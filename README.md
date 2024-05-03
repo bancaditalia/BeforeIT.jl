@@ -78,6 +78,30 @@ say `main.jl`, and run it directly from the terminal by typing
 julia --project=. main.jl
 ```
 
+## Contributors
+
+This project is brought to you by the following amazing people:
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/AldoGl">
+        <img src="https://avatars.githubusercontent.com/AldoGl" width="100px;" alt="Aldo Glielmo"/><br />
+        <sub><b>Aldo Glielmo</b></sub>
+      </a><br />
+      <p>Banca d'Italia &#9993;</p>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Devetak">
+        <img src="https://avatars.githubusercontent.com/Devetak" width="100px;" alt="Mitja Devetak"/><br />
+        <sub><b>Mitja Devetak</b></sub>
+      </a><br />
+      <p>Paris 1: Pantheon - Sorbonne &#9993;</p>
+    </td>
+  </tr>
+</table>
+
+
 ## Disclaimer
 
 This package is an outcome of a research project. All errors are those of
