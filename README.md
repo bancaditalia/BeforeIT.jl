@@ -112,7 +112,7 @@ julia --proj test/runtests.jl
       <p>Email: <a href="mailto:aldo.glielmo@bancaditalia.it:">aldo.glielmo@bancaditalia.it</a></p>
     </td>
     <td align="center">
-      <a href="https://github.com/Devetak">
+      <a href="https://devetak.github.io/">
         <img src="https://avatars.githubusercontent.com/Devetak" width="100px;" alt="Mitja Devetak"/><br />
         <sub><b>Mitja Devetak</b></sub>
       </a><br />
