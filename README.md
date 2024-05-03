@@ -77,6 +77,27 @@ say `main.jl`, and run it directly from the terminal by typing
 ```
 julia --project=. main.jl
 ```
+
+
+## Download Source Code and Run Tests
+
+### Clone the Repository
+```bash
+git clone https://github.com/bancaditalia/BeforeIT.jl.git
+cd BeforeIT.jl
+```
+
+### Activate and Instantiate the Environment
+```bash
+julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();'
+```
+
+### Run Tests
+```bash
+julia --proj test/runtests.jl
+```
+
+
 ## Contributors
 
 
