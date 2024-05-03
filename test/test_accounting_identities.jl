@@ -1,5 +1,4 @@
 using BeforeIT, MAT, FileIO, Random
-using Plots
 using Test
 
 dir = @__DIR__
