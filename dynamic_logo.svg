@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500">
+  <style>
+    .dark { display: none; }
+    @media (prefers-color-scheme: dark) {
+      .light { display: none; }
+      .dark { display: block; }
+    }
+  </style>
+  <image href="https://raw.githubusercontent.com/bancaditalia/BeforeIT.jl/main/docs/logo/logo_black_text.png" class="light" width="500" height="500"/>
+  <image href="https://raw.githubusercontent.com/bancaditalia/BeforeIT.jl/main/docs/logo/logo_white_text.png" class="dark" width="500" height="500"/>
+</svg>
+
