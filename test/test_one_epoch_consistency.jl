@@ -1,7 +1,7 @@
 using Revise
 using BeforeIT
 using MAT
-using Test, Statistics
+using Test
 
 dir = @__DIR__
 

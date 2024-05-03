@@ -1,7 +1,7 @@
 # In this tutorial we illustrate how to calibrate the model to the Italian data for a specific quarter
 
 import BeforeIT as Bit
-using Dates, Statistics, FileIO
+using Dates, FileIO
 
 
 # We start from loading the calibration oject for italy, which contains 4 datasets: calibration_data, figaro, data, and ea

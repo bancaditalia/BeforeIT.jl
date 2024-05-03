@@ -1,4 +1,4 @@
-using LinearAlgebra, Random, Statistics, Distributions
+using LinearAlgebra, Random, Distributions
 
 function estimate_next_value(data, type = nothing)
     alpha, beta, epsilon = estimate(data)
