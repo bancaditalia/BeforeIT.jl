@@ -77,10 +77,8 @@ say `main.jl`, and run it directly from the terminal by typing
 ```
 julia --project=. main.jl
 ```
-
 ## Contributors
 
-This project is brought to you by the following amazing people:
 
 <table>
   <tr>
@@ -89,14 +87,15 @@ This project is brought to you by the following amazing people:
         <img src="https://avatars.githubusercontent.com/AldoGl" width="100px;" alt="Aldo Glielmo"/><br />
         <sub><b>Aldo Glielmo</b></sub>
       </a><br />
-      <p>Banca d'Italia &#9993;</p>
+      <p>Banca d'Italia </p>
+      <p>Email: <a href="mailto:aldo@gmail.com">aldo [at] gmail.com</a></p>
     </td>
     <td align="center">
       <a href="https://github.com/Devetak">
         <img src="https://avatars.githubusercontent.com/Devetak" width="100px;" alt="Mitja Devetak"/><br />
         <sub><b>Mitja Devetak</b></sub>
       </a><br />
-      <p>Paris 1: Pantheon - Sorbonne &#9993;</p>
+      <p>Paris 1: Pantheon - Sorbonne</p>
     </td>
   </tr>
 </table>
