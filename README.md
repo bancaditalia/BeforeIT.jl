@@ -98,7 +98,7 @@ julia --proj test/runtests.jl
 ```
 
 
-## Contributors
+## Current Authors
 
 
 <table>
@@ -109,7 +109,7 @@ julia --proj test/runtests.jl
         <sub><b>Aldo Glielmo</b></sub>
       </a><br />
       <p>Banca d'Italia </p>
-      <p>Email: <a href="mailto:aldo@gmail.com">aldo [at] gmail.com</a></p>
+      <p>Email: <a href="mailto:aldo.glielmo@bancaditalia.it:">aldo.glielmo@bancaditalia.it</a></p>
     </td>
     <td align="center">
       <a href="https://github.com/Devetak">
