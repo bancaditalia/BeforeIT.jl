@@ -1,6 +1,6 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/bancaditalia/BeforeIT.jl/main/docs/logo/logo_black_text.png" width="500">
-<sup><a href="#footnote-1">*</a></sup>
+  <img src="https://raw.githubusercontent.com/bancaditalia/BeforeIT.jl/main/docs/logo/dynamic_logo.svg" width="500">
+  <sup><a href="#footnote-1">*</a></sup>
 </p>
 
 # Behavioural agent-based economic forecasting
