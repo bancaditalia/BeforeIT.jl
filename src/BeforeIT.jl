@@ -1,6 +1,5 @@
 module BeforeIT
 
-using Statistics
 using Random
 using StatsBase
 import Base: round, length

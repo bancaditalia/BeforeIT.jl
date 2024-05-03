@@ -1,5 +1,5 @@
 using BeforeIT
-using MAT, FileIO, Plots, StatsPlots, Statistics
+using MAT, FileIO, Plots, StatsPlots
 using Dates
 
 # load data from 1996

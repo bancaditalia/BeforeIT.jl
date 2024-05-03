@@ -3,7 +3,7 @@ function randn(n1::Int, n2::Int)
     return ones(n1, n2)
 end
 
-using BeforeIT, MAT, Test, Statistics
+using BeforeIT, MAT, Test, StatsBase
 
 dir = @__DIR__
 

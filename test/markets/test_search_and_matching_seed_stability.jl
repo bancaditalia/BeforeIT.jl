@@ -1,4 +1,4 @@
-using BeforeIT, Test, MAT, Statistics
+using BeforeIT, Test, MAT, StatsBase
 using Random
 
 Random.seed!(1)
