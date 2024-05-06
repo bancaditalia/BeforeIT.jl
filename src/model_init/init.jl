@@ -1,6 +1,6 @@
-using NamedTupleTools
+using MutableNamedTuples
 recursive_namedtuple(x::Any) = x
-recursive_namedtuple(d::Dict) = namedtuple(Dict(k => recursive_namedtuple(v) for (k, v) in d))
+recursive_namedtuple(d::Dict) = MutableNamedTuple(;Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
 
 """
     initialise_model(parameters, initial_conditions, T, typeInt = Int64, typeFloat = Float64)
