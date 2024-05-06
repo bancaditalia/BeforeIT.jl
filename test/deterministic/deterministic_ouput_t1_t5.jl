@@ -29,29 +29,29 @@
     end
 
 
-    # T = 4
-    # parameters = matread(joinpath(dir, "../../data/austria/parameters/2010Q1.mat"))
-    # initial_conditions = matread(joinpath(dir, "../../data/austria/initial_conditions/2010Q1.mat"))
-    # model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-    # data = BeforeIT.initialise_data(model)
-    # for t in 1:T-1
-    #     BeforeIT.one_epoch!(model; multi_threading = false)
-    #     BeforeIT.update_data!(data, model)
-    # end
+    T = 4
+    parameters = matread(joinpath(dir, "../../data/austria/parameters/2010Q1.mat"))
+    initial_conditions = matread(joinpath(dir, "../../data/austria/initial_conditions/2010Q1.mat"))
+    model = BeforeIT.initialise_model(parameters, initial_conditions, T)
+    data = BeforeIT.initialise_data(model)
+    for t in 1:T-1
+        BeforeIT.one_epoch!(model; multi_threading = false)
+        BeforeIT.update_data!(data, model)
+    end
 
-    # output_t5 = matread(joinpath(dir, "../matlab_code/output_t5.mat"))list
+    output_t5 = matread(joinpath(dir, "../matlab_code/output_t5.mat"))list
 
-    # # confront results between julia and matlab code
+    # confront results between julia and matlab code
 
-    # for fieldname in fieldnames(typeof(data))
-    #     julia_output = getfield(data, fieldname)
-    #     matlab_output = output_t5[string(fieldname)]
+    for fieldname in fieldnames(typeof(data))
+        julia_output = getfield(data, fieldname)
+        matlab_output = output_t5[string(fieldname)]
 
-    #     if length(size(julia_output)) == 1
-    #         @test isapprox(julia_output, matlab_output', rtol = 1e-4)
-    #     else
-    #         @test isapprox(julia_output, matlab_output, rtol = 1e-5)
-    #     end
-    # end
+        if length(size(julia_output)) == 1
+            @test isapprox(julia_output, matlab_output', rtol = 1e-4)
+        else
+            @test isapprox(julia_output, matlab_output, rtol = 1e-5)
+        end
+    end
 
 end

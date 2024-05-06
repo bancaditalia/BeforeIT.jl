@@ -6,9 +6,6 @@ include("utils/positive.jl")
 include("utils/randpl.jl")
 include("utils/nfvar3_and_estimate.jl")
 
-# one epoch
-include("model_init/initialise_model.jl")
-include("one_epoch.jl")
 include("utils/estimations.jl")
 
 # search_and_matching
