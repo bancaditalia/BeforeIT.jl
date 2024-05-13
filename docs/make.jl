@@ -1,10 +1,5 @@
-
-# Inside make.jl
 push!(LOAD_PATH, "../src/")
 include("../src/BeforeIT.jl")
-
-# using Pkg
-# pkg"activate .."
 
 println("Loading packages...")
 using .BeforeIT
@@ -35,7 +30,6 @@ Literate.markdown(joinpath(indir, "get_parameters_and_initial_conditions.jl"), o
 Literate.markdown(joinpath(indir, "multithreading_speedup.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "change_expectations.jl"), outdir; credit = false)
-# Literate.markdown(joinpath(indir, "parallel_evaluations.jl"), outdir; credit = false)
 
 
 println("Documentation Build")
@@ -55,7 +49,4 @@ makedocs(
     ],
 )
 
-# deploydocs(
-#     repo = "github.com/bancaditalia/BeforeIT.jl.git",
-#     devbranch = "main"
-# )
+deploydocs(;repo = "github.com/bancaditalia/BeforeIT.jl.git", devbranch = "main")
