@@ -1,8 +1,6 @@
-push!(LOAD_PATH, "../src/")
-include("../src/BeforeIT.jl")
-
+cd(@__DIR__)
 println("Loading packages...")
-using .BeforeIT
+using BeforeIT
 using Documenter
 using Literate
 
