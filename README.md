@@ -44,7 +44,7 @@ Then, whithin the Julia environment, you can install BeforeIT.jl as
 
 ```julia
 using Pkg
-Pkg.add(url="git@github.com:bancaditalia/BeforeIT.jl.git")
+Pkg.add("BeforeIT")
 ```
 
 You can ensure to have installed all dependencies via
@@ -55,9 +55,8 @@ Pkg.instantiate()
 
 Now you should be able to run the the following code
 
-
 ```julia
-using BeforeIT, Plots
+using BeforeIT
 
 parameters = BeforeIT.AUSTRIA2010Q1.parameters
 initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
@@ -65,11 +64,22 @@ initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 T = 20
 model = BeforeIT.initialise_model(parameters, initial_conditions, T)
 data = BeforeIT.run_one_sim!(model)
+```
+
+This will simulate the model with the original Austrian parametrisation for 20 quarters and save the results in the `data` object.
+To plot the time series within the `data` object, make sure you install Plots.jl in the same environment using
+
+```julia
+Pkg.add("Plots")
+```
+
+and then try running
+
+```julia
+using Plots
 
 plot(data.real_gdp)
 ```
-
-This will simulate the model with the original Austrian parametrisation for 20 quarters.
 
 In you want to run the script without opening a REPL, you can copy and paste the above lines into a file,
 say `main.jl`, and run it directly from the terminal by typing
