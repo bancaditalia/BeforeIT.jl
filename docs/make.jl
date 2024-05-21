@@ -47,4 +47,4 @@ makedocs(
     ],
 )
 
-deploydocs(;repo = "github.com/bancaditalia/BeforeIT.jl.git", devbranch = "main", target = "build", branch="gh-pages")
+deploydocs(;repo = "github.com/arnauqb/BeforeIT.jl.git", devbranch = "main", target = "build", branch="gh-pages")
