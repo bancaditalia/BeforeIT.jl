@@ -1,16 +1,5 @@
-
-
 export Workers, Firms, Bank, CentralBank, Government, RestOfTheWorld, Aggregates, Model
-
-# define a set of abstract types for the agent classes of the model
-abstract type AbstractWorkers end
-abstract type AbstractFirms end
-abstract type AbstractBank end
-abstract type AbstractCentralBank end
-abstract type AbstractGovernment end
-abstract type AbstractRestOfTheWorld end
-
-
+include("abstract.jl")
 """
 This is a Workers. Each field is an array which stores the values for all the workers in
 the economy. Note that the `O_h` field is an integer, while the rest are floats.
@@ -29,17 +18,7 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `I_h`: Realised investment
 """
 struct Workers{T <: AbstractVector, I <: AbstractVector} <: AbstractWorkers
-
-    Y_h::T
-    D_h::T
-    K_h::T
-    w_h::T
-    O_h::I
-    C_d_h::T
-    I_d_h::T
-    C_h::T
-    I_h::T
-
+    @worker T I
 end
 
 
