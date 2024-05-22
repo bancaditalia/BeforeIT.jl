@@ -7,7 +7,7 @@ abstract type AbstractCentralBank end
 abstract type AbstractGovernment end
 abstract type AbstractRestOfTheWorld end
 
-macro worker(T= Float64, I = Vector{Float64})
+macro worker(T= Vector{Float64}, I = Vector{Int})
     return esc(quote
         Y_h::$T
         D_h::$T
@@ -21,7 +21,7 @@ macro worker(T= Float64, I = Vector{Float64})
     end)
 end
 
-macro firm(T = Float64, I = Vector{Float64})
+macro firm(T = Vector{Float64}, I = Vector{Int})
     return esc(quote
                   G_i::$I
     alpha_bar_i::$T
