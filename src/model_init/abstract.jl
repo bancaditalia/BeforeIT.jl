@@ -7,12 +7,7 @@ abstract type AbstractCentralBank end
 abstract type AbstractGovernment end
 abstract type AbstractRestOfTheWorld end
 
-""""
-julia> macro zerox()
-           return esc(:(x = 0))
-       end
-"""
-macro worker(T, I)
+macro worker(T= Float64, I = Vector{Float64})
     return esc(quote
         Y_h::$T
         D_h::$T
@@ -26,7 +21,7 @@ macro worker(T, I)
     end)
 end
 
-macro firm(T, I)
+macro firm(T = Float64, I = Vector{Float64})
     return esc(quote
                   G_i::$I
     alpha_bar_i::$T
@@ -76,10 +71,8 @@ macro firm(T, I)
 end)
 end
 
-macro bank(T) 
+macro bank(T = Float64)
     return esc(quote
-
-
     E_k::$T
     Pi_k::$T
     Pi_e_k::$T
@@ -92,13 +85,11 @@ macro bank(T)
     I_h::$T
     K_h::$T
     D_h::$T
-end
-               )
+        end)
 end
 
-macro centralBank(T)
+macro centralBank(T = Float64)
     return esc(quote
-
     r_bar::$T
     r_G::$T
     rho::$T
@@ -107,12 +98,11 @@ macro centralBank(T)
     xi_pi::$T
     xi_gamma::$T
     E_CB::$T
-              end)
+        end)
 end
 
-macro government(T)
+macro government(T=Float64)
     return esc(quote
-
     alpha_G::$T
     beta_G::$T
     sigma_G::$T
@@ -124,11 +114,11 @@ macro government(T)
     C_d_j::Vector{$T}
     C_j::$T
     P_j::$T
-               end)
+            end)
 end
-macro restOfTheWorld(T) 
-    return esc(quote
 
+macro restOfTheWorld(T = Float64)
+    return esc(quote
     alpha_E::$T
     beta_E::$T
     sigma_E::$T
@@ -154,11 +144,10 @@ macro restOfTheWorld(T)
     Q_d_m::Vector{$T}
     P_m::Vector{$T}
     P_l::$T
-               end)
+            end)
 end
 
-
-macro aggregates(T, I) 
+macro aggregates(T = Float64, I = Vector{Float64})
     return esc(quote
     Y::Vector{$T}
     pi_::Vector{$T}
@@ -175,5 +164,5 @@ macro aggregates(T, I)
     epsilon_E::$T
     epsilon_I::$T
     t::$I
-               end)
+            end)
 end    
