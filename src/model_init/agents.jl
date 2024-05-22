@@ -76,52 +76,7 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `D_h`: Deposits of the owner of the firms
 """
 mutable struct Firms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
-
-    G_i::I
-    alpha_bar_i::T
-    beta_i::T
-    kappa_i::T
-    w_i::T
-    w_bar_i::T
-    delta_i::T
-    tau_Y_i::T
-    tau_K_i::T
-    N_i::I
-    Y_i::T
-    Q_i::T
-    Q_d_i::T
-    P_i::T
-    S_i::T
-    K_i::T
-    M_i::T
-    L_i::T
-    pi_bar_i::T
-    D_i::T
-    Pi_i::T
-    V_i::I
-    I_i::T
-    E_i::T
-    P_bar_i::T
-    P_CF_i::T
-    DS_i::T
-    DM_i::T
-    DL_i::T
-    DL_d_i::T
-    K_e_i::T
-    L_e_i::T
-    Q_s_i::T
-    I_d_i::T
-    DM_d_i::T
-    N_d_i::I
-    Pi_e_i::T
-    ### Household fields (firms' owners)
-    Y_h::T
-    C_d_h::T
-    I_d_h::T
-    C_h::T
-    I_h::T
-    K_h::T
-    D_h::T
+    @firm T I
 end
 
 
@@ -145,20 +100,7 @@ This is a Bank type. It represents the bank of the model.
 
 """
 mutable struct Bank{P} <: AbstractBank
-
-    E_k::P
-    Pi_k::P
-    Pi_e_k::P
-    D_k::P
-    r::P
-    Y_h::P
-    C_d_h::P
-    I_d_h::P
-    C_h::P
-    I_h::P
-    K_h::P
-    D_h::P
-
+    @bank P
 end
 
 
@@ -177,15 +119,7 @@ This is a CentralBank type. It represents the central bank of the model.
 """
 mutable struct CentralBank{T} <: AbstractCentralBank
 
-    r_bar::T
-    r_G::T
-    rho::T
-    r_star::T
-    pi_star::T
-    xi_pi::T
-    xi_gamma::T
-    E_CB::T
-
+    @centralBank T
 end
 
 """
@@ -206,18 +140,7 @@ This is a Government type. It represents the government of the model.
 """
 mutable struct Government{T} <: AbstractGovernment
 
-    alpha_G::T
-    beta_G::T
-    sigma_G::T
-    Y_G::T
-    C_G::T
-    L_G::T
-    sb_inact::T
-    sb_other::T
-    const C_d_j::Vector{T}
-    C_j::T
-    P_j::T
-
+    @government T
 end
 
 """
@@ -252,32 +175,7 @@ This is a RestOfTheWorld type. It represents the rest of the world of the model.
 """
 mutable struct RestOfTheWorld{T} <: AbstractRestOfTheWorld
 
-    alpha_E::T
-    beta_E::T
-    sigma_E::T
-    alpha_I::T
-    beta_I::T
-    sigma_I::T
-    Y_EA::T
-    gamma_EA::T
-    pi_EA::T
-    alpha_pi_EA::T
-    beta_pi_EA::T
-    sigma_pi_EA::T
-    alpha_Y_EA::T
-    beta_Y_EA::T
-    sigma_Y_EA::T
-    D_RoW::T
-    Y_I::T
-    C_E::T
-    C_d_l::Vector{T}
-    C_l::T
-    Y_m::Vector{T}
-    Q_m::Vector{T}
-    Q_d_m::Vector{T}
-    P_m::Vector{T}
-    P_l::T
-
+    @restOfTheWorld T
 end
 
 
@@ -301,21 +199,7 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 
 """
 mutable struct Aggregates{T, I}
-    const Y::Vector{T}
-    const pi_::Vector{T}
-    P_bar::T
-    const P_bar_g::Vector{T}
-    P_bar_HH::T
-    P_bar_CF::T
-    P_bar_h::T
-    P_bar_CF_h::T
-    Y_e::T
-    gamma_e::T
-    pi_e::T
-    epsilon_Y_EA::T
-    epsilon_E::T
-    epsilon_I::T
-    t::I
+    @Aggregates T I
 end
 
 """
