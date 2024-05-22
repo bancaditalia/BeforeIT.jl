@@ -1,3 +1,4 @@
+export AbstractBank, AbstractCentralBank, AbstractFirms, AbstractGovernment, AbstractRestOfTheWorld, AbstractRestOfTheWorld, AbstractWorkers, @worker, @firm, @bank, @centralBank, @aggregates, @restOfTheWorld
 
 abstract type AbstractWorkers end
 abstract type AbstractFirms end
@@ -120,7 +121,7 @@ macro government(T)
     L_G::$T
     sb_inact::$T
     sb_other::$T
-    const C_d_j::Vector{$T}
+    C_d_j::Vector{$T}
     C_j::$T
     P_j::$T
                end)
@@ -159,10 +160,10 @@ end
 
 macro aggregates(T, I) 
     return esc(quote
-    const Y::Vector{$T}
-    const pi_::Vector{$T}
+    Y::Vector{$T}
+    pi_::Vector{$T}
     P_bar::$T
-    const P_bar_g::Vector{$T}
+    P_bar_g::Vector{$T}
     P_bar_HH::$T
     P_bar_CF::$T
     P_bar_h::$T
@@ -175,4 +176,4 @@ macro aggregates(T, I)
     epsilon_I::$T
     t::$I
                end)
-    
+end    
