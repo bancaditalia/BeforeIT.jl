@@ -15,11 +15,7 @@ const MATLAB_EPOCH = Dates.DateTime(-1, 12, 31)
 num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(BeforeIT.round(Int64, n * 1000 * 60 * 60 * 24))
 
 
-function get_params_and_initial_conditions(
-    calibration_object,
-    calibration_date;
-    scale = 0.001,
-)
+function get_params_and_initial_conditions(calibration_object, calibration_date; scale = 0.001)
     calibration_data = calibration_object.calibration
     figaro = calibration_object.figaro
     data = calibration_object.data
@@ -205,7 +201,8 @@ function get_params_and_initial_conditions(
                     timescale * operating_surplus -
                     timescale * firm_interest * fixed_assets_other_than_dwellings /
                     sum(fixed_assets_other_than_dwellings) +
-                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) / sum(BeforeIT.pos(operating_surplus)),
+                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) /
+                    sum(BeforeIT.pos(operating_surplus)),
                 ),
             ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly)
         )
@@ -224,7 +221,8 @@ function get_params_and_initial_conditions(
                     timescale * operating_surplus -
                     timescale * firm_interest * fixed_assets_other_than_dwellings /
                     sum(fixed_assets_other_than_dwellings) +
-                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) / sum(BeforeIT.pos(operating_surplus)),
+                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) /
+                    sum(BeforeIT.pos(operating_surplus)),
                 ),
             ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly) -
             timescale * corporate_tax

@@ -200,7 +200,8 @@ function get_params_and_initial_conditions_steady_state(
                     timescale * operating_surplus -
                     timescale * firm_interest * fixed_assets_other_than_dwellings /
                     sum(fixed_assets_other_than_dwellings) +
-                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) / sum(BeforeIT.pos(operating_surplus)),
+                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) /
+                    sum(BeforeIT.pos(operating_surplus)),
                 ),
             ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly)
         )
@@ -219,7 +220,8 @@ function get_params_and_initial_conditions_steady_state(
                     timescale * operating_surplus -
                     timescale * firm_interest * fixed_assets_other_than_dwellings /
                     sum(fixed_assets_other_than_dwellings) +
-                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) / sum(BeforeIT.pos(operating_surplus)),
+                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) /
+                    sum(BeforeIT.pos(operating_surplus)),
                 ),
             ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly) -
             timescale * corporate_tax

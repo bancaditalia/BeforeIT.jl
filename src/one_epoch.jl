@@ -17,7 +17,7 @@ Key operations performed include:
 
 The function updates the model in-place and does not return any value.
 """
-function one_epoch!(model; multi_threading = false, shock=NoShock())
+function one_epoch!(model; multi_threading = false, shock = NoShock())
 
     gov = model.gov # government
     cb = model.cb # central bank
@@ -30,7 +30,7 @@ function one_epoch!(model; multi_threading = false, shock=NoShock())
     prop = model.prop # model properties
 
     # return an error if t is greater than T
-    if agg.t > prop.T+1
+    if agg.t > prop.T + 1
         error("The model has already reached the final time step.")
     end
 

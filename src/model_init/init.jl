@@ -1,6 +1,6 @@
 using MutableNamedTuples
 recursive_namedtuple(x::Any) = x
-recursive_namedtuple(d::Dict) = MutableNamedTuple(;Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
+recursive_namedtuple(d::Dict) = MutableNamedTuple(; Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
 
 """
     initialise_model(parameters, initial_conditions, T, typeInt = Int64, typeFloat = Float64)
@@ -387,7 +387,8 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     C_j = zero(typeFloat)
     P_j = zero(typeFloat)
     Y_G = zero(typeFloat)
-    government = StandardGovernment(alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime], L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
+    government =
+        StandardGovernment(alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime], L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
 
     id = typeInt(I + H_W + H_inact + 4)
     C_d_l = Vector{typeFloat}(zeros(L))

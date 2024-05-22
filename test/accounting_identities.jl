@@ -28,7 +28,8 @@ using Test
     @test isapprox(zero, 0.0, atol = 1e-8)
 
     zero = sum(
-        data.real_gdp - data.real_household_consumption - data.real_government_consumption - data.real_capitalformation - data.real_exports + data.real_imports,
+        data.real_gdp - data.real_household_consumption - data.real_government_consumption -
+        data.real_capitalformation - data.real_exports + data.real_imports,
     )
     @test isapprox(zero, 0.0, atol = 1e-8)
 
