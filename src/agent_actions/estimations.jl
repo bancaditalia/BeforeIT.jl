@@ -78,7 +78,7 @@ Y_{EA} = exp(\\alpha_Y \\cdot \\log(Y_{EA}) + \\beta_Y + \\epsilon_{Y_{EA}})
 where `alpha_Y`, `beta_Y`, `alpha_pi`, `beta_pi`, `epsilon_Y_EA` and `epsilon_pi_EA` are estimated using the past log-GDP and inflation data using the `estimate` function.
 
 """
-function growth_inflation_EA(rotw::RestOfTheWorld, model)
+function growth_inflation_EA(rotw::AbstractRestOfTheWorld, model)
     # unpack model variables
     epsilon_Y_EA = model.agg.epsilon_Y_EA
 
@@ -140,7 +140,7 @@ The sector-specific price index `vec` is calculated as follows:
 vec_g = \\frac{\\sum_{i=1}^N P_i \\cdot Y_i}{\\sum_{i=1}^N Y_i}
 ```
 """
-function sector_specific_priceindex(firms::AbstractFirms, rotw::RestOfTheWorld, G::Int)
+function sector_specific_priceindex(firms::AbstractFirms, rotw::AbstractRestOfTheWorld, G::Int)
     vec = zeros(G)
     for g in 1:G
         vec[g] = _sector_specific_priceindex(
