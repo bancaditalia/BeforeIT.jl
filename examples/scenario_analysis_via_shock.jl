@@ -30,7 +30,7 @@ end
 # this is done in Julia using the syntax below
 function (s::CustomShock)(model::Bit.Model)
     if model.agg.t <= s.final_time
-         model.cb.r_bar = s.rate
+        model.cb.r_bar = s.rate
     end
 end
 

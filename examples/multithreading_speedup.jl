@@ -19,7 +19,7 @@ model = Bit.initialise_model(parameters, initial_conditions, T);
 println(model.prop.H)
 
 # Note that households are the sum of active and inactive households and the owners of firms and of the bank
-println(length(model.w_act) +  length(model.w_inact) + length(model.firms) + 1)
+println(length(model.w_act) + length(model.w_inact) + length(model.firms) + 1)
 
 # Let's fist check how many threads we have available in this Julia session
 

@@ -19,7 +19,7 @@ for each epoch using `BeforeIT.one_epoch!(model)` and `BeforeIT.update_data!(dat
 model = BeforeIT.initialize_model(parameters, initial_conditions, T)
 data = run_one_sim!(model)
 """
-function run_one_sim!(model; multi_threading = false ,  shock = NoShock())
+function run_one_sim!(model; multi_threading = false, shock = NoShock())
 
     data = BeforeIT.initialise_data(model)
 

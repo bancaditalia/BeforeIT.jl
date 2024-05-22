@@ -1,4 +1,11 @@
-export StandardWorkers, StandardFirms, StandardBank, StandardCentralBank, StandardGovernment, StandardRestOfTheWorld, StandardAggregates, Model
+export StandardWorkers,
+    StandardFirms,
+    StandardBank,
+    StandardCentralBank,
+    StandardGovernment,
+    StandardRestOfTheWorld,
+    StandardAggregates,
+    Model
 include("abstract.jl")
 """
 This is a Workers. Each field is an array which stores the values for all the workers in
