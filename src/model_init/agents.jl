@@ -1,10 +1,10 @@
-export StandardWorkers,
-    StandardFirms,
-    StandardBank,
-    StandardCentralBank,
-    StandardGovernment,
-    StandardRestOfTheWorld,
-    StandardAggregates,
+export Workers,
+    Firms,
+    Bank,
+    CentralBank,
+    Government,
+    RestOfTheWorld,
+    Aggregates,
     Model
 include("abstract.jl")
 """
@@ -24,7 +24,7 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `C_h`: Realised consumption
 - `I_h`: Realised investment
 """
-struct StandardWorkers{T <: AbstractVector, I <: AbstractVector} <: AbstractWorkers
+struct Workers{T <: AbstractVector, I <: AbstractVector} <: AbstractWorkers
     @worker T I
 end
 
@@ -82,7 +82,7 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-mutable struct StandardFirms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
+mutable struct Firms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
     @firm T I
 end
 
@@ -106,7 +106,7 @@ This is a Bank type. It represents the bank of the model.
 - `D_h`: Deposits
 
 """
-mutable struct StandardBank{P} <: AbstractBank
+mutable struct Bank{P} <: AbstractBank
     @bank P
 end
 
@@ -124,7 +124,7 @@ This is a CentralBank type. It represents the central bank of the model.
 - `xi_gamma`: Weight placed on economic
 - `E_CB`: Central bank equity
 """
-mutable struct StandardCentralBank{T} <: AbstractCentralBank
+mutable struct CentralBank{T} <: AbstractCentralBank
 
     @centralBank T
 end
@@ -145,7 +145,7 @@ This is a Government type. It represents the government of the model.
 - `C_j`: Realised government consumption
 - `P_j`: Price inflation of government goods <- ??
 """
-mutable struct StandardGovernment{T} <: AbstractGovernment
+mutable struct Government{T} <: AbstractGovernment
 
     @government T
 end
@@ -180,7 +180,7 @@ This is a RestOfTheWorld type. It represents the rest of the world of the model.
 - `P_m [vector]`: Price of imports per sector
 - `P_l`: Price inflation of exports <- ??
 """
-mutable struct StandardRestOfTheWorld{T} <: AbstractRestOfTheWorld
+mutable struct RestOfTheWorld{T} <: AbstractRestOfTheWorld
 
     @restOfTheWorld T
 end
@@ -205,7 +205,7 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `t`: Time index
 
 """
-mutable struct StandardAggregates{T, I}
+mutable struct Aggregates{T, I}
     @aggregates T I
 end
 
@@ -229,8 +229,8 @@ mutable struct Model
     bank::AbstractBank
     cb::AbstractCentralBank
     gov::AbstractGovernment
-    rotw::StandardRestOfTheWorld
-    agg::StandardAggregates
+    rotw::AbstractRestOfTheWorld
+    agg::Aggregates
     prop::Any
 end
 
