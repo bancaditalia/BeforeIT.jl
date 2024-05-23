@@ -6,7 +6,7 @@
 Computes government expenditure on consumption and transfers to households.
 
 # Arguments
-- `gov::AbstractGovernment`: government object
+- `gov`: government object
 - `model`: model object
 
 # Returns
@@ -126,7 +126,7 @@ end
 Computes social benefits paid by the government households.
 
 # Arguments
-- `gov::AbstractGovernment`: government object
+- `gov`: government object
 - `model`: model object
 
 # Returns

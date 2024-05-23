@@ -8,17 +8,17 @@ recursive_namedtuple(d::Dict) = MutableNamedTuple(;Dict(k => recursive_namedtupl
 Initializes the model with given parameters and initial conditions.
 
 Parameters:
-- parameters::Dict{String, Any}: A dictionary containing the model parameters.
-- initial_conditions::Dict{String, Any}: A dictionary containing the initial conditions.
-- T::Int: The time horizon of the model.
-- typeInt::DataType (optional, default: Int64): The data type to be used for integer values.
-- typeFloat::DataType (optional, default: Float64): The data type to be used for floating-point values.
+- `parameters`: A dictionary containing the model parameters.
+- initial_conditions: A dictionary containing the initial conditions.
+- T (integer): The time horizon of the model.
+- typeInt: (optional, default: Int64): The data type to be used for integer values.
+- typeFloat: (optional, default: Float64): The data type to be used for floating-point values.
 
 Returns:
 - model::Model: The initialized model.
 
 """
-function initialise_model(parameters, initial_conditions, T, typeInt = Int64, typeFloat = Float64)
+function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}, T, typeInt::DataType = Int64, typeFloat::DataType = Float64)
 
     ###########################################
     ############# Parameter imports ###########
