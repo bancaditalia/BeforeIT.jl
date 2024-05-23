@@ -22,7 +22,7 @@ To install BeforeIT.jl, simply open a Julia REPL by writing `julia` in your term
 
 ```julia
 using Pkg
-Pkg.add(url="git@github.com:bancaditalia/BeforeIT.jl.git")
+Pkg.add("BeforeIT")
 ```
 
 ## Quick example
@@ -30,7 +30,7 @@ Pkg.add(url="git@github.com:bancaditalia/BeforeIT.jl.git")
 To check that the installation worked, try running the model in your terminal following
 
 ```julia
-using BeforeIT, Plots
+using BeforeIT
 
 parameters = BeforeIT.AUSTRIA2010Q1.parameters
 initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
@@ -38,6 +38,14 @@ initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 T = 20
 model = BeforeIT.initialise_model(parameters, initial_conditions, T)
 data = BeforeIT.run_one_sim!(model)
+
+plot(data.real_gdp)
+```
+
+To plot the results of the simulation, install the `Plots` package via ```Pkg.add("Plots")```  and then run
+
+```julia
+using Plots
 
 plot(data.real_gdp)
 ```
@@ -59,6 +67,7 @@ Copyright 2024- Banca d'Italia and the authors.
 - [Marco Benedetti](https://www.bankit.art/people/marco-benedetti)
 - [Sara Corbo](https://www.bankit.art/people/sara-corbo) for the logo design
 - [Andrea Gentili](https://www.bankit.art/people/andrea-gentili) for suggesting the name of the pakege
+- [Arnau Quera-Bofarull](https://github.com/arnauqb) for help in the deployment of the documentation
 
 ## Disclaimer
 
