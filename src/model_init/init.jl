@@ -293,7 +293,7 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     N_d_i = zeros(typeInt, I)
     Pi_e_i = zeros(typeFloat, I)
 
-    firms = StandardFirms(
+    firms = Firms(
         G_i,
         alpha_bar_i,
         beta_i,
@@ -346,7 +346,7 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     C_h = zeros(typeFloat, length(ids))
     I_h = zeros(typeFloat, length(ids))
     # active workers (both employed and unemployed)
-    workers_act = StandardWorkers(Y_h[1:H_W], D_h[1:H_W], K_h[1:H_W], w_h[1:H_W], O_h[1:H_W], C_d_h, I_d_h, C_h, I_h)
+    workers_act = Workers(Y_h[1:H_W], D_h[1:H_W], K_h[1:H_W], w_h[1:H_W], O_h[1:H_W], C_d_h, I_d_h, C_h, I_h)
 
     # inactive workers
     ids = Vector{typeInt}((I + H_W + 1):(I + H_W + H_inact))
@@ -356,7 +356,7 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     I_d_h = zeros(typeFloat, length(ids))
     C_h = zeros(typeFloat, length(ids))
     I_h = zeros(typeFloat, length(ids))
-    workers_inact = StandardWorkers(
+    workers_inact = Workers(
         Y_h[(H_W + 1):(H_W + H_inact)],
         D_h[(H_W + 1):(H_W + H_inact)],
         K_h[(H_W + 1):(H_W + H_inact)],
@@ -377,10 +377,10 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     K_h = K_h[H_W + H_inact + I + 1]
     D_h = D_h[H_W + H_inact + I + 1]
     Pi_e_k = typeFloat(0.0)
-    bank = StandardBank(E_k, Pi_k, Pi_e_k, D_k, r, Y_h_k, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
+    bank = Bank(E_k, Pi_k, Pi_e_k, D_k, r, Y_h_k, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
 
     id = typeInt(I + H_W + H_inact + 2)
-    central_bank = StandardCentralBank(r_bar, r_G, rho, r_star, pi_star, xi_pi, xi_gamma, E_CB)
+    central_bank = CentralBank(r_bar, r_G, rho, r_star, pi_star, xi_pi, xi_gamma, E_CB)
 
     id = typeInt(I + H_W + H_inact + 3)
     C_d_j = Vector{typeFloat}(zeros(J))
@@ -388,7 +388,7 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     P_j = zero(typeFloat)
     Y_G = zero(typeFloat)
     government =
-        StandardGovernment(alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime], L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
+        Government(alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime], L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
 
     id = typeInt(I + H_W + H_inact + 4)
     C_d_l = Vector{typeFloat}(zeros(L))
@@ -398,7 +398,7 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     Q_m = Vector{typeFloat}(zeros(G))
     Q_d_m = Vector{typeFloat}(zeros(G))
     P_m = Vector{typeFloat}(zeros(G))
-    rotw = StandardRestOfTheWorld(
+    rotw = RestOfTheWorld(
         alpha_E,
         beta_E,
         sigma_E,
@@ -435,7 +435,7 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     epsilon_Y_EA = zero(typeFloat)
     epsilon_E = zero(typeFloat)
     epsilon_I = zero(typeFloat)
-    agg = StandardAggregates(
+    agg = Aggregates(
         Y,
         pi_,
         P_bar,
