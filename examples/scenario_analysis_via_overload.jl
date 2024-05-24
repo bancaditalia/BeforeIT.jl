@@ -61,7 +61,7 @@ StatsPlots.errorline!(
 
 # Note that, importantly, once the function central_bank_rate has been changed, the model will use the new 
 # interest rate in all the simulations, unless the function is changed again.
-# To restore the original interest rate, we can redefine the function central_bank_rate
+# To restore the original interest rate, you need to close and restart the Julia session.
 
 function central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     gamma_EA = model.rotw.gamma_EA
