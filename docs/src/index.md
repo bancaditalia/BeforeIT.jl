@@ -38,8 +38,6 @@ initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 T = 20
 model = BeforeIT.initialise_model(parameters, initial_conditions, T)
 data = BeforeIT.run_one_sim!(model)
-
-plot(data.real_gdp)
 ```
 
 To plot the results of the simulation, install the `Plots` package via ```Pkg.add("Plots")```  and then run

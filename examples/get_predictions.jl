@@ -1,4 +1,4 @@
-# In this tutorial we illustrate how to 
+# In this tutorial we illustrate how to get predictions from the model for a number of quarters starting from previous simulations.
 
 using BeforeIT, FileIO
 using Dates

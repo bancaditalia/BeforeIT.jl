@@ -1,3 +1,5 @@
+# # Scenario analysis via custom shocks
+
 # In this tutorial we will illustrate how to perform a scenario analysis by running the model multiple times
 # under a specific shock and comparing the results with the unshocked model.
 
