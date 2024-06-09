@@ -8,6 +8,13 @@ import Base: round, length
 include("model_init/agents.jl")
 
 # model initialisation function
+include("model_init/init_properties.jl")
+include("model_init/init_banks.jl")
+include("model_init/init_firms.jl")
+include("model_init/init_workers.jl")
+include("model_init/init_government.jl")
+include("model_init/init_rest_of_the_world.jl")
+include("model_init/init_aggregates.jl")
 include("model_init/init.jl")
 
 # functions
