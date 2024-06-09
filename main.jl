@@ -14,7 +14,6 @@ for t in 1:T
     BeforeIT.update_data!(data, model)
 end
 
-
 p1 = plot(data.real_gdp, title = "gdp", titlefont = 10)
 p2 = plot(data.real_household_consumption, title = "household cons.", titlefont = 10)
 p3 = plot(data.real_government_consumption, title = "gov. cons.", titlefont = 10)
