@@ -4,6 +4,7 @@
   <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/bancaditalia/BeforeIT.jl/main/docs/logo/logo_black_text.png">
   <img alt="Logo adapts to light and dark modes" src="https://raw.githubusercontent.com/bancaditalia/BeforeIT.jl/main/docs/logo/logo_black_text.png" width="500">
 </picture>
+<sup><a href="#footnote-1">*</a></sup>
 </div>
 
 # Behavioural agent-based economic forecasting
