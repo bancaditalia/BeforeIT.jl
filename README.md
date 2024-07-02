@@ -90,6 +90,11 @@ julia --project=. main.jl
 ```
 
 
+## Docs
+
+Extensive documentation on how to use the package is available [here](https://bancaditalia.github.io/BeforeIT.jl/dev/).
+We suggest following the steps in [this tutorial](https://bancaditalia.github.io/BeforeIT.jl/dev/examples/basic_example.html) to quickly learn the basics.
+
 ## Download Source Code and Run Tests
 
 ### Clone the Repository
