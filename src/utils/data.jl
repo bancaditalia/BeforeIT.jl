@@ -32,7 +32,7 @@ end
 """
 Initialise the data arrays
 """
-function initialise_data(m)
+function init_data(m)
     p = m.prop
     T = p.T
     d = Data([zeros(T + 1) for _ in 1:25]..., zeros(T + 1, p.G), zeros(T + 1, p.G))

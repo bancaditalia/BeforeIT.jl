@@ -9,8 +9,8 @@ parameters = matread(joinpath(dir, "../data/steady_state/parameters/2010Q1.mat")
 initial_conditions = matread(joinpath(dir, "../data/steady_state/initial_conditions/2010Q1.mat"))
 
 T = 1
-model = BeforeIT.initialise_model(parameters, initial_conditions, T;)
-data = BeforeIT.initialise_data(model)
+model = BeforeIT.init_model(parameters, initial_conditions, T;)
+data = BeforeIT.init_data(model)
 
 
 println(BeforeIT.get_accounting_identity_banks(model))

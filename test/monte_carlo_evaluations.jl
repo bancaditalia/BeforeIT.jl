@@ -6,8 +6,8 @@ parameters = matread(joinpath(dir, "../data/austria/parameters/2010Q1.mat"))
 initial_conditions = matread(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
 
 T = 20
-model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-data = BeforeIT.initialise_data(model)
+model = BeforeIT.init_model(parameters, initial_conditions, T)
+data = BeforeIT.init_data(model)
 
 n_sims = 3
 data_vector = BeforeIT.run_n_sims(model, n_sims)

@@ -12,7 +12,7 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 # initialise the model and the data collector
 T = 20
-model = Bit.initialise_model(parameters, initial_conditions, T);
+model = Bit.init_model(parameters, initial_conditions, T);
 
 # Simulate the model for T quarters
 data_vec_baseline = Bit.run_n_sims(model, 4)

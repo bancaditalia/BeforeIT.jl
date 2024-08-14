@@ -5,7 +5,7 @@ dir = @__DIR__
 
 parameters = BeforeIT.STEADY_STATE2010Q1.parameters
 initial_conditions = BeforeIT.STEADY_STATE2010Q1.initial_conditions
-model = BeforeIT.initialise_model(parameters, initial_conditions, 1)
+model = BeforeIT.init_model(parameters, initial_conditions, 1)
 
 properties = model.prop
 

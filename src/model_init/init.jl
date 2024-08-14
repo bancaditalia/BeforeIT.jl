@@ -3,7 +3,7 @@ recursive_namedtuple(x::Any) = x
 recursive_namedtuple(d::Dict) = MutableNamedTuple(; Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
 
 """
-    initialise_model(parameters, initial_conditions, T, typeInt = Int64, typeFloat = Float64)
+    init_model(parameters, initial_conditions, T, typeInt = Int64, typeFloat = Float64)
 
 Initializes the model with given parameters and initial conditions.
 
@@ -18,7 +18,7 @@ Returns:
 - model::Model: The initialized model.
 
 """
-function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}, T, typeInt::DataType = Int64, typeFloat::DataType = Float64)
+function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}, T, typeInt::DataType = Int64, typeFloat::DataType = Float64)
 
     # properties
     properties = BeforeIT.init_properties(parameters, T; typeInt = typeInt, typeFloat = typeFloat)

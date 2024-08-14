@@ -13,7 +13,7 @@ using FileIO, Plots, StatsPlots
 parameters = Bit.ITALY2010Q1.parameters
 initial_conditions = Bit.ITALY2010Q1.initial_conditions
 T = 50
-model = Bit.initialise_model(parameters, initial_conditions, T);
+model = Bit.init_model(parameters, initial_conditions, T);
 
 
 # The model is in scale 1:2000, so it has around 30,000 households
@@ -31,7 +31,7 @@ println(Threads.nthreads())
 
 @time data = Bit.run_one_sim!(model; multi_threading = false);
 
-model = Bit.initialise_model(parameters, initial_conditions, T);
+model = Bit.init_model(parameters, initial_conditions, T);
 @time data = Bit.run_one_sim!(model; multi_threading = true);
 
 # Is the speedup in line to what we would expect?
