@@ -8,8 +8,8 @@ using Test
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 
     T = 1
-    model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-    data = BeforeIT.initialise_data(model)
+    model = BeforeIT.init_model(parameters, initial_conditions, T)
+    data = BeforeIT.init_data(model)
 
     for t in 1:T
         BeforeIT.one_epoch!(model; multi_threading = false)

@@ -4,7 +4,7 @@
 
     parameters = BeforeIT.AUSTRIA2010Q1.parameters
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
-    model = BeforeIT.initialise_model(parameters, initial_conditions, 1)
+    model = BeforeIT.init_model(parameters, initial_conditions, 1)
 
     properties = model.prop
 

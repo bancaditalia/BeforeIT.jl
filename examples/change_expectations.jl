@@ -15,7 +15,7 @@ init = Bit.AUSTRIA2010Q1.initial_conditions
 
 Random.seed!(1234)
 T = 40
-model = Bit.initialise_model(par, init, T)
+model = Bit.init_model(par, init, T)
 data = Bit.run_one_sim!(model)
 
 # Now we can experiment with changing expectations of the agents in the model.
@@ -30,7 +30,7 @@ end
 # run the model again, with the same seed
 
 Random.seed!(1234)
-model = Bit.initialise_model(par, init, T)
+model = Bit.init_model(par, init, T)
 data_back = Bit.run_one_sim!(model)
 
 # plot the results, comparing the two cases as different lines

@@ -10,7 +10,7 @@ using Random
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 
     T = 1
-    model = BeforeIT.initialise_model(parameters, initial_conditions, T;)
+    model = BeforeIT.init_model(parameters, initial_conditions, T;)
 
 
     gov = model.gov # government

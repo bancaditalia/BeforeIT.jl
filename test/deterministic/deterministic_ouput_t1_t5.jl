@@ -4,8 +4,8 @@
     T = 1
     parameters = BeforeIT.AUSTRIA2010Q1.parameters
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
-    model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-    data = BeforeIT.initialise_data(model)
+    model = BeforeIT.init_model(parameters, initial_conditions, T)
+    data = BeforeIT.init_data(model)
 
     BeforeIT.one_epoch!(model; multi_threading = false)
     BeforeIT.update_data!(data, model)
@@ -30,8 +30,8 @@
     T = 5
     parameters = BeforeIT.AUSTRIA2010Q1.parameters
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
-    model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-    data = BeforeIT.initialise_data(model)
+    model = BeforeIT.init_model(parameters, initial_conditions, T)
+    data = BeforeIT.init_data(model)
     for t in 1:T
         BeforeIT.one_epoch!(model; multi_threading = false)
         BeforeIT.update_data!(data, model)

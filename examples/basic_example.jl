@@ -15,7 +15,7 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 # We can now initialise the model, by specifying in advance the maximum number of epochs.
 
 T = 16
-model = Bit.initialise_model(parameters, initial_conditions, T)
+model = Bit.init_model(parameters, initial_conditions, T)
 
 
 # Note that the it is very simple to inspect the model by typing
@@ -28,7 +28,7 @@ fieldnames(typeof(model.bank))
 
 # We can now define a data tracker, which will store the time series of the model.
 
-data = Bit.initialise_data(model);
+data = Bit.init_data(model);
 
 # We can run now the model for a number of epochs and progressively update the data tracker.
 
@@ -53,11 +53,12 @@ p7 = plot(data.wages, title = "wages", titlefont = 10)
 p8 = plot(data.euribor, title = "euribor", titlefont = 10)
 p9 = plot(data.nominal_gdp ./ data.real_gdp, title = "gdp deflator", titlefont = 10)
 
+
 plot(p1, p2, p3, p4, p5, p6, p7, p8, p9, layout = (3, 3), legend = false)
 
 # To run multiple monte-carlo repetitions in parallel we can use
 
-model = Bit.initialise_model(parameters, initial_conditions, T)
+model = Bit.init_model(parameters, initial_conditions, T)
 data_vector = Bit.run_n_sims(model, 4)
 
 # Note that this will use the number of threads specified when activating the Julia environment.
@@ -96,3 +97,10 @@ p9 = errorline(
     titlefont = 10,
 )
 plot(p1, p2, p3, p4, p5, p6, p7, p8, p9, layout = (3, 3), legend = false)
+
+plot(p1, p4, p5, p3, p8, p9, layout = (3, 2), legend = false, size = (400, 600), dpi = 300, left_margin = 3Plots.mm) 
+
+plot(p1, p4, p5, p3, p8, p9, layout = (2, 3), legend = false, size = (600, 400), dpi = 300)#, left_margin = 3Plots.mm) 
+
+
+savefig("output.png")

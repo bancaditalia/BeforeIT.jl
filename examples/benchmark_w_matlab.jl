@@ -11,8 +11,8 @@ T = 12*2
 
 # We will run the model without any output to avoid the overhead of printing the results.
 function run_no_output(;multi_threading = false)
-    model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-    data = BeforeIT.initialise_data(model);
+    model = BeforeIT.init_model(parameters, initial_conditions, T)
+    data = BeforeIT.init_data(model);
     
     for _ in 1:T
         BeforeIT.one_epoch!(model; multi_threading = multi_threading)
@@ -25,7 +25,7 @@ end
 @time run_no_output(;multi_threading = true) 
 
 # time taken by the MATLAB code, computed independently on an Apple M1 chip
-matlab_times = [3.1465, 3.0795, 3.0274, 3.0345, 3.0873]
+matlab_times = [3.1919, 3.2454, 3.1501, 3.1074, 3.1551]
 matlab_time = mean(matlab_times)
 matlab_time_std = std(matlab_times)
 
@@ -50,11 +50,16 @@ julia_time_multi_thread_std = std(julia_times_multi_thread)
 # get the number of threads used
 n_threads = Threads.nthreads()
 
+theme(:default, bg = :white)
 # bar chart of the time taken vs the time taken by the MATLAB code, also plot the stds as error bars
-bar(["MATLAB", "Julia, 1 thread", "Julia, $n_threads threads"], [matlab_time, julia_time_1_thread, julia_time_multi_thread], yerr = [matlab_time_std, julia_time_1_thread_std, julia_time_multi_thread_std], legend = false, dpi=300)
-ylabel!("Time for one simulation (s)")
+# make a white background with no grid
+bar(["MATLAB", "Julia, 1 thread", "Julia, $n_threads threads"], [matlab_time, julia_time_1_thread, julia_time_multi_thread], 
+yerr = [matlab_time_std, julia_time_1_thread_std, julia_time_multi_thread_std],
+legend = false, dpi=300, size=(400, 300), grid = false, ylabel = "Time for one simulation (s)")
 
 # the Julia implementation is faster than the MATLAB implementation, and the multi-threaded version is faster than the single-threaded version.
+
+# increase
 
 # save the image
 savefig("benchmark_w_matlab.png")

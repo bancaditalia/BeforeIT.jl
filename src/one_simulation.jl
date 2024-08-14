@@ -11,7 +11,7 @@ The simulation runs for a number of epochs specified by `model.prop.T`.
 - `data::Data`: The data collected during the simulation.
 
 # Details
-The function initializes the data using `BeforeIT.initialise_data(model)`, then iteratively updates the model and data
+The function initializes the data using `BeforeIT.init_data(model)`, then iteratively updates the model and data
 for each epoch using `BeforeIT.one_epoch!(model)` and `BeforeIT.update_data!(data, model)` respectively.
 
 # Example
@@ -21,7 +21,7 @@ data = run_one_sim!(model)
 """
 function run_one_sim!(model; multi_threading = false, shock = NoShock())
 
-    data = BeforeIT.initialise_data(model)
+    data = BeforeIT.init_data(model)
 
     T = model.prop.T
 
