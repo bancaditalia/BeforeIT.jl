@@ -1,5 +1,25 @@
 
 
+"""
+    init_workers(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
+
+Initialize the workers for the given parameters, initial conditions, and firms.
+
+# Arguments
+- `parameters`: The parameters for the initialization.
+- `initial_conditions`: The initial conditions for the initialization.
+- `firms`: The already initialized firms.
+- `typeInt`: (optional) The type for integer values. Default is `Int64`.
+- `typeFloat`: (optional) The type for floating-point values. Default is `Float64`.
+
+# Returns
+- The initialized active workers.
+- The initialized inactive workers.
+- The updated firm vacancies V_i_new, this is needed to update the firms.
+- The arguments used to initialize the active workers.
+- The arguments used to initialize the inactive workers.
+
+"""
 function init_workers(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
  
     H_act = typeInt(parameters["H_act"])
@@ -15,11 +35,10 @@ function init_workers(parameters, initial_conditions, firms; typeInt = Int64, ty
     D_H = initial_conditions["D_H"]
     K_H = initial_conditions["K_H"]
 
-    
     H_W = H_act - I - 1
     P_bar_HH = one(typeFloat)
-    w_h = zeros(typeFloat, 1, H_W)
-    O_h = zeros(typeInt, 1, H_W)
+    w_h = zeros(typeFloat, H_W)
+    O_h = zeros(typeInt, H_W)
 
     h = one(typeInt)
 
@@ -37,7 +56,7 @@ function init_workers(parameters, initial_conditions, firms; typeInt = Int64, ty
 
     w_h[O_h .== 0] .= w_UB / theta_UB
     
-    Y_h = zeros(typeFloat, 1, H_W)
+    Y_h = zeros(typeFloat, H_W)
 
     for h in 1:H_W
         if O_h[h] != 0
@@ -55,8 +74,11 @@ function init_workers(parameters, initial_conditions, firms; typeInt = Int64, ty
     I_d_h = zeros(typeFloat, length(ids))
     C_h = zeros(typeFloat, length(ids))
     I_h = zeros(typeFloat, length(ids))
+
+    
     # active workers (both employed and unemployed)
-    workers_act = Workers(Y_h[1:H_W], D_h[1:H_W], K_h[1:H_W], w_h[1:H_W], O_h[1:H_W], C_d_h, I_d_h, C_h, I_h)
+    w_act_args = (Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)
+    workers_act = Workers(w_act_args...)
     
     # inactive workers
     ids = Vector{typeInt}((I + H_W + 1):(I + H_W + H_inact))
@@ -75,17 +97,9 @@ function init_workers(parameters, initial_conditions, firms; typeInt = Int64, ty
     I_d_h = zeros(typeFloat, length(ids))
     C_h = zeros(typeFloat, length(ids))
     I_h = zeros(typeFloat, length(ids))
-    workers_inact = Workers(
-        Y_h,
-        D_h,
-        K_h,
-        w_h_inact,
-        O_h_inact,
-        C_d_h,
-        I_d_h,
-        C_h,
-        I_h,
-    )
 
-    return workers_act, workers_inact, V_i_new
+    w_inact_args = (Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
+    workers_inact = Workers(w_inact_args...)
+
+    return workers_act, workers_inact, V_i_new, w_act_args, w_inact_args
 end

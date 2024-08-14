@@ -1,5 +1,22 @@
 
 
+"""
+    init_bank(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
+
+Initialize a bank with the given parameters, initial conditions, and firms.
+
+# Arguments
+- `parameters`: The parameters.
+- `initial_conditions`: The initial conditions.
+- `firms`: The already initialized firms.
+- `typeInt`: (optional) The integer type to use. Default is `Int64`.
+- `typeFloat`: (optional) The floating-point type to use. Default is `Float64`.
+
+# Returns
+- bank::Bank: The initialized bank.
+- bank_args::Tuple: The arguments used to initialize the bank.
+
+"""
 function init_bank(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
 
     theta_DIV = parameters["theta_DIV"]
@@ -32,12 +49,30 @@ function init_bank(parameters, initial_conditions, firms; typeInt = Int64, typeF
     K_h = K_h
     D_h = D_h
     Pi_e_k = typeFloat(0.0)
-    bank = Bank(E_k, Pi_k, Pi_e_k, D_k, r, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
 
-    return bank
+    bank_args = (E_k, Pi_k, Pi_e_k, D_k, r, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
+    bank = Bank(bank_args...)
+
+    return bank, bank_args
 end
 
 
+"""
+    init_central_bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+
+Initialize the central bank with the given parameters and initial conditions.
+
+# Arguments
+- `parameters`: The parameters.
+- `initial_conditions`: The initial conditions.
+- `typeInt`: (optional) The integer type to be used. Default is `Int64`.
+- `typeFloat`: (optional) The floating-point type to be used. Default is `Float64`.
+
+# Returns
+- central_bank::CentralBank: The initialized central bank.
+- cb_args::Tuple: The arguments used to initialize the central bank.
+
+"""
 function init_central_bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
     r_bar = initial_conditions["r_bar"]
     r_G = parameters["r_G"]
@@ -48,6 +83,8 @@ function init_central_bank(parameters, initial_conditions; typeInt = Int64, type
     xi_gamma = parameters["xi_gamma"]
     E_CB = initial_conditions["E_CB"]
     
-    central_bank = CentralBank(r_bar, r_G, rho, r_star, pi_star, xi_pi, xi_gamma, E_CB)
-return central_bank
+    cb_args = (r_bar, r_G, rho, r_star, pi_star, xi_pi, xi_gamma, E_CB)
+    central_bank = CentralBank(cb_args...)
+    
+    return central_bank, cb_args
 end

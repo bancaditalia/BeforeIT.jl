@@ -1,5 +1,21 @@
 
 
+"""
+    init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+
+Initialize the rest of the world (rotw) agent.
+
+# Arguments
+- `parameters`: The parameters.
+- `initial_conditions`: The initial conditions.
+- `typeInt`: The integer type to be used (default: `Int64`).
+- `typeFloat`: The floating-point type to be used (default: `Float64`).
+
+# Returns
+- rotw::RestOfTheWorld: The initialized rest of the world agent.
+- rotw_args::Tuple: The arguments used to initialize the rest of the world agent.
+
+"""
 function init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
     L = typeInt(parameters["L"])
     G = typeInt(parameters["G"])
@@ -34,7 +50,8 @@ function init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = 
     Q_m = Vector{typeFloat}(zeros(G))
     Q_d_m = Vector{typeFloat}(zeros(G))
     P_m = Vector{typeFloat}(zeros(G))
-    rotw = RestOfTheWorld(
+
+    rotw_args = (
         alpha_E,
         beta_E,
         sigma_E,
@@ -61,5 +78,8 @@ function init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = 
         P_m,
         P_l,
     )
-    return rotw
+
+    rotw = RestOfTheWorld(rotw_args...)
+
+    return rotw, rotw_args
 end

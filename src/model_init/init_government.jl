@@ -1,5 +1,21 @@
 
 
+"""
+    init_government(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+
+Initialize the government agent.
+
+# Arguments
+- `parameters`: The parameters.
+- `initial_conditions`: The initial conditions.
+- `typeInt`: The integer type to be used (default: `Int64`).
+- `typeFloat`: The floating-point type to be used (default: `Float64`).
+
+# Returns
+- The initialized government model.
+- The arguments used to initialize the government model.
+
+"""
 function init_government(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
     alpha_G = parameters["alpha_G"]
     beta_G = parameters["beta_G"]
@@ -16,8 +32,10 @@ function init_government(parameters, initial_conditions; typeInt = Int64, typeFl
     C_j = zero(typeFloat)
     P_j = zero(typeFloat)
     Y_G = zero(typeFloat)
-    government =
-        Government(alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime], L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
+
+    gov_args = (alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime], L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
+
+    government = Government(gov_args...)
         
-    return government
+    return government, gov_args
 end
