@@ -1,5 +1,22 @@
 
 
+"""
+    init_aggregates(parameters, initial_conditions, T; typeInt = Int64, typeFloat = Float64)
+
+Initialize aggregates for the model.
+
+# Arguments
+- `parameters`: The model parameters.
+- `initial_conditions`: The initial conditions.
+- `T`: The total simulation time.
+- `typeInt`: The integer type to use (default: `Int64`).
+- `typeFloat`: The floating-point type to use (default: `Float64`).
+
+# Returns
+- `agg`: The initialized aggregates.
+- `agg_args`: The arguments used to initialize the aggregates.
+
+"""
 function init_aggregates(parameters, initial_conditions, T; typeInt = Int64, typeFloat = Float64)
     
     Y = initial_conditions["Y"]
@@ -25,7 +42,7 @@ function init_aggregates(parameters, initial_conditions, T; typeInt = Int64, typ
     epsilon_E = zero(typeFloat)
     epsilon_I = zero(typeFloat)
 
-    agg = Aggregates(
+    agg_args = (
         Y,
         pi_,
         P_bar,
@@ -42,5 +59,8 @@ function init_aggregates(parameters, initial_conditions, T; typeInt = Int64, typ
         epsilon_I,
         t,
     )
-    return agg
+
+    agg = Aggregates(agg_args...)
+
+    return agg, agg_args
 end

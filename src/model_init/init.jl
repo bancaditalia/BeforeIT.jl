@@ -24,48 +24,66 @@ function initialise_model(parameters::Dict{String, Any}, initial_conditions::Dic
     properties = BeforeIT.init_properties(parameters, T; typeInt = typeInt, typeFloat = typeFloat)
 
     # firms
-    firms = BeforeIT.init_firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    firms, _ = BeforeIT.init_firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # workers, and update firms vacancies
-    workers_act, workers_inact, V_i_new = BeforeIT.init_workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
+    workers_act, workers_inact, V_i_new, _, _ = BeforeIT.init_workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
     firms.V_i = V_i_new
 
     # bank
-    bank = BeforeIT.init_bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
+    bank, _ = BeforeIT.init_bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
 
     # central bank
-    central_bank = BeforeIT.init_central_bank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    central_bank, _ = BeforeIT.init_central_bank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # government
-    government = BeforeIT.init_government(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    government, _ = BeforeIT.init_government(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # rest of the world
-    rotw = BeforeIT.init_rotw(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    rotw, _ = BeforeIT.init_rotw(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # aggregates
-    agg = BeforeIT.init_aggregates(parameters, initial_conditions, T; typeInt = typeInt, typeFloat = typeFloat)
-    
-    # obtain total income by summing contributions from firm owners, workers and bank owner
-
-    tot_Y_h = sum(firms.Y_h) + sum(workers_act.Y_h) + sum(workers_inact.Y_h) + bank.Y_h
-
-    # uptade K_h and D_h in all agent types
-    firms.K_h .= firms.K_h / tot_Y_h 
-    firms.D_h .= firms.D_h / tot_Y_h
-    workers_act.K_h .= workers_act.K_h / tot_Y_h
-    workers_act.D_h .= workers_act.D_h / tot_Y_h
-    workers_inact.K_h .= workers_inact.K_h / tot_Y_h
-    workers_inact.D_h .= workers_inact.D_h / tot_Y_h
-    bank.K_h = bank.K_h / tot_Y_h
-    bank.D_h = bank.D_h / tot_Y_h
-
-    # get total deposits and update bank balance sheet
-    tot_D_h = sum(firms.D_h) + sum(workers_act.D_h) + sum(workers_inact.D_h) + bank.D_h
-    bank.D_k += tot_D_h
+    agg, _ = BeforeIT.init_aggregates(parameters, initial_conditions, T; typeInt = typeInt, typeFloat = typeFloat)
 
     # model
     model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)
 
+    # update the model with global quantities (total income, total deposits) obtained from all the agents
+    update_variables_with_totals!(model)
+
     return model
 
+end
+
+"""
+    update_variables_with_totals!(model::Model)
+
+Update the variables in the given `model` with some global quantities obtained from all agents.
+This is the last step in the initialization process and it must be performed after all agents have been initialized.
+
+# Arguments
+- `model::Model`: The model object to update.
+
+# Returns
+- Nothing
+
+"""
+function update_variables_with_totals!(model::Model)
+
+    # obtain total income by summing contributions from firm owners, workers and bank owner
+    tot_Y_h = sum(model.firms.Y_h) + sum(model.w_act.Y_h) + sum(model.w_inact.Y_h) + model.bank.Y_h
+
+    # uptade K_h and D_h in all agent types using total income  
+    model.firms.K_h .= model.firms.K_h / tot_Y_h 
+    model.firms.D_h .= model.firms.D_h / tot_Y_h
+    model.w_act.K_h .= model.w_act.K_h / tot_Y_h
+    model.w_act.D_h .= model.w_act.D_h / tot_Y_h
+    model.w_inact.K_h .= model.w_inact.K_h / tot_Y_h
+    model.w_inact.D_h .= model.w_inact.D_h / tot_Y_h
+    model.bank.K_h = model.bank.K_h / tot_Y_h
+    model.bank.D_h = model.bank.D_h / tot_Y_h
+
+    # get total deposits and update bank balance sheet
+    tot_D_h = sum(model.firms.D_h) + sum(model.w_act.D_h) + sum(model.w_inact.D_h) + model.bank.D_h
+    model.bank.D_k += tot_D_h
 end
