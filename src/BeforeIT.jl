@@ -46,6 +46,7 @@ include("utils/epsilon.jl")
 include("utils/positive.jl")
 include("utils/toannual.jl")
 include("utils/get_predictions_from_sims.jl")
+include("utils/plot_data_vector.jl")
 
 # calibration
 include("utils/calibration.jl")
