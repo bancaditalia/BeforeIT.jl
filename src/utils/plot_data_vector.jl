@@ -14,7 +14,6 @@ const quantity_titles = Dict(
 )
 
 function plot_data_vector(data_vector::Vector{Data}; titlefont = 9, quantities = default_quantities)	
-
 	Te = length(data_vector[1].wages)	
 	ps = []
 
@@ -22,25 +21,24 @@ function plot_data_vector(data_vector::Vector{Data}; titlefont = 9, quantities =
 		# define title via the table only if the entry exists
 		title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
 		if q == :gdp_deflator
-			push!(ps, errorline(1:Te, data_vector.nominal_gdp ./ data_vector.real_gdp, errorstyle = :ribbon, title = title, titlefont = titlefont))
+			push!(ps, errorline(1:Te, data_vector.nominal_gdp ./ data_vector.real_gdp, errorstyle = :ribbon, title = title, titlefont = titlefont, legend = false))
 		else
-			push!(ps, errorline(1:Te, getproperty(data_vector, q), errorstyle = :ribbon, title = title, titlefont = titlefont))
+			push!(ps, errorline(1:Te, getproperty(data_vector, q), errorstyle = :ribbon, title = title, titlefont = titlefont, legend = false))
 		end
 	end
 	return ps
-
 end
-
 
 function plot_data(data::Data; titlefont = 9, quantities = default_quantities)
 	ps = []
 	for q in quantities
 		title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
 		if q == :gdp_deflator
-			push!(ps, plot(data.nominal_gdp ./ data.real_gdp, title = title, titlefont = titlefont))
+			push!(ps, plot(data.nominal_gdp ./ data.real_gdp, title = title, titlefont = titlefont, legend = false))
 		else
-			push!(ps, plot(getproperty(data, q), title = title, titlefont = titlefont))
+			push!(ps, plot(getproperty(data, q), title = title, titlefont = titlefont, legend = false))
 		end
 	end
 	return ps
 end
+
