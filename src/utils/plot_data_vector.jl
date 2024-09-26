@@ -1,43 +1,46 @@
 using Plots, StatsPlots
 
-"""
-	plot_data_vector function
+const default_quantities = [:real_gdp, :real_household_consumption, :real_government_consumption, :real_capitalformation, :real_exports, :real_imports, :wages, :euribor, :gdp_deflator]
 
-	data_vector = run_n_sims(model, n = 8)
-	plots = plot_data_vector(data_vector)
-	Plots.plot(plots...)
+# define a table that maps the quantities to concise names
+const quantity_titles = Dict(
+	:real_gdp => "gdp",
+	:real_household_consumption => "household cons.",
+	:real_government_consumption => "gov. cons.",
+	:real_capitalformation => "capital form.",
+	:real_exports => "exports",
+	:real_imports => "imports",
+	:gdp_deflator => "gdp deflator",
+)
+
+function plot_data_vector(data_vector::Vector{Data}; titlefont = 9, quantities = default_quantities)	
+
+	Te = length(data_vector[1].wages)	
+	ps = []
+
+	for q in quantities
+		# define title via the table only if the entry exists
+		title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
+		if q == :gdp_deflator
+			push!(ps, errorline(1:Te, data_vector.nominal_gdp ./ data_vector.real_gdp, errorstyle = :ribbon, title = title, titlefont = titlefont))
+		else
+			push!(ps, errorline(1:Te, getproperty(data_vector, q), errorstyle = :ribbon, title = title, titlefont = titlefont))
+		end
+	end
+	return ps
+
+end
 
 
-
-"""
-function plot_data_vector(data)
-
-	data_vector = data[1]
-
-	Te = length(data_vector.wages)
- 
-	p1 = errorline(1:Te, data_vector.real_gdp, errorstyle = :ribbon, title = "gdp", titlefont = 10)
-	p2 = errorline(
-	    1:Te,
-	    data_vector.real_household_consumption,
-	    errorstyle = :ribbon,
-	    title = "household cons.",
-	    titlefont = 10,
-	)
-	p3 =
-	    errorline(1:Te, data_vector.real_government_consumption, errorstyle = :ribbon, title = "gov. cons.", titlefont = 10)
-	p4 = errorline(1:Te, data_vector.real_capitalformation, errorstyle = :ribbon, title = "capital form.", titlefont = 10)
-	p5 = errorline(1:Te, data_vector.real_exports, errorstyle = :ribbon, title = "exports", titlefont = 10)
-	p6 = errorline(1:Te, data_vector.real_imports, errorstyle = :ribbon, title = "imports", titlefont = 10)
-	p7 = errorline(1:Te, data_vector.wages, errorstyle = :ribbon, title = "wages", titlefont = 10)
-	p8 = errorline(1:Te, data_vector.euribor, errorstyle = :ribbon, title = "euribor", titlefont = 10)
-	p9 = errorline(
-	    1:Te,
-	    data_vector.nominal_gdp ./ data.real_gdp,
-	    errorstyle = :ribbon,
-	    title = "gdp deflator",
-	    titlefont = 10,
-	)
-	return p1, p2, p3, p4, p5, p6, p7, p8, p9
-
+function plot_data(data::Data; titlefont = 9, quantities = default_quantities)
+	ps = []
+	for q in quantities
+		title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
+		if q == :gdp_deflator
+			push!(ps, plot(data.nominal_gdp ./ data.real_gdp, title = title, titlefont = titlefont))
+		else
+			push!(ps, plot(getproperty(data, q), title = title, titlefont = titlefont))
+		end
+	end
+	return ps
 end
