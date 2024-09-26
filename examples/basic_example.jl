@@ -48,7 +48,7 @@ plot(data.real_gdp, title = "gdp", titlefont = 10)
 # Or we can plot multiple time series at once using the function `plot_data`
 
 ps = Bit.plot_data(data, quantities = [:real_gdp, :real_household_consumption, :real_government_consumption, :real_capitalformation, :real_exports, :real_imports, :wages, :euribor, :gdp_deflator])
-plot(ps..., layout = (3, 3), legend = false)
+plot(ps..., layout = (3, 3))
 
 # To run multiple monte-carlo repetitions in parallel we can use
 
@@ -66,5 +66,5 @@ Threads.nthreads()
 # We can then plot the results of the monte-carlo repetitions using the function `plot_data_vector`
 
 ps = Bit.plot_data_vector(data_vector)
-plot(ps..., legend = false)
+plot(ps..., layout = (3, 3))
 
