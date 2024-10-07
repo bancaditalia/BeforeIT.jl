@@ -463,7 +463,9 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
 
     real_government_consumption = sims.real_government_consumption
     real_government_consumption_growth_quarterly = diff(log.(real_government_consumption), dims = 1)
-    model_dict["real_government_consumption_growth_quarterly"] = exp.(real_government_consumption_growth_quarterly) .- 1
+    real_government_consumption_growth_quarterly = exp.(real_government_consumption_growth_quarterly) .- 1
+
+    model_dict["real_government_consumption_growth_quarterly"] = real_government_consumption_growth_quarterly
     real_government_consumption_quarterly =
         data["real_government_consumption_quarterly"][data["quarters_num"] .== quarter_num] .*
         cumprod(1 .+ real_government_consumption_growth_quarterly, dims = 1)
@@ -519,8 +521,8 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
 
     nominal_government_consumption = sims.nominal_government_consumption
     nominal_government_consumption_growth_quarterly = diff(log.(nominal_government_consumption), dims = 1)
-    model_dict["nominal_government_consumption_growth_quarterly"] =
-        exp.(nominal_government_consumption_growth_quarterly) .- 1
+    nominal_government_consumption_growth_quarterly = exp.(nominal_government_consumption_growth_quarterly) .- 1
+    model_dict["nominal_government_consumption_growth_quarterly"] = nominal_government_consumption_growth_quarterly
     nominal_government_consumption_quarterly =
         data["nominal_government_consumption_quarterly"][data["quarters_num"] .== quarter_num] .*
         cumprod(1 .+ nominal_government_consumption_growth_quarterly, dims = 1)
@@ -633,7 +635,8 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
 
     real_capitalformation = sims.real_capitalformation
     real_capitalformation_growth_quarterly = diff(log.(real_capitalformation), dims = 1)
-    model_dict["real_capitalformation_growth_quarterly"] = exp.(real_capitalformation_growth_quarterly) .- 1
+    real_capitalformation_growth_quarterly  = exp.(real_capitalformation_growth_quarterly) .- 1
+    model_dict["real_capitalformation_growth_quarterly"] = real_capitalformation_growth_quarterly
     real_capitalformation_quarterly =
         data["real_capitalformation_quarterly"][data["quarters_num"] .== quarter_num] .*
         cumprod(1 .+ real_capitalformation_growth_quarterly, dims = 1)
@@ -681,7 +684,8 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
 
     nominal_capitalformation = sims.nominal_capitalformation
     nominal_capitalformation_growth_quarterly = diff(log.(nominal_capitalformation), dims = 1)
-    model_dict["nominal_capitalformation_growth_quarterly"] = exp.(nominal_capitalformation_growth_quarterly) .- 1
+    nominal_capitalformation_growth_quarterly = exp.(nominal_capitalformation_growth_quarterly) .- 1
+    model_dict["nominal_capitalformation_growth_quarterly"] = nominal_capitalformation_growth_quarterly
     nominal_capitalformation_quarterly =
         data["nominal_capitalformation_quarterly"][data["quarters_num"] .== quarter_num] .*
         cumprod(1 .+ nominal_capitalformation_growth_quarterly, dims = 1)
@@ -788,7 +792,8 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
 
     real_fixed_capitalformation = sims.real_fixed_capitalformation
     real_fixed_capitalformation_growth_quarterly = diff(log.(real_fixed_capitalformation), dims = 1)
-    model_dict["real_fixed_capitalformation_growth_quarterly"] = exp.(real_fixed_capitalformation_growth_quarterly) .- 1
+    real_fixed_capitalformation_growth_quarterly = exp.(real_fixed_capitalformation_growth_quarterly) .- 1
+    model_dict["real_fixed_capitalformation_growth_quarterly"] = real_fixed_capitalformation_growth_quarterly
     real_fixed_capitalformation_quarterly =
         data["real_fixed_capitalformation_quarterly"][data["quarters_num"] .== quarter_num] .*
         cumprod(1 .+ real_fixed_capitalformation_growth_quarterly, dims = 1)
