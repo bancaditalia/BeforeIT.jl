@@ -54,18 +54,19 @@ BeforeIT.jl is released under the GNU Affero General Public License v3 or later 
 
 Copyright 2024- Banca d'Italia and the authors.
 
-## Original authors
+## Main developers and maintainers
 
 - [Aldo Glielmo](https://github.com/AldoGl) <[aldo.glielmo@bancaditalia.it](mailto:aldo.glielmo@bancaditalia.it)>
 - [Mitja Devetak](https://github.com/Devetak) <[m888itja@gmail.com](mailto:m888itja@gmail.com)>
 
-## Other collaborators for the project
+## Other collaborators and contributors
 
 - [Sebastian Poledna](https://github.com/sebastianpoledna) <[poledna@iiasa.ac.at](mailto:poledna@iiasa.ac.at)>
 - [Marco Benedetti](https://www.bankit.art/people/marco-benedetti)
 - [Sara Corbo](https://www.bankit.art/people/sara-corbo) for the logo design
 - [Andrea Gentili](https://www.bankit.art/people/andrea-gentili) for suggesting the name of the pakege
 - [Arnau Quera-Bofarull](https://github.com/arnauqb) for help in the deployment of the documentation
+- [Steven Hoekstra](https://github.com/SGHoekstra) for fixing a bug in a script
 
 ## Disclaimer
 
