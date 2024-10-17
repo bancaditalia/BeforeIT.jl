@@ -12,7 +12,7 @@ date2num(d::Dates.DateTime) = Dates.value(d - MATLAB_EPOCH) / (1000 * 60 * 60 * 
 
 # imverse function of the above
 const MATLAB_EPOCH = Dates.DateTime(-1, 12, 31)
-num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(matlab_round(Int64, n * 1000 * 60 * 60 * 24))
+num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(round(Int64, n * 1000 * 60 * 60 * 24))
 
 
 function get_params_and_initial_conditions(calibration_object, calibration_date; scale = 0.001)
