@@ -32,7 +32,7 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
     D_I = initial_conditions["D_I"]
     L_I = initial_conditions["L_I"]
     omega = initial_conditions["omega"]
-    N_s = BeforeIT.round.(Int, initial_conditions["N_s"])
+    N_s = round.(Int, initial_conditions["N_s"])
     r_bar = initial_conditions["r_bar"]
     D_H = initial_conditions["D_H"]
     K_H = initial_conditions["K_H"]
