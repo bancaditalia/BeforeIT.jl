@@ -77,7 +77,7 @@ function neg(number::T) where {T <: Number}
 end
 
 # like in the original code
-function round(x)
+function matlab_round(x)
     return Base.round(x, RoundNearestTiesUp)
 end
 

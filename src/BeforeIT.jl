@@ -2,7 +2,7 @@ module BeforeIT
 
 using Random
 using StatsBase
-import Base: round, length
+import Base: length
 
 # definition of agents
 include("model_init/agents.jl")

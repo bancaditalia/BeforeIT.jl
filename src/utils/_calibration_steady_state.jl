@@ -148,15 +148,15 @@ function get_params_and_initial_conditions_steady_state(
     disposable_income =
         sum(wages) + mixed_income + property_income + social_benefits + other_net_transfers -
         household_social_contributions - household_income_tax - capital_taxes
-    unemployed = BeforeIT.round(unemployment_rate_quarterly * sum(employees))
+    unemployed = matlab_round(unemployment_rate_quarterly * sum(employees))
     inactive = population - sum(max.(max.(1, firms), employees)) - unemployed - sum(max.(1, firms)) - 1
 
 
     # Scale number of firms and employees
-    firms = max.(1, BeforeIT.round.(scale * firms))
-    employees = max.(firms, BeforeIT.round.(scale * employees))
-    inactive = max.(1, BeforeIT.round.(scale * inactive))
-    unemployed = max.(1, BeforeIT.round.(scale * unemployed))
+    firms = max.(1, matlab_round.(scale * firms))
+    employees = max.(firms, matlab_round.(scale * employees))
+    inactive = max.(1, matlab_round.(scale * inactive))
+    unemployed = max.(1, matlab_round.(scale * unemployed))
 
 
     # Sector parameters
@@ -187,8 +187,8 @@ function get_params_and_initial_conditions_steady_state(
     S = G
     H_act = sum(employees) + unemployed + sum(firms) + 1
     H_inact = inactive
-    J = BeforeIT.round(sum(firms) / 4)
-    L = BeforeIT.round(sum(firms) / 2)
+    J = matlab_round(sum(firms) / 4)
+    L = matlab_round(sum(firms) / 2)
     mu = timescale * firm_interest / firm_debt_quarterly - r_bar
     tau_INC =
         (household_income_tax + capital_taxes) /
