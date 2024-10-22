@@ -1,5 +1,4 @@
 
-[![CI](https://github.com/bancaditalia/BeforeIT.jl/workflows/CI/badge.svg)](https://github.com/bancaditalia/BeforeIT.jl/actions?query=workflow%3ACI)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://bancaditalia.github.io/BeforeIT.jl/dev/)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
