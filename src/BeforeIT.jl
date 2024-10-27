@@ -42,6 +42,7 @@ include("markets/search_and_matching.jl")
 include("utils/estimate.jl")
 include("utils/nfvar3.jl")
 include("utils/randpl.jl")
+include("utils/wsample.jl")
 include("utils/epsilon.jl")
 include("utils/positive.jl")
 include("utils/toannual.jl")
@@ -59,4 +60,5 @@ include("utils/standard_calibration_data.jl")
 
 # shocks
 include("shocks/shocks.jl")
+
 end
