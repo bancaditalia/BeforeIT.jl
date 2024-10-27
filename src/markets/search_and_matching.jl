@@ -377,7 +377,7 @@ function perform_firms_market!(
             i = I_g[j]
 
             # select a random firm according to the probabilities
-            e = wsample(1:length(F_g), pr_cum_f_)
+            e = wsample_single(1:length(F_g), pr_cum_f_)
             #e = randf(pr_cum_f)
             f = F_g[e]
 
@@ -423,7 +423,7 @@ function perform_firms_market!(
             for j in eachindex(I_g)
                 i = I_g[j]
 
-                e = wsample(1:length(F_g), pr_cum_f_)
+                e = wsample_single(1:length(F_g), pr_cum_f_)
                 f = F_g[e]
 
                 if S_fg_[f] > DM_d_ig_[i]
@@ -521,7 +521,7 @@ function perform_retail_market!(
         for j in eachindex(H_g)
             h = H_g[j]
 
-            e = wsample(1:length(F_g), pr_cum_f_) # SLOW
+            e = wsample_single(1:length(F_g), pr_cum_f_) # SLOW
             f = F_g[e]
 
             if S_fg[f] > C_d_hg[h] / P_f[f]
@@ -557,7 +557,7 @@ function perform_retail_market!(
             H_g = shuffle(H_g)
             for j in eachindex(H_g)
                 h = H_g[j]
-                e = wsample(1:length(F_g), pr_cum_f_)
+                e = wsample_single(1:length(F_g), pr_cum_f_)
                 f = F_g[e]
 
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
