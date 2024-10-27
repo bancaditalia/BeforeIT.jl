@@ -3,7 +3,6 @@ using Test
 
 import BeforeIT: randpl, epsilon
 import Random: shuffle!, rand, randn
-import StatsBase: wsample
 using Distributions
 
 function randn()
@@ -28,6 +27,6 @@ function shuffle!(v::Vector)
     # do nothing 
 end
 
-function wsample(v::UnitRange{Int64}, w::Vector{Float64})
+function wsample_single(v::UnitRange{Int64}, w::Vector{Float64})
     return v[1]
 end
