@@ -366,10 +366,9 @@ function perform_firms_market!(
 
         # size probability of being selected
         pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-        # total probabilities of being selected
 
+        # total probabilities of being selected
         pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
-        #pr_cum_f = [0; cumsum(pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)]
 
         # select buyers at random
         shuffle!(I_g)
@@ -378,7 +377,6 @@ function perform_firms_market!(
 
             # select a random firm according to the probabilities
             e = wsample(1:length(F_g), pr_cum_f_)
-            #e = randf(pr_cum_f)
             f = F_g[e]
 
             # selected firm has sufficient stock
@@ -386,17 +384,12 @@ function perform_firms_market!(
                 S_fg[f] -= DM_d_ig[i]
                 DM_nominal_ig[i] += DM_d_ig[i] .* @view(P_f[f])
                 DM_d_ig[i] = 0
-
             else
                 DM_d_ig[i] -= S_fg[f]
                 DM_nominal_ig[i] += @view(S_fg[f]) .* @view(P_f[f])
                 S_fg[f] = 0
-                F_g = deleteat!(F_g, e)
-
-                if isempty(F_g)
-                    break
-                end
-
+                deleteat!(F_g, e)
+                isempty(F_g) && break
                 pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                 pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                 pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
@@ -404,7 +397,6 @@ function perform_firms_market!(
         end
         I_g = findall(DM_d_ig .> 0)
     end
-
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
@@ -419,7 +411,6 @@ function perform_firms_market!(
             pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
             pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
 
-            # I_g = I_g[randperm(length(I_g))]
             shuffle!(I_g)
             for j in eachindex(I_g)
                 i = I_g[j]
@@ -436,9 +427,7 @@ function perform_firms_market!(
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
                     deleteat!(F_g, e)
-                    if isempty(F_g)
-                        break
-                    end
+                    isempty(F_g) && break
                     pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                     pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                     pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
@@ -533,10 +522,8 @@ function perform_retail_market!(
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
                 S_fg[f] = 0
-                F_g = F_g[setdiff(1:end, e)]
-                if isempty(F_g)
-                    break
-                end
+                deleteat!(F_g, e)
+                isempty(F_g) && break
                 pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                 pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                 pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
@@ -569,10 +556,8 @@ function perform_retail_market!(
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    F_g = deleteat!(F_g, e)
-                    if isempty(F_g)
-                        break
-                    end
+                    deleteat!(F_g, e)
+                    isempty(F_g) && break
                     pr_price_f = max.(0, exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                     pr_price_f[isnan.(pr_price_f)] .= 0.0
                     pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
