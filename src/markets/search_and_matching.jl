@@ -368,7 +368,7 @@ function perform_firms_market!(
         pr_size_f = S_f[F_g] ./ sum(S_f[F_g])
         # total probabilities of being selected
 
-        pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+        pr_cum_f_ = pr_price_f + pr_size_f
         #pr_cum_f = [0; cumsum(pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)]
 
         # select buyers at random
@@ -398,7 +398,7 @@ function perform_firms_market!(
                 end
                 pr_price_f = pos(exp.(-2 .* P_f[F_g]) ./ sum(exp.(-2 .* P_f[F_g])))
                 pr_size_f = S_f[F_g] ./ sum(S_f[F_g])
-                pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+                pr_cum_f_ = pr_price_f + pr_size_f
             end
         end
         I_g = findall(DM_d_ig .> 0)
@@ -416,7 +416,7 @@ function perform_firms_market!(
         while !isempty(I_g) && !isempty(F_g)
             pr_price_f = pos(exp.(-2 .* P_f[F_g]) ./ sum(exp.(-2 .* P_f[F_g])))
             pr_size_f = S_f[F_g] ./ sum(S_f[F_g])
-            pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+            pr_cum_f_ = pr_price_f + pr_size_f
 
             # I_g = I_g[randperm(length(I_g))]
             shuffle!(I_g)
@@ -440,7 +440,7 @@ function perform_firms_market!(
                     end
                     pr_price_f = pos(exp.(-2 .* P_f[F_g]) ./ sum(exp.(-2 .* P_f[F_g])))
                     pr_size_f = S_f[F_g] ./ sum(S_f[F_g])
-                    pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+                    pr_cum_f_ = pr_price_f + pr_size_f
                 end
             end
             I_g = findall(DM_d_ig_ .> 0)
@@ -515,7 +515,7 @@ function perform_retail_market!(
     while !isempty(H_g) && !isempty(F_g)
         pr_price_f = pos(exp.(-2 .* P_f[F_g]) ./ sum(exp.(-2 .* P_f[F_g])))
         pr_size_f = S_f[F_g] ./ sum(S_f[F_g])
-        pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+        pr_cum_f_ = pr_price_f + pr_size_f
 
         shuffle!(H_g)
         for j in eachindex(H_g)
@@ -538,7 +538,7 @@ function perform_retail_market!(
                 end
                 pr_price_f = pos(exp.(-2 .* P_f[F_g]) ./ sum(exp.(-2 .* P_f[F_g])))
                 pr_size_f = S_f[F_g] ./ sum(S_f[F_g])
-                pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+                pr_cum_f_ = pr_price_f + pr_size_f
             end
         end
         H_g = findall(C_d_hg .> 0)
@@ -552,7 +552,7 @@ function perform_retail_market!(
         while !isempty(H_g) && !isempty(F_g)
             pr_price_f = pos(exp.(-2 .* P_f[F_g]) ./ sum(exp.(-2 .* P_f[F_g])))
             pr_size_f = S_f[F_g] ./ sum(S_f[F_g])
-            pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+            pr_cum_f_ = pr_price_f + pr_size_f
 
             H_g = shuffle(H_g)
             for j in eachindex(H_g)
@@ -575,8 +575,7 @@ function perform_retail_market!(
                     pr_price_f = max.(0, exp.(-2 .* P_f[F_g]) ./ sum(exp.(-2 .* P_f[F_g])))
                     pr_price_f[isnan.(pr_price_f)] .= 0.0
                     pr_size_f = S_f[F_g] ./ sum(S_f[F_g])
-                    pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
-
+                    pr_cum_f_ = pr_price_f + pr_size_f
                 end
             end
             H_g = findall(C_d_hg_ .> 0)
