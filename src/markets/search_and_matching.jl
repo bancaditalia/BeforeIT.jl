@@ -521,7 +521,7 @@ function perform_retail_market!(
         for j in eachindex(H_g)
             h = H_g[j]
 
-            e = wsample_single(1:length(F_g), pr_cum_f_) # SLOW
+            e = wsample_single(1:length(F_g), pr_cum_f_)
             f = F_g[e]
 
             if S_fg[f] > C_d_hg[h] / P_f[f]
