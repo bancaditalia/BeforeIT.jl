@@ -2,8 +2,8 @@
 """
 weighted sampling single implementation
 """
-function wsample_single(a, w)
-    stop_w = rand() * sum(w)
+function wsample_single(a, w, wsum)
+    stop_w = rand() * wsum
     partial_w = 0.0
     j = 1
     for i in 1:length(w)
