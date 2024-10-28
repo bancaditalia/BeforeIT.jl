@@ -27,6 +27,6 @@ function shuffle!(v::Vector)
     # do nothing 
 end
 
-function wsample_single(v::UnitRange{Int64}, w::Vector{Float64})
+function wsample_single(v::UnitRange{Int64}, w::Vector{Float64}, wsum)
     return v[1]
 end
