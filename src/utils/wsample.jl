@@ -13,5 +13,5 @@ function wsample_single(a, w)
             break
         end
     end
-    return a[j]
+    return @inbounds a[j]
 end
