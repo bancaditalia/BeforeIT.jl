@@ -61,4 +61,6 @@ include("utils/standard_calibration_data.jl")
 # shocks
 include("shocks/shocks.jl")
 
+include("precompile.jl")
+
 end
