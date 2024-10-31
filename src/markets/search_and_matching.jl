@@ -573,13 +573,13 @@ function perform_retail_market!(
     Q_d_m_g[g, :] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
     C_h_g[g, :] .= b_HH_g[g] .* C_d_h .- pos(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
-    I_h_g[g, :] .= pos(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))  #I_h_g[g, :] .= pos(b_CFH_g[g] .* I_d_h .- C_d_hg[1:H])
+    I_h_g[g, :] .= pos(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
 
-    C_j_g[g] = sum(c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
-    C_l_g[g] = sum(c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
+    C_j_g[g] = dot(c_G_g[g], gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
+    C_l_g[g] = dot(c_E_g[g], rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
 
     a = sum(@view(C_real_hg[1:H]))
-    b = sum(C_d_h .* b_HH_g[g] .- pos(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)) # b = sum(C_d_h .* b_HH_g[g] .- pos(C_d_hg[1:H] .- b_CFH_g[g] .* I_d_h)) # OLD
+    b = sum(C_d_h .* b_HH_g[g] .- pos(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h))
     c = sum((C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])))
 
     P_bar_h_g[g] = pos(a * b / c)
