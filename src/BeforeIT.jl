@@ -1,5 +1,6 @@
 module BeforeIT
 
+using LinearAlgebra
 using Random
 using StatsBase
 import Base: length
