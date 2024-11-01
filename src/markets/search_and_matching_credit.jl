@@ -24,7 +24,7 @@ function search_and_matching_credit(firms::AbstractFirms, model)
     shuffle!(I_FG)
     for f in eachindex(I_FG)
         i = I_FG[f]
-        DL_i[i] = max(0, min(min(DL_d_i[i], zeta_LTV * K_e_i[i] - L_e_i[i]), E_k / zeta - sum(L_e_i .+ DL_i)))
+        DL_i[i] = max(0, min(min(DL_d_i[i], zeta_LTV * K_e_i[i] - L_e_i[i]), E_k / zeta - (sum(L_e_i) + sum(DL_i))))
     end
     return DL_i
 end
