@@ -1,7 +1,7 @@
 using BeforeIT, MAT
 using Test
 
-import BeforeIT: randpl, epsilon, wsample_single
+import BeforeIT: randpl, epsilon, wsample_single, wsample_single_2
 import Random: shuffle!, rand, randn
 using Distributions
 
