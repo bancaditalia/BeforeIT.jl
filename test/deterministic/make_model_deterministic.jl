@@ -1,7 +1,7 @@
 using BeforeIT, MAT
 using Test
 
-import BeforeIT: randpl, epsilon, wsample_single, wsample_single_2
+import BeforeIT: randpl, epsilon, wsample_single
 import Random: shuffle!, rand, randn
 using Distributions
 
@@ -30,8 +30,3 @@ end
 function wsample_single(v::UnitRange{Int64}, w::Vector{Float64}, wsum)
     return v[1]
 end
-
-function wsample_single_2(v::UnitRange{Int64}, w::Vector{Float64}, wmax)
-    return v[1]
-end
-
