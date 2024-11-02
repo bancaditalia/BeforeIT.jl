@@ -1,7 +1,7 @@
 using BeforeIT, MAT
 using Test
 
-import BeforeIT: randpl, epsilon, wsample_single
+import BeforeIT: randpl, epsilon, wsample_single, swap_pop!
 import Random: shuffle!, rand, randn
 using Distributions
 
@@ -29,4 +29,8 @@ end
 
 function wsample_single(v::UnitRange{Int64}, w::Vector{Float64}, wsum)
     return v[1]
+end
+
+function swap_pop!(v::Vector, e)
+    return deleteat!(v, e)
 end
