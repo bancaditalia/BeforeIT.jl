@@ -530,10 +530,12 @@ function perform_retail_market!(
                 pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                 pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                 pr_cum_f_ = pr_price_f + pr_size_f
-                if e < wmax_id
-                    wmax_id -= 1
-                elseif e == wmax_id 
+
+                # logic to update wmax_id
+                if e == wmax_id 
                     wmax_id = argmax(pr_cum_f_)
+                elseif wmax_id == length(pr_cum_f_) + 1
+                    wmax_id = e
                 end
             end
         end
