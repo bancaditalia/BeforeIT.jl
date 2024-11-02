@@ -507,13 +507,12 @@ function perform_retail_market!(
         pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
         pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
         pr_cum_f_ = pr_price_f + pr_size_f
-        wmax_id = argmax(pr_cum_f_)
 
         shuffle!(H_g)
         for j in eachindex(H_g)
             h = H_g[j]
 
-            e = wsample_single_2(1:length(F_g), pr_cum_f_, pr_cum_f_[wmax_id])
+            e = wsample_single(1:length(F_g), pr_cum_f_, 2.0)
             f = F_g[e]
 
             if S_fg[f] > C_d_hg[h] / P_f[f]
@@ -530,13 +529,6 @@ function perform_retail_market!(
                 pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                 pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                 pr_cum_f_ = pr_price_f + pr_size_f
-
-                # logic to update wmax_id
-                if e == wmax_id 
-                    wmax_id = argmax(pr_cum_f_)
-                elseif wmax_id == length(pr_cum_f_) + 1
-                    wmax_id = e
-                end
             end
         end
         H_g = findall(C_d_hg .> 0)
