@@ -388,8 +388,7 @@ function perform_firms_market!(
                 DM_d_ig[i] -= S_fg[f]
                 DM_nominal_ig[i] += @view(S_fg[f]) .* @view(P_f[f])
                 S_fg[f] = 0
-                F_g[e], F_g[end] = F_g[end], F_g[e]
-                pop!(F_g)
+                deleteat!(F_g, e)
                 isempty(F_g) && break
                 pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                 pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
@@ -427,8 +426,7 @@ function perform_firms_market!(
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    F_g[e], F_g[end] = F_g[end], F_g[e]
-                    isempty(F_g) && break
+                    deleteat!(F_g, e)
                     pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                     pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                     pr_cum_f_ = pr_price_f + pr_size_f
@@ -523,8 +521,7 @@ function perform_retail_market!(
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
                 S_fg[f] = 0
-                F_g[e], F_g[end] = F_g[end], F_g[e]
-                pop!(F_g)
+                deleteat!(F_g, e)
                 isempty(F_g) && break
                 pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                 pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
@@ -558,8 +555,7 @@ function perform_retail_market!(
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    F_g[e], F_g[end] = F_g[end], F_g[e]
-                    pop!(F_g)
+                    deleteat!(F_g, e)
                     isempty(F_g) && break
                     pr_price_f = max.(0, exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                     pr_price_f[isnan.(pr_price_f)] .= 0.0
