@@ -30,3 +30,8 @@ end
 function wsample_single(v::UnitRange{Int64}, w::Vector{Float64}, wsum)
     return v[1]
 end
+
+function wsample_single_2(v::UnitRange{Int64}, w::Vector{Float64}, wmax)
+    return v[1]
+end
+
