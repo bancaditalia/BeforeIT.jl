@@ -83,7 +83,5 @@ bar(
 # the Julia implementation is faster than the MATLAB implementation, and the multi-threaded version is
 # faster than the single-threaded version.
 
-# increase
-
 # save the image
 savefig("benchmark_w_matlab.png")
