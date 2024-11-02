@@ -427,6 +427,7 @@ function perform_firms_market!(
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
                     deleteat!(F_g, e)
+                    isempty(F_g) && break
                     pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                     pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                     pr_cum_f_ = pr_price_f + pr_size_f
