@@ -1,4 +1,3 @@
-
 # # Comparing the performance of the Julia and MATLAB implementations
 
 # We can compare the performance of the Julia and MATLAB implementations
@@ -7,11 +6,7 @@
 
 using BeforeIT, Plots, Statistics
 
-parameters = BeforeIT.AUSTRIA2010Q1.parameters
-initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
-T = 12*2 
-
-function run(; multi_threading = false)
+function run(parameters, initial_conditions, T; multi_threading = false)
     model = BeforeIT.init_model(parameters, initial_conditions, T)
     data = BeforeIT.init_data(model);
     
@@ -22,28 +17,38 @@ function run(; multi_threading = false)
     return model, data
 end
 
-# we run the code to compile it first
-@time run();
-@time run(;multi_threading = true);
+parameters = BeforeIT.AUSTRIA2010Q1.parameters
+initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+T = 12 
 
-# time taken by the MATLAB code, computed independently on an Apple M1 chip
-matlab_times = [3.1919, 3.2454, 3.1501, 3.1074, 3.1551]
+# we run the code to compile it first
+@time run(parameters, initial_conditions, T; multi_threading = false);
+@time run(parameters, initial_conditions, T; multi_threading = true);
+
+# time taken by the MATLAB code and the Generated Mex code with C backend
+# in MATLAB Coder, computed independently on an AMD Ryzen 5 5600H
+matlab_times = [4.399592, 4.398576, 4.352314, 4.385039, 4.389989]
 matlab_time = mean(matlab_times)
 matlab_time_std = std(matlab_times)
 
-# time taken by the Julia code, computed as the average of 5 runs
+c_times = [1.083792, 1.092614, 1.087623, 1.081414, 1.086691]
+c_time = mean(c_times)
+c_time_std = std(c_times)
+
+# time taken by the Julia code (same platform as in the the matlab benchmarks),
+# computed as the average of 5 runs
 n_runs = 5
 
 julia_times_1_thread = zeros(n_runs)   
 for i in 1:n_runs
-    julia_times_1_thread[i] = @elapsed run();
+    julia_times_1_thread[i] = @elapsed run(parameters, initial_conditions, T; multi_threading = false);
 end
 julia_time_1_thread = mean(julia_times_1_thread)
 julia_time_1_thread_std = std(julia_times_1_thread)
 
 julia_times_multi_thread = zeros(n_runs)
 for i in 1:5
-    julia_times_multi_thread[i] =  @elapsed run(multi_threading = true);
+    julia_times_multi_thread[i] =  @elapsed run(parameters, initial_conditions, T; multi_threading = true);
 end
 julia_time_multi_thread = mean(julia_times_multi_thread)
 julia_time_multi_thread_std = std(julia_times_multi_thread)
@@ -55,14 +60,22 @@ theme(:default, bg = :white)
 
 # bar chart of the time taken vs the time taken by the MATLAB code, also plot the stds as error bars
 # make a white background with no grid
-bar(["MATLAB", "Julia, 1 thread", "Julia, $n_threads threads"], [matlab_time, julia_time_1_thread, julia_time_multi_thread], 
-yerr = [matlab_time_std, julia_time_1_thread_std, julia_time_multi_thread_std],
-legend = false, dpi=300, size=(400, 300), grid = false, ylabel = "Time for one simulation (s)")
+bar(
+    ["MATLAB", "Generated C", "Julia, 1 thread", "Julia, $n_threads threads"], 
+    [matlab_time, c_time, julia_time_1_thread, julia_time_multi_thread], 
+    yerr = [matlab_time_std, c_time_std, julia_time_1_thread_std, julia_time_multi_thread_std],
+    legend = false, 
+    dpi = 300, 
+    size = (400, 300), 
+    grid = false, 
+    ylabel = "Time for one simulation (s)",
+    xtickfont = font(6),
+    ytickfont = font(6),
+    guidefont = font(6)
+)
 
 # the Julia implementation is faster than the MATLAB implementation, and the multi-threaded version is
 # faster than the single-threaded version.
-
-# increase
 
 # save the image
 savefig("benchmark_w_matlab.png")
