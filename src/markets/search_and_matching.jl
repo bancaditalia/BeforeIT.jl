@@ -563,7 +563,7 @@ function perform_retail_market!(
 
     a = @view(C_real_hg[1:H])
     b = C_d_h .* b_HH_g[g] .- pos!(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
-    c = (C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
+    c = C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])
     d = pos!(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
 
     Q_d_i_g[g, :] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
@@ -576,7 +576,6 @@ function perform_retail_market!(
     C_l_g[g] = sum(c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
 
     P_bar_h_g[g] = pos(sum(a) * sum(b) / sum(c))
-
     P_bar_CF_h_g[g] = pos(sum(a) * sum(d) / sum(c))
 
     P_j_g[g] = sum(@view(C_real_hg[(H + L + 1):(H + L + J)]))
