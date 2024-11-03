@@ -26,17 +26,17 @@ T = 12
 @time run(parameters, initial_conditions, T; multi_threading = false);
 @time run(parameters, initial_conditions, T; multi_threading = true);
 
-# time taken by the MATLAB code and the Generated Mex code with C backend
-# in MATLAB Coder with 6 threads, computed independently on an AMD Ryzen 5 5600H
+# time taken by the MATLAB code and the Generated C code with MATLAB Coder
+# (6 threads for the parallel version), computed independently on an AMD Ryzen 5 5600H
 matlab_times = [4.399592, 4.398576, 4.352314, 4.385039, 4.389989]
 matlab_time = mean(matlab_times)
 matlab_time_std = std(matlab_times)
 
-c_times = [1.083792, 1.092614, 1.087623, 1.081414, 1.086691]
+c_times = [0.952, 0.940, 0.951, 0.942, 0.938]
 c_time = mean(c_times)
 c_time_std = std(c_times)
 
-c_times_multi_thread = [0.449823, 0.452169, 0.445972, 0.462876, 0.435441]
+c_times_multi_thread = [0.305, 0.324, 0.330, 0.334, 0.323]
 c_time_multi_thread = mean(c_times_multi_thread)
 c_time_multi_thread_std = std(c_times_multi_thread)
 
