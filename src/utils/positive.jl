@@ -89,6 +89,19 @@ function neg(number::T) where {T <: Number}
     end
 end
 
+"""
+    neg!(vector) -> vector
+
+In-place version of `neg`. Mimicks min(0, vector) in Matlab. 
+Returns the updated vector.
+"""
+function neg!(A)
+    @simd for i in eachindex(A)
+        A[i] = ifelse(isnan(A[i]), zero(eltype(A)), min(zero(eltype(A)), A[i]))
+    end
+    return A
+end
+
 # like in the original code
 function matlab_round(x)
     return Base.round(x, RoundNearestTiesUp)
