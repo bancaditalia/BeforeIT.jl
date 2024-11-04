@@ -320,7 +320,6 @@ function initialize_variables_firms_market(firms, rotw, prop)
     P_bar_i_g = zeros(G, I)
 
     return a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g
-
 end
 
 function perform_firms_market!(
@@ -362,7 +361,7 @@ function perform_firms_market!(
     while length(I_g) != 0 && length(F_g) != 0
 
         # price probability of being selected
-        pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
+        pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
 
         # size probability of being selected
         pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
@@ -390,7 +389,7 @@ function perform_firms_market!(
                 S_fg[f] = 0
                 deleteat!(F_g, e)
                 isempty(F_g) && break
-                pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
+                pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                 pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                 pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
             end
@@ -407,7 +406,7 @@ function perform_firms_market!(
         deleteat!(F_g, to_delete)
 
         while !isempty(I_g) && !isempty(F_g)
-            pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
+            pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
             pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
             pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
 
@@ -428,7 +427,7 @@ function perform_firms_market!(
                     S_fg_[f] = 0
                     deleteat!(F_g, e)
                     isempty(F_g) && break
-                    pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
+                    pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                     pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                     pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
                 end
@@ -437,20 +436,16 @@ function perform_firms_market!(
         end
     end
 
-    DM_i_g[g, :] .= @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
+    a = @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos!(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
+    b = pos!(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
+    c = @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
 
-    I_i_g[g, :] .= pos(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
+    DM_i_g[g, :] .= a
 
-    P_bar_i_g[g, :] .= pos(
-        DM_nominal_ig .* (@view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)) ./
-        (@view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig),
-    )
+    I_i_g[g, :] .= b
 
-    P_CF_i_g[g, :] .= pos(
-        DM_nominal_ig .* pos(b_CF_g[g] .* firms.I_d_i .- DM_d_ig) ./
-        (@view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig),
-    )
-
+    P_bar_i_g[g, :] .= pos!(DM_nominal_ig .* a ./ c)
+    P_CF_i_g[g, :] .= pos!(DM_nominal_ig .* b ./ c)
 end
 
 function perform_retail_market!(
@@ -501,9 +496,8 @@ function perform_retail_market!(
     to_delete = findall(@view(S_fg[F_g]) .<= 0)
     deleteat!(F_g, to_delete)
 
-
     while !isempty(H_g) && !isempty(F_g)
-        pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
+        pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
         pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
         pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
 
@@ -524,7 +518,7 @@ function perform_retail_market!(
                 S_fg[f] = 0
                 deleteat!(F_g, e)
                 isempty(F_g) && break
-                pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
+                pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                 pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                 pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
             end
@@ -538,7 +532,7 @@ function perform_retail_market!(
         F_g = findall(G_f .== g)
         F_g = F_g[(@view(S_fg_[F_g]) .> 0) .& (@view(S_f[F_g]) .> 0)]
         while !isempty(H_g) && !isempty(F_g)
-            pr_price_f = pos(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
+            pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
             pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
             pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
 
@@ -558,38 +552,32 @@ function perform_retail_market!(
                     S_fg_[f] = 0
                     deleteat!(F_g, e)
                     isempty(F_g) && break
-                    pr_price_f = max.(0, exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-                    pr_price_f[isnan.(pr_price_f)] .= 0.0
+                    pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
                     pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
                     pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
-
                 end
             end
             H_g = findall(C_d_hg_ .> 0)
         end
     end
 
+    a = @view(C_real_hg[1:H])
+    b = C_d_h .* b_HH_g[g] .- pos!(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
+    c = C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])
+    d = pos!(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
+
     Q_d_i_g[g, :] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
     Q_d_m_g[g, :] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
-    C_h_g[g, :] .= b_HH_g[g] .* C_d_h .- pos(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
-    I_h_g[g, :] .= pos(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
+    C_h_g[g, :] .= b
+    I_h_g[g, :] .= d
 
     C_j_g[g] = sum(c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
     C_l_g[g] = sum(c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
 
-    a = sum(@view(C_real_hg[1:H]))
-    b = sum(C_d_h .* b_HH_g[g] .- pos(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h))
-    c = sum((C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])))
-
-    P_bar_h_g[g] = pos(a * b / c)
-
-    P_bar_CF_h_g[g] = pos(
-        sum(@view(C_real_hg[1:H])) * sum(pos(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))) /
-        sum((C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))),
-    )
+    P_bar_h_g[g] = pos(sum(a) * sum(b) / sum(c))
+    P_bar_CF_h_g[g] = pos(sum(a) * sum(d) / sum(c))
 
     P_j_g[g] = sum(@view(C_real_hg[(H + L + 1):(H + L + J)]))
     P_l_g[g] = sum(@view(C_real_hg[(H + 1):(H + L)]))
-
 end
