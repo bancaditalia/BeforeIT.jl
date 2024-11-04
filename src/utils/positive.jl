@@ -38,6 +38,19 @@ function pos(number::T) where {T <: Number}
 end
 
 """
+    pos!(vector) -> vector
+
+In-place version of `pos`. Mimicks max(0, vector) in Matlab. 
+Returns the updated vector.
+"""
+function pos!(A)
+    @simd for i in eachindex(A)
+        A[i] = ifelse(isnan(A[i]), zero(eltype(A)), max(zero(eltype(A)), A[i]))
+    end
+    return A
+end
+
+"""
     neg(vector) -> vector
 
 Returns new vector such that all the NaN and positive values in `vector` to zero.
@@ -74,6 +87,19 @@ function neg(number::T) where {T <: Number}
     else
         return number
     end
+end
+
+"""
+    neg!(vector) -> vector
+
+In-place version of `neg`. Mimicks min(0, vector) in Matlab. 
+Returns the updated vector.
+"""
+function neg!(A)
+    @simd for i in eachindex(A)
+        A[i] = ifelse(isnan(A[i]), zero(eltype(A)), min(zero(eltype(A)), A[i]))
+    end
+    return A
 end
 
 # like in the original code
