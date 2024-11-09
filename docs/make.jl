@@ -30,7 +30,7 @@ Literate.markdown(joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; 
 Literate.markdown(joinpath(indir, "change_expectations.jl"), outdir; credit = false)
 
 
-@info "Building Documentation Build"
+@info "Building Documentation"
 makedocs(
     sitename = "BeforeIT.jl",
     format = Documenter.HTML(prettyurls = false),
