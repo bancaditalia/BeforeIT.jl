@@ -570,13 +570,10 @@ end
 function compute_price_size_weights(P_f, S_f, F_g)
     pr_price_f_v = exp.(-2 .* @view(P_f[F_g]))
     pr_size_f_v = @view(S_f[F_g])
-
     # price probability of being selected
     pr_price_f = pos!(pr_price_f_v / sum(pr_price_f_v))
-
     # size probability of being selected
     pr_size_f = pr_size_f_v / sum(pr_size_f_v)
-
     # total weight of being selected
     w_cum_f_ = @~ pr_price_f .+ pr_size_f
     return w_cum_f_
@@ -589,4 +586,3 @@ function create_weighted_sampler(P_f, S_f, F_g)
     append!(sampler, (1:length(F_g), w_cum_f_))
     return sampler
 end
-
