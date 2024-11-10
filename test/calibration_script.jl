@@ -27,7 +27,7 @@ parameters, initial_conditions = BeforeIT.get_params_and_initial_conditions(
     ea = ea,
     max_calibration_date = max_calibration_date,
     estimation_date = estimation_date), calibration_date;
-    scale = 0.01,
+    scale = 0.001,
 )
 
 for key in collect(keys(initial_conditions))[1:end]
