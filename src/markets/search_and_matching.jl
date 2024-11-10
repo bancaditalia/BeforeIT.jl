@@ -360,10 +360,8 @@ function perform_firms_market!(
 
     while length(I_g) != 0 && length(F_g) != 0
 
-        w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
-        sampler = WDynSampler()
-        sizehint!(sampler, length(F_g))
-        append!(sampler, (1:length(F_g), w_cum_f_))
+        # weights according to size and price
+        sampler = create_weighted_sampler(P_f, S_f, F_g)
 
         # select buyers at random
         shuffle!(I_g)
@@ -401,10 +399,8 @@ function perform_firms_market!(
 
         while !isempty(I_g) && !isempty(F_g)
 
-            w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
-            sampler = WDynSampler()
-            sizehint!(sampler, length(F_g))
-            append!(sampler, (1:length(F_g), w_cum_f_))
+            # weights according to size and price
+            sampler = create_weighted_sampler(P_f, S_f, F_g)
 
             shuffle!(I_g)
             for j in eachindex(I_g)
@@ -491,10 +487,8 @@ function perform_retail_market!(
 
     while !isempty(H_g) && !isempty(F_g)
 
-        w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
-        sampler = WDynSampler()
-        sizehint!(sampler, length(F_g))
-        append!(sampler, (1:length(F_g), w_cum_f_))
+        # weights according to size and price
+        sampler = create_weighted_sampler(P_f, S_f, F_g)
 
         shuffle!(H_g)
         for j in eachindex(H_g)
@@ -526,10 +520,8 @@ function perform_retail_market!(
         F_g = F_g[(@view(S_fg_[F_g]) .> 0) .& (@view(S_f[F_g]) .> 0)]
         while !isempty(H_g) && !isempty(F_g)
 
-            w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
-            sampler = WDynSampler()
-            sizehint!(sampler, length(F_g))
-            append!(sampler, (1:length(F_g), w_cum_f_))
+            # weights according to size and price
+            sampler = create_weighted_sampler(P_f, S_f, F_g)
 
             H_g = shuffle(H_g)
             for j in eachindex(H_g)
@@ -589,3 +581,12 @@ function compute_price_size_weights(P_f, S_f, F_g)
     w_cum_f_ = @~ pr_price_f .+ pr_size_f
     return w_cum_f_
 end
+
+function create_weighted_sampler(P_f, S_f, F_g)
+    w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+    sampler = WDynSampler()
+    sizehint!(sampler, length(F_g))
+    append!(sampler, (1:length(F_g), w_cum_f_))
+    return sampler
+end
+
