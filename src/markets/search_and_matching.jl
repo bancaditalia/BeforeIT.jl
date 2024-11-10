@@ -360,10 +360,10 @@ function perform_firms_market!(
 
     while length(I_g) != 0 && length(F_g) != 0
 
-        pr_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+        w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
         sampler = WDynSampler()
         sizehint!(sampler, length(F_g))
-        append!(sampler, (1:length(F_g), pr_cum_f_))
+        append!(sampler, (1:length(F_g), w_cum_f_))
 
         # select buyers at random
         shuffle!(I_g)
@@ -401,10 +401,10 @@ function perform_firms_market!(
 
         while !isempty(I_g) && !isempty(F_g)
 
-            pr_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+            w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
             sampler = WDynSampler()
             sizehint!(sampler, length(F_g))
-            append!(sampler, (1:length(F_g), pr_cum_f_))
+            append!(sampler, (1:length(F_g), w_cum_f_))
 
             shuffle!(I_g)
             for j in eachindex(I_g)
@@ -491,10 +491,10 @@ function perform_retail_market!(
 
     while !isempty(H_g) && !isempty(F_g)
 
-        pr_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+        w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
         sampler = WDynSampler()
         sizehint!(sampler, length(F_g))
-        append!(sampler, (1:length(F_g), pr_cum_f_))
+        append!(sampler, (1:length(F_g), w_cum_f_))
 
         shuffle!(H_g)
         for j in eachindex(H_g)
@@ -526,10 +526,10 @@ function perform_retail_market!(
         F_g = F_g[(@view(S_fg_[F_g]) .> 0) .& (@view(S_f[F_g]) .> 0)]
         while !isempty(H_g) && !isempty(F_g)
 
-            pr_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+            w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
             sampler = WDynSampler()
             sizehint!(sampler, length(F_g))
-            append!(sampler, (1:length(F_g), pr_cum_f_))
+            append!(sampler, (1:length(F_g), w_cum_f_))
 
             H_g = shuffle(H_g)
             for j in eachindex(H_g)
@@ -585,7 +585,7 @@ function compute_price_size_weights(P_f, S_f, F_g)
     # size probability of being selected
     pr_size_f = pr_size_f_v / sum(pr_size_f_v)
 
-    # total probabilities of being selected
-    pr_cum_f_ = @~ pr_price_f .+ pr_size_f
-    return pr_cum_f_
+    # total weight of being selected
+    w_cum_f_ = @~ pr_price_f .+ pr_size_f
+    return w_cum_f_
 end
