@@ -1,10 +1,10 @@
 
 
-function init_properties(parameters::Dict{String, Any}, T::Real; typeInt::DataType = Int64, typeFloat::DataType = Float64)
+function init_properties(parameters::Dict{String, Any}, T::Integer; typeInt::DataType = Int64, typeFloat::DataType = Float64)
     properties = Dict{Symbol, Any}()
     G = typeInt(parameters["G"])
 
-    properties[:T] = T
+    properties[:T] = typeInt(T)
     properties[:G] = typeInt(G)
     properties[:T_prime] = typeInt(parameters["T_prime"])       # Time interval used to estimate parameters for expectations
 
