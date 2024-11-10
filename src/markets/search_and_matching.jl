@@ -360,14 +360,10 @@ function perform_firms_market!(
 
     while length(I_g) != 0 && length(F_g) != 0
 
-        # price probability of being selected
-        pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-
-        # size probability of being selected
-        pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-
-        # total probabilities of being selected
-        pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+        pr_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+        sampler = WDynSampler()
+        sizehint!(sampler, length(F_g))
+        append!(sampler, (1:length(F_g), pr_cum_f_))
 
         # select buyers at random
         shuffle!(I_g)
@@ -375,25 +371,23 @@ function perform_firms_market!(
             i = I_g[j]
 
             # select a random firm according to the probabilities
-            e = wsample(1:length(F_g), pr_cum_f_)
-            f = F_g[e]
+            e = rand(sampler; info=true)
+            f = F_g[e.idx]
 
             # selected firm has sufficient stock
             if S_fg[f] > DM_d_ig[i]
                 S_fg[f] -= DM_d_ig[i]
-                DM_nominal_ig[i] += DM_d_ig[i] .* @view(P_f[f])
+                DM_nominal_ig[i] += DM_d_ig[i] * P_f[f]
                 DM_d_ig[i] = 0
             else
                 DM_d_ig[i] -= S_fg[f]
-                DM_nominal_ig[i] += @view(S_fg[f]) .* @view(P_f[f])
+                DM_nominal_ig[i] += S_fg[f] .* P_f[f]
                 S_fg[f] = 0
-                deleteat!(F_g, e)
-                isempty(F_g) && break
-                pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-                pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-                pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+                deleteat!(sampler, e)
+                isempty(sampler) && break
             end
         end
+        F_g = F_g[allvalues(sampler)]
         I_g = findall(DM_d_ig .> 0)
     end
 
@@ -406,16 +400,18 @@ function perform_firms_market!(
         deleteat!(F_g, to_delete)
 
         while !isempty(I_g) && !isempty(F_g)
-            pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-            pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-            pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+
+            pr_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+            sampler = WDynSampler()
+            sizehint!(sampler, length(F_g))
+            append!(sampler, (1:length(F_g), pr_cum_f_))
 
             shuffle!(I_g)
             for j in eachindex(I_g)
                 i = I_g[j]
 
-                e = wsample(1:length(F_g), pr_cum_f_)
-                f = F_g[e]
+                e = rand(sampler; info=true)
+                f = F_g[e.idx]
 
                 if S_fg_[f] > DM_d_ig_[i]
                     S_fg[f] -= DM_d_ig_[i]
@@ -425,13 +421,11 @@ function perform_firms_market!(
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    deleteat!(F_g, e)
-                    isempty(F_g) && break
-                    pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-                    pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-                    pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+                    deleteat!(sampler, e)
+                    isempty(sampler) && break
                 end
             end
+            F_g = F_g[allvalues(sampler)]
             I_g = findall(DM_d_ig_ .> 0)
         end
     end
@@ -441,7 +435,6 @@ function perform_firms_market!(
     c = @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
 
     DM_i_g[g, :] .= a
-
     I_i_g[g, :] .= b
 
     P_bar_i_g[g, :] .= pos!(DM_nominal_ig .* a ./ c)
@@ -497,16 +490,18 @@ function perform_retail_market!(
     deleteat!(F_g, to_delete)
 
     while !isempty(H_g) && !isempty(F_g)
-        pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-        pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-        pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+
+        pr_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+        sampler = WDynSampler()
+        sizehint!(sampler, length(F_g))
+        append!(sampler, (1:length(F_g), pr_cum_f_))
 
         shuffle!(H_g)
         for j in eachindex(H_g)
             h = H_g[j]
 
-            e = wsample(1:length(F_g), pr_cum_f_) # SLOW
-            f = F_g[e]
+            e = rand(sampler; info=true)
+            f = F_g[e.idx]
 
             if S_fg[f] > C_d_hg[h] / P_f[f]
                 S_fg[f] -= C_d_hg[h] / P_f[f]
@@ -516,13 +511,11 @@ function perform_retail_market!(
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
                 S_fg[f] = 0
-                deleteat!(F_g, e)
-                isempty(F_g) && break
-                pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-                pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-                pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+                deleteat!(sampler, e)
+                isempty(sampler) && break
             end
         end
+        F_g = F_g[allvalues(sampler)]
         H_g = findall(C_d_hg .> 0)
     end
 
@@ -532,15 +525,17 @@ function perform_retail_market!(
         F_g = findall(G_f .== g)
         F_g = F_g[(@view(S_fg_[F_g]) .> 0) .& (@view(S_f[F_g]) .> 0)]
         while !isempty(H_g) && !isempty(F_g)
-            pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-            pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-            pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+
+            pr_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
+            sampler = WDynSampler()
+            sizehint!(sampler, length(F_g))
+            append!(sampler, (1:length(F_g), pr_cum_f_))
 
             H_g = shuffle(H_g)
             for j in eachindex(H_g)
                 h = H_g[j]
-                e = wsample(1:length(F_g), pr_cum_f_)
-                f = F_g[e]
+                e = rand(sampler; info=true)
+                f = F_g[e.idx]
 
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
                     S_fg[f] -= C_d_hg_[h] / P_f[f]
@@ -550,13 +545,11 @@ function perform_retail_market!(
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    deleteat!(F_g, e)
-                    isempty(F_g) && break
-                    pr_price_f = pos!(exp.(-2 .* @view(P_f[F_g])) ./ sum(exp.(-2 .* @view(P_f[F_g]))))
-                    pr_size_f = @view(S_f[F_g]) ./ sum(@view(S_f[F_g]))
-                    pr_cum_f_ = (pr_price_f + pr_size_f) ./ sum(pr_price_f + pr_size_f)
+                    deleteat!(sampler, e)
+                    isempty(sampler) && break
                 end
             end
+            F_g = F_g[allvalues(sampler)]
             H_g = findall(C_d_hg_ .> 0)
         end
     end
@@ -580,4 +573,19 @@ function perform_retail_market!(
 
     P_j_g[g] = sum(@view(C_real_hg[(H + L + 1):(H + L + J)]))
     P_l_g[g] = sum(@view(C_real_hg[(H + 1):(H + L)]))
+end
+
+function compute_price_size_weights(P_f, S_f, F_g)
+    pr_price_f_v = exp.(-2 .* @view(P_f[F_g]))
+    pr_size_f_v = @view(S_f[F_g])
+
+    # price probability of being selected
+    pr_price_f = pos!(pr_price_f_v / sum(pr_price_f_v))
+
+    # size probability of being selected
+    pr_size_f = pr_size_f_v / sum(pr_size_f_v)
+
+    # total probabilities of being selected
+    pr_cum_f_ = @~ pr_price_f .+ pr_size_f
+    return pr_cum_f_
 end

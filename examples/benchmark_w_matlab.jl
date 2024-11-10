@@ -7,24 +7,28 @@
 
 using BeforeIT, Plots, Statistics
 
-function run(parameters, initial_conditions, T; multi_threading = false)
+function run(T)
+    #initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+    #parameters = BeforeIT.AUSTRIA2010Q1.parameters
     model = BeforeIT.init_model(parameters, initial_conditions, T)
     data = BeforeIT.init_data(model);
     
     for _ in 1:T
-        BeforeIT.one_epoch!(model; multi_threading = multi_threading)
+        BeforeIT.one_epoch!(model; multi_threading=true)
         BeforeIT.update_data!(data, model)
     end
     return model, data
 end
 
-parameters = BeforeIT.AUSTRIA2010Q1.parameters
 initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
-T = 12 
+parameters = BeforeIT.AUSTRIA2010Q1.parameters
+T = 12
+model = BeforeIT.init_model(parameters, initial_conditions, T)
+data = BeforeIT.init_data(model);
 
 # we run the code to compile it first
-@time run(parameters, initial_conditions, T; multi_threading = false);
-@time run(parameters, initial_conditions, T; multi_threading = true);
+@time run(12);
+@time run([parameters, initial_conditions]; multi_threading = true);
 
 # time taken by the MATLAB code and the Generated C code with MATLAB Coder
 # (6 threads for the parallel version), computed independently on an AMD Ryzen 5 5600H

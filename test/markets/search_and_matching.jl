@@ -4,14 +4,11 @@ using Random
 @testset "search and matching" begin
     Random.seed!(1)
 
-    dir = @__DIR__
-
     parameters = BeforeIT.AUSTRIA2010Q1.parameters
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 
     T = 1
     model = BeforeIT.init_model(parameters, initial_conditions, T;)
-
 
     gov = model.gov # government
     cb = model.cb # central bank
@@ -23,7 +20,6 @@ using Random
     agg = model.agg # aggregate variables
 
     prop = model.prop # model properties
-
 
     gamma_e = 0.01 # set expected growth in euro area
     pi_e = 0.001   # set expected inflation in euro area
@@ -61,7 +57,6 @@ using Random
     C_G, C_d_j = BeforeIT.gov_expenditure(gov, model)
     gov.C_G = C_G
     gov.C_d_j .= C_d_j
-
 
     epsilon_E = 0.28
     epsilon_I = 0.36

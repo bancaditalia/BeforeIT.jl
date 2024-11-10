@@ -1,8 +1,10 @@
 module BeforeIT
 
+using LazyArrays
 using LinearAlgebra
 using Random
 using StatsBase
+using DynamicSampling
 import Base: length
 
 # definition of agents

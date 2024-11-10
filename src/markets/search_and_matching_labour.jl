@@ -48,21 +48,21 @@ function search_and_matching_labour(firms::AbstractFirms, model)
     H_U = findall(O_h .== 0)
     I_V = findall(V_i .> 0)
 
+    shuffle!(H_U)
     # while there are no more vacancies or unemployed workers
     while !isempty(H_U) && !isempty(I_V)
         shuffle!(I_V)
-
         for f in eachindex(I_V)
-            i = I_V[f]   # select random vacancy
-            e = rand(1:length(H_U))
-            h = H_U[e]   # select random unemployed worker
-            O_h[h] = i   # employ worker
+            # select random vacancy
+            i = I_V[f]
+            # select random unemployed worker
+            h = H_U[1]
+            # employ worker
+            O_h[h] = i
             N_i[i] += 1
             V_i[i] -= 1
-            deleteat!(H_U, e)
-            if isempty(H_U)
-                break
-            end
+            popfirst!(H_U)
+            isempty(H_U) && break
         end
         I_V = findall(V_i .> 0)
     end
