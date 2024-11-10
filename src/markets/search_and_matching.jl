@@ -305,14 +305,14 @@ function initialize_variables_firms_market(firms, rotw, prop)
     b_CF_g = prop.products.b_CF_g
 
     G = length(prop.products.b_HH_g) # number of goods
-    I = length(firms)            # number of firms
+    I = length(firms)                # number of firms
 
     # join internal and foreign firms arrays
-    P_f = [firms.P_i; rotw.P_m]                    # price array (firms + foreign firms)) 
-    S_f = [firms.Y_i + firms.S_i; rotw.Y_m]        # size array (firms + foreign firms)
+    P_f = [firms.P_i; rotw.P_m]                     # price array (firms + foreign firms)) 
+    S_f = [firms.Y_i + firms.S_i; rotw.Y_m]         # size array (firms + foreign firms)
     S_i_ = firms.K_i .* firms.kappa_i .- firms.Y_i  # (from matlab inputs)
     S_f_ = [S_i_; ones(size(rotw.Y_m)) .* Inf]      # Join S_i_ with an array of Infs of size(Y_m)
-    G_f = [firms.G_i; collect(1:G)]                # enlarge vector of final goods with foreign firms
+    G_f = [firms.G_i; collect(1:G)]                 # enlarge vector of final goods with foreign firms
 
     I_i_g = zeros(G, I)         # output
     P_CF_i_g = zeros(G, I)
@@ -352,9 +352,7 @@ function perform_firms_market!(
     I_g = findall(DM_d_ig .> 0)
 
     # remove firms that have no stock of good "g"
-    #F_g[S_fg[F_g] .<= 0] .= []
-    to_delete = findall(@view(S_fg[F_g]) .<= 0)
-    deleteat!(F_g, to_delete)
+    filter!(i -> S_fg[i] > 0, F_g)
 
     # continue exchanges until either demand or supply terminates
 
@@ -392,10 +390,9 @@ function perform_firms_market!(
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
         I_g = findall(DM_d_ig_ .> 0)
-        F_g = findall(G_f .== g)
 
-        to_delete = findall((@view(S_fg_[F_g]) .<= 0.0) .|| (@view(S_f[F_g]) .<= 0.0))
-        deleteat!(F_g, to_delete)
+        F_g = findall(G_f .== g)
+        filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
 
         while !isempty(I_g) && !isempty(F_g)
 
@@ -426,15 +423,15 @@ function perform_firms_market!(
         end
     end
 
-    a = @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos!(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
-    b = pos!(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
-    c = @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
+    a = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos.(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
+    b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
+    c = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
 
     DM_i_g[g, :] .= a
     I_i_g[g, :] .= b
 
-    P_bar_i_g[g, :] .= pos!(DM_nominal_ig .* a ./ c)
-    P_CF_i_g[g, :] .= pos!(DM_nominal_ig .* b ./ c)
+    P_bar_i_g[g, :] .= @~ pos.(DM_nominal_ig .* a ./ c)
+    P_CF_i_g[g, :] .= @~ pos.(DM_nominal_ig .* b ./ c)
 end
 
 function perform_retail_market!(
@@ -482,8 +479,7 @@ function perform_retail_market!(
     C_real_hg = zeros(size(C_d_hg))
     H_g = findall(C_d_hg .> 0.0)
 
-    to_delete = findall(@view(S_fg[F_g]) .<= 0)
-    deleteat!(F_g, to_delete)
+    filter!(i -> S_fg[i] > 0, F_g)
 
     while !isempty(H_g) && !isempty(F_g)
 
@@ -516,8 +512,10 @@ function perform_retail_market!(
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
         H_g = findall(C_d_hg_ .> 0)
+
         F_g = findall(G_f .== g)
-        F_g = F_g[(@view(S_fg_[F_g]) .> 0) .& (@view(S_f[F_g]) .> 0)]
+        filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
+
         while !isempty(H_g) && !isempty(F_g)
 
             # weights according to size and price
@@ -547,18 +545,18 @@ function perform_retail_market!(
     end
 
     a = @view(C_real_hg[1:H])
-    b = C_d_h .* b_HH_g[g] .- pos!(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
-    c = C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])
-    d = pos!(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
+    b = @~ C_d_h .* b_HH_g[g] .- pos.(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
+    c = @~ C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])
+    d = @~ pos.(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
 
-    Q_d_i_g[g, :] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
-    Q_d_m_g[g, :] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
+    Q_d_i_g[g, :] .= @~ @view(S_f[1:I]) .- @view(S_fg[1:I])
+    Q_d_m_g[g, :] .= @~ @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
     C_h_g[g, :] .= b
     I_h_g[g, :] .= d
 
-    C_j_g[g] = sum(c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
-    C_l_g[g] = sum(c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
+    C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
+    C_l_g[g] = sum(@~ c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
 
     P_bar_h_g[g] = pos(sum(a) * sum(b) / sum(c))
     P_bar_CF_h_g[g] = pos(sum(a) * sum(d) / sum(c))
@@ -568,12 +566,14 @@ function perform_retail_market!(
 end
 
 function compute_price_size_weights(P_f, S_f, F_g)
-    pr_price_f_v = exp.(-2 .* @view(P_f[F_g]))
+    pr_price_f_v = @~ exp.(-2 .* @view(P_f[F_g]))
     pr_size_f_v = @view(S_f[F_g])
     # price probability of being selected
-    pr_price_f = pos!(pr_price_f_v / sum(pr_price_f_v))
+    pr_price_f_sum = sum(pr_price_f_v)
+    pr_price_f = @~ pos.(pr_price_f_v ./ pr_price_f_sum)
     # size probability of being selected
-    pr_size_f = pr_size_f_v / sum(pr_size_f_v)
+    pr_size_f_sum = sum(pr_size_f_v)
+    pr_size_f = @~ pr_size_f_v ./ pr_size_f_sum
     # total weight of being selected
     w_cum_f_ = @~ pr_price_f .+ pr_size_f
     return w_cum_f_
