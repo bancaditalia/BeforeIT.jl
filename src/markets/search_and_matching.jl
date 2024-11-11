@@ -581,7 +581,7 @@ end
 
 function create_weighted_sampler(P_f, S_f, F_g)
     w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
-    sampler = WDynSampler()
+    sampler = DynamicSampler()
     sizehint!(sampler, length(F_g))
     append!(sampler, (1:length(F_g), w_cum_f_))
     return sampler
