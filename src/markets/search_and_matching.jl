@@ -356,7 +356,7 @@ function perform_firms_market!(
 
     # continue exchanges until either demand or supply terminates
 
-    while length(I_g) != 0 && length(F_g) != 0
+    while !isempty(I_g) && !isempty(F_g)
 
         # weights according to size and price
         sampler = create_weighted_sampler(P_f, S_f, F_g)
