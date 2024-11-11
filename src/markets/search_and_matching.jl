@@ -144,9 +144,6 @@ function search_and_matching!(model, multi_threading = false)
 
 end
 
-
-
-
 function update_aggregate_variables!(
     agg,
     w_act,
@@ -238,20 +235,20 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     # ... Initialize all the variables ...
 
     # change some variables according to arguments of matlab function
-    b_HH_g = agg.P_bar_g .* prop.products.b_HH_g / sum(agg.P_bar_g .* prop.products.b_HH_g) #prop.products.b_HH_g
-    b_CFH_g = agg.P_bar_g .* prop.products.b_CFH_g / sum(agg.P_bar_g .* prop.products.b_CFH_g)   #prop.products.b_CFH_g
-    c_G_g = agg.P_bar_g .* prop.products.c_G_g / sum(agg.P_bar_g .* prop.products.c_G_g)   #prop.products.c_G_g
-    c_E_g = agg.P_bar_g .* prop.products.c_E_g / sum(agg.P_bar_g .* prop.products.c_E_g)   #prop.products.c_E_g
+    b_HH_g = agg.P_bar_g .* prop.products.b_HH_g / sum(agg.P_bar_g .* prop.products.b_HH_g)    #prop.products.b_HH_g
+    b_CFH_g = agg.P_bar_g .* prop.products.b_CFH_g / sum(agg.P_bar_g .* prop.products.b_CFH_g) #prop.products.b_CFH_g
+    c_G_g = agg.P_bar_g .* prop.products.c_G_g / sum(agg.P_bar_g .* prop.products.c_G_g)       #prop.products.c_G_g
+    c_E_g = agg.P_bar_g .* prop.products.c_E_g / sum(agg.P_bar_g .* prop.products.c_E_g)       #prop.products.c_E_g
 
     G = size(agg.P_bar_g, 1)
 
     # retrieve some general lengths from existing arrays
-    I = size(firms.P_i, 1)            # number of firms
+    I = size(firms.P_i, 1)        # number of firms
     H_W = length(w_act)           # number of active households
     H_inact = length(w_inact)     # number of inactive households
-    H = H_W + H_inact + I + 1      # number of households
-    L = size(rotw.C_d_l, 1)        # number of export partners
-    J = size(gov.C_d_j, 1)       # number of government entities
+    H = H_W + H_inact + I + 1     # number of households
+    L = size(rotw.C_d_l, 1)       # number of export partners
+    J = size(gov.C_d_j, 1)        # number of government entities
 
 
     # define a global C_d_h and I_d_h
