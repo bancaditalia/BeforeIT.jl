@@ -389,8 +389,8 @@ function perform_firms_market!(
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
-        I_g = findall(DM_d_ig_ .> 0)
 
+        I_g = findall(DM_d_ig_ .> 0)
         F_g = findall(G_f .== g)
         filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
 
@@ -511,8 +511,8 @@ function perform_retail_market!(
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
-        H_g = findall(C_d_hg_ .> 0)
 
+        H_g = findall(C_d_hg_ .> 0)
         F_g = findall(G_f .== g)
         filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
 
@@ -566,12 +566,12 @@ function perform_retail_market!(
 end
 
 function compute_price_size_weights(P_f, S_f, F_g)
-    pr_price_f_v = @~ exp.(-2 .* @view(P_f[F_g]))
-    pr_size_f_v = @view(S_f[F_g])
     # price probability of being selected
+    pr_price_f_v = @~ exp.(-2 .* @view(P_f[F_g]))
     pr_price_f_sum = sum(pr_price_f_v)
     pr_price_f = @~ pos.(pr_price_f_v ./ pr_price_f_sum)
     # size probability of being selected
+    pr_size_f_v = @view(S_f[F_g])
     pr_size_f_sum = sum(pr_size_f_v)
     pr_size_f = @~ pr_size_f_v ./ pr_size_f_sum
     # total weight of being selected
