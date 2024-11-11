@@ -2,12 +2,12 @@ using BeforeIT, MAT
 using Test
 
 import BeforeIT: randpl, epsilon
-import DynamicSampling: WDynSampler, IndexInfo, getlevel, allvalues
+import DynamicSampling: DynamicSampler, IndexInfo, getlevel, allvalues
 import Random: shuffle!, rand, randn
 import StatsBase: wsample
 using Distributions
 
-function allvalues(s::WDynSampler)
+function allvalues(s::DynamicSampler)
     return sort!(reduce(vcat, s.level_buckets))
 end
 
@@ -15,7 +15,7 @@ function randn()
     return 0.0
 end
 
-function rand(s::WDynSampler; info=true)
+function rand(s::DynamicSampler; info=true)
     idx = minimum(minimum.(s.level_buckets; init=typemax(Int)))
     weight = s.weights[idx]
     level = getlevel(first(s.level_inds), weight)
