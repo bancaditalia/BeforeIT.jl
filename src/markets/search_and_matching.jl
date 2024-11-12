@@ -319,6 +319,9 @@ function initialize_variables_firms_market(firms, rotw, prop)
     return a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g
 end
 
+"""
+Perform the firms market exchange process
+"""
 function perform_firms_market!(
     g,
     firms,
@@ -336,8 +339,6 @@ function perform_firms_market!(
     S_fg,
     S_fg_,
 )
-    # ... Perform the firms market exchange process ...
-
     ##############################
     ######## FIRMS MARKET ########
     ##############################
@@ -431,6 +432,9 @@ function perform_firms_market!(
     P_CF_i_g[g, :] .= @~ pos.(DM_nominal_ig .* b ./ c)
 end
 
+"""
+Perform the retail market exchange process
+"""
 function perform_retail_market!(
     g,
     agg,
@@ -463,8 +467,6 @@ function perform_retail_market!(
     S_f,
     G_f,
 )
-    # ... Perform the retail market exchange process ...
-
     ###############################
     ######## RETAIL MARKET ########
     ###############################
