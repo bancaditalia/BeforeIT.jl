@@ -7,7 +7,7 @@ import Random: shuffle!, rand, randn
 import StatsBase: wsample
 using Distributions
 
-function allvalues(s::DynamicSampler)
+function allinds(s::DynamicSampler)
     return sort!(reduce(vcat, s.level_buckets))
 end
 
