@@ -22,7 +22,7 @@ StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 [compat]
 Dates = "1"
 Distributions = "0.25"
-DynamicSampling = "0.1"
+DynamicSampling = "0.2"
 FileIO = "1.16"
 JLD2 = "0.4"
 LazyArrays = "2"
