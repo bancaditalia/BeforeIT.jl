@@ -54,7 +54,6 @@ function search_and_matching!(model, multi_threading = false)
         S_fg = copy(S_f)
         S_fg_ = copy(S_f_)
 
-
         perform_firms_market!(
             g,
             firms,
@@ -349,15 +348,15 @@ function perform_firms_market!(
     # firms that have demand for good "g" participate as buyers
     I_g = findall(DM_d_ig .> 0)
 
-    # remove firms that have no stock of good "g"
+    # keep firms that have positive stock of good "g"
     filter!(i -> S_fg[i] > 0, F_g)
 
     # continue exchanges until either demand or supply terminates
 
-    while !isempty(I_g) && !isempty(F_g)
+    # weights according to size and price
+    F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
 
-        # weights according to size and price
-        sampler = create_weighted_sampler(P_f, S_f, F_g)
+    while !isempty(I_g) && !isempty(F_g_sampler)
 
         # select buyers at random
         shuffle!(I_g)
@@ -365,7 +364,7 @@ function perform_firms_market!(
             i = I_g[j]
 
             # select a random firm according to the probabilities
-            e = rand(sampler; info=true)
+            e = rand(F_g_sampler; info=true)
             f = F_g[e.idx]
 
             # selected firm has sufficient stock
@@ -377,11 +376,10 @@ function perform_firms_market!(
                 DM_d_ig[i] -= S_fg[f]
                 DM_nominal_ig[i] += S_fg[f] .* P_f[f]
                 S_fg[f] = 0
-                delete!(sampler, e)
-                isempty(sampler) && break
+                delete!(F_g_sampler, e)
+                isempty(F_g_sampler) && break
             end
         end
-        F_g = F_g[allinds(sampler)]
         I_g = findall(DM_d_ig .> 0)
     end
 
@@ -392,16 +390,16 @@ function perform_firms_market!(
         F_g = findall(G_f .== g)
         filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
 
-        while !isempty(I_g) && !isempty(F_g)
+        # weights according to size and price
+        F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
 
-            # weights according to size and price
-            sampler = create_weighted_sampler(P_f, S_f, F_g)
+        while !isempty(I_g) && !isempty(F_g_sampler)
 
             shuffle!(I_g)
             for j in eachindex(I_g)
                 i = I_g[j]
 
-                e = rand(sampler; info=true)
+                e = rand(F_g_sampler; info=true)
                 f = F_g[e.idx]
 
                 if S_fg_[f] > DM_d_ig_[i]
@@ -412,14 +410,15 @@ function perform_firms_market!(
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    delete!(sampler, e)
-                    isempty(sampler) && break
+                    delete!(F_g_sampler, e)
+                    isempty(F_g_sampler) && break
                 end
             end
-            F_g = F_g[allinds(sampler)]
             I_g = findall(DM_d_ig_ .> 0)
         end
     end
+
+    F_g = F_g[allinds(F_g_sampler)]
 
     a = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos.(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
     b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
@@ -470,6 +469,7 @@ function perform_retail_market!(
     ###############################
     ######## RETAIL MARKET ########
     ###############################
+
     C_d_hg = [
         b_HH_g[g] .* C_d_h .+ b_CFH_g[g] .* I_d_h
         c_E_g[g] .* rotw.C_d_l
@@ -480,16 +480,16 @@ function perform_retail_market!(
 
     filter!(i -> S_fg[i] > 0, F_g)
 
-    while !isempty(H_g) && !isempty(F_g)
+    # weights according to size and price
+    F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
 
-        # weights according to size and price
-        sampler = create_weighted_sampler(P_f, S_f, F_g)
+    while !isempty(H_g) && !isempty(F_g_sampler)
 
         shuffle!(H_g)
         for j in eachindex(H_g)
             h = H_g[j]
 
-            e = rand(sampler; info=true)
+            e = rand(F_g_sampler; info=true)
             f = F_g[e.idx]
 
             if S_fg[f] > C_d_hg[h] / P_f[f]
@@ -500,11 +500,10 @@ function perform_retail_market!(
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
                 S_fg[f] = 0
-                delete!(sampler, e)
-                isempty(sampler) && break
+                delete!(F_g_sampler, e)
+                isempty(F_g_sampler) && break
             end
         end
-        F_g = F_g[allinds(sampler)]
         H_g = findall(C_d_hg .> 0)
     end
 
@@ -515,15 +514,15 @@ function perform_retail_market!(
         F_g = findall(G_f .== g)
         filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
 
-        while !isempty(H_g) && !isempty(F_g)
+        # weights according to size and price
+        F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
 
-            # weights according to size and price
-            sampler = create_weighted_sampler(P_f, S_f, F_g)
+        while !isempty(H_g) && !isempty(F_g_sampler)
 
             H_g = shuffle(H_g)
             for j in eachindex(H_g)
                 h = H_g[j]
-                e = rand(sampler; info=true)
+                e = rand(F_g_sampler; info=true)
                 f = F_g[e.idx]
 
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
@@ -534,14 +533,15 @@ function perform_retail_market!(
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    delete!(sampler, e)
-                    isempty(sampler) && break
+                    delete!(F_g_sampler, e)
+                    isempty(F_g_sampler) && break
                 end
             end
-            F_g = F_g[allinds(sampler)]
             H_g = findall(C_d_hg_ .> 0)
         end
     end
+
+    F_g = F_g[allinds(F_g_sampler)]
 
     a = @view(C_real_hg[1:H])
     b = @~ C_d_h .* b_HH_g[g] .- pos.(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
@@ -579,8 +579,9 @@ function compute_price_size_weights(P_f, S_f, F_g)
 end
 
 function create_weighted_sampler(P_f, S_f, F_g)
-    w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
     sampler = DynamicSampler()
+    isempty(F_g) && return sampler
+    w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
     sizehint!(sampler, length(F_g))
     append!(sampler, 1:length(F_g), w_cum_f_)
     return sampler
