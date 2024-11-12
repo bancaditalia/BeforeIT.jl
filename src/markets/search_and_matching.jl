@@ -519,7 +519,7 @@ function perform_retail_market!(
 
         while !isempty(H_g) && !isempty(F_g_sampler)
 
-            H_g = shuffle(H_g)
+            shuffle!(H_g)
             for j in eachindex(H_g)
                 h = H_g[j]
                 e = rand(F_g_sampler; info=true)
