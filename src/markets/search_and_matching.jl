@@ -381,7 +381,7 @@ function perform_firms_market!(
                 isempty(sampler) && break
             end
         end
-        F_g = F_g[allvalues(sampler)]
+        F_g = F_g[allinds(sampler)]
         I_g = findall(DM_d_ig .> 0)
     end
 
@@ -416,7 +416,7 @@ function perform_firms_market!(
                     isempty(sampler) && break
                 end
             end
-            F_g = F_g[allvalues(sampler)]
+            F_g = F_g[allinds(sampler)]
             I_g = findall(DM_d_ig_ .> 0)
         end
     end
@@ -504,7 +504,7 @@ function perform_retail_market!(
                 isempty(sampler) && break
             end
         end
-        F_g = F_g[allvalues(sampler)]
+        F_g = F_g[allinds(sampler)]
         H_g = findall(C_d_hg .> 0)
     end
 
@@ -538,7 +538,7 @@ function perform_retail_market!(
                     isempty(sampler) && break
                 end
             end
-            F_g = F_g[allvalues(sampler)]
+            F_g = F_g[allinds(sampler)]
             H_g = findall(C_d_hg_ .> 0)
         end
     end
