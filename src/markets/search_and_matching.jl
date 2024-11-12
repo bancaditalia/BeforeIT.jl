@@ -377,7 +377,7 @@ function perform_firms_market!(
                 DM_d_ig[i] -= S_fg[f]
                 DM_nominal_ig[i] += S_fg[f] .* P_f[f]
                 S_fg[f] = 0
-                deleteat!(sampler, e)
+                delete!(sampler, e)
                 isempty(sampler) && break
             end
         end
@@ -412,7 +412,7 @@ function perform_firms_market!(
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    deleteat!(sampler, e)
+                    delete!(sampler, e)
                     isempty(sampler) && break
                 end
             end
@@ -500,7 +500,7 @@ function perform_retail_market!(
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
                 S_fg[f] = 0
-                deleteat!(sampler, e)
+                delete!(sampler, e)
                 isempty(sampler) && break
             end
         end
@@ -534,7 +534,7 @@ function perform_retail_market!(
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0
-                    deleteat!(sampler, e)
+                    delete!(sampler, e)
                     isempty(sampler) && break
                 end
             end
