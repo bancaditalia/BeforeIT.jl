@@ -360,9 +360,7 @@ function perform_firms_market!(
 
         # select buyers at random
         shuffle!(I_g)
-        for j in eachindex(I_g)
-            i = I_g[j]
-
+        for i in I_g
             # select a random firm according to the probabilities
             e = rand(F_g_sampler; info=true)
             f = F_g[e.idx]
@@ -396,9 +394,7 @@ function perform_firms_market!(
         while !isempty(I_g) && !isempty(F_g_sampler)
 
             shuffle!(I_g)
-            for j in eachindex(I_g)
-                i = I_g[j]
-
+            for i in I_g
                 e = rand(F_g_sampler; info=true)
                 f = F_g[e.idx]
 
@@ -486,9 +482,7 @@ function perform_retail_market!(
     while !isempty(H_g) && !isempty(F_g_sampler)
 
         shuffle!(H_g)
-        for j in eachindex(H_g)
-            h = H_g[j]
-
+        for h in H_g
             e = rand(F_g_sampler; info=true)
             f = F_g[e.idx]
 
@@ -520,8 +514,7 @@ function perform_retail_market!(
         while !isempty(H_g) && !isempty(F_g_sampler)
 
             shuffle!(H_g)
-            for j in eachindex(H_g)
-                h = H_g[j]
+            for h in H_g
                 e = rand(F_g_sampler; info=true)
                 f = F_g[e.idx]
 
