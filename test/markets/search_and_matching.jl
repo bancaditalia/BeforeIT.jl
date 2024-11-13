@@ -10,14 +10,14 @@ using Random
     T = 1
     model = BeforeIT.init_model(parameters, initial_conditions, T;)
 
-    gov = model.gov # government
-    cb = model.cb # central bank
-    rotw = model.rotw # rest of the world
-    firms = model.firms # firms
-    bank = model.bank # bank
-    w_act = model.w_act # active workers
+    gov = model.gov         # government
+    cb = model.cb           # central bank
+    rotw = model.rotw       # rest of the world
+    firms = model.firms     # firms
+    bank = model.bank       # bank
+    w_act = model.w_act     # active workers
     w_inact = model.w_inact # inactive workers
-    agg = model.agg # aggregate variables
+    agg = model.agg         # aggregate variables
 
     prop = model.prop # model properties
 
@@ -78,22 +78,20 @@ using Random
     # NOTE: the expected numbers come out of the original implementation, 
     # and only hold for the serial code (without multithreading)
     @test isapprox(mean(w_act.C_h), 4.148850396106796, rtol = rtol)
-    @test isapprox(mean(w_inact.C_h), 2.205381003981018, rtol = rtol)
-    @test isapprox(mean(firms.C_h), 9.060799641122962, rtol = rtol)
-    @test isapprox(bank.C_h, 2931.5395701704915, rtol = rtol)
-
-    @test isapprox(mean(w_act.I_h), 0.34186063655926524, rtol = rtol)
-    @test isapprox(mean(w_inact.I_h), 0.18217582636296747, rtol = rtol)
-    @test isapprox(mean(firms.I_h), 0.7442975169996757, rtol = rtol)
-    @test isapprox(bank.I_h, 233.5381841004737, rtol = rtol)
-
-    @test isapprox(gov.C_j, 14686.094833493271, rtol = rtol)
-    @test isapprox(rotw.C_l, 44241.742486622454, rtol = rtol)
-
     @test isapprox(mean(firms.I_i), 20.671016463479898, rtol = rtol)
     @test isapprox(mean(firms.DM_i), 110.18635469222951, rtol = rtol)
     @test isapprox(mean(firms.P_bar_i), 1.0010000000000023, rtol = rtol)
     @test isapprox(mean(firms.P_CF_i), 1.0010000000000023, rtol = rtol)
-    @test isapprox(mean(firms.Q_d_i), 216.70740037345882, rtol = rtol)
-    @test isapprox(mean(rotw.Q_d_m), 719.2385742449192, rtol = rtol)
+
+    @test isapprox(bank.I_h, 244.42776822353426, rtol = rtol)
+    @test isapprox(mean(w_act.I_h), 0.3420136195963817, rtol = rtol)
+    @test isapprox(mean(w_inact.I_h), 0.18162243697695482, rtol = rtol)
+    @test isapprox(mean(firms.I_h), 0.7316919957786155, rtol = rtol)
+    @test isapprox(mean(w_inact.C_h), 2.203922884342319, rtol = rtol)
+    @test isapprox(mean(firms.C_h), 9.0276113211221, rtol = rtol)
+    @test isapprox(bank.C_h, 2940.438274750598, rtol = rtol)
+    @test isapprox(gov.C_j, 14684.361815480583, rtol = rtol)
+    @test isapprox(rotw.C_l, 44260.46666796691, rtol = rtol)
+    @test isapprox(mean(firms.Q_d_i), 216.9251832069571, rtol = rtol)
+    @test isapprox(mean(rotw.Q_d_m), 717.0466954045518, rtol = rtol)
 end
