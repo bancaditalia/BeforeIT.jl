@@ -83,6 +83,8 @@ using Random
     @test isapprox(mean(firms.P_bar_i), 1.0010000000000023, rtol = rtol)
     @test isapprox(mean(firms.P_CF_i), 1.0010000000000023, rtol = rtol)
 
+    # the expected numbers of these tests are not stable so different seeds
+    # will make them fail
     @test isapprox(bank.I_h, 244.42776822353426, rtol = rtol)
     @test isapprox(mean(w_act.I_h), 0.3420136195963817, rtol = rtol)
     @test isapprox(mean(w_inact.I_h), 0.18162243697695482, rtol = rtol)
