@@ -15,12 +15,12 @@ function randn()
     return 0.0
 end
 
-function rand(s::DynamicSampler; info=true)
+function rand(s::DynamicSampler)
     idx = minimum(minimum.(s.level_buckets; init=typemax(Int)))
     weight = s.weights[idx]
-    level = getlevel(first(s.level_inds), weight)
+    level = log2(weight) - first(s.level_inds) + 1
     idx_in_level = findfirst(x -> x == idx, s.level_buckets[level])
-    return IndexInfo(idx, weight, level, idx_in_level)
+    return idx
 end
 function rand(n::UnitRange)
     return 1
