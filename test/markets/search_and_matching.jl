@@ -93,5 +93,5 @@ using Random
     @test isapprox(gov.C_j, 14684.361815480583, rtol = rtol)
     @test isapprox(rotw.C_l, 44260.46666796691, rtol = rtol)
     @test isapprox(mean(firms.Q_d_i), 216.2474, rtol = 2*1.2275)
-    @test isapprox(mean(rotw.Q_s_i), 535.7522, rtol = 2*9.6082)
+    @test isapprox(mean(rotw.Q_d_m), 719.2385742449192, rtol = rtol)
 end
