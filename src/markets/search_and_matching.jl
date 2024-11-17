@@ -362,8 +362,8 @@ function perform_firms_market!(
         shuffle!(I_g)
         for i in I_g
             # select a random firm according to the probabilities
-            e = rand(F_g_sampler; info=true)
-            f = F_g[e.idx]
+            e = rand(F_g_sampler)
+            f = F_g[e]
 
             # selected firm has sufficient stock
             if S_fg[f] > DM_d_ig[i]
@@ -395,8 +395,8 @@ function perform_firms_market!(
 
             shuffle!(I_g)
             for i in I_g
-                e = rand(F_g_sampler; info=true)
-                f = F_g[e.idx]
+                e = rand(F_g_sampler)
+                f = F_g[e]
 
                 if S_fg_[f] > DM_d_ig_[i]
                     S_fg[f] -= DM_d_ig_[i]
@@ -483,8 +483,8 @@ function perform_retail_market!(
 
         shuffle!(H_g)
         for h in H_g
-            e = rand(F_g_sampler; info=true)
-            f = F_g[e.idx]
+            e = rand(F_g_sampler)
+            f = F_g[e]
 
             if S_fg[f] > C_d_hg[h] / P_f[f]
                 S_fg[f] -= C_d_hg[h] / P_f[f]
@@ -515,8 +515,8 @@ function perform_retail_market!(
 
             shuffle!(H_g)
             for h in H_g
-                e = rand(F_g_sampler; info=true)
-                f = F_g[e.idx]
+                e = rand(F_g_sampler)
+                f = F_g[e]
 
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
                     S_fg[f] -= C_d_hg_[h] / P_f[f]
