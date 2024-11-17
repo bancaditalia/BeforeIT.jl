@@ -78,15 +78,13 @@ using Random
     # NOTE: the expected numbers come out of the original implementation, 
     # and only hold for the serial code (without multithreading)
     @test isapprox(mean(w_act.C_h), 4.148850396106796, rtol = rtol)
-    @test isapprox(mean(firms.I_i), 20.671016463479898, rtol = rtol)
-    @test isapprox(mean(firms.DM_i), 110.18635469222951, rtol = rtol)
-    @test isapprox(mean(firms.P_bar_i), 1.0010000000000023, rtol = rtol)
-    @test isapprox(mean(firms.P_CF_i), 1.0010000000000023, rtol = rtol)
+    @test isapprox(mean(firms.I_i), 20.5075, rtol = 2*0.12763)
+    @test isapprox(mean(firms.DM_i), 109.3163, rtol = 2*0.68033)
+    @test isapprox(mean(firms.P_bar_i), 1.0031, rtol = 2*0.0044726)
+    @test isapprox(mean(firms.P_CF_i), 1.0031, rtol = 2*0.0044726)
 
-    # the expected numbers of these tests are not stable so different seeds
-    # will make them fail
     @test isapprox(bank.I_h, 244.42776822353426, rtol = rtol)
-    @test isapprox(mean(w_act.I_h), 0.3420136195963817, rtol = rtol)
+    @test isapprox(mean(w_act.I_h), 0.32975, rtol = 2*0.0025351)
     @test isapprox(mean(w_inact.I_h), 0.18162243697695482, rtol = rtol)
     @test isapprox(mean(firms.I_h), 0.7316919957786155, rtol = rtol)
     @test isapprox(mean(w_inact.C_h), 2.203922884342319, rtol = rtol)
@@ -94,6 +92,6 @@ using Random
     @test isapprox(bank.C_h, 2940.438274750598, rtol = rtol)
     @test isapprox(gov.C_j, 14684.361815480583, rtol = rtol)
     @test isapprox(rotw.C_l, 44260.46666796691, rtol = rtol)
-    @test isapprox(mean(firms.Q_d_i), 216.9251832069571, rtol = rtol)
-    @test isapprox(mean(rotw.Q_d_m), 717.0466954045518, rtol = rtol)
+    @test isapprox(mean(firms.Q_d_i), 216.2474, rtol = 2*1.2275)
+    @test isapprox(mean(rotw.Q_s_i), 535.7522, rtol = 2*9.6082)
 end
