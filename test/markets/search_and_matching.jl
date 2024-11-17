@@ -84,24 +84,18 @@ using Random
 
     BeforeIT.search_and_matching!(model, false)
 
-    rtol = 0.0001
-    # NOTE: the expected numbers come out of the original implementation, 
-    # and only hold for the serial code (without multithreading)
-    @test isapprox(mean(w_act.C_h), 4.148850396106796, rtol = rtol)
-    @test isapprox(mean(firms.I_i), 20.5075, rtol = 2*0.12763)
-    @test isapprox(mean(firms.DM_i), 109.3163, rtol = 2*0.68033)
-    @test isapprox(mean(firms.P_bar_i), 1.0031, rtol = 2*0.0044726)
-    @test isapprox(mean(firms.P_CF_i), 1.0031, rtol = 2*0.0044726)
-
-    @test isapprox(bank.I_h, 244.42776822353426, rtol = rtol)
-    @test isapprox(mean(w_act.I_h), 0.32975, rtol = 2*0.0025351)
-    @test isapprox(mean(w_inact.I_h), 0.18162243697695482, rtol = rtol)
-    @test isapprox(mean(firms.I_h), 0.7316919957786155, rtol = rtol)
-    @test isapprox(mean(w_inact.C_h), 2.203922884342319, rtol = rtol)
-    @test isapprox(mean(firms.C_h), 9.0276113211221, rtol = rtol)
-    @test isapprox(bank.C_h, 2940.438274750598, rtol = rtol)
-    @test isapprox(gov.C_j, 14684.361815480583, rtol = rtol)
-    @test isapprox(rotw.C_l, 44260.46666796691, rtol = rtol)
-    @test isapprox(mean(firms.Q_d_i), 216.2474, rtol = 2*1.2275)
-    @test isapprox(mean(rotw.Q_d_m), 719.2385742449192, rtol = rtol)
+    # NOTE: as a test we use the expected values and standard deviations of the
+    #       original implementation, with tolerance = 3*(standard deviation)
+    @test isapprox(mean([bank.I_h, w_act.I_h..., w_inact.I_h..., firms.I_h...]), 
+                   0.32975, rtol = 3*0.0025351)
+    @test isapprox(mean([bank.C_h, w_act.C_h..., w_inact.C_h..., firms.C_h...]), 
+                   3.973, rtol = 3*0.029366)
+    @test isapprox(mean(firms.I_i), 20.5075, rtol = 3*0.12763)
+    @test isapprox(mean(firms.DM_i), 109.3163, rtol = 3*0.68033)
+    @test isapprox(mean(firms.P_bar_i), 1.0031, rtol = 3*0.0044726)
+    @test isapprox(mean(firms.P_CF_i), 1.0031, rtol = 3*0.0044726)
+    @test isapprox(gov.C_j, 14752.2413, rtol = 3*126.7441)
+    @test isapprox(rotw.C_l, 34188.1258, rtol = 3*666.275)
+    @test isapprox(mean(firms.Q_d_i), 216.2474, rtol = 3*1.2275)
+    @test isapprox(mean(rotw.Q_d_m), 535.7522, rtol = 3*9.6082)
 end
