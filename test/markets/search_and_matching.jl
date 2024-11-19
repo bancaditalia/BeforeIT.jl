@@ -87,15 +87,15 @@ using Random
     # NOTE: as a test we use the expected values and standard deviations of the
     #       original implementation, with tolerance = 3*(standard deviation)
     @test isapprox(mean([bank.I_h, w_act.I_h..., w_inact.I_h..., firms.I_h...]), 
-                   0.32975, rtol = 3*0.0025351)
+                   0.32975, atol = 3*0.0025351)
     @test isapprox(mean([bank.C_h, w_act.C_h..., w_inact.C_h..., firms.C_h...]), 
-                   3.973, rtol = 3*0.029366)
-    @test isapprox(mean(firms.I_i), 20.5075, rtol = 3*0.12763)
-    @test isapprox(mean(firms.DM_i), 109.3163, rtol = 3*0.68033)
-    @test isapprox(mean(firms.P_bar_i), 1.0031, rtol = 3*0.0044726)
-    @test isapprox(mean(firms.P_CF_i), 1.0031, rtol = 3*0.0044726)
-    @test isapprox(gov.C_j, 14752.2413, rtol = 3*126.7441)
-    @test isapprox(rotw.C_l, 34188.1258, rtol = 3*666.275)
-    @test isapprox(mean(firms.Q_d_i), 216.2474, rtol = 3*1.2275)
-    @test isapprox(mean(rotw.Q_d_m), 535.7522, rtol = 3*9.6082)
+                   3.973, atol = 3*0.029366)
+    @test isapprox(mean(firms.I_i), 20.5075, atol = 3*0.12763)
+    @test isapprox(mean(firms.DM_i), 109.3163, atol = 3*0.68033)
+    @test isapprox(mean(firms.P_bar_i), 1.0031, atol = 3*0.0044726)
+    @test isapprox(mean(firms.P_CF_i), 1.0031, atol = 3*0.0044726)
+    @test isapprox(gov.C_j, 14752.2413, atol = 3*126.7441)
+    @test isapprox(rotw.C_l, 34188.1258, atol = 3*666.275)
+    @test isapprox(mean(firms.Q_d_i), 216.2474, atol = 3*1.2275)
+    @test isapprox(mean(rotw.Q_d_m), 535.7522, atol = 3*9.6082)
 end
