@@ -1,5 +1,4 @@
 
-
 """
     search_and_matching!(model, multi_threading::Bool = false)
 
@@ -378,7 +377,7 @@ function perform_firms_market!(
                 isempty(F_g_sampler) && break
             end
         end
-        I_g = findall(DM_d_ig .> 0)
+        I_g = I_g[@view(DM_d_ig[I_g]) .> 0]
     end
 
     if !isempty(I_g)
@@ -410,7 +409,7 @@ function perform_firms_market!(
                     isempty(F_g_sampler) && break
                 end
             end
-            I_g = findall(DM_d_ig_ .> 0)
+            I_g = I_g[@view(DM_d_ig_[I_g]) .> 0]
         end
     end
 
@@ -420,11 +419,11 @@ function perform_firms_market!(
     b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
     c = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
 
-    DM_i_g[g, :] .= a
-    I_i_g[g, :] .= b
+    @~ DM_i_g[g, :] .= a
+    @~ I_i_g[g, :] .= b
 
-    P_bar_i_g[g, :] .= @~ pos.(DM_nominal_ig .* a ./ c)
-    P_CF_i_g[g, :] .= @~ pos.(DM_nominal_ig .* b ./ c)
+    @~ P_bar_i_g[g, :] .= pos.(DM_nominal_ig .* a ./ c)
+    @~ P_CF_i_g[g, :] .= pos.(DM_nominal_ig .* b ./ c)
 end
 
 """
@@ -498,7 +497,7 @@ function perform_retail_market!(
                 isempty(F_g_sampler) && break
             end
         end
-        H_g = findall(C_d_hg .> 0)
+        H_g = H_g[@view(C_d_hg[H_g]) .> 0]
     end
 
     if !isempty(H_g)
@@ -530,7 +529,7 @@ function perform_retail_market!(
                     isempty(F_g_sampler) && break
                 end
             end
-            H_g = findall(C_d_hg_ .> 0)
+            H_g = H_g[@view(C_d_hg_[H_g]) .> 0]
         end
     end
 
@@ -541,11 +540,11 @@ function perform_retail_market!(
     c = @~ C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])
     d = @~ pos.(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
 
-    Q_d_i_g[g, :] .= @~ @view(S_f[1:I]) .- @view(S_fg[1:I])
-    Q_d_m_g[g, :] .= @~ @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
+    @~ Q_d_i_g[g, :] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
+    @~ Q_d_m_g[g, :] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
-    C_h_g[g, :] .= b
-    I_h_g[g, :] .= d
+    @~ C_h_g[g, :] .= b
+    @~ I_h_g[g, :] .= d
 
     C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
     C_l_g[g] = sum(@~ c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
