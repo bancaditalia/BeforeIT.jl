@@ -171,16 +171,16 @@ function update_aggregate_variables!(
     H_inact = length(w_inact)
     H = H_W + H_inact + I + 1
 
-    I_i = vec(sum(I_i_g, dims = 1))
-    DM_i = vec(sum(DM_i_g, dims = 1))
-    P_bar_i = vec(sum(P_bar_i_g, dims = 1))
-    P_CF_i = vec(sum(P_CF_i_g, dims = 1))
+    I_i = vec(sum(I_i_g, dims = 2))
+    DM_i = vec(sum(DM_i_g, dims = 2))
+    P_bar_i = vec(sum(P_bar_i_g, dims = 2))
+    P_CF_i = vec(sum(P_CF_i_g, dims = 2))
 
-    Q_d_i = vec(sum(Q_d_i_g, dims = 1))
-    Q_d_m = vec(sum(Q_d_m_g, dims = 1))
+    Q_d_i = vec(sum(Q_d_i_g, dims = 2))
+    Q_d_m = vec(sum(Q_d_m_g, dims = 2))
 
-    C_h = sum(C_h_g, dims = 1)
-    I_h = sum(I_h_g, dims = 1)
+    C_h = sum(C_h_g, dims = 2)
+    I_h = sum(I_h_g, dims = 2)
 
     gov.C_j = sum(C_j_g)
     rotw.C_l = sum(C_l_g)
@@ -248,26 +248,25 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     L = size(rotw.C_d_l, 1)       # number of export partners
     J = size(gov.C_d_j, 1)        # number of government entities
 
-
     # define a global C_d_h and I_d_h
     C_d_h = [w_act.C_d_h; w_inact.C_d_h; firms.C_d_h; bank.C_d_h]
     I_d_h = [w_act.I_d_h; w_inact.I_d_h; firms.I_d_h; bank.I_d_h]
 
     # initialise some vectors of variables to zeros
-    Q_d_i_g = zeros(G, size(firms.Y_i)...)
-    Q_d_m_g = zeros(G, size(rotw.Y_m)...)
+    Q_d_i_g = zeros(size(firms.Y_i)..., G)
+    Q_d_m_g = zeros(size(rotw.Y_m)..., G)
 
-    C_h_g = zeros(G, H)
-    I_h_g = zeros(G, H)
+    C_h_g = zeros(H, G)
+    I_h_g = zeros(H, G)
 
-    C_j_g = zeros(G, 1)
-    C_l_g = zeros(G, 1)
+    C_j_g = zeros(1, G)
+    C_l_g = zeros(1, G)
 
-    P_bar_h_g = zeros(G, 1)
-    P_bar_CF_h_g = zeros(G, 1)
+    P_bar_h_g = zeros(1, G)
+    P_bar_CF_h_g = zeros(1, G)
 
-    P_j_g = zeros(G, 1)
-    P_l_g = zeros(G, 1)
+    P_j_g = zeros(1, G)
+    P_l_g = zeros(1, G)
 
     return I,
     H,
@@ -309,10 +308,10 @@ function initialize_variables_firms_market(firms, rotw, prop)
     S_f_ = [S_i_; ones(size(rotw.Y_m)) .* Inf]      # Join S_i_ with an array of Infs of size(Y_m)
     G_f = [firms.G_i; collect(1:G)]                 # enlarge vector of final goods with foreign firms
 
-    I_i_g = zeros(G, I)         # output
-    P_CF_i_g = zeros(G, I)
-    DM_i_g = zeros(G, I)
-    P_bar_i_g = zeros(G, I)
+    I_i_g = zeros(I, G)         # output
+    P_CF_i_g = zeros(I, G)
+    DM_i_g = zeros(I, G)
+    P_bar_i_g = zeros(I, G)
 
     return a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g
 end
@@ -419,11 +418,11 @@ function perform_firms_market!(
     b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
     c = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
 
-    @~ DM_i_g[g, :] .= a
-    @~ I_i_g[g, :] .= b
+    @~ DM_i_g[:, g] .= a
+    @~ I_i_g[:, g] .= b
 
-    @~ P_bar_i_g[g, :] .= pos.(DM_nominal_ig .* a ./ c)
-    @~ P_CF_i_g[g, :] .= pos.(DM_nominal_ig .* b ./ c)
+    @~ P_bar_i_g[:, g] .= pos.(DM_nominal_ig .* a ./ c)
+    @~ P_CF_i_g[:, g] .= pos.(DM_nominal_ig .* b ./ c)
 end
 
 """
@@ -540,11 +539,11 @@ function perform_retail_market!(
     c = @~ C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])
     d = @~ pos.(b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H]))
 
-    @~ Q_d_i_g[g, :] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
-    @~ Q_d_m_g[g, :] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
+    @~ Q_d_i_g[:, g] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
+    @~ Q_d_m_g[:, g] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
-    @~ C_h_g[g, :] .= b
-    @~ I_h_g[g, :] .= d
+    @~ C_h_g[:, g] .= b
+    @~ I_h_g[:, g] .= d
 
     C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
     C_l_g[g] = sum(@~ c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
