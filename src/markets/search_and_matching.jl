@@ -376,7 +376,7 @@ function perform_firms_market!(
                 isempty(F_g_sampler) && break
             end
         end
-        I_g = I_g[@view(DM_d_ig[I_g]) .> 0]
+        filter!(i -> DM_d_ig[i] > 0, I_g)
     end
 
     if !isempty(I_g)
@@ -406,7 +406,7 @@ function perform_firms_market!(
                     isempty(F_g_sampler) && break
                 end
             end
-            I_g = I_g[@view(DM_d_ig_[I_g]) .> 0]
+            filter!(i -> DM_d_ig_[i] > 0, I_g)
         end
     end
 
@@ -494,7 +494,7 @@ function perform_retail_market!(
                 isempty(F_g_sampler) && break
             end
         end
-        H_g = H_g[@view(C_d_hg[H_g]) .> 0]
+        filter!(h -> C_d_hg[h] > 0, H_g)
     end
 
     if !isempty(H_g)
@@ -524,7 +524,7 @@ function perform_retail_market!(
                     isempty(F_g_sampler) && break
                 end
             end
-            H_g = H_g[@view(C_d_hg_[H_g]) .> 0]
+            filter!(h -> C_d_hg_[h] > 0, H_g)
         end
     end
 
