@@ -65,7 +65,7 @@ function search_and_matching_labour(firms::AbstractFirms, model)
             popfirst!(H_U)
             isempty(H_U) && break
         end
-        I_V = I_V[@view(V_i[I_V]) .> 0]
+        filter!(i -> V_i[i] > 0, I_V)
         shuffle!(I_V)
     end
 
