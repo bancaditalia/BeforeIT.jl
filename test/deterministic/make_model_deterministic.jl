@@ -2,7 +2,7 @@ using BeforeIT, MAT
 using Test
 
 import BeforeIT: randpl, epsilon
-import DynamicSampling: DynamicSampler, IndexInfo, getlevel, allinds
+import DynamicSampling: DynamicSampler, getlevel, allinds
 import Random: shuffle!, rand, randn
 import StatsBase: wsample
 using Distributions
