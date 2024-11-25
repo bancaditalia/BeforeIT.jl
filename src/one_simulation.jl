@@ -36,7 +36,7 @@ end
 
 
 """
-    run_n_sims(model, n_sims; shock = NoShock())
+    run_n_sims(model, n_sims; shock = NoShock(), multi_threading = true)
 
 A function that runs `n_sims` simulations in parallel with multiple threading and returns a vector of 
 data objects of dimension `n_sims`.
@@ -48,14 +48,26 @@ data objects of dimension `n_sims`.
 # Returns
 - `data_vector`: A vector containing the data objects collected during each simulation.
 """
-function run_n_sims(model, n_sims; shock = NoShock())
+function run_n_sims(model, n_sims; multi_threading = true, shock = NoShock())
 
     data_vector = Vector{BeforeIT.Data}(undef, n_sims)
 
-    Threads.@threads for i in 1:n_sims
-        model_i = deepcopy(model)
-        data = run_one_sim!(model_i; shock = shock)
-        data_vector[i] = data
+    if multi_threading
+        Threads.@threads for i in 1:n_sims
+            model_i = deepcopy(model)
+            data = run_one_sim!(model_i; shock = shock)
+            data_vector[i] = data
+        end
+    else
+        for i in 1:n_sims
+            model_i = deepcopy(model)
+            data = run_one_sim!(model_i; shock = shock)
+            data_vector[i] = data
+        end
     end
+
+    # transform the vector of data objects into a DataVector
+    data_vector = BeforeIT.DataVector(data_vector)
+
     return data_vector
 end
