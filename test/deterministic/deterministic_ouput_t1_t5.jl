@@ -7,7 +7,7 @@
     model = BeforeIT.init_model(parameters, initial_conditions, T)
     data = BeforeIT.init_data(model)
 
-    BeforeIT.one_epoch!(model; multi_threading = false)
+    BeforeIT.run_one_epoch!(model; multi_threading = false)
     BeforeIT.update_data!(data, model)
 
     # import results from matlab run
@@ -33,7 +33,7 @@
     model = BeforeIT.init_model(parameters, initial_conditions, T)
     data = BeforeIT.init_data(model)
     for t in 1:T
-        BeforeIT.one_epoch!(model; multi_threading = false)
+        BeforeIT.run_one_epoch!(model; multi_threading = false)
         BeforeIT.update_data!(data, model)
     end
 

@@ -12,7 +12,7 @@ The simulation runs for a number of epochs specified by `model.prop.T`.
 
 # Details
 The function initializes the data using `BeforeIT.init_data(model)`, then iteratively updates the model and data
-for each epoch using `BeforeIT.one_epoch!(model)` and `BeforeIT.update_data!(data, model)` respectively.
+for each epoch using `BeforeIT.run_one_epoch!(model)` and `BeforeIT.update_data!(data, model)` respectively.
 
 # Example
 ```julia
@@ -26,7 +26,7 @@ function run_one_sim!(model; multi_threading = false, shock = NoShock())
     T = model.prop.T
 
     for _ in 1:T
-        BeforeIT.one_epoch!(model; multi_threading = multi_threading, shock = shock)
+        BeforeIT.run_one_epoch!(model; multi_threading = multi_threading, shock = shock)
         BeforeIT.update_data!(data, model)
     end
 
