@@ -139,6 +139,14 @@ julia --proj test/runtests.jl
       </a><br />
       <p>Paris 1: Pantheon - Sorbonne</p>
     </td>
+  <td align="center">
+      <a href="https://github.com/Tortar">
+        <img src="https://avatars.githubusercontent.com/Tortar" width="100px;" alt="Adriano Meligrana"/><br />
+        <sub><b>Adriano Meligrana</b></sub>
+      </a><br />
+      <p>University of Turin</p>
+      <p>Email: <a href="mailto:adrianomeligrana@proton.me:">adrianomeligrana@proton.me</a></p>
+    </td>
   </tr>
 </table>
 
