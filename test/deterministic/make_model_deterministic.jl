@@ -2,14 +2,26 @@ using BeforeIT, MAT
 using Test
 
 import BeforeIT: randpl, epsilon
+import DynamicSampling: DynamicSampler, allinds
 import Random: shuffle!, rand, randn
 import StatsBase: wsample
 using Distributions
+
+function allinds(s::DynamicSampler)
+    return sort!(reduce(vcat, s.level_buckets))
+end
 
 function randn()
     return 0.0
 end
 
+function rand(s::DynamicSampler)
+    idx = minimum(minimum.(s.level_buckets; init=typemax(Int)))
+    weight = s.weights[idx]
+    level = ceil(Int, log2(weight)) - first(s.level_inds) + 1
+    idx_in_level = findfirst(x -> x == idx, s.level_buckets[level])
+    return idx
+end
 function rand(n::UnitRange)
     return 1
 end

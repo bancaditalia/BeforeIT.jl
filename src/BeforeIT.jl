@@ -1,9 +1,12 @@
 module BeforeIT
 
+import Base: length
+
+using DynamicSampling
+using LazyArrays
 using LinearAlgebra
 using Random
 using StatsBase
-import Base: length
 
 # definition of agents
 include("model_init/agents.jl")

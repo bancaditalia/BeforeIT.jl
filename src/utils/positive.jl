@@ -29,12 +29,8 @@ function pos(vector::AbstractArray)
     return r
 end
 
-function pos(number::T) where {T <: Number}
-    if isnan(number) || number < zero(T)
-        return zero(T)
-    else
-        return number
-    end
+@inline function pos(x::T) where {T <: Number}
+    return isnan(x) || x < zero(T) ? zero(T) : x
 end
 
 """
@@ -81,12 +77,8 @@ function neg(vector::AbstractArray)
     return r
 end
 
-function neg(number::T) where {T <: Number}
-    if isnan(number) || number > zero(T)
-        return zero(T)
-    else
-        return number
-    end
+@inline function neg(x::T) where {T <: Number}
+    return isnan(x) || x > zero(T) ? zero(T) : x
 end
 
 """
