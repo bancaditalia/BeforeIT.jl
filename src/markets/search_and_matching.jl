@@ -345,10 +345,10 @@ function perform_firms_market!(
     DM_nominal_ig = zeros(size(DM_d_ig))
 
     # firms that have demand for good "g" participate as buyers
-    I_g = findall(DM_d_ig .> 0)
+    I_g = findall(DM_d_ig .> 0.0)
 
     # keep firms that have positive stock of good "g"
-    filter!(i -> S_fg[i] > 0, F_g)
+    filter!(i -> S_fg[i] > 0.0, F_g)
 
     # continue exchanges until either demand or supply terminates
 
@@ -368,22 +368,22 @@ function perform_firms_market!(
             if S_fg[f] > DM_d_ig[i]
                 S_fg[f] -= DM_d_ig[i]
                 DM_nominal_ig[i] += DM_d_ig[i] * P_f[f]
-                DM_d_ig[i] = 0
+                DM_d_ig[i] = 0.0
             else
                 DM_d_ig[i] -= S_fg[f]
                 DM_nominal_ig[i] += S_fg[f] .* P_f[f]
-                S_fg[f] = 0
+                S_fg[f] = 0.0
                 delete!(F_g_sampler, e)
                 isempty(F_g_sampler) && break
             end
         end
-        filter!(i -> DM_d_ig[i] > 0, I_g)
+        filter!(i -> DM_d_ig[i] > 0.0, I_g)
     end
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
         F_g = findall(G_f .== g)
-        filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
+        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
         F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
@@ -398,16 +398,16 @@ function perform_firms_market!(
                 if S_fg_[f] > DM_d_ig_[i]
                     S_fg[f] -= DM_d_ig_[i]
                     S_fg_[f] -= DM_d_ig_[i]
-                    DM_d_ig_[i] = 0
+                    DM_d_ig_[i] = 0.0
                 else
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
-                    S_fg_[f] = 0
+                    S_fg_[f] = 0.0
                     delete!(F_g_sampler, e)
                     isempty(F_g_sampler) && break
                 end
             end
-            filter!(i -> DM_d_ig_[i] > 0, I_g)
+            filter!(i -> DM_d_ig_[i] > 0.0, I_g)
         end
     end
 
@@ -472,7 +472,7 @@ function perform_retail_market!(
     C_real_hg = zeros(size(C_d_hg))
     H_g = findall(C_d_hg .> 0.0)
 
-    filter!(i -> S_fg[i] > 0, F_g)
+    filter!(i -> S_fg[i] > 0.0, F_g)
 
     # weights according to size and price
     F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
@@ -487,22 +487,22 @@ function perform_retail_market!(
             if S_fg[f] > C_d_hg[h] / P_f[f]
                 S_fg[f] -= C_d_hg[h] / P_f[f]
                 C_real_hg[h] += C_d_hg[h] / P_f[f]
-                C_d_hg[h] = 0
+                C_d_hg[h] = 0.0
             else
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
-                S_fg[f] = 0
+                S_fg[f] = 0.0
                 delete!(F_g_sampler, e)
                 isempty(F_g_sampler) && break
             end
         end
-        filter!(h -> C_d_hg[h] > 0, H_g)
+        filter!(h -> C_d_hg[h] > 0.0, H_g)
     end
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
         F_g = findall(G_f .== g)
-        filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
+        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
         F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
@@ -517,16 +517,16 @@ function perform_retail_market!(
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
                     S_fg[f] -= C_d_hg_[h] / P_f[f]
                     S_fg_[f] -= C_d_hg_[h] / P_f[f]
-                    C_d_hg_[h] = 0
+                    C_d_hg_[h] = 0.0
                 else
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
-                    S_fg_[f] = 0
+                    S_fg_[f] = 0.0
                     delete!(F_g_sampler, e)
                     isempty(F_g_sampler) && break
                 end
             end
-            filter!(h -> C_d_hg_[h] > 0, H_g)
+            filter!(h -> C_d_hg_[h] > 0.0, H_g)
         end
     end
 
