@@ -1,7 +1,7 @@
 
 
 """
-    one_epoch!(model; multi_threading = false)
+    run_one_epoch!(model; multi_threading = false)
 
 This function simulates a single epoch the economic model, updating various components of the model based 
 the interactions between different economic agents. It accepts a `model` object, which encapsulates the state for the
@@ -17,7 +17,7 @@ Key operations performed include:
 
 The function updates the model in-place and does not return any value.
 """
-function one_epoch!(model; multi_threading = false, shock = NoShock())
+function run_one_epoch!(model; multi_threading = false, shock = NoShock())
 
     gov = model.gov # government
     cb = model.cb # central bank

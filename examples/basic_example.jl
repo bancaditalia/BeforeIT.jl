@@ -34,7 +34,7 @@ data = Bit.init_data(model);
 
 for t in 1:T
     println(t)
-    Bit.one_epoch!(model; multi_threading = true)
+    Bit.run_one_epoch!(model; multi_threading = true)
     Bit.update_data!(data, model)
 end
 
