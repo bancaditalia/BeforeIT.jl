@@ -58,6 +58,7 @@ Copyright 2024- Banca d'Italia and the authors.
 
 - [Aldo Glielmo](https://github.com/AldoGl) <[aldo.glielmo@bancaditalia.it](mailto:aldo.glielmo@bancaditalia.it)>
 - [Mitja Devetak](https://github.com/Devetak) <[m888itja@gmail.com](mailto:m888itja@gmail.com)>
+- [Adriano Meligrana](https://github.com/Tortar) <[adrianomeligrana@proton.me](mailto:adrianomeligrana@proton.me)>
 
 ## Other collaborators and contributors
 
@@ -67,7 +68,6 @@ Copyright 2024- Banca d'Italia and the authors.
 - [Andrea Gentili](https://www.bankit.art/people/andrea-gentili) for suggesting the name of the pakege
 - [Arnau Quera-Bofarull](https://github.com/arnauqb) for help in the deployment of the documentation
 - [Steven Hoekstra](https://github.com/SGHoekstra) for fixing a bug in a script
-- [Adriano Meligrana](https://github.com/Tortar) for fixing a bug in a script
 
 ## Disclaimer
 
