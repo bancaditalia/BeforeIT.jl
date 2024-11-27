@@ -14,7 +14,7 @@
     model = BeforeIT.init_model(parameters1, initial_conditions1, T;)
     data = BeforeIT.init_data(model)
     for t in 1:(T - 1)
-        BeforeIT.one_epoch!(model; multi_threading = false)
+        BeforeIT.run_one_epoch!(model; multi_threading = false)
         BeforeIT.update_data!(data, model)
     end
 
@@ -23,7 +23,7 @@
     data2 = BeforeIT.init_data(model2)
 
     for t in 1:(T - 1)
-        BeforeIT.one_epoch!(model2; multi_threading = false)
+        BeforeIT.run_one_epoch!(model2; multi_threading = false)
         BeforeIT.update_data!(data2, model2)
     end
 

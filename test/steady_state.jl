@@ -10,7 +10,7 @@ data = BeforeIT.init_data(model)
 
 for t in 1:T
     println(t)
-    BeforeIT.one_epoch!(model; multi_threading = false)
+    BeforeIT.run_one_epoch!(model; multi_threading = false)
     BeforeIT.update_data!(data, model)
 end
 
