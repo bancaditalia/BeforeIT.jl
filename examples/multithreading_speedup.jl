@@ -26,7 +26,7 @@ Threads.nthreads()
 
 # Then we need to first compile the code not to count compilation time,
 # we can do that just by executing the function one time
-Bit.run_one_sim!(model; multi_threading = false)
+Bit.run_one_sim!(model; multi_threading = false);
 
 # Let's now compare the performance of single threading and multi threading
 model = Bit.init_model(parameters, initial_conditions, T);
