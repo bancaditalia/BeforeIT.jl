@@ -5,7 +5,6 @@
 import BeforeIT as Bit
 using FileIO, Plots
 
-
 # We then initialise the model loading some precomputed set of parameters and by specifying a number of epochs.
 # In another tutorial we will illustrate how to compute parameters and initial conditions.
 
@@ -16,7 +15,6 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 16
 model = Bit.init_model(parameters, initial_conditions, T)
-
 
 # Note that the it is very simple to inspect the model by typing
 
@@ -33,13 +31,12 @@ data = Bit.init_data(model);
 # We can run now the model for a number of epochs and progressively update the data tracker.
 
 for t in 1:T
-    println(t)
     Bit.run_one_epoch!(model; multi_threading = true)
     Bit.update_data!(data, model)
 end
 
 # Note that we can equivalently run the model for a number of epochs in the single command 
-# `data = BeforeIT.run_one_sim!(model)` , but writing the loop explicitely is more instructive.
+# `data = BeforeIT.run_one_sim!(model)`, but writing the loop explicitely is more instructive.
 
 # We can then plot any time series stored in the data tracker, for example
 
@@ -67,4 +64,3 @@ Threads.nthreads()
 
 ps = Bit.plot_data_vector(data_vector)
 plot(ps..., layout = (3, 3))
-
