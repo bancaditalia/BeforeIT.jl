@@ -1,25 +1,19 @@
 
 @testset "run deterministic" begin
     T = 3
-    dir = @__DIR__
 
     parameters = BeforeIT.AUSTRIA2010Q1.parameters
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 
-    parameters1 = deepcopy(parameters)
-    parameters2 = deepcopy(parameters)
-    initial_conditions1 = deepcopy(initial_conditions)
-    initial_conditions2 = deepcopy(initial_conditions)
-
-    model = BeforeIT.init_model(parameters1, initial_conditions1, T;)
+    model = BeforeIT.init_model(parameters, initial_conditions, T;)
     data = BeforeIT.init_data(model)
+
     for t in 1:(T - 1)
         BeforeIT.run_one_epoch!(model; multi_threading = false)
         BeforeIT.update_data!(data, model)
     end
 
-
-    model2 = BeforeIT.init_model(parameters2, initial_conditions2, T;)
+    model2 = BeforeIT.init_model(parameters, initial_conditions, T;)
     data2 = BeforeIT.init_data(model2)
 
     for t in 1:(T - 1)
