@@ -371,7 +371,7 @@ function perform_firms_market!(
                 DM_d_ig[i] = 0.0
             else
                 DM_d_ig[i] -= S_fg[f]
-                DM_nominal_ig[i] += S_fg[f] .* P_f[f]
+                DM_nominal_ig[i] += S_fg[f] * P_f[f]
                 S_fg[f] = 0.0
                 delete!(F_g_sampler, e)
                 isempty(F_g_sampler) && break
