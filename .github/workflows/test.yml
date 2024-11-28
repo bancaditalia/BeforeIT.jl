@@ -34,3 +34,5 @@ jobs:
             ${{ runner.os }}-
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
+      - env:
+          JULIA_NUM_THREADS: 2
