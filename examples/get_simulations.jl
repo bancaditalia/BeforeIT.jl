@@ -1,10 +1,13 @@
-# Here we show how to get simulations for all quarters from 2010Q1 to 2019Q4, and for all years from 2010 to 2019.
+# Here we show how to get simulations for all quarters
+# from `2010Q1` to `2019Q4`, and for all years from 2010 to 2019.
 
 using BeforeIT, MAT, FileIO
 
-# The following code, loads the parameters and initial conditions, it initialises the model, 
-# runs the model n_sims times, and finally saves the data_list into a .jld2 file with an appropriate name.
-# The whole process is repeatead for all quarters from 2010Q1 to 2019Q4, and for all years from 2010 to 2019.
+# The following code loads the parameters and initial conditions,
+# it initialises the model, runs the model `n_sims` times, and finally
+# saves the `data_vector` into a `.jld2` file with an appropriate name.
+# The whole process is repeatead for all quarters from `2010Q1` to `2019Q4`,
+# and for all years from 2010 to 2019.
 
 for year in 2010:2019
     for quarter in 1:4
@@ -16,6 +19,5 @@ for year in 2010:2019
         n_sims = 4
         data_vector = BeforeIT.run_n_sims(model, n_sims)
         save("data/italy/simulations/" * string(year) * "Q" * string(quarter) * ".jld2", "data_vector", data_vector)
-
     end
 end
