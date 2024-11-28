@@ -1,5 +1,4 @@
 @testset "one epoch deterministic" begin
-    dir = @__DIR__
 
     parameters = BeforeIT.AUSTRIA2010Q1.parameters
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
@@ -67,11 +66,9 @@
 
     @test isapprox(mean(firms.DL_i[firms.DL_i .> 0]), 95.9791, rtol = 1e-6)
 
-
     N_i, Oh = BeforeIT.search_and_matching_labour(firms, model)
     firms.N_i .= N_i
     w_act.O_h .= Oh
-
 
     firms.w_i .= BeforeIT.firms_wages(firms)
     firms.Y_i .= BeforeIT.firms_production(firms)
@@ -82,8 +79,6 @@
 
     # update wages for workers
     BeforeIT.update_workers_wages!(w_act, firms.w_i)
-
-
 
     @test isapprox(mean(model.w_act.w_h), 7.5221, rtol = 1e-5)
 
@@ -142,7 +137,6 @@
     @test isapprox(I_h_sum, 2699.6511, rtol = 1e-7, atol = 1e-9)
     @test isapprox(K_h_sum, 408076.5511, rtol = 1e-8, atol = 1e-9)
 
-
     @test isapprox(mean(firms.Q_d_i), 220.092, rtol = 1e-6)
     @test isapprox(mean(firms.Q_i), 216.6644, rtol = 1e-6)
     @test isapprox(mean(rotw.Q_d_m), 527.2969, rtol = 1e-6)
@@ -190,7 +184,6 @@
     firms.D_h .= BeforeIT.households_deposits(firms, model)
     bank.D_h = BeforeIT.households_deposits(bank, model)
 
-
     Y_h_sum = sum(w_act.Y_h) + sum(w_inact.Y_h) + sum(firms.Y_h) + bank.Y_h
     D_h_sum = sum(w_act.D_h) + sum(w_inact.D_h) + sum(firms.D_h) + bank.D_h
     @test isapprox(Y_h_sum, 45032.3263, rtol = 1e-2)
@@ -213,15 +206,12 @@
     @test isapprox(Pi_G, 3140.6916, rtol = 1e-2)
     @test isapprox(gov.L_G, 235751.5916, rtol = 1e-4)
 
-
     # compute firms deposits, loans and equity
     D_i = BeforeIT.firms_deposits(firms, model)
     DD_i = D_i .- firms.D_i
     firms.D_i .= D_i
 
     firms.L_i .= BeforeIT.firms_loans(firms, model)
-
-
     firms.E_i .= BeforeIT.firms_equity(firms, model)
 
     @test isapprox(mean(DD_i), -14.8245, rtol = 1e-2)
@@ -239,5 +229,4 @@
     # update bank net credit/debit position
     bank.D_k = BeforeIT.bank_deposits(bank, model)
     @test isapprox(bank.D_k, 128349.3912, rtol = 1e-3)
-
 end
