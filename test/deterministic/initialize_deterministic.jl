@@ -1,4 +1,6 @@
 @testset "initialize deterministic" begin
+
+    dir = @__DIR__
     T = 3
 
     parameters = BeforeIT.AUSTRIA2010Q1.parameters
