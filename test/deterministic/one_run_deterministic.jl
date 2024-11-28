@@ -20,7 +20,7 @@
     
     # loop over the data fields and compare them
     for field in fieldnames(typeof(data))
-        @test isapprox(getproperty(data, field), getproperty(data2, field), rtol = 0.001)
-        @test isapprox(getproperty(data2, field), getproperty(data3, field), rtol = 0.001)
+        @test isapprox(getproperty(data, field), getproperty(data2, field), rtol = 0.00001)
+        @test isapprox(getproperty(data2, field), getproperty(data3, field), rtol = 0.00001)
     end
 end
