@@ -1,7 +1,6 @@
 # # Changing expectations via function overloading
 
 # In this tutorial we will illustrate how to experiment with different expectations of the agents in the model.
-# Differently from the basic version, here we use function overloading.
 
 import BeforeIT as Bit
 using Random, Plots
