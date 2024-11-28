@@ -4,7 +4,6 @@ CurrentModule = BeforeIT
 
 # Behavioural agent-based economic forecasting in Julia
 
-
 Welcome to BeforeIT.jl, a Julia implementation of the agent-based model presented in [Economic forecasting with an agent-based model](https://www.sciencedirect.com/science/article/pii/S0014292122001891), the first ABM matching the performance of traditional economic forecasting tools.
 
 With BeforeIT.jl, you can perform economic forecasting and explore different counterfactual scenarios. Thanks to its modular design, the package is also a great starting point for anyone looking to extend its capabilities or integrate it with other tools.
@@ -40,7 +39,7 @@ model = BeforeIT.initialise_model(parameters, initial_conditions, T)
 data = BeforeIT.run_one_sim!(model)
 ```
 
-To plot the results of the simulation, install the `Plots` package via ```Pkg.add("Plots")```  and then run
+To plot the results of the simulation, you can use the `Plots` package
 
 ```julia
 using Plots
@@ -52,7 +51,7 @@ plot(data.real_gdp)
 
 BeforeIT.jl is released under the GNU Affero General Public License v3 or later (AGPLv3+).
 
-Copyright 2024- Banca d'Italia and the authors.
+Copyright 2024 - Banca d'Italia and the authors.
 
 ## Main developers and maintainers
 
