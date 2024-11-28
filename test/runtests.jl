@@ -1,6 +1,9 @@
 
 using BeforeIT, Test
 
+
+println(Threads.nthreads())
+
 @testset "BeforeIT.jl Tests" begin
     
     include("package_sanity_tests.jl")
