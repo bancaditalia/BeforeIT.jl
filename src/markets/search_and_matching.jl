@@ -35,20 +35,20 @@ function search_and_matching!(model, multi_threading = false)
     c_G_g,
     Q_d_i_g,
     Q_d_m_g,
-    C_h_g,
-    I_h_g,
+    C_h_t,
+    I_h_t,
     C_j_g,
     C_l_g,
     P_bar_h_g,
     P_bar_CF_h_g,
     P_j_g,
-    P_l_g = initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank)
+    P_l_g = initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading)
 
     G = size(prop.products.b_HH_g, 1) # number of goods
 
     # Loop over all goods (internal and foreign)
 
-    function loopBody(g)
+    function loopBody(i, g)
         F_g = findall(G_f .== g)
         S_fg = copy(S_f)
         S_fg_ = copy(S_f_)
@@ -72,6 +72,7 @@ function search_and_matching!(model, multi_threading = false)
         )
 
         perform_retail_market!(
+            i,
             g,
             agg,
             gov,
@@ -88,8 +89,8 @@ function search_and_matching!(model, multi_threading = false)
             c_G_g,
             Q_d_i_g,
             Q_d_m_g,
-            C_h_g,
-            I_h_g,
+            C_h_t,
+            I_h_t,
             C_j_g,
             C_l_g,
             P_bar_h_g,
@@ -107,12 +108,12 @@ function search_and_matching!(model, multi_threading = false)
 
 
     if multi_threading
-        Threads.@threads for g in 1:G
-            loopBody(g)
+        Threads.@threads :static for g in 1:G
+            loopBody(Threads.threadid(), g)
         end
     else
         for g in 1:G
-            loopBody(g)
+            loopBody(1, g)
         end
     end
 
@@ -128,8 +129,8 @@ function search_and_matching!(model, multi_threading = false)
         I_i_g,
         P_bar_i_g,
         DM_i_g,
-        C_h_g,
-        I_h_g,
+        C_h_t,
+        I_h_t,
         Q_d_i_g,
         Q_d_m_g,
         C_j_g,
@@ -154,8 +155,8 @@ function update_aggregate_variables!(
     I_i_g,
     P_bar_i_g,
     DM_i_g,
-    C_h_g,
-    I_h_g,
+    C_h_t,
+    I_h_t,
     Q_d_i_g,
     Q_d_m_g,
     C_j_g,
@@ -179,8 +180,8 @@ function update_aggregate_variables!(
     Q_d_i = vec(sum(Q_d_i_g, dims = 2))
     Q_d_m = vec(sum(Q_d_m_g, dims = 2))
 
-    C_h = sum(C_h_g, dims = 2)
-    I_h = sum(I_h_g, dims = 2)
+    C_h = sum(C_h_t, dims = 2)
+    I_h = sum(I_h_t, dims = 2)
 
     gov.C_j = sum(C_j_g)
     rotw.C_l = sum(C_l_g)
@@ -229,7 +230,7 @@ function update_aggregate_variables!(
 
 end
 
-function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank)
+function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading)
     # ... Initialize all the variables ...
 
     # change some variables according to arguments of matlab function
@@ -256,8 +257,8 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     Q_d_i_g = zeros(size(firms.Y_i)..., G)
     Q_d_m_g = zeros(size(rotw.Y_m)..., G)
 
-    C_h_g = zeros(H, G)
-    I_h_g = zeros(H, G)
+    C_h_t = zeros(H, multi_threading ? Threads.nthreads() : 1)
+    I_h_t = zeros(H, multi_threading ? Threads.nthreads() : 1)
 
     C_j_g = zeros(1, G)
     C_l_g = zeros(1, G)
@@ -280,8 +281,8 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     c_G_g,
     Q_d_i_g,
     Q_d_m_g,
-    C_h_g,
-    I_h_g,
+    C_h_t,
+    I_h_t,
     C_j_g,
     C_l_g,
     P_bar_h_g,
@@ -344,10 +345,10 @@ function perform_firms_market!(
     DM_nominal_ig = zeros(size(DM_d_ig))
 
     # firms that have demand for good "g" participate as buyers
-    I_g = findall(DM_d_ig .> 0)
+    I_g = findall(DM_d_ig .> 0.0)
 
     # keep firms that have positive stock of good "g"
-    filter!(i -> S_fg[i] > 0, F_g)
+    filter!(i -> S_fg[i] > 0.0, F_g)
 
     # continue exchanges until either demand or supply terminates
 
@@ -367,22 +368,22 @@ function perform_firms_market!(
             if S_fg[f] > DM_d_ig[i]
                 S_fg[f] -= DM_d_ig[i]
                 DM_nominal_ig[i] += DM_d_ig[i] * P_f[f]
-                DM_d_ig[i] = 0
+                DM_d_ig[i] = 0.0
             else
                 DM_d_ig[i] -= S_fg[f]
-                DM_nominal_ig[i] += S_fg[f] .* P_f[f]
-                S_fg[f] = 0
+                DM_nominal_ig[i] += S_fg[f] * P_f[f]
+                S_fg[f] = 0.0
                 delete!(F_g_sampler, e)
                 isempty(F_g_sampler) && break
             end
         end
-        filter!(i -> DM_d_ig[i] > 0, I_g)
+        filter!(i -> DM_d_ig[i] > 0.0, I_g)
     end
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
         F_g = findall(G_f .== g)
-        filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
+        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
         F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
@@ -397,16 +398,16 @@ function perform_firms_market!(
                 if S_fg_[f] > DM_d_ig_[i]
                     S_fg[f] -= DM_d_ig_[i]
                     S_fg_[f] -= DM_d_ig_[i]
-                    DM_d_ig_[i] = 0
+                    DM_d_ig_[i] = 0.0
                 else
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
-                    S_fg_[f] = 0
+                    S_fg_[f] = 0.0
                     delete!(F_g_sampler, e)
                     isempty(F_g_sampler) && break
                 end
             end
-            filter!(i -> DM_d_ig_[i] > 0, I_g)
+            filter!(i -> DM_d_ig_[i] > 0.0, I_g)
         end
     end
 
@@ -427,6 +428,7 @@ end
 Perform the retail market exchange process
 """
 function perform_retail_market!(
+    i,
     g,
     agg,
     gov,
@@ -443,8 +445,8 @@ function perform_retail_market!(
     c_G_g,
     Q_d_i_g,
     Q_d_m_g,
-    C_h_g,
-    I_h_g,
+    C_h_t,
+    I_h_t,
     C_j_g,
     C_l_g,
     P_bar_h_g,
@@ -470,7 +472,7 @@ function perform_retail_market!(
     C_real_hg = zeros(size(C_d_hg))
     H_g = findall(C_d_hg .> 0.0)
 
-    filter!(i -> S_fg[i] > 0, F_g)
+    filter!(i -> S_fg[i] > 0.0, F_g)
 
     # weights according to size and price
     F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
@@ -485,22 +487,22 @@ function perform_retail_market!(
             if S_fg[f] > C_d_hg[h] / P_f[f]
                 S_fg[f] -= C_d_hg[h] / P_f[f]
                 C_real_hg[h] += C_d_hg[h] / P_f[f]
-                C_d_hg[h] = 0
+                C_d_hg[h] = 0.0
             else
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
-                S_fg[f] = 0
+                S_fg[f] = 0.0
                 delete!(F_g_sampler, e)
                 isempty(F_g_sampler) && break
             end
         end
-        filter!(h -> C_d_hg[h] > 0, H_g)
+        filter!(h -> C_d_hg[h] > 0.0, H_g)
     end
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
         F_g = findall(G_f .== g)
-        filter!(i -> S_fg_[i] > 0 && S_f[i] > 0, F_g)
+        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
         F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
@@ -515,16 +517,16 @@ function perform_retail_market!(
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
                     S_fg[f] -= C_d_hg_[h] / P_f[f]
                     S_fg_[f] -= C_d_hg_[h] / P_f[f]
-                    C_d_hg_[h] = 0
+                    C_d_hg_[h] = 0.0
                 else
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
-                    S_fg_[f] = 0
+                    S_fg_[f] = 0.0
                     delete!(F_g_sampler, e)
                     isempty(F_g_sampler) && break
                 end
             end
-            filter!(h -> C_d_hg_[h] > 0, H_g)
+            filter!(h -> C_d_hg_[h] > 0.0, H_g)
         end
     end
 
@@ -538,8 +540,8 @@ function perform_retail_market!(
     @~ Q_d_i_g[:, g] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
     @~ Q_d_m_g[:, g] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
-    @~ C_h_g[:, g] .= b
-    @~ I_h_g[:, g] .= d
+    @~ C_h_t[:, i] .+= b
+    @~ I_h_t[:, i] .+= d
 
     C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
     C_l_g[g] = sum(@~ c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
