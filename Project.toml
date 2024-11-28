@@ -1,6 +1,6 @@
 name = "BeforeIT"
 uuid = "ca9fcad7-41d0-4f76-b1e5-366c28bce52e"
-authors = ["Aldo Glielmo <aldo.glielmo@bancaditalia.it>", "Mitja Devetak <m888itja@gmail.com>"]
+authors = ["Aldo Glielmo <aldo.glielmo@bancaditalia.it>", "Mitja Devetak <m888itja@gmail.com>", "Adriano Meligrana <adrianomeligrana@proton.me>"]
 version = "0.1.2"
 
 [deps]

@@ -1,10 +1,10 @@
 # # Changing expectations via function overloading
 
-# In this tutorial we will illustrate how to experiment with different expectations of the agents in the model.
+# In this tutorial we will illustrate how to experiment with
+# different expectations of the agents in the model.
 
 import BeforeIT as Bit
 using Random, Plots
-
 
 # Import standard parameters and initial conditions
 
@@ -19,21 +19,21 @@ model = Bit.init_model(par, init, T)
 data = Bit.run_one_sim!(model)
 
 # Now we can experiment with changing expectations of the agents in the model.
-# We will change the function 'estimate_next_value' to make the agents expect 
-# the last value of the time series (in way representing backward looking expectations)
+# We will change the function `estimate_next_value` to make the agents expect 
+# the last value of the time series (so to represent backward looking expectations)
 
 import BeforeIT: estimate_next_value
 function estimate_next_value(data)
     return data[end]
 end
 
-# run the model again, with the same seed
+# Run the model again, with the same seed
 
 Random.seed!(1234)
 model = Bit.init_model(par, init, T)
 data_back = Bit.run_one_sim!(model)
 
-# plot the results, comparing the two cases as different lines
+# Plot the results, comparing the two cases as different lines
 
 p1 = plot(data.real_gdp, title = "gdp", titlefont = 10, label = "forward looking")
 plot!(p1, data_back.real_gdp, titlefont = 10, label = "backward looking")
@@ -43,7 +43,7 @@ plot!(p2, data_back.real_household_consumption, titlefont = 10, label = "backwar
 
 plot(p1, p2, layout = (2, 1), legend = true)
 
-# plot all time series
+# Plot all time series
 
 p1 = plot(data.real_gdp, title = "gdp", titlefont = 10)
 plot!(p1, data_back.real_gdp, titlefont = 10)
@@ -66,6 +66,6 @@ plot!(p9, data_back.nominal_gdp ./ data_back.real_gdp, titlefont = 10)
 
 plot(p1, p2, p3, p4, p5, p6, p7, p8, p9, layout = (3, 3), legend = false)
 
-# Note that, importantly, once the function estimate_next_value has been changed, the model will use the new 
-# expectations in all the simulations, unless the function is changed again.
-# To restore the original expectations you need to close the Julia session.
+# Note that, importantly, once the function `estimate_next_value` has been changed,
+# the model will use the new expectations in all the simulations, unless the function
+# is changed again. To restore the original expectations you could close the Julia session.

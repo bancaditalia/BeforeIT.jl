@@ -11,7 +11,6 @@ real_data = BeforeIT.ITALY_CALIBRATION.data
 model = load("data/italy/abm_predictions/2015Q1.jld2")["model_dict"]
 
 function plot_model_vs_real(model, real, varname; crop = true)
-
     if length(varname) > 9
         if varname[(end - 8):end] == "quarterly"
             x_nums = "quarters_num"
@@ -39,13 +38,11 @@ function plot_model_vs_real(model, real, varname; crop = true)
         xlimits = :auto
     end
 
-
     if crop
         all_tick_numbers = model[x_nums]
     else
         all_tick_numbers = real[x_nums]
     end
-
 
     num_ticks = []
     year_ticks = []
@@ -58,7 +55,6 @@ function plot_model_vs_real(model, real, varname; crop = true)
             push!(year_ticks, y)
         end
     end
-
 
     p = plot(
         real[x_nums],
@@ -76,7 +72,6 @@ function plot_model_vs_real(model, real, varname; crop = true)
     return p
 end
 
-
 num_ticks = []
 year_ticks = []
 for r in real_data["years_num"]
@@ -89,42 +84,42 @@ for r in real_data["years_num"]
     end
 end
 
-# plot real gdp
+# Plot real gdp
 plot_model_vs_real(model, real_data, "real_gdp")
 
-# plot real household consumption
+# Plot real household consumption
 plot_model_vs_real(model, real_data, "real_household_consumption")
 
-# plot real fixed capital formation
+# Plot real fixed capital formation
 plot_model_vs_real(model, real_data, "real_fixed_capitalformation")
 
-# plot real government consumption
+# Plot real government consumption
 plot_model_vs_real(model, real_data, "real_government_consumption")
 
-# plot real exports
+# Plot real exports
 plot_model_vs_real(model, real_data, "real_exports")
 
-# plot real imports
+# Plot real imports
 plot_model_vs_real(model, real_data, "real_imports")
 
-### quarterly plots ###
+### Quarterly Plots ###
 
-# plot real gdp quarterly
+# Plot real gdp quarterly
 p1 = plot_model_vs_real(model, real_data, "real_gdp_quarterly")
 
-# plot real household consumption quarterly
+# Plot real household consumption quarterly
 p2 = plot_model_vs_real(model, real_data, "real_household_consumption_quarterly")
 
-# plot real fixed capital formation quarterly
+# Plot real fixed capital formation quarterly
 p3 = plot_model_vs_real(model, real_data, "real_fixed_capitalformation_quarterly")
 
-# plot real government consumption quarterly
+# Plot real government consumption quarterly
 p4 = plot_model_vs_real(model, real_data, "real_government_consumption_quarterly")
 
-# plot real exports quarterly
+# Plot real exports quarterly
 p5 = plot_model_vs_real(model, real_data, "real_exports_quarterly")
 
-# plot real imports quarterly
+# Plot real imports quarterly
 p6 = plot_model_vs_real(model, real_data, "real_imports_quarterly")
 
 plot(p1, p2, p3, p4, p5, p6, layout = (3, 2), legend = false)
