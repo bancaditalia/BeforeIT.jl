@@ -21,7 +21,7 @@ end
 
 parameters = BeforeIT.AUSTRIA2010Q1.parameters
 initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
-T = 1
+T = 12
 
 # We run the code to compile it first
 @time run(parameters, initial_conditions, T; multi_threading = false);
