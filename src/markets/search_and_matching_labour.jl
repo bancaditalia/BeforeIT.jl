@@ -31,10 +31,9 @@ function search_and_matching_labour(firms::AbstractFirms, model)
     shuffle!(H_E)
 
     # fire workers if vacancies are negative
-    for e in eachindex(H_E)
+    for h in H_E
 
         # find employer of worker
-        h = H_E[e]
         i = O_h[h]
 
         # if employer has negative vacancies, fire the worker
@@ -53,9 +52,7 @@ function search_and_matching_labour(firms::AbstractFirms, model)
     # while there are no more vacancies or unemployed workers
     while !isempty(H_U) && !isempty(I_V)
         shuffle!(I_V)
-        for f in eachindex(I_V)
-            # select random vacancy
-            i = I_V[f]
+        for i in I_V
             # select random unemployed worker
             h = H_U[1]
             # employ worker
