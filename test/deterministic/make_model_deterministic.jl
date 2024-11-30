@@ -18,7 +18,7 @@ end
 function rand(s::DynamicSampler)
     idx = minimum(minimum.(s.level_buckets; init=typemax(Int)))
     weight = s.weights[idx]
-    level = ceil(Int, log2(weight)) - first(s.level_inds) + 1
+    level = ceil(Int, log2(weight)) - s.info.level_min + 1
     idx_in_level = findfirst(x -> x == idx, s.level_buckets[level])
     return idx
 end
