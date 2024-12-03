@@ -108,9 +108,9 @@ function search_and_matching!(model, multi_threading = false)
 
 
     if multi_threading
-        Threads.@sync for (i, gs) in enumerate(chunks(1:G; n=Threads.nthreads(), split=RoundRobin()))
+        Threads.@threads for (i, gs) in enumerate(chunks(1:G; n=Threads.nthreads(), split=RoundRobin()))
             for g in gs
-                Threads.@spawn loopBody(i, g)
+                loopBody(i, g)
             end
         end
     else
