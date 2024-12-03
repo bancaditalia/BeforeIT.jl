@@ -48,7 +48,7 @@ function search_and_matching!(model, multi_threading = false)
 
     # Loop over all goods (internal and foreign)
 
-    function loopBody(i, g)
+    function loopBody(g)
         F_g = findall(G_f .== g)
         S_fg = copy(S_f)
         S_fg_ = copy(S_f_)
@@ -72,7 +72,6 @@ function search_and_matching!(model, multi_threading = false)
         )
 
         perform_retail_market!(
-            i,
             g,
             agg,
             gov,
@@ -108,12 +107,12 @@ function search_and_matching!(model, multi_threading = false)
 
 
     if multi_threading
-        Threads.@threads :static for g in 1:G
-            loopBody(Threads.threadid(), g)
+        Threads.@sync for g in 1:G
+            Threads.@spawn loopBody(g)
         end
     else
         for g in 1:G
-            loopBody(1, g)
+            loopBody(g)
         end
     end
 
@@ -428,7 +427,6 @@ end
 Perform the retail market exchange process
 """
 function perform_retail_market!(
-    i,
     g,
     agg,
     gov,
@@ -540,8 +538,8 @@ function perform_retail_market!(
     @~ Q_d_i_g[:, g] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
     @~ Q_d_m_g[:, g] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
-    @~ C_h_t[:, i] .+= b
-    @~ I_h_t[:, i] .+= d
+    @~ C_h_t[:, Threads.threadid()] .+= b
+    @~ I_h_t[:, Threads.threadid()] .+= d
 
     C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
     C_l_g[g] = sum(@~ c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
