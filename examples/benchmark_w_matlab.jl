@@ -1,3 +1,4 @@
+
 ## Comparing the performance of the Julia and MATLAB implementations
 
 # We can compare the performance of the Julia and MATLAB implementations
@@ -31,19 +32,19 @@ T = 12
 # (6 threads for the parallel version), computed independently on an AMD Ryzen 5 5600H
 matlab_times = [4.399592, 4.398576, 4.352314, 4.385039, 4.389989]
 matlab_times ./= T
-matlab_times = [matlab_times, [1000.0, 1000.0, 1000.0, 1000.0, 1000.0]]
+matlab_times = [matlab_times, [2000.189556, 1990.485305, 2002.295329, 1994.215843, 1993.651854]]
 matlab_time = mean.(matlab_times)
 matlab_time_std = std.(matlab_times)
 
 c_times = [0.952, 0.940, 0.951, 0.942, 0.938]
 c_times ./= T
-c_times = [c_times, [1000.0, 1000.0, 1000.0, 1000.0, 1000.0]]
+c_times = [c_times, [574.692, 576.725, 572.382, 573.921, 575.949]]
 c_time = mean.(c_times)
 c_time_std = std.(c_times)
 
 c_times_multi_thread = [0.305, 0.324, 0.330, 0.334, 0.323]
 c_times_multi_thread ./= T
-c_times_multi_thread = [c_times_multi_thread, [1000.0, 1000.0, 1000.0, 1000.0, 1000.0]]
+c_times_multi_thread = [c_times_multi_thread, [162.603, 160.197, 161.610, 160.759, 161.174]]
 c_time_multi_thread = mean.(c_times_multi_thread)
 c_time_multi_thread_std = std.(c_times_multi_thread)
 
@@ -56,7 +57,7 @@ for i in 1:n_runs
     julia_times_1_thread[i] = @elapsed run(parameters, initial_conditions, T; multi_threading = false);
 end
 julia_times_1_thread ./= T
-julia_times_1_thread = [julia_times_1_thread, [61.010209, 60.503288, 61.343696, 60.170186, 59.275483]]
+julia_times_1_thread = [julia_times_1_thread, [56.593792, 56.297404, 54.682004, 55.079674, 55.192496]]
 julia_time_1_thread = mean.(julia_times_1_thread)
 julia_time_1_thread_std = std.(julia_times_1_thread)
 
@@ -65,7 +66,7 @@ for i in 1:5
     julia_times_multi_thread[i] =  @elapsed run(parameters, initial_conditions, T; multi_threading = true);
 end
 julia_times_multi_thread ./= T
-julia_times_multi_thread = [julia_times_multi_thread, [35.904997, 34.800452, 36.283711, 35.967733, 37.254648]]
+julia_times_multi_thread = [julia_times_multi_thread, [30.775353, 29.533283, 30.594063, 30.469412, 30.521846]]
 julia_time_multi_thread = mean.(julia_times_multi_thread)
 julia_time_multi_thread_std = std.(julia_times_multi_thread)
 
@@ -83,9 +84,10 @@ stds = reduce(hcat, [matlab_time_std, c_time_std, c_time_multi_thread_std,
 ix1, ix2 = [1], [2]
 means1, means2 = means[:, ix1], means[:, ix2]
 
-scaler = 1 * maximum(means1) / maximum(means2)
+scaler = maximum(means1) / maximum(means2)
 
 means[:, ix2] .*= scaler
+stds[:, ix2] .*= scaler
 
 labels = ["MATLAB", "Gen. C, 1 thread", "Gen. C, 6 threads", "BeforeIT.jl, 1 thread", "BeforeIT.jl, 6 threads"]
 
