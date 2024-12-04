@@ -106,10 +106,11 @@ function search_and_matching!(model, multi_threading = false)
         )
     end
 
-
     if multi_threading
-        Threads.@threads :static for g in 1:G
-            loopBody(Threads.threadid(), g)
+        Threads.@threads for (i, gs) in enumerate(chunks(shuffle(1:G); n=Threads.nthreads()))
+            for g in gs
+                loopBody(i, g)
+            end
         end
     else
         for g in 1:G
