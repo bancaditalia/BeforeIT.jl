@@ -106,9 +106,8 @@ function search_and_matching!(model, multi_threading = false)
         )
     end
 
-
     if multi_threading
-        Threads.@threads for (i, gs) in enumerate(chunks(1:G; n=Threads.nthreads(), split=RoundRobin()))
+        Threads.@threads for (i, gs) in enumerate(chunks(shuffle(1:G); n=Threads.nthreads()))
             for g in gs
                 loopBody(i, g)
             end
