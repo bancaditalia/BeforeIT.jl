@@ -16,7 +16,7 @@ for each epoch using `BeforeIT.run_one_epoch!(model)` and `BeforeIT.update_data!
 
 # Example
 ```julia
-model = BeforeIT.initialize_model(parameters, initial_conditions, T)
+model = BeforeIT.init_model(parameters, initial_conditions, T)
 data = run_one_sim!(model)
 """
 function run_one_sim!(model; multi_threading = false, shock = NoShock())
