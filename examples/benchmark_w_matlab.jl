@@ -84,14 +84,14 @@ julia_mtime_big_multi = mean(julia_times_big_multi)
 julia_stime_big_multi = std(julia_times_big_multi)
 
 
-labels = ["MATLAB", "Gen. C, 1 core", "Gen. C, 4 cores", "HPC, 1 core*", "HPC, 4 cores*", 
-          "BeforeIT.jl, 1 core", "BeforeIT.jl, 4 cores"]
+labels = ["MATLAB", "Gen. C - 1 core", "Gen. C - 4 cores", "HPC - 1 core*", "HPC - 4 cores*", 
+          "BeforeIT.jl - 1 core", "BeforeIT.jl - 4 cores"]
 
 # Create the layout
 fig = Figure(size = (800, 400));
 
-ax1 = Axis(fig[1, 1], ylabel="time for one epoch (s)", title="Model with 8 thousands agents")
-ax2 = Axis(fig[1, 2], title="Model with 8 millions agents")
+ax1 = Axis(fig[1, 1], ylabel="time for one epoch (s)", title="Model with 8 thousand agents")
+ax2 = Axis(fig[1, 2], title="Model with 8 million agents")
 
 times_small = [matlab_mtime_small, c_mtime_small, c_mtime_small_multi, julia_mtime_small, julia_mtime_small_multi]
 barplot!(ax1,
