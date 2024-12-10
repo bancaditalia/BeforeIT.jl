@@ -77,12 +77,11 @@ for i in 1:5
     julia_times_small_multi[i] =  @elapsed run(parameters, initial_conditions, T; multi_threading = true);
 end
 julia_times_small_multi ./= T
-julia_times_big_multi = [35.775353, 34.933283, 35.594063, 35.469412, 35.521846]
+julia_times_big_multi = [32.981467, 32.243157, 33.016562, 33.957509, 33.046763]
 julia_mtime_small_multi = mean(julia_times_small_multi)
 julia_stime_small_multi = std(julia_times_small_multi)
 julia_mtime_big_multi = mean(julia_times_big_multi)
 julia_stime_big_multi = std(julia_times_big_multi)
-
 
 labels = ["MATLAB", "Gen. C - 1 core", "Gen. C - 4 cores", "HPC - 1 core*", "HPC - 4 cores*", 
           "BeforeIT.jl - 1 core", "BeforeIT.jl - 4 cores"]
