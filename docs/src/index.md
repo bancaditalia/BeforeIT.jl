@@ -26,7 +26,7 @@ Pkg.add("BeforeIT")
 
 ## Quick example
 
-To check that the installation worked, try running the model in your terminal following
+To check that the installation worked, try running the model in your terminal with
 
 ```julia
 using BeforeIT
@@ -67,6 +67,7 @@ Copyright 2024 - Banca d'Italia and the authors.
 - [Andrea Gentili](https://www.bankit.art/people/andrea-gentili) for suggesting the name of the pakege
 - [Arnau Quera-Bofarull](https://github.com/arnauqb) for help in the deployment of the documentation
 - [Steven Hoekstra](https://github.com/SGHoekstra) for fixing a bug in a script
+- [Peter Reschenhofer](https://github.com/petres) for fixing a bug in a script
 
 ## Disclaimer
 
