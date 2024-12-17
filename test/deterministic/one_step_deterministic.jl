@@ -1,4 +1,4 @@
-@testset "one epoch deterministic" begin
+@testset "one step deterministic" begin
 
     parameters = BeforeIT.AUSTRIA2010Q1.parameters
     initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions

@@ -31,8 +31,8 @@ include("agent_actions/government.jl")
 include("agent_actions/rotw.jl")
 include("agent_actions/bank.jl")
 
-# full epoch
-include("one_epoch.jl")
+# full step
+include("one_step.jl")
 include("one_simulation.jl")
 
 # data handling

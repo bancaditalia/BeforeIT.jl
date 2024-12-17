@@ -7,7 +7,7 @@ import BeforeIT as Bit
 using FileIO, Plots, StatsPlots
 
 # First, we initialise the model, this time we use the Italy 2010Q1 scenario, 
-# and we want to simulate the model for a large number of epochs
+# and we want to simulate the model for a large number of steps
 
 parameters = Bit.ITALY2010Q1.parameters
 initial_conditions = Bit.ITALY2010Q1.initial_conditions

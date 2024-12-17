@@ -17,7 +17,7 @@ println(BeforeIT.get_accounting_identity_banks(model))
 
 
 """
-Testing an entire epoch of the model
+Testing an entire step of the model
 """
 
 ####### GENERAL ESTIMATIONS #######

@@ -22,12 +22,12 @@ data_vec_baseline = Bit.run_n_sims(model, 4)
 # its parameters for a specific time period.
 
 # In this case, let's define an interest rate shock that sets the interest
-# rate for a number of epochs.
+# rate for a number of steps.
 
 # We do this by first defining a "struct" with some useful attributes
 struct CustomShock
-    rate::Float64    # target rate for the first 10 epochs
-    final_time::Int  # number of epochs for the shock
+    rate::Float64    # target rate for the first 10 steps
+    final_time::Int  # number of steps for the shock
 end
 
 # and then by making the struct a callable function that changes the interest
@@ -38,7 +38,7 @@ function (s::CustomShock)(model::Bit.Model)
     end
 end
 
-# Now we define a specific shock with a rate of 0.01 for the first 10 epochs,
+# Now we define a specific shock with a rate of 0.01 for the first 10 steps,
 # and run a shocked simulation
 
 custom_shock = CustomShock(0.0, 10)

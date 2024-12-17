@@ -5,13 +5,13 @@
 import BeforeIT as Bit
 using FileIO, Plots
 
-# We then initialise the model loading some precomputed set of parameters and by specifying a number of epochs.
+# We then initialise the model loading some precomputed set of parameters and by specifying a number of steps.
 # In another tutorial we will illustrate how to compute parameters and initial conditions.
 
 parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
-# We can now initialise the model, by specifying in advance the maximum number of epochs.
+# We can now initialise the model, by specifying in advance the maximum number of steps.
 
 T = 16
 model = Bit.init_model(parameters, initial_conditions, T)
@@ -28,14 +28,14 @@ fieldnames(typeof(model.bank))
 
 data = Bit.init_data(model);
 
-# We can run now the model for a number of epochs and progressively update the data tracker.
+# We can run now the model for a number of steps and progressively update the data tracker.
 
 for t in 1:T
-    Bit.run_one_epoch!(model; multi_threading = true)
+    Bit.run_one_step!(model; multi_threading = true)
     Bit.update_data!(data, model)
 end
 
-# Note that we can equivalently run the model for a number of epochs in the single command 
+# Note that we can equivalently run the model for a number of steps in the single command 
 # `data = BeforeIT.run_one_sim!(model)`, but writing the loop explicitely is more instructive.
 
 # We can then plot any time series stored in the data tracker, for example

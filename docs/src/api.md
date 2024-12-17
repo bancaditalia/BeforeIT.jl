@@ -31,7 +31,7 @@ Pages   = ["init.jl"]
 ```@autodocs
 Modules = [BeforeIT]
 Order   = [:type, :function]
-Pages   = ["one_epoch.jl", "one_simulation.jl"]
+Pages   = ["one_step.jl", "one_simulation.jl"]
 ```
 
 

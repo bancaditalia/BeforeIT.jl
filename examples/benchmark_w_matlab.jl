@@ -1,7 +1,7 @@
 ## Comparing the performance of the Julia and MATLAB implementations
 
 # We can compare the performance of the Julia and MATLAB implementations
-# by running the same model for the same number of epochs and measuring
+# by running the same model for the same number of steps and measuring
 # the time taken.
 
 using BeforeIT, CairoMakie, Statistics, ThreadPinning
@@ -13,7 +13,7 @@ function run(parameters, initial_conditions, T; multi_threading = false)
     data = BeforeIT.init_data(model);
     
     for _ in 1:T
-        BeforeIT.run_one_epoch!(model; multi_threading = multi_threading)
+        BeforeIT.run_one_step!(model; multi_threading = multi_threading)
         BeforeIT.update_data!(data, model)
     end
     return model, data
@@ -89,7 +89,7 @@ labels = ["MATLAB", "Gen. C - 1 core", "Gen. C - 4 cores", "HPC - 1 core*", "HPC
 # Create the layout
 fig = Figure(size = (800, 400));
 
-ax1 = Axis(fig[1, 1], ylabel="time for one epoch (s)", title="Model with 8 thousand agents")
+ax1 = Axis(fig[1, 1], ylabel="time for one step (s)", title="Model with 8 thousand agents")
 ax2 = Axis(fig[1, 2], title="Model with 8 million agents")
 
 times_small = [matlab_mtime_small, c_mtime_small, c_mtime_small_multi, julia_mtime_small, julia_mtime_small_multi]
