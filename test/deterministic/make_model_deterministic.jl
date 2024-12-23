@@ -7,20 +7,18 @@ import Random: shuffle!, rand, randn
 import StatsBase: wsample
 using Distributions
 
-function allinds(s::DynamicSampler)
-    return sort!(reduce(vcat, s.level_buckets))
+function allinds(sp::DynamicSampler)
+    inds = collect(Iterators.Flatten((Iterators.map(x -> x[1], b) for b in sp.level_buckets)))
+    return sort!(inds)
 end
 
 function randn()
     return 0.0
 end
 
-function rand(s::DynamicSampler)
-    idx = minimum(minimum.(s.level_buckets; init=typemax(Int)))
-    weight = s.weights[idx]
-    level = ceil(Int, log2(weight)) - s.info.level_min + 1
-    idx_in_level = findfirst(x -> x == idx, s.level_buckets[level])
-    return idx
+function rand(sp::DynamicSampler)
+    inds = collect(Iterators.Flatten((Iterators.map(x -> x[1], b) for b in sp.level_buckets)))
+    return minimum(inds)
 end
 function rand(n::UnitRange)
     return 1
