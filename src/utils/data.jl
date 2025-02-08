@@ -146,7 +146,7 @@ Update the data `d` with the model `m`.
 
 ```julia
 data = BeforeIT.init_data(model)
-run_one_epoch!(model)
+step!(model)
 BeforeIT.update_data!(data, model)
 ```
 """

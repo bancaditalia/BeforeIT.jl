@@ -31,12 +31,12 @@ data = Bit.init_data(model);
 # We can run now the model for a number of epochs and progressively update the data tracker.
 
 for t in 1:T
-    Bit.run_one_epoch!(model; multi_threading = true)
+    Bit.step!(model; multi_threading = true)
     Bit.update_data!(data, model)
 end
 
 # Note that we can equivalently run the model for a number of epochs in the single command 
-# `data = BeforeIT.run_one_sim!(model)`, but writing the loop explicitely is more instructive.
+# `data = BeforeIT.run!(model)`, but writing the loop explicitely is more instructive.
 
 # We can then plot any time series stored in the data tracker, for example
 
@@ -50,7 +50,7 @@ plot(ps..., layout = (3, 3))
 # To run multiple monte-carlo repetitions in parallel we can use
 
 model = Bit.init_model(parameters, initial_conditions, T)
-data_vector = Bit.run_n_sims(model, 4)
+data_vector = Bit.ensemblerun(model, 4)
 
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command 

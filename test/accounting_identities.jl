@@ -12,7 +12,7 @@ using Test
     data = BeforeIT.init_data(model)
 
     for t in 1:T
-        BeforeIT.run_one_epoch!(model; multi_threading = false)
+        BeforeIT.step!(model; multi_threading = false)
         BeforeIT.update_data!(data, model)
     end
 

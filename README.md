@@ -69,7 +69,7 @@ initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 
 T = 20
 model = BeforeIT.init_model(parameters, initial_conditions, T)
-data = BeforeIT.run_one_sim!(model)
+data = BeforeIT.run!(model)
 ```
 
 This will simulate the model with the original Austrian parametrisation for 20 quarters and save the results in the `data` object.

@@ -36,7 +36,7 @@ initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
 
 T = 20
 model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-data = BeforeIT.run_one_sim!(model)
+data = BeforeIT.run!(model)
 ```
 
 To plot the results of the simulation, you can use the `Plots` package

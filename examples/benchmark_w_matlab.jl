@@ -13,7 +13,7 @@ function run(parameters, initial_conditions, T; multi_threading = false)
     data = BeforeIT.init_data(model);
     
     for _ in 1:T
-        BeforeIT.run_one_epoch!(model; multi_threading = multi_threading)
+        BeforeIT.step!(model; multi_threading = multi_threading)
         BeforeIT.update_data!(data, model)
     end
     return model, data
