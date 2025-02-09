@@ -1,5 +1,7 @@
 
-using BeforeIT, Test
+import BeforeIT as Bit
+
+using Test
 
 @testset "BeforeIT.jl Tests" begin
     

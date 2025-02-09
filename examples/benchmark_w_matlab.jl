@@ -4,23 +4,25 @@
 # by running the same model for the same number of epochs and measuring
 # the time taken.
 
-using BeforeIT, CairoMakie, Statistics, ThreadPinning
+import BeforeIT as Bit
+
+using CairoMakie, Statistics, ThreadPinning
 
 pinthreads(:cores)
 
 function run(parameters, initial_conditions, T; multi_threading = false)
-    model = BeforeIT.init_model(parameters, initial_conditions, T)
-    data = BeforeIT.init_data(model);
+    model = Bit.init_model(parameters, initial_conditions, T)
+    data = Bit.init_data(model);
     
     for _ in 1:T
-        BeforeIT.step!(model; multi_threading = multi_threading)
-        BeforeIT.update_data!(data, model)
+        Bit.step!(model; multi_threading = multi_threading)
+        Bit.update_data!(data, model)
     end
     return model, data
 end
 
-parameters = BeforeIT.AUSTRIA2010Q1.parameters
-initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 T = 12
 
 # We run the code to compile it first

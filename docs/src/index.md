@@ -29,14 +29,14 @@ Pkg.add("BeforeIT")
 To check that the installation worked, try running the model in your terminal with
 
 ```julia
-using BeforeIT
+import BeforeIT as Bit
 
-parameters = BeforeIT.AUSTRIA2010Q1.parameters
-initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 20
-model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-data = BeforeIT.run!(model)
+model = Bit.initialise_model(parameters, initial_conditions, T)
+data = Bit.run!(model)
 ```
 
 To plot the results of the simulation, you can use the `Plots` package

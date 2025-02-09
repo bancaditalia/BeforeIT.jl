@@ -1,15 +1,15 @@
 
 @testset "run deterministic" begin
     T = 3
-    parameters = BeforeIT.AUSTRIA2010Q1.parameters
-    initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+    parameters = Bit.AUSTRIA2010Q1.parameters
+    initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
     function run_deterministic(parameters, initial_conditions, T, m)
-        model = BeforeIT.init_model(parameters, initial_conditions, T;)
-        data = BeforeIT.init_data(model)
+        model = Bit.init_model(parameters, initial_conditions, T;)
+        data = Bit.init_data(model)
         for t in 1:(T - 1)
-            BeforeIT.step!(model; multi_threading = m)
-            BeforeIT.update_data!(data, model)
+            Bit.step!(model; multi_threading = m)
+            Bit.update_data!(data, model)
         end
         return model, data   
     end

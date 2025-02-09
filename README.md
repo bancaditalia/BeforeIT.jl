@@ -62,14 +62,14 @@ Pkg.instantiate()
 Now you should be able to run the the following code
 
 ```julia
-using BeforeIT
+import BeforeIT as Bit
 
-parameters = BeforeIT.AUSTRIA2010Q1.parameters
-initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 20
-model = BeforeIT.init_model(parameters, initial_conditions, T)
-data = BeforeIT.run!(model)
+model = Bit.init_model(parameters, initial_conditions, T)
+data = Bit.run!(model)
 ```
 
 This will simulate the model with the original Austrian parametrisation for 20 quarters and save the results in the `data` object.

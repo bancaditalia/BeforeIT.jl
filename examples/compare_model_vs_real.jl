@@ -1,10 +1,10 @@
-using BeforeIT
-using MAT, FileIO, Plots, StatsPlots
-using Dates
+import BeforeIT as Bit
+
+using MAT, FileIO, Plots, StatsPlots, Dates
 
 # load data from 1996
 
-real_data = BeforeIT.ITALY_CALIBRATION.data
+real_data = Bit.ITALY_CALIBRATION.data
 
 # load predictions from 2010Q1
 
@@ -48,7 +48,7 @@ function plot_model_vs_real(model, real, varname; crop = true)
     year_ticks = []
     for r in all_tick_numbers
         # get year of r
-        y = year(BeforeIT.num2date(r))
+        y = year(Bit.num2date(r))
         # save year only if it's new
         if !(y in year_ticks)
             push!(num_ticks, r)
@@ -76,7 +76,7 @@ num_ticks = []
 year_ticks = []
 for r in real_data["years_num"]
     # get year of r
-    y = year(BeforeIT.num2date(r))
+    y = year(Bit.num2date(r))
     # save year only if it's new
     if !(y in year_ticks)
         push!(num_ticks, r)

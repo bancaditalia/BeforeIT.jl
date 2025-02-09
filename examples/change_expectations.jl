@@ -4,6 +4,7 @@
 # different expectations of the agents in the model.
 
 import BeforeIT as Bit
+
 using Random, Plots
 
 # Import standard parameters and initial conditions
@@ -22,8 +23,7 @@ data = Bit.run!(model)
 # We will change the function `estimate_next_value` to make the agents expect 
 # the last value of the time series (so to represent backward looking expectations)
 
-import BeforeIT: estimate_next_value
-function estimate_next_value(data)
+function Bit.estimate_next_value(data)
     return data[end]
 end
 
