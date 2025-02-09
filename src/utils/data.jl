@@ -57,7 +57,7 @@ end
 # This function allows for the extraction of fields from the Data struct
 # by using the dot syntax, e.g., data_vector.nominal_gdp
 function Base.getproperty(dv::DataVector, name::Symbol)
-    if name in fieldnames(BeforeIT.Data)
+    if name in fieldnames(Bit.Data)
         # If the field name exists in the `a` struct, extract it from all elements
         return hcat([getproperty(d, name) for d in dv.vector]...)
     else
@@ -145,9 +145,9 @@ Update the data `d` with the model `m`.
 # Example
 
 ```julia
-data = BeforeIT.init_data(model)
+data = Bit.init_data(model)
 step!(model)
-BeforeIT.update_data!(data, model)
+Bit.update_data!(data, model)
 ```
 """
 function update_data!(d, m)

@@ -21,29 +21,29 @@ Returns:
 function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}, T, typeInt::DataType = Int64, typeFloat::DataType = Float64)
 
     # properties
-    properties = BeforeIT.init_properties(parameters, T; typeInt = typeInt, typeFloat = typeFloat)
+    properties = Bit.init_properties(parameters, T; typeInt = typeInt, typeFloat = typeFloat)
 
     # firms
-    firms, _ = BeforeIT.init_firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    firms, _ = Bit.init_firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # workers, and update firms vacancies
-    workers_act, workers_inact, V_i_new, _, _ = BeforeIT.init_workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
+    workers_act, workers_inact, V_i_new, _, _ = Bit.init_workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
     firms.V_i = V_i_new
 
     # bank
-    bank, _ = BeforeIT.init_bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
+    bank, _ = Bit.init_bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
 
     # central bank
-    central_bank, _ = BeforeIT.init_central_bank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    central_bank, _ = Bit.init_central_bank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # government
-    government, _ = BeforeIT.init_government(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    government, _ = Bit.init_government(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # rest of the world
-    rotw, _ = BeforeIT.init_rotw(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    rotw, _ = Bit.init_rotw(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # aggregates
-    agg, _ = BeforeIT.init_aggregates(parameters, initial_conditions, T; typeInt = typeInt, typeFloat = typeFloat)
+    agg, _ = Bit.init_aggregates(parameters, initial_conditions, T; typeInt = typeInt, typeFloat = typeFloat)
 
     # model
     model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)

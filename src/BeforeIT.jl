@@ -9,6 +9,8 @@ using LinearAlgebra
 using Random
 using StatsBase
 
+const Bit = BeforeIT
+
 # definition of agents
 include("model_init/agents.jl")
 

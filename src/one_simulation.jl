@@ -11,23 +11,23 @@ The simulation runs for a number of epochs specified by `model.prop.T`.
 - `data::Data`: The data collected during the simulation.
 
 # Details
-The function initializes the data using `BeforeIT.init_data(model)`, then iteratively updates the model and data
-for each epoch using `BeforeIT.step!(model)` and `BeforeIT.update_data!(data, model)` respectively.
+The function initializes the data using `Bit.init_data(model)`, then iteratively updates the model and data
+for each epoch using `Bit.step!(model)` and `Bit.update_data!(data, model)` respectively.
 
 # Example
 ```julia
-model = BeforeIT.init_model(parameters, initial_conditions, T)
+model = Bit.init_model(parameters, initial_conditions, T)
 data = run!(model)
 """
 function run!(model::AbstractModel; multi_threading = false, shock = NoShock())
 
-    data = BeforeIT.init_data(model)
+    data = Bit.init_data(model)
 
     T = model.prop.T
 
     for _ in 1:T
-        BeforeIT.step!(model; multi_threading = multi_threading, shock = shock)
-        BeforeIT.update_data!(data, model)
+        Bit.step!(model; multi_threading = multi_threading, shock = shock)
+        Bit.update_data!(data, model)
     end
 
     return data
@@ -50,7 +50,7 @@ data objects of dimension `n_sims`.
 """
 function ensemblerun(model::AbstractModel, n_sims; multi_threading = true, shock = NoShock())
 
-    data_vector = Vector{BeforeIT.Data}(undef, n_sims)
+    data_vector = Vector{Bit.Data}(undef, n_sims)
 
     if multi_threading
         Threads.@threads for i in 1:n_sims
@@ -67,7 +67,7 @@ function ensemblerun(model::AbstractModel, n_sims; multi_threading = true, shock
     end
 
     # transform the vector of data objects into a DataVector
-    data_vector = BeforeIT.DataVector(data_vector)
+    data_vector = Bit.DataVector(data_vector)
 
     return data_vector
 end

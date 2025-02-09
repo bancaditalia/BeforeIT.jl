@@ -1,17 +1,18 @@
-using BeforeIT, Random
-using Plots
+import BeforeIT as Bit
 
-parameters = BeforeIT.AUSTRIA2010Q1.parameters
-initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+using Random, Plots
+
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 20
-model = BeforeIT.init_model(parameters, initial_conditions, T)
-data = BeforeIT.init_data(model)
+model = Bit.init_model(parameters, initial_conditions, T)
+data = Bit.init_data(model)
 
 for t in 1:T
     println("Epoch: ", t)
-    BeforeIT.step!(model; multi_threading = true)
-    BeforeIT.update_data!(data, model)
+    Bit.step!(model; multi_threading = true)
+    Bit.update_data!(data, model)
 end
 
 p1 = plot(data.real_gdp, title = "gdp", titlefont = 10)

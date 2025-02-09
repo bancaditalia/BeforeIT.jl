@@ -1,17 +1,17 @@
-using BeforeIT
 
+import BeforeIT as Bit
 
-parameters = BeforeIT.STEADY_STATE2010Q1.parameters
-initial_conditions = BeforeIT.STEADY_STATE2010Q1.initial_conditions
+parameters = Bit.STEADY_STATE2010Q1.parameters
+initial_conditions = Bit.STEADY_STATE2010Q1.initial_conditions
 
 T = 5
-model = BeforeIT.init_model(parameters, initial_conditions, T)
-data = BeforeIT.init_data(model)
+model = Bit.init_model(parameters, initial_conditions, T)
+data = Bit.init_data(model)
 
 for t in 1:T
     println(t)
-    BeforeIT.step!(model; multi_threading = false)
-    BeforeIT.update_data!(data, model)
+    Bit.step!(model; multi_threading = false)
+    Bit.update_data!(data, model)
 end
 
 # check that all variables in the "data" struct are constant up to numerical precision

@@ -1,7 +1,10 @@
-using BeforeIT, Test
+
+import BeforeIT as Bit
+
+using Test
 
 @testset "test no shock" begin
-    shock = BeforeIT.NoShock()
+    shock = Bit.NoShock()
     x = [1]
     shock(x)
     @test x == [1]
@@ -20,7 +23,7 @@ end
         agg::Any
     end
     model = Bar(Foo(0.01), Agg(1))
-    shock = BeforeIT.InterestRateShock(0.02, 1)
+    shock = Bit.InterestRateShock(0.02, 1)
     shock(model)
     @test model.cb.r_bar == 0.02
     model.cb.r_bar = 0.01

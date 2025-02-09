@@ -3,6 +3,7 @@
 # We start by importing the BeforeIT library and other useful libraries.
 
 import BeforeIT as Bit
+
 using FileIO, Plots
 
 # We then initialise the model loading some precomputed set of parameters and by specifying a number of epochs.
@@ -36,7 +37,7 @@ for t in 1:T
 end
 
 # Note that we can equivalently run the model for a number of epochs in the single command 
-# `data = BeforeIT.run!(model)`, but writing the loop explicitely is more instructive.
+# `data = Bit.run!(model)`, but writing the loop explicitely is more instructive.
 
 # We can then plot any time series stored in the data tracker, for example
 

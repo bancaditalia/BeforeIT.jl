@@ -2,13 +2,13 @@
 using PrecompileTools
 
 @setup_workload let
-    parameters = BeforeIT.AUSTRIA2010Q1.parameters
-    initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+    parameters = Bit.AUSTRIA2010Q1.parameters
+    initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     T = 1
     @compile_workload let
-        model = BeforeIT.init_model(parameters, initial_conditions, T)
-	data = BeforeIT.init_data(model);
-	BeforeIT.step!(model)
-	BeforeIT.update_data!(data, model)
+        model = Bit.init_model(parameters, initial_conditions, T)
+	data = Bit.init_data(model);
+	Bit.step!(model)
+	Bit.update_data!(data, model)
     end
 end

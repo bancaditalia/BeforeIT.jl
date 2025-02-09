@@ -1,4 +1,6 @@
-using BeforeIT
+
+import BeforeIT as Bit
+
 using Test, Random
 
 @testset "nfvar3" begin
@@ -6,7 +8,7 @@ using Test, Random
     u = [0, 0, 0, 0]
 
     y = Matrix{Float64}([1.0; 2.0; 3.0; 4.0; 5.0][:, :])
-    var_ = BeforeIT.rfvar3(y, 1, ones(size(y, 1), 1))
+    var_ = Bit.rfvar3(y, 1, ones(size(y, 1), 1))
 
     @test isapprox(var_.Bx[1, 1], 1.0)
     @test isapprox(var_.By[1], 1.0)
@@ -19,13 +21,13 @@ using MAT
 @testset "estimate" begin
     dir = @__DIR__
 
-    init_conds = BeforeIT.AUSTRIA2010Q1.initial_conditions#matopen(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
+    init_conds = Bit.AUSTRIA2010Q1.initial_conditions#matopen(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
 
     Y = init_conds["Y"]
 
 
     Random.seed!(123)
-    alpha, beta, epsilon_ = BeforeIT.estimate(log.(Y))
+    alpha, beta, epsilon_ = Bit.estimate(log.(Y))
 
     @test isapprox(alpha, 0.971001709000414)
     @test isapprox(beta, 0.344659199612863)
@@ -33,7 +35,7 @@ using MAT
 
     Random.seed!(123)
     Yvec = vec(Y)
-    alpha, beta, epsilon_ = BeforeIT.estimate(log.(Yvec))
+    alpha, beta, epsilon_ = Bit.estimate(log.(Yvec))
     @test isapprox(alpha, 0.971001709000414)
     @test isapprox(beta, 0.344659199612863)
     @test isapprox(epsilon_, -0.00415932810164292)
@@ -71,7 +73,7 @@ using MAT
     ]
 
 
-    alpha, beta, sigma, epsilon_ = BeforeIT.estimate_for_calibration_script(dummy_series)
+    alpha, beta, sigma, epsilon_ = Bit.estimate_for_calibration_script(dummy_series)
 
     @test isapprox(alpha, alpha_e)
     @test isapprox(beta, beta_e)

@@ -1,4 +1,6 @@
 
+import BeforeIT as Bit
+
 using MAT, FileIO, Dates
 
 dir = @__DIR__
@@ -6,12 +8,10 @@ dir = @__DIR__
 parameters_mat = matread(joinpath(dir, "matlab_code/italy_calibration/parameters/2010Q1.mat"))
 initial_conditions_mat = matread(joinpath(dir, "matlab_code/italy_calibration/initial_conditions/2010Q1.mat"))
 
-using BeforeIT
-
-calibration_data = BeforeIT.ITALY_CALIBRATION.calibration
-figaro = BeforeIT.ITALY_CALIBRATION.figaro
-data = BeforeIT.ITALY_CALIBRATION.data
-ea = BeforeIT.ITALY_CALIBRATION.ea
+calibration_data = Bit.ITALY_CALIBRATION.calibration
+figaro = Bit.ITALY_CALIBRATION.figaro
+data = Bit.ITALY_CALIBRATION.data
+ea = Bit.ITALY_CALIBRATION.ea
 
 # define a calibration period
 start_calibration_date = DateTime(2010, 03, 31)
@@ -20,7 +20,7 @@ estimation_date = DateTime(1996, 12, 31)
 
 # Calibrate on a specific quarter
 calibration_date = DateTime(2010, 03, 31)#-Dates.Month(3)
-parameters, initial_conditions = BeforeIT.get_params_and_initial_conditions(
+parameters, initial_conditions = Bit.get_params_and_initial_conditions(
     (calibration = calibration_data,
     figaro = figaro,
     data = data,

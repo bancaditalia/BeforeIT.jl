@@ -1,4 +1,7 @@
-using BeforeIT, Test
+
+import BeforeIT as Bit
+
+using Test
 
 @testset "test bank actions" begin
 
@@ -10,7 +13,7 @@ using BeforeIT, Test
         r_bar = 0.10
         r = 0.05
         expected_profits = 0.3
-        Pi_k = BeforeIT._bank_profits(L_i, D_i, D_h, D_k, r_bar, r)
+        Pi_k = Bit._bank_profits(L_i, D_i, D_h, D_k, r_bar, r)
         @test isapprox(Pi_k, expected_profits, atol = 1e-10)
     end
 
@@ -19,11 +22,11 @@ using BeforeIT, Test
         theta_DIV = 0.01
         tau_FIRM = 0.2
         expected_net_profits = 0.792
-        DE_k = BeforeIT._bank_net_profits(Pi_k, theta_DIV, tau_FIRM)
+        DE_k = Bit._bank_net_profits(Pi_k, theta_DIV, tau_FIRM)
         @test isapprox(DE_k, expected_net_profits, atol = 1e-10)
         Pi_k = -1.0
         expected_net_profits = -1.0
-        DE_k = BeforeIT._bank_net_profits(Pi_k, theta_DIV, tau_FIRM)
+        DE_k = Bit._bank_net_profits(Pi_k, theta_DIV, tau_FIRM)
         @test isapprox(DE_k, expected_net_profits, atol = 1e-10)
     end
 
@@ -32,7 +35,7 @@ using BeforeIT, Test
         pi_e = 0.1
         gamma_e = 0.2
         expected_profits = 1.32
-        Pi_k = BeforeIT._bank_expected_profits(Pi_k, pi_e, gamma_e)
+        Pi_k = Bit._bank_expected_profits(Pi_k, pi_e, gamma_e)
         @test isapprox(Pi_k, expected_profits, atol = 1e-10)
     end
 
@@ -50,7 +53,7 @@ using BeforeIT, Test
         bE_k = 6.0
         fL_i = 6.0
         expected_deposits = 30.0
-        D_h = BeforeIT._bank_deposits(waD_h, wiD_h, fD_h, bD_h, fD_i, bE_k, fL_i)
+        D_h = Bit._bank_deposits(waD_h, wiD_h, fD_h, bD_h, fD_i, bE_k, fL_i)
         @test isapprox(D_h, expected_deposits, atol = 1e-10)
     end
 
