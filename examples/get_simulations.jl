@@ -17,7 +17,7 @@ for year in 2010:2019
         T = 12
         model = BeforeIT.init_model(parameters, initial_conditions, T)
         n_sims = 4
-        data_vector = BeforeIT.run_n_sims(model, n_sims)
+        data_vector = BeforeIT.ensemblerun(model, n_sims)
         save("data/italy/simulations/" * string(year) * "Q" * string(quarter) * ".jld2", "data_vector", data_vector)
     end
 end

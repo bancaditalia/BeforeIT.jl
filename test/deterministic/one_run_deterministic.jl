@@ -8,7 +8,7 @@
         model = BeforeIT.init_model(parameters, initial_conditions, T;)
         data = BeforeIT.init_data(model)
         for t in 1:(T - 1)
-            BeforeIT.run_one_epoch!(model; multi_threading = m)
+            BeforeIT.step!(model; multi_threading = m)
             BeforeIT.update_data!(data, model)
         end
         return model, data   

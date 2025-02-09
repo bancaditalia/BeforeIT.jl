@@ -15,7 +15,7 @@ T = 20
 model = Bit.init_model(parameters, initial_conditions, T);
 
 # Simulate the model for T quarters
-data_vec_baseline = Bit.run_n_sims(model, 4)
+data_vec_baseline = Bit.ensemblerun(model, 4)
 
 # Now, apply a shock to the model and simulate it again.
 # A shock is simply a function that takes the model and changes some of
@@ -42,7 +42,7 @@ end
 # and run a shocked simulation
 
 custom_shock = CustomShock(0.0, 10)
-data_vec_shocked = Bit.run_n_sims(model, 4; shock = custom_shock)
+data_vec_shocked = Bit.ensemblerun(model, 4; shock = custom_shock)
 
 # Finally, we can plot baseline and shocked simulations
 

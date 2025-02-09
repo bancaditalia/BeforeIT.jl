@@ -18,7 +18,7 @@ data = Bit.init_data(model);
 
 # Simulate the model for T quarters
 
-data_vec_baseline = Bit.run_n_sims(model, 4)
+data_vec_baseline = Bit.ensemblerun(model, 4)
 
 # Now, apply a shock to the model and simulate it again
 # Here, we do this by overloading the central_bank_rate function with the wanted behaviour
@@ -36,7 +36,7 @@ function central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     end
 end
 
-data_vec_shocked = Bit.run_n_sims(model, 4)
+data_vec_shocked = Bit.ensemblerun(model, 4)
 
 # Finally, we can plot baseline and shocked simulations
 

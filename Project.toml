@@ -1,10 +1,11 @@
 name = "BeforeIT"
 uuid = "ca9fcad7-41d0-4f76-b1e5-366c28bce52e"
 authors = ["Aldo Glielmo <aldo.glielmo@bancaditalia.it>", "Mitja Devetak <m888itja@gmail.com>", "Adriano Meligrana <adrianomeligrana@proton.me>"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 ChunkSplitters = "ae650224-84b6-46f8-82ea-d812ca08434e"
+CommonSolve = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 DynamicSampling = "2083aeaf-6258-5d07-89fc-32cf5060c837"
@@ -22,6 +23,7 @@ StatsPlots = "f3b207a7-027a-5e70-b257-86293d7955fd"
 
 [compat]
 ChunkSplitters = "3"
+CommonSolve = "0.2"
 Dates = "1"
 Distributions = "0.25"
 DynamicSampling = "0.4"

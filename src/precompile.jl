@@ -8,7 +8,7 @@ using PrecompileTools
     @compile_workload let
         model = BeforeIT.init_model(parameters, initial_conditions, T)
 	data = BeforeIT.init_data(model);
-	BeforeIT.run_one_epoch!(model)
+	BeforeIT.step!(model)
 	BeforeIT.update_data!(data, model)
     end
 end

@@ -10,7 +10,7 @@ model = BeforeIT.init_model(parameters, initial_conditions, T)
 data = BeforeIT.init_data(model)
 
 n_sims = 3
-data_vector = BeforeIT.run_n_sims(model, n_sims)
+data_vector = BeforeIT.ensemblerun(model, n_sims)
 
 @test length(data_vector) == n_sims
 @test typeof(data_vector) == Vector{BeforeIT.Data}
