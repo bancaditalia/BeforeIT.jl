@@ -1,6 +1,22 @@
 BeforeIT Release Notes
 ======================
 
+0.3.0 (February 2025)
+------------------
+
+* Some refactoring of market functions by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/36
+* Use ChunkSplitters for multithreading by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/39
+* Added missing changes due to renaming initalis/ze_model by @petres in https://github.com/bancaditalia/BeforeIT.jl/pull/40
+* Add 1:1 benchmarks results by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/37
+* More efficient credit market loop by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/41
+* Rename model stepping functions by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/42
+* Use import BeforeIT as Bit everywhere by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/43
+
+## New Contributors
+* @petres made their first contribution in https://github.com/bancaditalia/BeforeIT.jl/pull/40
+
+**Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.2.0...v0.3.0
+
 0.2.0 (Nov 2024)
 ------------------
 
