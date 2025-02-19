@@ -5,69 +5,93 @@
 # results with the unshocked model.
 
 import BeforeIT as Bit
-
-using Plots, StatsPlots
+import StatsBase: mean, std
+using Plots
 
 parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 # Initialise the model and the data collector
-T = 20
+
+T = 16
 model = Bit.init_model(parameters, initial_conditions, T);
 
-# Simulate the model for T quarters
-data_vec_baseline = Bit.ensemblerun(model, 4)
+# Simulate the baseline model for T quarters, N_reps times, and collect the data
+
+N_reps = 64
+data_vec_baseline = Bit.ensemblerun(model, N_reps)
 
 # Now, apply a shock to the model and simulate it again.
 # A shock is simply a function that takes the model and changes some of
 # its parameters for a specific time period.
+# We do this by first defining a "struct" with useful attributes.
+# For example, we can define an productivity and a consumption shock with the following structs
 
-# In this case, let's define an interest rate shock that sets the interest
-# rate for a number of epochs.
-
-# We do this by first defining a "struct" with some useful attributes
-struct CustomShock
-    rate::Float64    # target rate for the first 10 epochs
-    final_time::Int  # number of epochs for the shock
+struct ProductivityShock
+    productivity_multiplier::Float64    # productivity multiplier
 end
 
-# and then by making the struct a callable function that changes the interest
-# rate in the model, this is done in Julia using the syntax below
-function (s::CustomShock)(model::Bit.Model)
-    if model.agg.t <= s.final_time
-        model.cb.r_bar = s.rate
+struct ConsumptionShock
+    consumption_multiplier::Float64    # productivity multiplier
+    final_time::Int
+end
+
+# and then by making the structs callable functions that change the parameters of the model,
+# this is done in Julia using the syntax below
+
+# A permanent change in the labour productivities by the factor s.productivity_multiplier
+
+function (s::ProductivityShock)(model::Bit.Model)
+    model.firms.alpha_bar_i .= model.firms.alpha_bar_i .* s.productivity_multiplier
+end
+
+# A temporary change in the propensity to consume model.prop.psi by the factor s.consumption_multiplier
+
+function (s::ConsumptionShock)(model::Bit.Model)    
+    if model.agg.t == 1
+        model.prop.psi = model.prop.psi * s.consumption_multiplier
+    elseif model.agg.t == s.final_time
+        model.prop.psi = model.prop.psi / s.consumption_multiplier
     end
 end
 
-# Now we define a specific shock with a rate of 0.01 for the first 10 epochs,
-# and run a shocked simulation
+# Define specific shocks, for example a 2% increase in productivity 
 
-custom_shock = CustomShock(0.0, 10)
-data_vec_shocked = Bit.ensemblerun(model, 4; shock = custom_shock)
+productivity_shock = ProductivityShock(1.02)
 
-# Finally, we can plot baseline and shocked simulations
+# or a 4 quarters long 2% increase in consumption
 
-Te = T + 1
-StatsPlots.errorline(
-    1:Te,
-    data_vec_baseline.real_gdp,
-    errortype = :sem,
-    label = "baseline",
-    titlefont = 10,
+consumption_shock = ConsumptionShock(1.02, 4)
+
+# Simulate the model with the shock
+
+data_vec_shocked = Bit.ensemblerun(model, N_reps; shock = consumption_shock)
+
+# Compute mean and standard error of GDP for the baseline and shocked simulations
+
+mean_gdp_baseline = mean(data_vec_baseline.real_gdp, dims = 2)
+mean_gdp_shocked = mean(data_vec_shocked.real_gdp, dims = 2)
+sem_gdp_baseline = std(data_vec_baseline.real_gdp, dims = 2) / sqrt(N_reps)
+sem_gdp_shocked = std(data_vec_shocked.real_gdp, dims = 2) / sqrt(N_reps)
+
+# Compute the ratio of shocked to baseline GDP
+
+gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline
+
+# the standard error on a ratio of two variables is computed with the error propagation formula
+
+sem_gdp_ratio = gdp_ratio .* ((sem_gdp_baseline ./ mean_gdp_baseline).^2 .+ (sem_gdp_shocked ./ mean_gdp_shocked).^2).^0.5
+
+# Finally, we can plot the impulse response curve
+
+plot(
+    1:T+1,
+    gdp_ratio,
+    ribbon = sem_gdp_ratio,
+    fillalpha = 0.2,
+    label = "",
     xlabel = "quarters",
-    ylabel = "GDP",
-)
-StatsPlots.errorline!(
-    1:Te,
-    data_vec_shocked.real_gdp,
-    errortype = :sem,
-    label = "shock",
-    titlefont = 10,
-    xlabel = "quarters",
-    ylabel = "GDP",
+    ylabel = "GDP change",
 )
 
-# Note that, importantly, once the function `central_bank_rate` has been changed,
-# the model will use the new interest rate in all the simulations, unless the function
-# is changed again. To restore the original interest rate, we can simply re-import the
-# function `central_bank_rate`.
+# We can save the figure using: savefig("gdp_shock.png")
