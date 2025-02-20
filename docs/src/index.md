@@ -63,6 +63,7 @@ Copyright 2024 - Banca d'Italia and the authors.
 
 - [Sebastian Poledna](https://github.com/sebastianpoledna) <[poledna@iiasa.ac.at](mailto:poledna@iiasa.ac.at)>
 - [Marco Benedetti](https://www.bankit.art/people/marco-benedetti)
+- [Claudia Biancotti](https://www.bankit.art/people/claudia-biancotti)
 - [Sara Corbo](https://www.bankit.art/people/sara-corbo) for the logo design
 - [Andrea Gentili](https://www.bankit.art/people/andrea-gentili) for suggesting the name of the pakege
 - [Arnau Quera-Bofarull](https://github.com/arnauqb) for help in the deployment of the documentation
