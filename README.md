@@ -100,6 +100,8 @@ julia --project=. main.jl
 Extensive documentation on how to use the package is available [here](https://bancaditalia.github.io/BeforeIT.jl/dev/).
 We suggest following the steps in [this tutorial](https://bancaditalia.github.io/BeforeIT.jl/dev/examples/basic_example.html) to quickly learn the basics.
 
+Furthermore, we suggest reading the software description available [here](https://arxiv.org/abs/2502.13267).
+
 ## Download Source Code and Run Tests
 
 ### Clone the Repository
@@ -150,6 +152,20 @@ julia --proj test/runtests.jl
   </tr>
 </table>
 
+## Citing _BeforeIT_
+
+If you found _BeforeIT_ useful for your research, please cite the following software description
+
+```bib
+@article{glielmo2025beforeit,
+  title={BeforeIT. jl: High-Performance Agent-Based Macroeconomics Made Easy},
+  author={Glielmo, Aldo and Devetak, Mitja and Meligrana, Adriano and Poledna, Sebastian},
+  journal={arXiv preprint arXiv:2502.13267},
+  year={2025}
+}
+```
+
+and do not hesitate to get in touch to include your extension in the next release of the package and software description.
 
 ## Disclaimer
 

@@ -70,6 +70,21 @@ Copyright 2024 - Banca d'Italia and the authors.
 - [Steven Hoekstra](https://github.com/SGHoekstra) for fixing a bug in a script
 - [Peter Reschenhofer](https://github.com/petres) for fixing a bug in a script
 
+## Citing _BeforeIT_
+
+A software description of the package is available [here](https://arxiv.org/abs/2502.13267). If you found _BeforeIT_ useful for your research, please cite it
+
+```bib
+@article{glielmo2025beforeit,
+  title={BeforeIT. jl: High-Performance Agent-Based Macroeconomics Made Easy},
+  author={Glielmo, Aldo and Devetak, Mitja and Meligrana, Adriano and Poledna, Sebastian},
+  journal={arXiv preprint arXiv:2502.13267},
+  year={2025}
+}
+```
+
+and do not hesitate to get in touch to include your extension in the next release of the package and software description.
+
 ## Disclaimer
 
 This package is an outcome of a research project. All errors are those of
