@@ -30,6 +30,35 @@ function plot_data_vector(data_vector::DataVector; titlefont = 9, quantities = d
 	return ps
 end
 
+# plot multiple data vectors, one line for each vector
+function plot_data_vectors(data_vectors; titlefont = 9, quantities = Bit.default_quantities)
+	Te = length(data_vectors[1].vector[1].wages)
+	
+	ps = []
+
+	for q in quantities
+		# define title via the table only if the entry exists
+		title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
+		if q == :gdp_deflator
+            dv = data_vectors[1]
+            p = errorline(1:Te, dv.nominal_gdp ./ dv.real_gdp, errorstyle = :ribbon, title = title, titlefont = titlefont, legend = false);
+            for dv in data_vectors[2:end]
+                errorline!(1:Te, dv.nominal_gdp ./ dv.real_gdp, errorstyle = :ribbon, titlefont = titlefont, legend = false);
+            end
+			push!(ps, p)
+		else
+            dv = data_vectors[1]
+            p = errorline(1:Te, getproperty(dv, q), errorstyle = :ribbon, title = title, titlefont = titlefont, legend = false);
+            for dv in data_vectors[2:end]  
+                errorline!(1:Te, getproperty(dv, q), errorstyle = :ribbon, titlefont = titlefont, legend = false);
+            end
+    		push!(ps, p)
+		end
+	end
+	return ps
+end
+
+
 function plot_data(data::Data; titlefont = 9, quantities = default_quantities)
 	ps = []
 	for q in quantities

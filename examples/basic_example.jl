@@ -4,7 +4,7 @@
 
 import BeforeIT as Bit
 
-using FileIO, Plots
+using Plots
 
 # We then initialise the model loading some precomputed set of parameters and by specifying a number of epochs.
 # In another tutorial we will illustrate how to compute parameters and initial conditions.
