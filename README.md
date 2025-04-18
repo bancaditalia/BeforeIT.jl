@@ -127,8 +127,8 @@ julia --proj test/runtests.jl
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/AldoGl">
-        <img src="https://avatars.githubusercontent.com/AldoGl" width="100px;" alt="Aldo Glielmo"/><br />
+      <a href="https://github.com/aldoglielmo">
+        <img src="https://avatars.githubusercontent.com/aldoglielmo" width="100px;" alt="Aldo Glielmo"/><br />
         <sub><b>Aldo Glielmo</b></sub>
       </a><br />
       <p>Banca d'Italia </p>

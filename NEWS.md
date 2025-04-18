@@ -20,7 +20,7 @@ BeforeIT Release Notes
 0.2.0 (Nov 2024)
 ------------------
 
-* Better initialisation by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/13
+* Better initialisation by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/13
 * Plotting utility function by @Devetak in https://github.com/bancaditalia/BeforeIT.jl/pull/14
 * Update get_predictions_from_sims.jl by @SGHoekstra in https://github.com/bancaditalia/BeforeIT.jl/pull/15
 * Use `matlab_round` instead of `round` to fix precompilation issues by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/16
@@ -33,9 +33,9 @@ BeforeIT Release Notes
 * Update calibration_script.jl by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/24
 * Use inplace conversion by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/27
 * Deploy docs improvements by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/29
-* Improve data structs by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/31
+* Improve data structs by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/31
 * Use a dynamic sampler to speed-up weighted sampling by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/30
-* refactor: one_epoch! -> run_one_epoch! by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/32
+* refactor: one_epoch! -> run_one_epoch! by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/32
 * Use threads local sums of C_h and I_h to reduce memory consumption  by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/33
 * General docs improvements by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/34
 
@@ -48,19 +48,19 @@ BeforeIT Release Notes
 0.1.2 (June 2024)
 ------------------
 
-* Docs deploy by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/6
-* Deploy docs on website [WIP] by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/8
-* docs: small update by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/10
+* Docs deploy by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/6
+* Deploy docs on website [WIP] by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/8
+* docs: small update by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/10
 * Modularisation by @Devetak in https://github.com/bancaditalia/BeforeIT.jl/pull/9
-* Modular initialisation function by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/11
+* Modular initialisation function by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/11
 
 0.1.1 (May 2024)
 ------------------
 
 * Pre registration fixes by @Devetak in https://github.com/bancaditalia/BeforeIT.jl/pull/1
 * Use mutable named tuples by @Devetak in https://github.com/bancaditalia/BeforeIT.jl/pull/2
-* Cleaner tests by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/3
-* Cleaner tests by @AldoGl in https://github.com/bancaditalia/BeforeIT.jl/pull/4
+* Cleaner tests by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/3
+* Cleaner tests by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/4
 
 0.1.0 (April 2024)
 ------------------

@@ -55,7 +55,7 @@ Copyright 2024 - Banca d'Italia and the authors.
 
 ## Main developers and maintainers
 
-- [Aldo Glielmo](https://github.com/AldoGl) <[aldo.glielmo@bancaditalia.it](mailto:aldo.glielmo@bancaditalia.it)>
+- [Aldo Glielmo](https://github.com/aldoglielmo) <[aldo.glielmo@bancaditalia.it](mailto:aldo.glielmo@bancaditalia.it)>
 - [Mitja Devetak](https://github.com/Devetak) <[m888itja@gmail.com](mailto:m888itja@gmail.com)>
 - [Adriano Meligrana](https://github.com/Tortar) <[adrianomeligrana@proton.me](mailto:adrianomeligrana@proton.me)>
 
