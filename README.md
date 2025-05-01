@@ -158,7 +158,7 @@ If you found _BeforeIT_ useful for your research, please cite the following soft
 
 ```bib
 @article{glielmo2025beforeit,
-  title={BeforeIT. jl: High-Performance Agent-Based Macroeconomics Made Easy},
+  title={BeforeIT.jl: High-Performance Agent-Based Macroeconomics Made Easy},
   author={Glielmo, Aldo and Devetak, Mitja and Meligrana, Adriano and Poledna, Sebastian},
   journal={arXiv preprint arXiv:2502.13267},
   year={2025}
