@@ -7,7 +7,7 @@ year_ = 2010
 number_years = 9#10
 number_quarters = 4 * number_years
 horizon = 12#12
-number_seeds = 4
+number_seeds = 10
 number_sectors = 62
 
 # Load the real time series
