@@ -1,10 +1,11 @@
 @testset "initialize deterministic" begin
-    T = 3
-    dir = @__DIR__
 
-    parameters = BeforeIT.AUSTRIA2010Q1.parameters
-    initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
-    model = BeforeIT.init_model(parameters, initial_conditions, 1)
+    dir = @__DIR__
+    T = 3
+
+    parameters = Bit.AUSTRIA2010Q1.parameters
+    initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+    model = Bit.init_model(parameters, initial_conditions, 1)
 
     properties = model.prop
 

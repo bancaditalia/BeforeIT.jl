@@ -1,4 +1,7 @@
-using BeforeIT, Test
+
+import BeforeIT as Bit
+
+using Test
 
 @testset "test estimations actions" begin
 
@@ -16,7 +19,7 @@ using BeforeIT, Test
         P_bar = 2.0
         expected_inflation = log(14 / 12)
         expected_priceindex = 14 / 6
-        inflation, priceindex = BeforeIT.inflation_priceindex(P_i, Y_i, P_bar)
+        inflation, priceindex = Bit.inflation_priceindex(P_i, Y_i, P_bar)
         @test isapprox(inflation, expected_inflation, atol = 1e-10)
     end
 
@@ -26,7 +29,7 @@ using BeforeIT, Test
         P_m = 2.0
         Q_m = 1.0
         expected_priceindex = 16 / 7
-        priceindex = BeforeIT._sector_specific_priceindex(P_i, Y_i, P_m, Q_m)
+        priceindex = Bit._sector_specific_priceindex(P_i, Y_i, P_m, Q_m)
         @test isapprox(priceindex, expected_priceindex, atol = 1e-10)
     end
 

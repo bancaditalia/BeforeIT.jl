@@ -1,19 +1,22 @@
-using BeforeIT, MAT, FileIO, Random
+
+import BeforeIT as Bit
+
+using MAT, FileIO, Random
 using Test
 
 @testset "accounting identities" begin
     dir = @__DIR__
 
-    parameters = BeforeIT.AUSTRIA2010Q1.parameters
-    initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+    parameters = Bit.AUSTRIA2010Q1.parameters
+    initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
     T = 1
-    model = BeforeIT.init_model(parameters, initial_conditions, T)
-    data = BeforeIT.init_data(model)
+    model = Bit.init_model(parameters, initial_conditions, T)
+    data = Bit.init_data(model)
 
     for t in 1:T
-        BeforeIT.one_epoch!(model; multi_threading = false)
-        BeforeIT.update_data!(data, model)
+        Bit.step!(model; multi_threading = false)
+        Bit.update_data!(data, model)
     end
 
     # income accounting and production accounting should be equal

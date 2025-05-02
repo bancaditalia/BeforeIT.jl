@@ -29,12 +29,21 @@ function pos(vector::AbstractArray)
     return r
 end
 
-function pos(number::T) where {T <: Number}
-    if isnan(number) || number < zero(T)
-        return zero(T)
-    else
-        return number
+@inline function pos(x::T) where {T <: Number}
+    return isnan(x) || x < zero(T) ? zero(T) : x
+end
+
+"""
+    pos!(vector) -> vector
+
+In-place version of `pos`. Mimicks max(0, vector) in Matlab. 
+Returns the updated vector.
+"""
+function pos!(A)
+    @simd for i in eachindex(A)
+        A[i] = ifelse(isnan(A[i]), zero(eltype(A)), max(zero(eltype(A)), A[i]))
     end
+    return A
 end
 
 """
@@ -68,16 +77,25 @@ function neg(vector::AbstractArray)
     return r
 end
 
-function neg(number::T) where {T <: Number}
-    if isnan(number) || number > zero(T)
-        return zero(T)
-    else
-        return number
+@inline function neg(x::T) where {T <: Number}
+    return isnan(x) || x > zero(T) ? zero(T) : x
+end
+
+"""
+    neg!(vector) -> vector
+
+In-place version of `neg`. Mimicks min(0, vector) in Matlab. 
+Returns the updated vector.
+"""
+function neg!(A)
+    @simd for i in eachindex(A)
+        A[i] = ifelse(isnan(A[i]), zero(eltype(A)), min(zero(eltype(A)), A[i]))
     end
+    return A
 end
 
 # like in the original code
-function round(x)
+function matlab_round(x)
     return Base.round(x, RoundNearestTiesUp)
 end
 

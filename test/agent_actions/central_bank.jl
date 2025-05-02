@@ -1,4 +1,7 @@
-using BeforeIT, Test
+
+import BeforeIT as Bit
+
+using Test
 
 @testset "test central bank actions" begin
 
@@ -12,7 +15,7 @@ using BeforeIT, Test
         gamma_EA = 0.1
         pi_EA = 0.1
         expected_rate = 0.0
-        rate = BeforeIT.taylor_rule(rho, r_bar, r_star, pi_star, xi_pi, xi_gamma, gamma_EA, pi_EA)
+        rate = Bit.taylor_rule(rho, r_bar, r_star, pi_star, xi_pi, xi_gamma, gamma_EA, pi_EA)
         @test isapprox(rate, expected_rate, atol = 1e-10)
 
     end

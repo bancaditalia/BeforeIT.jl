@@ -30,11 +30,10 @@ Literate.markdown(joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; 
 Literate.markdown(joinpath(indir, "change_expectations.jl"), outdir; credit = false)
 
 
-println("Documentation Build")
-
+@info "Building Documentation"
 makedocs(
     sitename = "BeforeIT.jl",
-    format = Documenter.HTML(prettyurls = false),
+    format = Documenter.HTML(prettyurls = false, size_threshold=409600),
     pages = [
         "Home" => "index.md",
         "Essentials" => "examples/basic_example.md",
@@ -47,4 +46,14 @@ makedocs(
     ],
 )
 
-deploydocs(;repo = "github.com/bancaditalia/BeforeIT.jl.git")
+@info "Deploying Documentation"
+CI = get(ENV, "CI", nothing) == "true" || get(ENV, "GITHUB_TOKEN", nothing) !== nothing
+if CI
+    deploydocs(
+        repo = "github.com/bancaditalia/BeforeIT.jl.git",
+        target = "build",
+        push_preview = true,
+        devbranch = "main",
+    )
+end
+println("Finished building and deploying docs.")

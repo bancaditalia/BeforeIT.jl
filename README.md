@@ -1,3 +1,8 @@
+
+[![](https://img.shields.io/badge/docs-dev-blue.svg)](https://bancaditalia.github.io/BeforeIT.jl/dev/)
+[![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
+
+
 <div align='center'>
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/bancaditalia/BeforeIT.jl/main/docs/logo/logo_white_text.png">
@@ -57,14 +62,14 @@ Pkg.instantiate()
 Now you should be able to run the the following code
 
 ```julia
-using BeforeIT
+import BeforeIT as Bit
 
-parameters = BeforeIT.AUSTRIA2010Q1.parameters
-initial_conditions = BeforeIT.AUSTRIA2010Q1.initial_conditions
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 20
-model = BeforeIT.initialise_model(parameters, initial_conditions, T)
-data = BeforeIT.run_one_sim!(model)
+model = Bit.init_model(parameters, initial_conditions, T)
+data = Bit.run!(model)
 ```
 
 This will simulate the model with the original Austrian parametrisation for 20 quarters and save the results in the `data` object.
@@ -95,6 +100,8 @@ julia --project=. main.jl
 Extensive documentation on how to use the package is available [here](https://bancaditalia.github.io/BeforeIT.jl/dev/).
 We suggest following the steps in [this tutorial](https://bancaditalia.github.io/BeforeIT.jl/dev/examples/basic_example.html) to quickly learn the basics.
 
+Furthermore, we suggest reading the software description available [here](https://arxiv.org/abs/2502.13267).
+
 ## Download Source Code and Run Tests
 
 ### Clone the Repository
@@ -120,8 +127,8 @@ julia --proj test/runtests.jl
 <table>
   <tr>
     <td align="center">
-      <a href="https://github.com/AldoGl">
-        <img src="https://avatars.githubusercontent.com/AldoGl" width="100px;" alt="Aldo Glielmo"/><br />
+      <a href="https://github.com/aldoglielmo">
+        <img src="https://avatars.githubusercontent.com/aldoglielmo" width="100px;" alt="Aldo Glielmo"/><br />
         <sub><b>Aldo Glielmo</b></sub>
       </a><br />
       <p>Banca d'Italia </p>
@@ -134,9 +141,31 @@ julia --proj test/runtests.jl
       </a><br />
       <p>Paris 1: Pantheon - Sorbonne</p>
     </td>
+  <td align="center">
+      <a href="https://github.com/Tortar">
+        <img src="https://avatars.githubusercontent.com/Tortar" width="100px;" alt="Adriano Meligrana"/><br />
+        <sub><b>Adriano Meligrana</b></sub>
+      </a><br />
+      <p>University of Turin</p>
+      <p>Email: <a href="mailto:adrianomeligrana@proton.me:">adrianomeligrana@proton.me</a></p>
+    </td>
   </tr>
 </table>
 
+## Citing _BeforeIT_
+
+If you found _BeforeIT_ useful for your research, please cite the following software description
+
+```bib
+@article{glielmo2025beforeit,
+  title={BeforeIT.jl: High-Performance Agent-Based Macroeconomics Made Easy},
+  author={Glielmo, Aldo and Devetak, Mitja and Meligrana, Adriano and Poledna, Sebastian},
+  journal={arXiv preprint arXiv:2502.13267},
+  year={2025}
+}
+```
+
+and do not hesitate to get in touch to include your extension in the next release of the package and software description.
 
 ## Disclaimer
 

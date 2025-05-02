@@ -1,8 +1,15 @@
 module BeforeIT
 
+import Base: length
+
+using ChunkSplitters
+using DynamicSampling
+using LazyArrays
+using LinearAlgebra
 using Random
 using StatsBase
-import Base: round, length
+
+const Bit = BeforeIT
 
 # definition of agents
 include("model_init/agents.jl")
@@ -46,6 +53,7 @@ include("utils/epsilon.jl")
 include("utils/positive.jl")
 include("utils/toannual.jl")
 include("utils/get_predictions_from_sims.jl")
+include("utils/plot_data_vector.jl")
 
 # calibration
 include("utils/calibration.jl")
@@ -58,4 +66,7 @@ include("utils/standard_calibration_data.jl")
 
 # shocks
 include("shocks/shocks.jl")
+
+include("precompile.jl")
+
 end

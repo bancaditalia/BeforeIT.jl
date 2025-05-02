@@ -1,31 +1,69 @@
+"""
+    @data(AV = Vector{Float64}, AM = Matrix{Float64})
+
+A macro that defines default types for data structures used in the code. 
+
+# Arguments
+- `AV::Type`: The default type for vectors. Defaults to `Vector{Float64}`.
+- `AM::Type`: The default type for matrices. Defaults to `Matrix{Float64}`.
+
+# Usage
+This macro can be used to standardize the types of vectors and matrices across the codebase, ensuring consistency and reducing the need for repetitive type declarations.
+"""
+macro data(AV = Vector{Float64}, AM = Matrix{Float64})
+    return esc(quote
+        nominal_gdp::$AV
+        real_gdp::$AV
+        nominal_gva::$AV
+        real_gva::$AV
+        nominal_household_consumption::$AV
+        real_household_consumption::$AV
+        nominal_government_consumption::$AV
+        real_government_consumption::$AV
+        nominal_capitalformation::$AV
+        real_capitalformation::$AV
+        nominal_fixed_capitalformation::$AV
+        real_fixed_capitalformation::$AV
+        nominal_fixed_capitalformation_dwellings::$AV
+        real_fixed_capitalformation_dwellings::$AV
+        nominal_exports::$AV
+        real_exports::$AV
+        nominal_imports::$AV
+        real_imports::$AV
+        operating_surplus::$AV
+        compensation_employees::$AV
+        wages::$AV
+        taxes_production::$AV
+        gdp_deflator_growth_ea::$AV
+        real_gdp_ea::$AV
+        euribor::$AV
+        nominal_sector_gva::$AM
+        real_sector_gva::$AM
+    end)
+end
+
+
+# Define the Data struct
 struct Data{T, AV <: AbstractVector{T}, AM <: AbstractMatrix{T}}
-    nominal_gdp::AV
-    real_gdp::AV
-    nominal_gva::AV
-    real_gva::AV
-    nominal_household_consumption::AV
-    real_household_consumption::AV
-    nominal_government_consumption::AV
-    real_government_consumption::AV
-    nominal_capitalformation::AV
-    real_capitalformation::AV
-    nominal_fixed_capitalformation::AV
-    real_fixed_capitalformation::AV
-    nominal_fixed_capitalformation_dwellings::AV
-    real_fixed_capitalformation_dwellings::AV
-    nominal_exports::AV
-    real_exports::AV
-    nominal_imports::AV
-    real_imports::AV
-    operating_surplus::AV
-    compensation_employees::AV
-    wages::AV
-    taxes_production::AV
-    gdp_deflator_growth_ea::AV
-    real_gdp_ea::AV
-    euribor::AV
-    nominal_sector_gva::AM
-    real_sector_gva::AM
+    @data AV AM
+end
+
+# Define the DataVector struct
+struct DataVector
+    vector::Vector{Data}
+end
+
+# Define the getproperty function for the DataVector struct
+# This function allows for the extraction of fields from the Data struct
+# by using the dot syntax, e.g., data_vector.nominal_gdp
+function Base.getproperty(dv::DataVector, name::Symbol)
+    if name in fieldnames(Bit.Data)
+        # If the field name exists in the `a` struct, extract it from all elements
+        return hcat([getproperty(d, name) for d in dv.vector]...)
+    else
+        # Fallback to default behavior for other fields
+        return getfield(dv, name)
+    end
 end
 
 
@@ -92,6 +130,26 @@ function _update_data_init!(d, m)
 end
 
 
+"""
+    update_data!(d, m)
+
+Update the data `d` with the model `m`.
+
+# Arguments
+- `d`: The data structure to be updated.
+- `m`: The model used to update the data.
+
+# Returns
+- Nothing. The function updates the data structure `d` in place.
+
+# Example
+
+```julia
+data = Bit.init_data(model)
+step!(model)
+Bit.update_data!(data, model)
+```
+"""
 function update_data!(d, m)
     p = m.prop
     t = m.agg.t
@@ -176,6 +234,3 @@ function update_data!(d, m)
     d.real_gdp_ea[t] = m.rotw.Y_EA
 end
 
-# overloading "getproperty" to allow for easy access to data in a vector of data structs
-import Base: getproperty
-getproperty(a::Vector{Data}, v::Symbol) = hcat([getproperty(d, v) for d in a]...)

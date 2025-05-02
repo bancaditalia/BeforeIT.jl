@@ -12,7 +12,7 @@ date2num(d::Dates.DateTime) = Dates.value(d - MATLAB_EPOCH) / (1000 * 60 * 60 * 
 
 # imverse function of the above
 const MATLAB_EPOCH = Dates.DateTime(-1, 12, 31)
-num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(BeforeIT.round(Int64, n * 1000 * 60 * 60 * 24))
+num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(round(Int64, n * 1000 * 60 * 60 * 24))
 
 
 function get_params_and_initial_conditions(calibration_object, calibration_date; scale = 0.001)
@@ -92,7 +92,7 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     operating_surplus = operating_surplus - capital_consumption
     taxes_products_export = 0 # TODO: unelegant hard coded zero
     employers_social_contributions = min(social_contributions, sum(compensation_employees) - wages)
-    fixed_capitalformation = BeforeIT.pos(fixed_capitalformation)
+    fixed_capitalformation = Bit.pos(fixed_capitalformation)
     taxes_products_capitalformation_dwellings =
         gross_capitalformation_dwellings *
         (1 - 1 / (1 + taxes_products_fixed_capitalformation / sum(fixed_capitalformation)))
@@ -111,8 +111,8 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         (gross_capitalformation_dwellings - taxes_products_capitalformation_dwellings) * fixed_capitalformation /
         sum(fixed_capitalformation)
     fixed_capital_formation_other_than_dwellings = fixed_capitalformation - capitalformation_dwellings
-    exports = BeforeIT.pos(exports)
-    imports = BeforeIT.pos(
+    exports = Bit.pos(exports)
+    imports = Bit.pos(
         sum(intermediate_consumption, dims = 2) +
         household_consumption +
         government_consumption +
@@ -121,7 +121,7 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         capitalformation_dwellings +
         exports - output,
     )
-    reexports = BeforeIT.neg(
+    reexports = Bit.neg(
         sum(intermediate_consumption, dims = 2) +
         household_consumption +
         government_consumption +
@@ -133,7 +133,7 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     household_social_contributions = social_contributions - employers_social_contributions
     wages = compensation_employees * (1 - employers_social_contributions / sum(compensation_employees)) # Note: owerwrighting the wages variable here!
     household_income_tax = income_tax - corporate_tax
-    other_net_transfers = BeforeIT.pos(
+    other_net_transfers = Bit.pos(
         sum(taxes_products_household) +
         sum(taxes_products_capitalformation_dwellings) +
         sum(taxes_products_export) +
@@ -149,15 +149,15 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     disposable_income =
         sum(wages) + mixed_income + property_income + social_benefits + other_net_transfers -
         household_social_contributions - household_income_tax - capital_taxes
-    unemployed = BeforeIT.round(unemployment_rate_quarterly * sum(employees))
+    unemployed = matlab_round(unemployment_rate_quarterly * sum(employees))
     inactive = population - sum(max.(max.(1, firms), employees)) - unemployed - sum(max.(1, firms)) - 1
 
 
     # Scale number of firms and employees
-    firms = max.(1, BeforeIT.round.(scale * firms))
-    employees = max.(firms, BeforeIT.round.(scale * employees))
-    inactive = max.(1, BeforeIT.round.(scale * inactive))
-    unemployed = max.(1, BeforeIT.round.(scale * unemployed))
+    firms = max.(1, matlab_round.(scale * firms))
+    employees = max.(firms, matlab_round.(scale * employees))
+    inactive = max.(1, matlab_round.(scale * inactive))
+    unemployed = max.(1, matlab_round.(scale * unemployed))
 
 
     # Sector parameters
@@ -188,8 +188,8 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     S = G
     H_act = sum(employees) + unemployed + sum(firms) + 1
     H_inact = inactive
-    J = BeforeIT.round(sum(firms) / 4)
-    L = BeforeIT.round(sum(firms) / 2)
+    J = matlab_round(sum(firms) / 4)
+    L = matlab_round(sum(firms) / 2)
     mu = timescale * firm_interest / firm_debt_quarterly - r_bar
     tau_INC =
         (household_income_tax + capital_taxes) /
@@ -197,12 +197,12 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     tau_FIRM =
         timescale * corporate_tax / (
             sum(
-                BeforeIT.pos(
+                Bit.pos(
                     timescale * operating_surplus -
                     timescale * firm_interest * fixed_assets_other_than_dwellings /
                     sum(fixed_assets_other_than_dwellings) +
-                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) /
-                    sum(BeforeIT.pos(operating_surplus)),
+                    r_bar * firm_cash_quarterly * Bit.pos(operating_surplus) /
+                    sum(Bit.pos(operating_surplus)),
                 ),
             ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly)
         )
@@ -217,12 +217,12 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     theta_DIV =
         timescale * (mixed_income + property_income) / (
             sum(
-                BeforeIT.pos(
+                Bit.pos(
                     timescale * operating_surplus -
                     timescale * firm_interest * fixed_assets_other_than_dwellings /
                     sum(fixed_assets_other_than_dwellings) +
-                    r_bar * firm_cash_quarterly * BeforeIT.pos(operating_surplus) /
-                    sum(BeforeIT.pos(operating_surplus)),
+                    r_bar * firm_cash_quarterly * Bit.pos(operating_surplus) /
+                    sum(Bit.pos(operating_surplus)),
                 ),
             ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly) -
             timescale * corporate_tax
@@ -234,17 +234,17 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     zeta_LTV = 0.6
     zeta_b = 0.5
 
-    alpha_pi_EA, beta_pi_EA, sigma_pi_EA, epsilon_pi_EA = BeforeIT.estimate_for_calibration_script(
+    alpha_pi_EA, beta_pi_EA, sigma_pi_EA, epsilon_pi_EA = Bit.estimate_for_calibration_script(
         diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo])),
     )
     alpha_Y_EA, beta_Y_EA, sigma_Y_EA, epsilon_Y_EA =
-        BeforeIT.estimate_for_calibration_script(log.(ea["real_gdp_quarterly"][T_estimation_exo:T_calibration_exo]))
+        Bit.estimate_for_calibration_script(log.(ea["real_gdp_quarterly"][T_estimation_exo:T_calibration_exo]))
 
     a1 = (data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1) .^ (1 / 4) .- 1
     a2 = exp.(diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))) .- 1
     a3 = exp.(diff(log.(ea["real_gdp_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))) .- 1
 
-    rho, r_star, xi_pi, xi_gamma, pi_star = BeforeIT.estimate_taylor_rule(a1, a2, a3)
+    rho, r_star, xi_pi, xi_gamma, pi_star = Bit.estimate_taylor_rule(a1, a2, a3)
 
 
     G_est =
@@ -263,9 +263,9 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         data["real_imports_quarterly"][T_calibration_exo]
     I_est = log.(I_est)
 
-    alpha_G, beta_G, sigma_G, epsilon_G = BeforeIT.estimate_for_calibration_script(G_est)
-    alpha_E, beta_E, sigma_E, epsilon_E = BeforeIT.estimate_for_calibration_script(E_est)
-    alpha_I, beta_I, sigma_I, epsilon_I = BeforeIT.estimate_for_calibration_script(I_est)
+    alpha_G, beta_G, sigma_G, epsilon_G = Bit.estimate_for_calibration_script(G_est)
+    alpha_E, beta_E, sigma_E, epsilon_E = Bit.estimate_for_calibration_script(E_est)
+    alpha_I, beta_I, sigma_I, epsilon_I = Bit.estimate_for_calibration_script(I_est)
 
     C = cov([epsilon_Y_EA epsilon_E epsilon_I])
 

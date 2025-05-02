@@ -222,7 +222,7 @@ This is a Model type. It is used to store all the agents of the economy.
 - `rotw`: RestOfTheWorld
 - `agg`: Aggregates
 """
-mutable struct Model
+mutable struct Model <: AbstractModel
     w_act::AbstractWorkers
     w_inact::AbstractWorkers
     firms::AbstractFirms
