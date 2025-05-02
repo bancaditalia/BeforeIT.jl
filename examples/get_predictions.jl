@@ -8,13 +8,8 @@ using FileIO, Dates
 year_ = 2010
 number_years = 9
 number_quarters = 4 * number_years
-<<<<<<< HEAD
-horizon = 12#12
-number_seeds = 10
-=======
 horizon = 12
 number_seeds = 4
->>>>>>> 39461d94f9c31c1975004bec1ca9064eb1b3e4ec
 number_sectors = 62
 
 # Load the real time series
