@@ -91,17 +91,10 @@ function error_table_validation_var(country::String = "italy")
         
         latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-        if k == 1
-            open("data/" * country * "/analysis/rmse_validation_var.tex", "w") do fid
-                for line in latex
-                    write(fid, line * "\n")
-                end
-            end
-        else
-            open("data/" * country * "/analysis/rmse_validation_var_$(k).tex", "w") do fid
-                for line in latex
-                    write(fid, line * "\n")
-                end
+        idx = k == 1 ? "" : "_$(k)"
+        open("data/" * country * "/analysis/rmse_validation_var" * idx * ".tex", "w") do fid
+            for line in latex
+                write(fid, line * "\n")
             end
         end
         
