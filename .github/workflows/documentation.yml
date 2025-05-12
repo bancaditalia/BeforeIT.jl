@@ -6,13 +6,13 @@ permissions:
   statuses: write  # Optional, used to report documentation build statuses
 
 on:
-  push:
-    branches:
-      - main
   pull_request:
     branches:
       - main
-
+  push:
+    branches:
+      - main
+    tags: '*'
 concurrency:
   # Skip intermediate builds: always.
   # Cancel intermediate builds: only if it is a pull request build.
