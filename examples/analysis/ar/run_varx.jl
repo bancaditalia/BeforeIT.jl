@@ -11,34 +11,6 @@ using MAT
 
 country = "italy"
 
-# Load calibration data (with figaro input-output tables)
-
-year_ = 2010
-number_years = 7
-number_quarters = 4 * number_years
-quarters_num = []
-year_m = year_
-max_year = 2019
-
-for month in 4:3:((number_years + 1) * 12 + 1)
-
-    global year_m = year_ + (month ÷ 12)
-    mont_m = month % 12
-    date = DateTime(year_m, mont_m, 1) - Day(1)
-
-    push!(quarters_num, Bit.date2num(date))
-
-end
-horizon = 12
-number_variables = 8
-presample = 4
-number_seeds = 100
-
-data = matread(("data/" * country * "/calibration/data/1996.mat"))
-data = data["data"]
-ea = matread(("data/" * country * "/calibration/ea/1996.mat"))
-ea = ea["ea"]
-
 for i in 1:number_quarters
 #i=1
     model_dict = Dict{String, Any}()

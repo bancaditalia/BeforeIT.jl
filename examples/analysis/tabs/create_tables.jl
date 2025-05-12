@@ -1,10 +1,9 @@
-# This scripts calls all scripts to create tables for comparing forecasts of the abm and the baseline models (AR, ARX, VAR, VARX)
+
+# This scripts calls all scripts to create tables for comparing forecasts
+# of the abm and the baseline models (AR, ARX, VAR, VARX)
+
 import BeforeIT as Bit
 using LaTeXStrings, CSV, HDF5, MAT
-
-# Clear old files
-foreach(rm, filter(endswith(".h5"), readdir("./examples/analysis/tabs/",join=true)))
-foreach(rm, filter(endswith(".tex"), readdir("./examples/analysis/tabs/",join=true)))
 
 country = "italy"
 

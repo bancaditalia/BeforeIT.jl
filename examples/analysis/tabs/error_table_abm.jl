@@ -3,29 +3,9 @@ using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO
 
 function error_table_abm(country::String = "italy")
 
-    # Load calibration data (with figaro input-output tables)
-
-    year_ = 2010
-    number_years = 10
-    number_quarters = 4 * number_years
-    quarters_num = []
-    year_m = year_
-    max_year = 2019
-
-    for month in 4:3:((number_years + 1) * 12 + 1)
-        global year_m = year_ + (month ÷ 12)
-        mont_m = month % 12
-        date = DateTime(year_m, mont_m, 1) - Day(1)
-        push!(quarters_num, Bit.date2num(date))
-    end
-
     horizons = [1, 2, 4, 8, 12]
     number_horizons = length(horizons)
     number_variables = 5
-    presample = 4
-
-    data = matread(("data/" * country * "/calibration/data/1996.mat"))
-    data = data["data"]
 
     forecast = fill(NaN, number_quarters, number_horizons, number_variables)
     actual = fill(NaN, number_quarters, number_horizons, number_variables)
