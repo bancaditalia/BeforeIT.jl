@@ -80,3 +80,10 @@ number_seeds = 100
 
 data = matread(("data/" * country * "/calibration/data/1996.mat"))["data"]
 ea = matread(("data/" * country * "/calibration/ea/1996.mat"))["ea"]
+
+tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
+dataFormat = "%.2f"
+tableColumnAlignment = "r"
+tableBorders = false
+booktabs = false
+makeCompleteLatexDocument = false

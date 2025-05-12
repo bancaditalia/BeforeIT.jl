@@ -85,13 +85,6 @@ function error_table_ar(country::String = "italy")
             end
         end
 
-        tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
-        dataFormat = "%.2f"
-        tableColumnAlignment = "r"
-        tableBorders = false
-        booktabs = false
-        makeCompleteLatexDocument = false
-        
         latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
         if k == 1
