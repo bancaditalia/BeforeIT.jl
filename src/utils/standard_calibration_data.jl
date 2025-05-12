@@ -1,6 +1,6 @@
 using MAT, Dates
 
-dir = @__DIR__
+dir = joinpath(splitpath(dirname(pathof(@__MODULE__)))[1:end-1])
 
 nation = "italy"
 
