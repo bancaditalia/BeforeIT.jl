@@ -1,5 +1,3 @@
-import BeforeIT as Bit
-using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO, MAT
 
 function error_table_abm(country::String = "italy")
 
