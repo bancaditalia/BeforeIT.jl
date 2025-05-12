@@ -21,14 +21,12 @@ year_m = year_
 max_year = 2019
 
 for month in 4:3:((number_years + 1) * 12 + 1)
-
     global year_m = year_ + (month ÷ 12)
     mont_m = month % 12
     date = DateTime(year_m, mont_m, 1) - Day(1)
-
     push!(quarters_num, Bit.date2num(date))
-
 end
+
 horizon = 12
 number_variables = 8
 presample = 4
@@ -37,13 +35,9 @@ number_seeds = 100
 data = matread(("data/" * country * "/calibration/data/1996.mat"))
 data = data["data"]
 
-
-
 for i in 1:number_quarters
 #i=1
     model_dict = Dict{String, Any}()
-
-
     quarter_num = quarters_num[i]
     q = quarterofyear(DateTime(Bit.num2date(quarter_num)))
     year_num = Bit.date2num(DateTime(year(Bit.num2date(quarter_num)) + 1, 1, 1) - Day(1))
@@ -80,20 +74,13 @@ for i in 1:number_quarters
     V = fill(NaN, horizon, number_seeds, number_variables)
 
     for j = 1:number_seeds 
-        
         for l in 1:number_variables
             Y[:,l] = Bit.forecast_k_steps_VARX(Y0_diff[:,l], X_diff, horizon, intercept = true, lags = 1, stochastic = true)
         end
-
         Y[:, [1, 3, 4, 6, 7, 8]] = cumsum(Y[:, [1, 3, 4, 6, 7, 8]], dims =1)
-
-
         V[:, j, :] = Y
     end
     
-    
-
-
     real_gdp_growth_quarterly=data["real_gdp_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,1].-Y0[end,1]);
     model_dict["real_gdp_growth_quarterly"] = real_gdp_growth_quarterly .-1
     model_dict["real_gdp_growth_quarterly"] = [
@@ -196,7 +183,6 @@ for i in 1:number_quarters
     ]
     model_dict["real_household_consumption_growth"] = diff(log.(tmp), dims = 1)
 
-
     # calculate discrete compounding rate
     model_dict["real_household_consumption_growth"] = exp.(model_dict["real_household_consumption_growth"]) .- 1
     model_dict["real_household_consumption_growth"] = [
@@ -228,7 +214,6 @@ for i in 1:number_quarters
     ]
     model_dict["real_fixed_capitalformation_growth"] = diff(log.(tmp), dims = 1)
 
-
     # calculate discrete compounding rate
     model_dict["real_fixed_capitalformation_growth"] = exp.(model_dict["real_fixed_capitalformation_growth"]) .- 1
     model_dict["real_fixed_capitalformation_growth"] = [
@@ -236,8 +221,6 @@ for i in 1:number_quarters
         model_dict["real_fixed_capitalformation_growth"]
     ]
 
-  
-    
     real_government_consumption_growth_quarterly=data["real_government_consumption_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,6].-Y0[end,6]);
     model_dict["real_government_consumption_growth_quarterly"] = real_government_consumption_growth_quarterly .-1
     model_dict["real_government_consumption_growth_quarterly"] = [
@@ -261,11 +244,6 @@ for i in 1:number_quarters
         Bit.toannual(real_government_consumption_quarterly[(5 - q):(end - mod(q, 4)), :]')'
     ]
     model_dict["real_government_consumption_growth"] = diff(log.(tmp), dims = 1)
-
-
-
-    
-
     
     real_exports_growth_quarterly=data["real_exports_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,7].-Y0[end,7]);
     model_dict["real_exports_growth_quarterly"] = real_exports_growth_quarterly .-1
@@ -315,7 +293,6 @@ for i in 1:number_quarters
         Bit.toannual(real_imports_quarterly[(5 - q):(end - mod(q, 4)), :]')'
     ]
     model_dict["real_imports_quarterly_growth"] = diff(log.(tmp), dims = 1)
-
 
     save("data/" * country * "/arx/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2",                
         "model_dict",

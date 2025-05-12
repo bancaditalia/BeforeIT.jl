@@ -41,3 +41,19 @@ function latexTableContent(input_data::Matrix{String}, tableRowLabels::Vector{St
 
     return latex
 end
+
+# Helper functions for LaTeX table creation and stars notation
+function stars(p_value)
+    if p_value < 0.01
+        return "***"
+    elseif p_value < 0.05
+        return "**"
+    elseif p_value < 0.1
+        return "*"
+    else
+        return ""
+    end
+end
+
+nanmean(x) = mean(filter(!isnan,x))
+nanmean(x,y) = mapslices(nanmean,x; dims = y)

@@ -39,12 +39,9 @@ data = data["data"]
 ea = matread(("data/" * country * "/calibration/ea/1996.mat"))
 ea = ea["ea"]
 
-
-
 for i in 1:number_quarters
 #i=1
     model_dict = Dict{String, Any}()
-
 
     quarter_num = quarters_num[i]
     q = quarterofyear(DateTime(Bit.num2date(quarter_num)))
@@ -77,19 +74,11 @@ for i in 1:number_quarters
     V = fill(NaN, horizon, number_seeds, number_variables)
 
     for j = 1:number_seeds 
-        
-        
         Y= Bit.forecast_k_steps_VARX(Y0_diff, X_diff, horizon, intercept = true, lags = 1, stochastic = true)
-        
-
         Y[:, [1, 3, 4, 5, 6]] = cumsum(Y[:, [1, 3, 4, 5, 6]], dims =1)
-
-
         V[:, j, :] = Y
     end
     
-
-
     real_gdp_growth_quarterly=data["real_gdp_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,1].-Y0[end,1]);
     model_dict["real_gdp_growth_quarterly"] = real_gdp_growth_quarterly .-1
     model_dict["real_gdp_growth_quarterly"] = [
@@ -121,7 +110,6 @@ for i in 1:number_quarters
             repeat(data["real_gdp_growth"][data["years_num"] .== year_num], 1, number_seeds)
             model_dict["real_gdp_growth"]
         ]
-
 
     gdp_deflator_quarterly=data["gdp_deflator_quarterly"][data["quarters_num"] .== quarter_num].*exp.(cumsum(V[:,:,2], dims = 1));
     
@@ -167,7 +155,6 @@ for i in 1:number_quarters
         repeat(data["gdp_deflator_growth_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds)
         model_dict["gdp_deflator_growth_quarterly"]
     ]
-    
     
     real_government_consumption_growth_quarterly=data["real_government_consumption_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,6].-Y0[end,6]);
     model_dict["real_government_consumption_growth_quarterly"] = real_government_consumption_growth_quarterly .-1
@@ -243,9 +230,7 @@ for i in 1:number_quarters
     ]
     model_dict["real_imports_quarterly_growth"] = diff(log.(tmp), dims = 1)
     
-
     save("/data/" * country * "/varx/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2",                
         "model_dict",
         model_dict)
-
 end

@@ -3,25 +3,7 @@ using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO
 
 function error_table_validation_abm(country::String = "italy")
 
-
-    nanmean(x) = mean(filter(!isnan,x))
-    nanmean(x,y) = mapslices(nanmean,x; dims = y)
-
-    # Helper functions for LaTeX table creation and stars notation
-    function stars(p_value)
-        if p_value < 0.01
-            return "***"
-        elseif p_value < 0.05
-            return "**"
-        elseif p_value < 0.1
-            return "*"
-        else
-            return ""
-        end
-    end
-
     # Load calibration data (with figaro input-output tables)
-
 
     year_ = 2010
     number_years = 10
@@ -48,7 +30,6 @@ function error_table_validation_abm(country::String = "italy")
     data = data["data"]
     ea = matread(("data/" * country * "/calibration/ea/1996.mat"))
     ea = ea["ea"]
-
 
     forecast = fill(NaN, number_quarters, number_horizons, number_variables)
     actual = fill(NaN, number_quarters, number_horizons, number_variables)
@@ -112,7 +93,6 @@ function error_table_validation_abm(country::String = "italy")
     rmse_validation_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
     error_validation_var = forecast - actual
 
-
     input_data = - round.(100 * (rmse_validation_abm .- rmse_validation_var) ./ rmse_validation_var, digits=1)
     input_data_S = fill("", size(input_data))
     for j in 1:length(horizons)
@@ -124,7 +104,6 @@ function error_table_validation_abm(country::String = "italy")
             input_data_S[j, l] = string(input_data[j, l]) * "(" * string(round(p_value, digits=2)) *", "* string(stars(p_value)) * ")"
         end
     end
-
 
     tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
     dataFormat = "%.2f"
@@ -140,7 +119,6 @@ function error_table_validation_abm(country::String = "italy")
             write(fid, line * "\n")
         end
     end
-
 
     input_data = round.(bias_validation_abm, digits=4)
     input_data_S = fill("", size(input_data))

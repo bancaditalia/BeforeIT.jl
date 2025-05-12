@@ -39,11 +39,9 @@ data = data["data"]
 ea = matread(("data/" * country * "/calibration/ea/1996.mat"))
 ea = ea["ea"]
 
-
 for i in 1:number_quarters
 #i=1
     model_dict = Dict{String, Any}()
-
 
     quarter_num = quarters_num[i]
     q = quarterofyear(DateTime(Bit.num2date(quarter_num)))
@@ -67,26 +65,15 @@ for i in 1:number_quarters
     ])...)
 
     Y = zeros(horizon, number_variables)
-
     Y0_diff = diff(Y0; dims = 1)
-
     V = fill(NaN, horizon, number_seeds, number_variables)
 
     for j = 1:number_seeds 
-        
-        
         Y= Bit.forecast_k_steps_VAR(Y0_diff, horizon, intercept = true, lags = 1, stochastic = true)
-        
-
         Y[:, [1, 3, 4, 5, 6]] = cumsum(Y[:, [1, 3, 4, 5, 6]], dims =1)
-
-
         V[:, j, :] = Y
     end
     
-    
-
-
     real_gdp_growth_quarterly=data["real_gdp_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,1].-Y0[end,1]);
     model_dict["real_gdp_growth_quarterly"] = real_gdp_growth_quarterly .-1
     model_dict["real_gdp_growth_quarterly"] = [
@@ -189,11 +176,6 @@ for i in 1:number_quarters
         Bit.toannual(real_government_consumption_quarterly[(5 - q):(end - mod(q, 4)), :]')'
     ]
     model_dict["real_government_consumption_growth"] = diff(log.(tmp), dims = 1)
-
-
-
-    
-
     
     real_exports_growth_quarterly=data["real_exports_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,7].-Y0[end,7]);
     model_dict["real_exports_growth_quarterly"] = real_exports_growth_quarterly .-1
@@ -218,7 +200,6 @@ for i in 1:number_quarters
         Bit.toannual(real_exports_quarterly[(5 - q):(end - mod(q, 4)), :]')'
     ]
     model_dict["real_exports_growth"] = diff(log.(tmp), dims = 1)
-
 
     real_imports_growth_quarterly=data["real_imports_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,8].-Y0[end,8]);
     model_dict["real_imports_growth_quarterly"] = real_imports_growth_quarterly .-1
@@ -247,5 +228,4 @@ for i in 1:number_quarters
     save("data/" * country * "/var/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2",                
         "model_dict",
         model_dict)
-
 end

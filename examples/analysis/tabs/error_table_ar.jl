@@ -3,24 +3,7 @@ using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO
 
 function error_table_ar(country::String = "italy")
 
-    nanmean(x) = mean(filter(!isnan,x))
-    nanmean(x,y) = mapslices(nanmean,x; dims = y)
-
-    # Helper functions for LaTeX table creation and stars notation
-    function stars(p_value)
-        if p_value < 0.01
-            return "***"
-        elseif p_value < 0.05
-            return "**"
-        elseif p_value < 0.1
-            return "*"
-        else
-            return ""
-        end
-    end
-
     # Load calibration data (with figaro input-output tables)
-
 
     year_ = 2010
     number_years = 10
@@ -30,25 +13,21 @@ function error_table_ar(country::String = "italy")
     max_year = 2019
 
     for month in 4:3:((number_years + 1) * 12 + 1)
-
         global year_m = year_ + (month ÷ 12)
         mont_m = month % 12
         date = DateTime(year_m, mont_m, 1) - Day(1)
-
         push!(quarters_num, Bit.date2num(date))
-
     end
+
     horizons = [1, 2, 4, 8, 12]
     number_horizons = length(horizons)
     number_variables = 5
     presample = 4
 
-
     data = matread(("data/" * country * "/calibration/data/1996.mat"))
     data = data["data"]
 
     for k = 1:3
-
         global forecast = fill(NaN, number_quarters, number_horizons, number_variables)
         global actual = fill(NaN, number_quarters, number_horizons, number_variables)
 
@@ -80,7 +59,6 @@ function error_table_ar(country::String = "italy")
                 ])...)
 
                 Y = zeros(horizon, number_variables)
-
                 Y0_diff = diff(Y0[presample - k:end,:]; dims = 1)
                 
                 for l in 1:number_variables
@@ -111,7 +89,6 @@ function error_table_ar(country::String = "italy")
             rmse_ar = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             error_ar = forecast - actual
         end
-
 
         if k == 1
             global input_data = round.(rmse_ar, digits=2)
@@ -175,7 +152,6 @@ function error_table_ar(country::String = "italy")
                     write(fid, line * "\n")
                 end
             end
-        
         end
     end
     return nothing

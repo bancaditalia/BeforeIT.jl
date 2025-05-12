@@ -3,24 +3,7 @@ using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO
 
 function error_table_abm(country::String = "italy")
 
-    nanmean(x) = mean(filter(!isnan,x))
-    nanmean(x,y) = mapslices(nanmean,x; dims = y)
-
-    # Helper functions for LaTeX table creation and stars notation
-    function stars(p_value)
-        if p_value < 0.01
-            return "***"
-        elseif p_value < 0.05
-            return "**"
-        elseif p_value < 0.1
-            return "*"
-        else
-            return ""
-        end
-    end
-
     # Load calibration data (with figaro input-output tables)
-
 
     year_ = 2010
     number_years = 10
@@ -30,28 +13,22 @@ function error_table_abm(country::String = "italy")
     max_year = 2019
 
     for month in 4:3:((number_years + 1) * 12 + 1)
-
         global year_m = year_ + (month ÷ 12)
         mont_m = month % 12
         date = DateTime(year_m, mont_m, 1) - Day(1)
-
         push!(quarters_num, Bit.date2num(date))
-
     end
+
     horizons = [1, 2, 4, 8, 12]
     number_horizons = length(horizons)
     number_variables = 5
     presample = 4
 
-
     data = matread(("data/" * country * "/calibration/data/1996.mat"))
     data = data["data"]
 
-
     forecast = fill(NaN, number_quarters, number_horizons, number_variables)
     actual = fill(NaN, number_quarters, number_horizons, number_variables)
-
-
 
     quarter_num = quarters_num[1]
     model = load("./data/" * country * "/abm_predictions/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2","model_dict");
@@ -85,8 +62,6 @@ function error_table_abm(country::String = "italy")
                 log.(mean(model["real_fixed_capitalformation_quarterly"][repeat(model["quarters_num"] .== forecast_quarter_num,1,number_of_seeds)])),
                 (1 .+ mean(model["euribor"][repeat(model["quarters_num"] .== forecast_quarter_num,1,number_of_seeds)])).^(1/4)
                 ])...)
-
-            
         end
     end
 
@@ -135,12 +110,10 @@ function error_table_abm(country::String = "italy")
         end
     end
 
-
     input_data = round.(bias_abm, digits=4)
     input_data_S = fill("", size(input_data))
 
     for j in 1:length(horizons)
-        
         h = horizons[j]
         for l in 1:number_variables
             mz_forecast = (view(error_abm, :, j, l) + view(actual, :, j, l))[map(!,isnan.(view(error_abm, :, j, l) + view(actual, :, j, l)))]

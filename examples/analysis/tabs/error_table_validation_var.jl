@@ -1,25 +1,7 @@
 import BeforeIT as Bit
 using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO, MAT
 
-
 function error_table_validation_var(country::String = "italy")
-
-
-    nanmean(x) = mean(filter(!isnan,x))
-    nanmean(x,y) = mapslices(nanmean,x; dims = y)
-
-    # Helper functions for LaTeX table creation and stars notation
-    function stars(p_value)
-        if p_value < 0.01
-            return "***"
-        elseif p_value < 0.05
-            return "**"
-        elseif p_value < 0.1
-            return "*"
-        else
-            return ""
-        end
-    end
 
     # Load calibration data (with figaro input-output tables)
 
@@ -31,19 +13,16 @@ function error_table_validation_var(country::String = "italy")
     max_year = 2019
 
     for month in 4:3:((number_years + 1) * 12 + 1)
-
         global year_m = year_ + (month ÷ 12)
         mont_m = month % 12
         date = DateTime(year_m, mont_m, 1) - Day(1)
-
         push!(quarters_num, Bit.date2num(date))
-
     end
+
     horizons = [1, 2, 4, 8, 12]
     number_horizons = length(horizons)
     number_variables = 8
     presample = 4
-
 
     data = matread(("data/" * country * "/calibration/data/1996.mat"))
     data = data["data"]
@@ -88,9 +67,7 @@ function error_table_validation_var(country::String = "italy")
                     cumsum((1 .+ data["euribor"][data["quarters_num"] .<= quarter_num]).^(1/4))
                     ])...)
 
-
                 Y0_diff = diff(Y0[presample - k + 1:end,:]; dims = 1)
-
                 Y = Bit.forecast_k_steps_VAR(Y0_diff, horizon, intercept = true, lags = k)
 
                 Y[end, [1, 3, 4, 5, 6]] = Y0[end, [1, 3, 4, 5, 6]]' + sum(Y[:, [1, 3, 4, 5, 6]], dims=1)
@@ -181,7 +158,6 @@ function error_table_validation_var(country::String = "italy")
                     write(fid, line * "\n")
                 end
             end
-        
         end
     end
     return nothing
