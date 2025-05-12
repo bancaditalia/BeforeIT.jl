@@ -37,9 +37,9 @@ number_variables = 8
 presample = 4
 number_seeds = 100
 
-data = matread(("./src/utils/" * "calibration_data/" * country * "/data/1996.mat"))
+data = matread(("calibration_data/" * country * "/data/1996.mat"))
 data = data["data"]
-ea = matread(("./src/utils/" * "calibration_data/" * country * "/ea/1996.mat"))
+ea = matread(("calibration_data/" * country * "/ea/1996.mat"))
 ea = ea["ea"]
 
 
@@ -197,10 +197,6 @@ for i in 1:number_quarters
     model_dict["real_government_consumption_growth"] = diff(log.(tmp), dims = 1)
 
 
-
-    
-
-    
     real_exports_growth_quarterly=data["real_exports_quarterly"][data["quarters_num"] .== quarter_num].*exp.(V[:,:,7].-Y0[end,7]);
     model_dict["real_exports_growth_quarterly"] = real_exports_growth_quarterly .-1
     model_dict["real_exports_growth_quarterly"] = [
@@ -251,7 +247,7 @@ for i in 1:number_quarters
     model_dict["real_imports_quarterly_growth"] = diff(log.(tmp), dims = 1)
     
 
-    save(pwd() * "/src/utils/data/" * country * "/varx/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2",                
+    save("/data/" * country * "/varx/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2",                
         "model_dict",
         model_dict)
 

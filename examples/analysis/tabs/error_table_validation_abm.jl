@@ -20,9 +20,6 @@ function error_table_validation_abm(country::String = "italy")
         end
     end
 
-
-    dir = @__DIR__
-
     # Load calibration data (with figaro input-output tables)
 
 
@@ -47,9 +44,9 @@ function error_table_validation_abm(country::String = "italy")
     number_variables = 8
     presample = 4
 
-    data = matread(("./src/utils/" * "calibration_data/" * country * "/data/1996.mat"))
+    data = matread(("calibration_data/" * country * "/data/1996.mat"))
     data = data["data"]
-    ea = matread(("./src/utils/" * "calibration_data/" * country * "/ea/1996.mat"))
+    ea = matread(("calibration_data/" * country * "/ea/1996.mat"))
     ea = ea["ea"]
 
 
@@ -99,7 +96,7 @@ function error_table_validation_abm(country::String = "italy")
         end
     end
 
-    h5open(dir * "/forecast_validation_abm.h5", "w") do file
+    h5open("data/" * country * "/analysis/forecast_validation_abm.h5", "w") do file
         write(file, "forecast", forecast)
     end
 
@@ -107,7 +104,7 @@ function error_table_validation_abm(country::String = "italy")
     bias_validation_abm = dropdims(nanmean(forecast - actual, 1), dims=1)
     error_validation_abm = forecast - actual
 
-    file_path = dir * "/forecast_validation_var.h5"
+    file_path = "data/" * country * "/analysis/forecast_validation_var.h5"
     forecast = h5open(file_path, "r") do file
         forecast = read(file["forecast"])
     end
@@ -138,7 +135,7 @@ function error_table_validation_abm(country::String = "italy")
 
     latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-    open(dir * "/rmse_validation_abm.tex", "w") do fid
+    open("data/" * country * "/analysis/rmse_validation_abm.tex", "w") do fid
         for line in latex
             write(fid, line * "\n")
         end
@@ -161,7 +158,7 @@ function error_table_validation_abm(country::String = "italy")
 
     latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-    open(dir * "/bias_validation_abm.tex", "w") do fid
+    open("data/" * country * "/analysis/bias_validation_abm.tex", "w") do fid
         for line in latex
             write(fid, line * "\n")
         end

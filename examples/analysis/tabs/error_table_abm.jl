@@ -19,9 +19,6 @@ function error_table_abm(country::String = "italy")
         end
     end
 
-
-    dir = @__DIR__
-
     # Load calibration data (with figaro input-output tables)
 
 
@@ -47,7 +44,7 @@ function error_table_abm(country::String = "italy")
     presample = 4
 
 
-    data = matread(("./src/utils/" * "calibration_data/" * country * "/data/1996.mat"))
+    data = matread(("calibration_data/" * country * "/data/1996.mat"))
     data = data["data"]
 
 
@@ -93,8 +90,7 @@ function error_table_abm(country::String = "italy")
         end
     end
 
-    mkpath(dirname(dir * "/forecast_abm.h5"))
-    h5open(dir * "/forecast_abm.h5", "w") do file
+    h5open("data/" * country * "/analysis/forecast_abm.h5", "w") do file
         write(file, "forecast", forecast)
     end
 
@@ -102,7 +98,7 @@ function error_table_abm(country::String = "italy")
     bias_abm = dropdims(nanmean(forecast - actual, 1), dims=1)
     error_abm = forecast - actual
 
-    file_path = dir * "/forecast_ar.h5"
+    file_path = "data/" * country * "/analysis/forecast_ar.h5"
 
     forecast = h5open(file_path, "r") do file
         read(file["forecast"])
@@ -133,7 +129,7 @@ function error_table_abm(country::String = "italy")
 
     latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-    open(dir * "/rmse_abm.tex", "w") do fid
+    open("data/" * country * "/analysis/rmse_abm.tex", "w") do fid
         for line in latex
             write(fid, line * "\n")
         end
@@ -156,7 +152,7 @@ function error_table_abm(country::String = "italy")
 
     latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-    open(dir * "/bias_abm.tex", "w") do fid
+    open("data/" * country * "/analysis/bias_abm.tex", "w") do fid
         for line in latex
             write(fid, line * "\n")
         end

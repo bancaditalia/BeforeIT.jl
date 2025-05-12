@@ -61,7 +61,11 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
         model_dict["real_gdp_growth_quarterly"]
     ]
 
+    println("ok")
+    println(typeof(sims[1]))
     nominal_gdp_growth_quarterly = hcat([diff(log.(s.nominal_gdp)) for s in sims]...)
+    println("ok")
+
     nominal_gdp_growth_quarterly = exp.(nominal_gdp_growth_quarterly) .- 1
     nominal_gdp_quarterly =
         data["nominal_gdp_quarterly"][data["quarters_num"] .== quarter_num] .*

@@ -37,7 +37,7 @@ number_variables = 8
 presample = 4
 number_seeds = 100
 
-data = matread(("./src/utils/" * "calibration_data/" * country * "/data/1996.mat"))
+data = matread(("calibration_data/" * country * "/data/1996.mat"))
 data = data["data"]
 
 
@@ -320,8 +320,7 @@ for i in 1:number_quarters
     model_dict["real_imports_quarterly_growth"] = diff(log.(tmp), dims = 1)
 
 
-    save(pwd() * "/src/utils/data/" * country * "/arx/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2",                
+    save("data/" * country * "/arx/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2",                
         "model_dict",
         model_dict)
-
 end

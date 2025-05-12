@@ -65,7 +65,10 @@ function Base.getproperty(dv::DataVector, name::Symbol)
         return getfield(dv, name)
     end
 end
-
+Base.getindex(dv::DataVector, i::Int) = Base.getindex(getfield(dv, :vector), i)
+Base.length(dv::DataVector) = Base.length(getfield(dv, :vector))
+Base.iterate(dv::DataVector) = Base.iterate(getfield(dv, :vector))
+Base.iterate(dv::DataVector, state) = Base.iterate(getfield(dv, :vector), state)
 
 """
 Initialise the data arrays

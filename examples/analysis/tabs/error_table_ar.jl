@@ -19,9 +19,6 @@ function error_table_ar(country::String = "italy")
         end
     end
 
-
-    dir = @__DIR__
-
     # Load calibration data (with figaro input-output tables)
 
 
@@ -47,7 +44,7 @@ function error_table_ar(country::String = "italy")
     presample = 4
 
 
-    data = matread(("./src/utils/" * "calibration_data/" * country * "/data/1996.mat"))
+    data = matread(("calibration_data/" * country * "/data/1996.mat"))
     data = data["data"]
 
     for k = 1:3
@@ -96,21 +93,21 @@ function error_table_ar(country::String = "italy")
         end
 
         if k == 1
-            h5open(dir * "/forecast_ar.h5", "w") do file
+            h5open("data/" * country * "/analysis/forecast_ar.h5", "w") do file
                 write(file, "forecast", forecast)
             end
             global rmse_ar = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             bias_ar = dropdims(nanmean(forecast - actual, 1), dims=1)
             global error_ar = forecast - actual
         else
-            h5open(dir * "/forecast_ar_$(k).h5", "w") do file
+            h5open("data/" * country * "/analysis/forecast_ar_$(k).h5", "w") do file
                 write(file, "forecast", forecast)
             end
             rmse_ar_k = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             bias_ar_k = dropdims(nanmean(forecast - actual, 1), dims=1)
             error_ar_k = forecast - actual
 
-            forecast = h5read(dir * "/forecast_ar.h5","forecast")
+            forecast = h5read("data/" * country * "/analysis/forecast_ar.h5","forecast")
             rmse_ar = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             error_ar = forecast - actual
         end
@@ -143,13 +140,13 @@ function error_table_ar(country::String = "italy")
         global latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
         if k == 1
-            open(dir * "/rmse_ar.tex", "w") do fid
+            open("data/" * country * "/analysis/rmse_ar.tex", "w") do fid
                 for line in latex
                     write(fid, line * "\n")
                 end
             end
         else
-            open(dir * "/rmse_ar_$(k).tex", "w") do fid
+            open("data/" * country * "/analysis/rmse_ar_$(k).tex", "w") do fid
                 for line in latex
                     write(fid, line * "\n")
                 end
@@ -173,7 +170,7 @@ function error_table_ar(country::String = "italy")
             
             latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-            open(dir * "/bias_ar.tex", "w") do fid
+            open("data/" * country * "/analysis/bias_ar.tex", "w") do fid
                 for line in latex
                     write(fid, line * "\n")
                 end

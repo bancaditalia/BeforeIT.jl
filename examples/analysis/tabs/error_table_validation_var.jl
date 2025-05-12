@@ -21,11 +21,7 @@ function error_table_validation_var(country::String = "italy")
         end
     end
 
-
-    dir = @__DIR__
-
     # Load calibration data (with figaro input-output tables)
-
 
     year_ = 2010
     number_years = 10
@@ -49,9 +45,9 @@ function error_table_validation_var(country::String = "italy")
     presample = 4
 
 
-    data = matread(("./src/utils/" * "calibration_data/" * country * "/data/1996.mat"))
+    data = matread(("calibration_data/" * country * "/data/1996.mat"))
     data = data["data"]
-    ea = matread(("./src/utils/" * "calibration_data/" * country * "/ea/1996.mat"))
+    ea = matread(("calibration_data/" * country * "/ea/1996.mat"))
     ea = ea["ea"]
 
     for k = 1:3
@@ -103,21 +99,21 @@ function error_table_validation_var(country::String = "italy")
         end
 
         if k == 1
-            h5open(dir * "/forecast_validation_var.h5", "w") do file
+            h5open("data/" * country * "/analysis/forecast_validation_var.h5", "w") do file
                 write(file, "forecast", forecast)
             end
             rmse_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             bias_var = dropdims(nanmean(forecast - actual, 1), dims=1)
             error_var = forecast - actual
         else
-            h5open(dir * "/forecast_validation_var_$(k).h5", "w") do file
+            h5open("data/" * country * "/analysis/forecast_validation_var_$(k).h5", "w") do file
                 write(file, "forecast", forecast)
             end
             rmse_var_k = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             bias_var_k = dropdims(nanmean(forecast - actual, 1), dims=1)
             error_var_k = forecast - actual
 
-            forecast = h5read(dir * "/forecast_validation_var.h5","forecast")
+            forecast = h5read("data/" * country * "/analysis/forecast_validation_var.h5","forecast")
             rmse_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             error_var = forecast - actual
         end
@@ -150,13 +146,13 @@ function error_table_validation_var(country::String = "italy")
         global latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
         if k == 1
-            open(dir * "/rmse_validation_var.tex", "w") do fid
+            open("data/" * country * "/analysis/rmse_validation_var.tex", "w") do fid
                 for line in latex
                     write(fid, line * "\n")
                 end
             end
         else
-            open(dir * "/rmse_validation_var_$(k).tex", "w") do fid
+            open("data/" * country * "/analysis/rmse_validation_var_$(k).tex", "w") do fid
                 for line in latex
                     write(fid, line * "\n")
                 end
@@ -180,7 +176,7 @@ function error_table_validation_var(country::String = "italy")
             
             latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-            open(dir * "/bias_validation_var.tex", "w") do fid
+            open("data/" * country * "/analysis/bias_validation_var.tex", "w") do fid
                 for line in latex
                     write(fid, line * "\n")
                 end

@@ -8,17 +8,18 @@ foreach(rm, filter(endswith(".tex"), readdir("./examples/analysis/tabs/",join=tr
 
 country = "italy"
 
-include("./analysis_utils.jl")
-include("./error_table_ar.jl")
-include("./error_table_abm.jl")
-include("./error_table_validation_var.jl")
-include("./error_table_validation_abm.jl")
+include("./examples/get_parameters_and_initial_conditions.jl")
+include("./examples/get_simulations.jl")
+include("./examples/get_predictions.jl")
 
+include("./examples/analysis/tabs/analysis_utils.jl")
+include("./examples/analysis/tabs/error_table_ar.jl")
+include("./examples/analysis/tabs/error_table_abm.jl")
+include("./examples/analysis/tabs/error_table_validation_var.jl")
+include("./examples/analysis/tabs/error_table_validation_abm.jl")
 
 error_table_ar()
 error_table_validation_var()
 
 error_table_abm(country)
 error_table_validation_abm(country)
-
-
