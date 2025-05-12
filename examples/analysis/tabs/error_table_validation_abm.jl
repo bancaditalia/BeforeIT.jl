@@ -1,4 +1,4 @@
-import BeforeIT as BIT
+import BeforeIT as Bit
 using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO, MAT
 
 function error_table_validation_abm(country::String = "italy")
@@ -36,7 +36,7 @@ function error_table_validation_abm(country::String = "italy")
         mont_m = month % 12
         date = DateTime(year_m, mont_m, 1) - Day(1)
 
-        push!(quarters_num, BIT.date2num(date))
+        push!(quarters_num, Bit.date2num(date))
 
     end
     horizons = [1, 2, 4, 8, 12]
@@ -44,9 +44,9 @@ function error_table_validation_abm(country::String = "italy")
     number_variables = 8
     presample = 4
 
-    data = matread(("calibration_data/" * country * "/data/1996.mat"))
+    data = matread(("data/" * country * "/calibration/data/1996.mat"))
     data = data["data"]
-    ea = matread(("calibration_data/" * country * "/ea/1996.mat"))
+    ea = matread(("data/" * country * "/calibration/ea/1996.mat"))
     ea = ea["ea"]
 
 
@@ -54,19 +54,19 @@ function error_table_validation_abm(country::String = "italy")
     actual = fill(NaN, number_quarters, number_horizons, number_variables)
 
     quarter_num = quarters_num[1]
-    model = load("./data/" * country * "/abm_predictions/" * string(year(BIT.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(BIT.num2date(quarter_num))) *".jld2","model_dict");
+    model = load("./data/" * country * "/abm_predictions/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2","model_dict");
     number_of_seeds = size(model["real_gdp_quarterly"],2)
 
     for i in 1:number_quarters
         quarter_num = quarters_num[i]
         
-        global model = load("./data/"* country *"/abm_predictions/" * string(year(BIT.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(BIT.num2date(quarter_num))) *".jld2","model_dict");
+        global model = load("./data/"* country *"/abm_predictions/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2","model_dict");
 
         for j in 1:number_horizons
             global horizon = horizons[j]
-            forecast_quarter_num = BIT.date2num(lastdayofmonth(BIT.num2date(quarter_num) + Month(3 * horizon)))
+            forecast_quarter_num = Bit.date2num(lastdayofmonth(Bit.num2date(quarter_num) + Month(3 * horizon)))
 
-            if BIT.num2date(forecast_quarter_num) > Date(max_year, 12, 31)
+            if Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31)
                 break
             end
             
@@ -120,7 +120,7 @@ function error_table_validation_abm(country::String = "italy")
         for l in 1:number_variables
             dm_error_validation_abm = view(error_validation_abm, :, j, l)[map(!,isnan.(view(error_validation_abm, :, j, l)))]
             dm_error_validation_var = view(error_validation_var, :, j, l)[map(!,isnan.(view(error_validation_var, :, j, l)))]
-            _, p_value = dmtest_modified(dm_error_validation_var,dm_error_validation_abm, h)
+            _, p_value = Bit.dmtest_modified(dm_error_validation_var,dm_error_validation_abm, h)
             input_data_S[j, l] = string(input_data[j, l]) * "(" * string(round(p_value, digits=2)) *", "* string(stars(p_value)) * ")"
         end
     end
@@ -151,7 +151,7 @@ function error_table_validation_abm(country::String = "italy")
         for l in 1:number_variables
             mz_forecast = (view(error_validation_abm, :, j, l) + view(actual, :, j, l))[map(!,isnan.(view(error_validation_abm, :, j, l) + view(actual, :, j, l)))]
             mz_actual = view(actual, :, j, l)[map(!,isnan.(view(actual, :, j, l)))]
-            _, _, p_value = mztest(mz_actual, mz_forecast)
+            _, _, p_value = Bit.mztest(mz_actual, mz_forecast)
             input_data_S[j, l] = string(input_data[j, l]) * " (" * string(round(p_value, digits=3)) *", "* stars(p_value) * ")"
         end
     end

@@ -9,12 +9,9 @@ using HDF5
 using FileIO
 using MAT
 
-
 country = "italy"
 
 # Load calibration data (with figaro input-output tables)
-
-
 
 year_ = 2010
 number_years = 7
@@ -37,7 +34,7 @@ number_variables = 8
 presample = 4
 number_seeds = 100
 
-data = matread(("calibration_data/" * country * "/data/1996.mat"))
+data = matread(("data/" * country * "/calibration/data/1996.mat"))
 data = data["data"]
 
 

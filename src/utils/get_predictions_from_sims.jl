@@ -102,7 +102,6 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
         dims = 1,
     )
 
-
     # calculate discrete compounding rate
     model_dict["nominal_gdp_growth_quarterly"] = exp.(model_dict["nominal_gdp_growth_quarterly"]) .- 1
     model_dict["nominal_gdp_growth_quarterly"] = [

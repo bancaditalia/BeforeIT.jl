@@ -12,7 +12,6 @@ initial_conditions = matread(joinpath(dir, "data/austria/initial_conditions/2010
 
 const AUSTRIA2010Q1 = InitialState(parameters, initial_conditions)
 
-
 parameters = load(joinpath(dir, "data/italy/parameters/2010Q1.jld2"))
 initial_conditions = load(joinpath(dir, "data/italy/initial_conditions/2010Q1.jld2"))
 

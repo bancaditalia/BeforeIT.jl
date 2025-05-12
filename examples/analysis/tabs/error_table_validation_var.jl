@@ -1,4 +1,4 @@
-import BeforeIT as BIT
+import BeforeIT as Bit
 using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO, MAT
 
 
@@ -36,7 +36,7 @@ function error_table_validation_var(country::String = "italy")
         mont_m = month % 12
         date = DateTime(year_m, mont_m, 1) - Day(1)
 
-        push!(quarters_num, BIT.date2num(date))
+        push!(quarters_num, Bit.date2num(date))
 
     end
     horizons = [1, 2, 4, 8, 12]
@@ -45,9 +45,9 @@ function error_table_validation_var(country::String = "italy")
     presample = 4
 
 
-    data = matread(("calibration_data/" * country * "/data/1996.mat"))
+    data = matread(("data/" * country * "/calibration/data/1996.mat"))
     data = data["data"]
-    ea = matread(("calibration_data/" * country * "/ea/1996.mat"))
+    ea = matread(("data/" * country * "/calibration/ea/1996.mat"))
     ea = ea["ea"]
 
     for k = 1:3
@@ -60,9 +60,9 @@ function error_table_validation_var(country::String = "italy")
 
             for j in 1:number_horizons
                 global horizon = horizons[j]
-                forecast_quarter_num = BIT.date2num(lastdayofmonth(BIT.num2date(quarter_num) + Month(3 * horizon)))
+                forecast_quarter_num = Bit.date2num(lastdayofmonth(Bit.num2date(quarter_num) + Month(3 * horizon)))
 
-                if BIT.num2date(forecast_quarter_num) > Date(max_year, 12, 31)
+                if Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31)
                     break
                 end
                 
@@ -91,7 +91,7 @@ function error_table_validation_var(country::String = "italy")
 
                 Y0_diff = diff(Y0[presample - k + 1:end,:]; dims = 1)
 
-                Y = BIT.forecast_k_steps_VAR(Y0_diff, horizon, intercept = true, lags = k)
+                Y = Bit.forecast_k_steps_VAR(Y0_diff, horizon, intercept = true, lags = k)
 
                 Y[end, [1, 3, 4, 5, 6]] = Y0[end, [1, 3, 4, 5, 6]]' + sum(Y[:, [1, 3, 4, 5, 6]], dims=1)
                 forecast[i, j, :] = Y[end, :]
@@ -130,7 +130,7 @@ function error_table_validation_var(country::String = "italy")
                 for l in 1:number_variables
                     dm_error_var_k = view(error_var_k, :, j, l)[map(!,isnan.(view(error_var_k, :, j, l)))]
                     dm_error_var = view(error_var, :, j, l)[map(!,isnan.(view(error_var, :, j, l)))]
-                    _, p_value = dmtest_modified(dm_error_var,dm_error_var_k, h)
+                    _, p_value = Bit.dmtest_modified(dm_error_var,dm_error_var_k, h)
                     input_data_S[j, l] = string(input_data[j, l]) * "(" * string(round(p_value, digits=2)) *", "* string(stars(p_value)) * ")"
                 end
             end
@@ -169,7 +169,7 @@ function error_table_validation_var(country::String = "italy")
                 for l in 1:number_variables
                     mz_forecast = (view(error_var, :, j, l) + view(actual, :, j, l))[map(!,isnan.(view(error_var, :, j, l) + view(actual, :, j, l)))]
                     mz_actual = view(actual, :, j, l)[map(!,isnan.(view(actual, :, j, l)))]
-                    _, _, p_value = mztest(mz_actual, mz_forecast)
+                    _, _, p_value = Bit.mztest(mz_actual, mz_forecast)
                     input_data_S[j, l] = string(input_data[j, l]) * " (" * string(round(p_value, digits=3)) *", "* stars(p_value) * ")"
                 end
             end
