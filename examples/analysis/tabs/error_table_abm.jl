@@ -17,10 +17,10 @@ function error_table_abm(country::String = "italy")
     for i in 1:number_quarters
         quarter_num = quarters_num[i]
 
-        global model = load("./data/" * country * "/abm_predictions/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2","model_dict");
+        model = load("./data/" * country * "/abm_predictions/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2","model_dict");
         
         for j in 1:number_horizons
-            global horizon = horizons[j]
+            horizon = horizons[j]
             forecast_quarter_num = Bit.date2num(lastdayofmonth(Bit.num2date(quarter_num) + Month(3 * horizon)))
 
             if Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31)

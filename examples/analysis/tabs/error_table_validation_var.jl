@@ -1,5 +1,3 @@
-import BeforeIT as Bit
-using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO, MAT
 
 function error_table_validation_var(country::String = "italy")
 
@@ -9,14 +7,14 @@ function error_table_validation_var(country::String = "italy")
 
     for k = 1:3
 
-        global forecast = fill(NaN, number_quarters, number_horizons, number_variables)
-        global actual = fill(NaN, number_quarters, number_horizons, number_variables)
+        forecast = fill(NaN, number_quarters, number_horizons, number_variables)
+        actual = fill(NaN, number_quarters, number_horizons, number_variables)
 
         for i in 1:number_quarters
             quarter_num = quarters_num[i]
 
             for j in 1:number_horizons
-                global horizon = horizons[j]
+                horizon = horizons[j]
                 forecast_quarter_num = Bit.date2num(lastdayofmonth(Bit.num2date(quarter_num) + Month(3 * horizon)))
 
                 if Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31)
@@ -75,8 +73,8 @@ function error_table_validation_var(country::String = "italy")
 
 
         if k == 1
-            global input_data = round.(rmse_var, digits=2)
-            global input_data_S = string.(input_data)
+            input_data = round.(rmse_var, digits=2)
+            input_data_S = string.(input_data)
         else
             input_data = - round.(100 * (rmse_var .- rmse_var_k) ./ rmse_var, digits=1)
             input_data_S = fill("", size(input_data))
@@ -91,14 +89,14 @@ function error_table_validation_var(country::String = "italy")
             end
         end
 
-        global tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
-        global dataFormat = "%.2f"
-        global tableColumnAlignment = "r"
-        global tableBorders = false
-        global booktabs = false
-        global makeCompleteLatexDocument = false
+        tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
+        dataFormat = "%.2f"
+        tableColumnAlignment = "r"
+        tableBorders = false
+        booktabs = false
+        makeCompleteLatexDocument = false
         
-        global latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
+        latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
         if k == 1
             open("data/" * country * "/analysis/rmse_validation_var.tex", "w") do fid

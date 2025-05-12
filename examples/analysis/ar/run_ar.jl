@@ -1,13 +1,3 @@
-import BeforeIT as Bit
-using Dates
-using DelimitedFiles
-using Statistics
-using Printf
-using LaTeXStrings
-using CSV
-using HDF5
-using FileIO
-using MAT
 
 country = "italy"
 
