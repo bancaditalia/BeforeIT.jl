@@ -9,21 +9,35 @@ function compound_quarterly(base, growth)
     return base .* cumprod(1 .+ growth, dims=1)
 end
 
-function prepare_quarterly_and_annual(data, sims, varname, quarter_num, year_num, number_seeds, q)
-    var_sim = getproperty(sims, Symbol(varname))
-    growth_quarterly = growth_rate(var_sim)
-    quarterly = compound_quarterly(
-        data["$(varname)_quarterly"][data["quarters_num"] .== quarter_num],
-        growth_quarterly,
-    )
-    quarterly_full = [repeat(data["$(varname)_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds); quarterly]
+function prepare_quarterly_annual(data, sims, varname, quarter_num, year_num, number_seeds, q)
 
-    annual = [
-        repeat(data[varname][data["years_num"] .== year_num], 1, number_seeds)
-        Bit.toannual(quarterly[(5 - q):(end - mod(q, 4)), :]')'
+    var_sim = getproperty(sims, Symbol(varname))
+
+    # quarter‑on‑quarter growth used for compounding
+    growth_quarterly = growth_rate(var_sim)
+
+    # produce forecast path in quarterly frequency
+    quarterly_forecast =
+        compound_quarterly(data["$(varname)_quarterly"][data["quarters_num"] .== quarter_num], growth_quarterly)
+
+    quarterly_full = [
+        repeat(data["$(varname)_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds)
+        quarterly_forecast  # vertical concatenation
     ]
 
-    growth_annual = diff(log.(annual), dims=1)
+    annual_full = [
+        repeat(data[varname][data["years_num"] .== year_num], 1, number_seeds)
+        Bit.toannual(quarterly_forecast[(5 - q):(end - mod(q, 4)), :]')'
+    ]
+
+    return quarterly_full, annual_full
+end
+
+function prepare_quarterly_annual_growth(data, sims, varname, quarter_num, year_num, number_seeds, q)
+
+    quarterly_full, annual_full = prepare_quarterly_annual(data, sims, varname, quarter_num, year_num, number_seeds, q)
+
+    growth_annual = diff(log.(annual_full), dims=1)
     growth_annual = exp.(growth_annual) .- 1
 
     growth_annual_full = [repeat(data["$(varname)_growth"][data["years_num"] .== year_num], 1, number_seeds); growth_annual]
@@ -31,7 +45,7 @@ function prepare_quarterly_and_annual(data, sims, varname, quarter_num, year_num
     growth_quarterly_full = growth_rate(quarterly_full)
     growth_quarterly_full = [repeat(data["$(varname)_growth_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds); growth_quarterly_full]
 
-    return quarterly_full, annual, growth_annual_full, growth_quarterly_full
+    return quarterly_full, annual_full, growth_annual_full, growth_quarterly_full
 end
 
 function prepare_deflator(nominal, real, data, name, quarter_num, year_num, number_seeds, q)
@@ -80,7 +94,7 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
                  "real_imports", "nominal_imports"]
 
     for var in variables
-        quarterly, annual, growth_annual, growth_quarterly = prepare_quarterly_and_annual(
+        quarterly, annual, growth_annual, growth_quarterly = prepare_quarterly_annual_growth(
             data, sims, var, quarter_num, year_num, number_seeds, q)
 
         model_dict["$(var)_quarterly"] = quarterly
@@ -109,6 +123,22 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
         model_dict["$(name)_deflator"] = deflator_y
         model_dict["$(name)_deflator_growth"] = deflator_growth_y
         model_dict["$(name)_deflator_growth_quarterly"] = deflator_growth_q
+    end
+
+    # Variables where only levels (no growth series) are required
+    level_only_vars = [
+        "operating_surplus",
+        "compensation_employees",
+        "wages",
+    ]
+
+    for var in level_only_vars
+        quarterly, annual = prepare_quarterly_annual(
+            data, sims, var, quarter_num, year_num, number_seeds, q,
+        )
+
+        model_dict["$(var)_quarterly"] = quarterly
+        model_dict[var]                = annual
     end
 
     # Prepare quarters_num and years_num
