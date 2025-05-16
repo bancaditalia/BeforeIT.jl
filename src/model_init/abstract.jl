@@ -159,7 +159,7 @@ macro restOfTheWorld(T = Float64)
     end)
 end
 
-macro aggregates(T = Float64, I = Vector{Float64})
+macro aggregates(T = Float64, I = Int)
     return esc(quote
         Y::Vector{$T}
         pi_::Vector{$T}
