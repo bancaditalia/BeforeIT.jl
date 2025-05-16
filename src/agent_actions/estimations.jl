@@ -46,7 +46,6 @@ function growth_inflation_expectations(model)
     return Y_e, gamma_e, pi_e
 end
 
-
 """
     growth_inflation_EA(rotw, epsilon_Y_EA)
 
