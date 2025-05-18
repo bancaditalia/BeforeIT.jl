@@ -24,9 +24,9 @@ The total profits `Pi_k` are calculated as follows:
 ```
 """
 function _bank_profits(
-    L_i::AbstractVector{T},
-    D_i::AbstractVector{T},
-    D_h::AbstractVector{T},
+    L_i::Vector{T},
+    D_i::Vector{T},
+    D_h::Vector{T},
     D_k::T,
     r_bar::T,
     r::T,
@@ -72,7 +72,6 @@ function bank_profits(bank, model)
     return Pi_k
 end
 
-
 """
     bank_equity(bank, model)
 
@@ -110,7 +109,6 @@ function _bank_net_profits(Pi_k, theta_DIV, tau_FIRM)
     return DE_k
 end
 
-
 """
     bank_rate(bank, model)
 
@@ -132,7 +130,6 @@ function bank_rate(bank, model)
     r_bar = model.cb.r_bar
     mu = model.prop.mu
     r = r_bar + mu
-
     return r
 end
 
@@ -159,7 +156,6 @@ function bank_expected_profits(bank, model)
     # unpack arguments
     pi_e = model.agg.pi_e
     gamma_e = model.agg.gamma_e
-
     return _bank_expected_profits(bank.Pi_k, pi_e, gamma_e)
 end
 

@@ -93,7 +93,6 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     # update wages for workers
     Bit.update_workers_wages!(w_act, firms.w_i)
 
-
     ####### CONSUMPTION AND INVESTMENT BUDGET #######
 
     # update social benefits
@@ -113,7 +112,6 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     firms.C_d_h .= C_d_h
     firms.I_d_h .= I_d_h
     bank.C_d_h, bank.I_d_h = Bit.households_budget(bank, model)
-
 
     ####### GOVERNMENT SPENDING BUDGET, IMPORT-EXPORT BUDGET #######
 

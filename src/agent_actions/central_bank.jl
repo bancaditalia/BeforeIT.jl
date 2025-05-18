@@ -20,7 +20,6 @@ function central_bank_rate(cb::AbstractCentralBank, model::AbstractModel)
     return r_bar
 end
 
-
 """
     taylor_rule(rho, r_bar, r_star, pi_star, xi_pi, xi_gamma, gamma_EA, pi_EA)
 
@@ -44,13 +43,11 @@ The Taylor rule is given by the following equation:
 ```math
 r_t = ρ * r_{t-1} + (1 - ρ) * (r^* + π^* + ξ_π * (π_t - π^*) + ξ_γ * γ_t)```
 ```
-
 """
 function taylor_rule(rho::T, r_bar::T, r_star::T, pi_star::T, xi_pi::T, xi_gamma::T, gamma_EA::T, pi_EA::T) where {T}
     rate = rho * r_bar + (one(T) - rho) * (r_star + pi_star + xi_pi * (pi_EA - pi_star) + xi_gamma * gamma_EA)
     return pos(rate)
 end
-
 
 """
     _central_bank_profits(r_bar, D_k, L_G, r_G)
@@ -71,7 +68,6 @@ The profits `Pi_CB` are calculated as follows:
 ```math
 \\{Pi}_{CB} = r_{G} \\cdot L_{G} - r_{bar} \\cdot D_{k}
 ```
-
 """
 function _central_bank_profits(r_bar, D_k, L_G, r_G)
     Pi_CB = r_G * L_G - r_bar * D_k

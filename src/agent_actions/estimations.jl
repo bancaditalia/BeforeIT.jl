@@ -46,7 +46,6 @@ function growth_inflation_expectations(model)
     return Y_e, gamma_e, pi_e
 end
 
-
 """
     growth_inflation_EA(rotw, epsilon_Y_EA)
 
@@ -61,7 +60,8 @@ Update the growth and inflation of the economic area.
 - `gamma_EA`: Growth rate of GDP of the economic area
 - `pi_EA`: Inflation rate of the economic area
 
-The GDP `Y_EA`, the growth rate `gamma_EA` and the inflation rate `pi_EA` of the economic area are calculated as follows:
+The GDP `Y_EA`, the growth rate `gamma_EA` and the inflation rate `pi_EA` of the economic area are calculated
+as follows:
 
 ```math
 Y_{EA} = exp(\\alpha_Y \\cdot \\log(Y_{EA}) + \\beta_Y + \\epsilon_{Y_{EA}})
@@ -75,8 +75,8 @@ Y_{EA} = exp(\\alpha_Y \\cdot \\log(Y_{EA}) + \\beta_Y + \\epsilon_{Y_{EA}})
 \\pi_{EA} = exp(\\alpha_\\pi \\cdot \\log(1 + \\pi_{EA}) + \\beta_\\pi + \\epsilon_{\\pi_{EA}}) - 1
 ```
 
-where `alpha_Y`, `beta_Y`, `alpha_pi`, `beta_pi`, `epsilon_Y_EA` and `epsilon_pi_EA` are estimated using the past log-GDP and inflation data using the `estimate` function.
-
+where `alpha_Y`, `beta_Y`, `alpha_pi`, `beta_pi`, `epsilon_Y_EA` and `epsilon_pi_EA` are estimated using
+the past log-GDP and inflation data using the `estimate` function.
 """
 function growth_inflation_EA(rotw::AbstractRestOfTheWorld, model)
     # unpack model variables

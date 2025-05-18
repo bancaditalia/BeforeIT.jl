@@ -1,4 +1,6 @@
+
 using MutableNamedTuples
+
 recursive_namedtuple(x::Any) = x
 recursive_namedtuple(d::Dict) = MutableNamedTuple(; Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
 
@@ -52,7 +54,6 @@ function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
     update_variables_with_totals!(model)
 
     return model
-
 end
 
 """

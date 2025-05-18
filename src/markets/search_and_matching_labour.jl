@@ -18,7 +18,7 @@ The function returns:
 - `N_i`: An updated array of the number of employed workers for each firm.
 - `O_h`: An updated array where each element represents the firm a worker is employed with (0 if unemployed).
 """
-function search_and_matching_labour(firms::AbstractFirms, model)
+function search_and_matching_labour(firms::AbstractFirms, model::AbstractModel)
 
     N_d_i = firms.N_d_i
     N_i = firms.N_i

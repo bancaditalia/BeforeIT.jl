@@ -1,5 +1,4 @@
 
-
 """
     init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
 
@@ -34,15 +33,13 @@ function init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = 
     sigma_Y_EA = parameters["sigma_Y_EA"]
     T_prime = typeInt(parameters["T_prime"])
 
-
     Y_EA = initial_conditions["Y_EA"]
     gamma_EA = typeFloat(0.0)
     pi_EA = initial_conditions["pi_EA"]
     D_RoW = typeFloat(initial_conditions["D_RoW"])
     Y_I = Vector{typeFloat}(vec(initial_conditions["Y_I"]))
     C_E = Vector{typeFloat}(vec(initial_conditions["C_E"]))
-    
-    
+
     C_d_l = Vector{typeFloat}(zeros(L))
     C_l = zero(typeFloat)
     P_l = zero(typeFloat)
