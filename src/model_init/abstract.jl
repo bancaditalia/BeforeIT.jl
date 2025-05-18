@@ -17,6 +17,7 @@ abstract type AbstractBank end
 abstract type AbstractCentralBank end
 abstract type AbstractGovernment end
 abstract type AbstractRestOfTheWorld end
+abstract type AbstractAggregates end
 abstract type AbstractModel end
 
 macro worker(T = Vector{Float64}, I = Vector{Int})
@@ -176,8 +177,5 @@ macro aggregates(T = Float64, I = Int)
         epsilon_E::$T
         epsilon_I::$T
         t::$I
-        Y_EA_series::Vector{$T}
-        pi_EA_series::Vector{$T}
-        r_bar_series::Vector{$T}
     end)
 end

@@ -205,7 +205,7 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `t`: Time index
 
 """
-mutable struct Aggregates{T, I}
+mutable struct Aggregates{T, I} <: AbstractAggregates
     @aggregates T I
 end
 
@@ -230,7 +230,7 @@ mutable struct Model <: AbstractModel
     cb::AbstractCentralBank
     gov::AbstractGovernment
     rotw::AbstractRestOfTheWorld
-    agg::Aggregates
+    agg::AbstractAggregates
     prop::Any
 end
 
