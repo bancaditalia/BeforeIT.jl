@@ -6,9 +6,9 @@ end
 
 (s::NoShock)(x) = nothing
 
-struct InterestRateShock <: AbstractShock
-    rate::Any
-    final_time::Any
+struct InterestRateShock{R, T} <: AbstractShock
+    rate::R
+    final_time::T
 end
 
 (s::InterestRateShock)(model) = (model.agg.t <= s.final_time) ? model.cb.r_bar = s.rate : nothing

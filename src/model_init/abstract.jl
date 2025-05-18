@@ -1,15 +1,7 @@
-export AbstractBank,
-    AbstractCentralBank,
-    AbstractFirms,
-    AbstractGovernment,
-    AbstractRestOfTheWorld,
-    AbstractWorkers,
-    @worker,
-    @firm,
-    @bank,
-    @centralBank,
-    @aggregates,
-    @restOfTheWorld
+
+export AbstractBank, AbstractCentralBank, AbstractFirms, AbstractGovernment,
+       AbstractRestOfTheWorld, AbstractWorkers, @worker, @firm, @bank, @centralBank,
+       @aggregates, @restOfTheWorld
 
 abstract type AbstractWorkers end
 abstract type AbstractFirms end

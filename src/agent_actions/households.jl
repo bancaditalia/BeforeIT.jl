@@ -1,3 +1,4 @@
+
 # update wages for workers
 function update_workers_wages!(w_act, w_i)
     T = eltype(w_act.O_h)
@@ -8,10 +9,7 @@ function update_workers_wages!(w_act, w_i)
     end
 end
 
-
-
 function _income_w_act(w_h, O_h, tau_SIW, tau_INC, theta_UB, sb_other, P_bar_HH; pi_e = 0.0)
-
     Y_h = zeros(length(w_h))
     for h in eachindex(w_h)
         if O_h[h] != 0
@@ -36,7 +34,6 @@ function households_income_act(w_act::AbstractWorkers, model)
 end
 
 function _income_w_inact(H_inact, sb_inact, sb_other, P_bar_HH; pi_e = 0.0)
-
     Y_h = zeros(H_inact)
     for h in 1:H_inact
         Y_h[h] = (sb_inact + sb_other) * P_bar_HH * (1 + pi_e)
@@ -49,7 +46,6 @@ function households_income_inact(w_inact::AbstractWorkers, model)
 end
 
 function _income_fowner(Pi_i, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; pi_e = 0.0)
-
     Y_h = zeros(length(Pi_i))
     for i in eachindex(Pi_i)
         Y_h[i] = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_i[i]) + sb_other * P_bar_HH * (1 + pi_e)
@@ -69,7 +65,6 @@ function households_income(firms::AbstractFirms, model)
 end
 
 function _income_bowner(Pi_k, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; pi_e = 0.0)
-
     Y_h = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k) + sb_other * P_bar_HH * (1 + pi_e)
     return Y_h
 end
@@ -84,8 +79,6 @@ function households_income(bank::AbstractBank, model)
         model.agg.P_bar_HH,
     )
 end
-
-
 
 function _budget_w_act(w_h, O_h, psi, psi_H, tau_VAT, tau_CF, sb_other, P_bar_HH, pi_e, tau_SIW, tau_INC, theta_UB)
 
@@ -189,7 +182,6 @@ function households_budget(bank::AbstractBank, model)
         model.agg.pi_e,
     )
 end
-
 
 function households_deposits(households, model)
     tau_VAT, tau_CF = model.prop.tau_VAT, model.prop.tau_CF

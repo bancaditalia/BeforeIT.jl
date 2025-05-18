@@ -42,7 +42,6 @@ macro data(AV = Vector{Float64}, AM = Matrix{Float64})
     end)
 end
 
-
 # Define the Data struct
 struct Data{T, AV <: AbstractVector{T}, AM <: AbstractMatrix{T}}
     @data AV AM

@@ -1,5 +1,4 @@
 
-
 """
     init_aggregates(parameters, initial_conditions, T; typeInt = Int64, typeFloat = Float64)
 
@@ -25,7 +24,6 @@ function init_aggregates(parameters, initial_conditions, T; typeInt = Int64, typ
     pi_ = Vector{typeFloat}(vec(vcat(pi_, zeros(typeFloat, T))))
 
     G = typeInt(parameters["G"])
-
 
     P_bar = one(typeFloat)
     P_bar_g = ones(typeFloat, G)

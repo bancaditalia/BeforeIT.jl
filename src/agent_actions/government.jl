@@ -1,5 +1,4 @@
 
-
 """
     gov_expenditure(gov::AbstractGovernment, model)
 
@@ -25,7 +24,6 @@ function gov_expenditure(gov, model)
     C_d_j = C_G ./ J .* ones(J) .* sum(c_G_g .* P_bar_g) .* (1 + pi_e)
     return C_G, C_d_j
 end
-
 
 """ 
     gov_revenues(model)
@@ -83,7 +81,6 @@ function gov_revenues(model::AbstractModel)
     return Y_G
 end
 
-
 """
     gov_loans(gov::AbstractGovernment, model, Y_G)
 
@@ -117,7 +114,6 @@ function gov_loans(gov, model)
     L_G = gov.L_G + Pi_G
 
     return L_G
-
 end
 
 """

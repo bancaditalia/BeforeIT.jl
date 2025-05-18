@@ -1,3 +1,4 @@
+
 """
     run!(model; shock = NoShock())
 
@@ -32,8 +33,6 @@ function run!(model::AbstractModel; multi_threading = false, shock = NoShock())
 
     return data
 end
-
-
 
 """
     ensemblerun(model, n_sims; shock = NoShock(), multi_threading = true)

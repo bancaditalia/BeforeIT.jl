@@ -1,5 +1,4 @@
 
-
 """
     init_bank(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
 
@@ -55,7 +54,6 @@ function init_bank(parameters, initial_conditions, firms; typeInt = Int64, typeF
 
     return bank, bank_args
 end
-
 
 """
     init_central_bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)

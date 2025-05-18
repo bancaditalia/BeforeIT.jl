@@ -11,7 +11,7 @@ Parameters:
 Returns:
 - DL_i: An array of credit allocations for each firm.
 """
-function search_and_matching_credit(firms::AbstractFirms, model)
+function search_and_matching_credit(firms::AbstractFirms, model::AbstractModel)
 
     # unpack arguments
     DL_d_i, K_e_i, L_e_i = firms.DL_d_i, firms.K_e_i, firms.L_e_i

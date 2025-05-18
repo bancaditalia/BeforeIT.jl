@@ -1,5 +1,4 @@
 
-
 """
     firms_expectations_and_decisions(firms, model)
 
@@ -75,7 +74,6 @@ function firms_expectations_and_decisions(firms, model)
     L_e_i = (1 - theta) .* firms.L_i
 
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
-
 end
 
 """
@@ -116,10 +114,8 @@ Calculate the production of firms.
 - `Y_i`: Vector of production
 
 The production `Y_i` is computed using a Leontief technology.
-
 """
 function firms_production(firms::AbstractFirms)
-
     Q_s_i = firms.Q_s_i
     # compute productivity of labour
     alpha_i =
@@ -294,7 +290,6 @@ function firms_deposits(firms, model)
     return D_i
 end
 
-
 """
     firms_equity(firms, model)
 
@@ -338,7 +333,6 @@ function firms_equity(firms, model)
 
     return E_i
 end
-
 
 """
     firms_loans(firms, model)
