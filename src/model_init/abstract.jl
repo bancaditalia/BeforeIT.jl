@@ -176,5 +176,8 @@ macro aggregates(T = Float64, I = Vector{Float64})
         epsilon_E::$T
         epsilon_I::$T
         t::$I
+        Y_EA_series::Vector{$T}
+        pi_EA_series::Vector{$T}
+        r_bar_series::Vector{$T}
     end)
 end
