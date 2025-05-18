@@ -121,9 +121,7 @@ function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model)
     L_e_i = (1 - theta) .* firms.L_i
 
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i, pi_d_i, pi_c_i, pi_l_i, pi_k_i, pi_m_i
-
 end
-
 
 # new firms initialisation
 firms_st, args = Bit.init_firms(p, ic)
@@ -145,19 +143,19 @@ rotw, _ = Bit.init_rotw(p, ic)
 properties = Bit.init_properties(p, T)
 
 # define a standard model
-model_st = Bit.Model(workers_act, workers_inact, firms_st, bank, central_bank, government, rotw, agg_st, properties)
+model_std = Bit.Model(workers_act, workers_inact, firms_st, bank, central_bank, government, rotw, agg_st, properties)
 
 # define a CANVAS model
-model = Bit.Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)
+model_canvas = Bit.Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)
 
 # adjust accounting
-Bit.update_variables_with_totals!(model_st)
-Bit.update_variables_with_totals!(model)
+Bit.update_variables_with_totals!(model_std)
+Bit.update_variables_with_totals!(model_canvas)
 
 # run the model(s)
-data_vector_st = Bit.ensemblerun(model_st, 8)
-data_vector = Bit.ensemblerun(model, 8)
+data_vector_std = Bit.ensemblerun(model_std, 8)
+data_vector_canvas = Bit.ensemblerun(model_canvas, 8)
 
 # plot the results
-ps = Bit.plot_data_vectors([data_vector_st, data_vector])
+ps = Bit.plot_data_vectors([data_vector_std, data_vector_canvas])
 plot(ps..., layout = (3, 3))
