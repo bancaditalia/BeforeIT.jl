@@ -12,7 +12,7 @@ Args:
 
 This function updates the model in-place and does not return any value.
 """
-function search_and_matching!(model, multi_threading = false)
+function search_and_matching!(model::AbstractModel, multi_threading = false)
 
     # unpack models' variables
     w_act, w_inact, firms, gov, bank, rotw = model.w_act, model.w_inact, model.firms, model.gov, model.bank, model.rotw

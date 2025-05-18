@@ -1,5 +1,4 @@
 
-
 """
     gov_expenditure(gov::AbstractGovernment, model)
 
@@ -26,7 +25,6 @@ function gov_expenditure(gov, model)
     return C_G, C_d_j
 end
 
-
 """ 
     gov_revenues(model)
 
@@ -43,7 +41,7 @@ imports.
 # Returns
 - `Y_G`: government revenues
 """
-function gov_revenues(model::Model)
+function gov_revenues(model::AbstractModel)
     # unpack objects
     w_act, w_inact, firms, bank, rotw = model.w_act, model.w_inact, model.firms, model.bank, model.rotw
     prop = model.prop
@@ -83,7 +81,6 @@ function gov_revenues(model::Model)
     return Y_G
 end
 
-
 """
     gov_loans(gov::AbstractGovernment, model, Y_G)
 
@@ -117,7 +114,6 @@ function gov_loans(gov, model)
     L_G = gov.L_G + Pi_G
 
     return L_G
-
 end
 
 """
