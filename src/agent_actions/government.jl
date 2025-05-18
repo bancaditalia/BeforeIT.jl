@@ -43,7 +43,7 @@ imports.
 # Returns
 - `Y_G`: government revenues
 """
-function gov_revenues(model::Model)
+function gov_revenues(model::AbstractModel)
     # unpack objects
     w_act, w_inact, firms, bank, rotw = model.w_act, model.w_inact, model.firms, model.bank, model.rotw
     prop = model.prop
