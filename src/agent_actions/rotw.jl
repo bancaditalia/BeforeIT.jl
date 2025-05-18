@@ -1,5 +1,4 @@
 
-
 """
     rotw_import_export(rotw, model, pi_e, epsilon_E, epsilon_I)
 
@@ -39,7 +38,6 @@ function rotw_import_export(rotw, model)
     return C_E, Y_I, C_d_l, Y_m, P_m
 
 end
-
 
 """
     rotw_deposits(rotw, tau_EXPORT)

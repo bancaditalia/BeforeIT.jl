@@ -1,3 +1,6 @@
+
+abstract type AbstractData end
+
 """
     @data(AV = Vector{Float64}, AM = Matrix{Float64})
 
@@ -42,15 +45,14 @@ macro data(AV = Vector{Float64}, AM = Matrix{Float64})
     end)
 end
 
-
 # Define the Data struct
-struct Data{T, AV <: AbstractVector{T}, AM <: AbstractMatrix{T}}
+struct Data{T, AV <: AbstractVector{T}, AM <: AbstractMatrix{T}} <: AbstractData
     @data AV AM
 end
 
 # Define the DataVector struct
-struct DataVector
-    vector::Vector{Data}
+struct DataVector{D<:AbstractData}
+    vector::Vector{D}
 end
 
 # Define the getproperty function for the DataVector struct
@@ -66,7 +68,6 @@ function Base.getproperty(dv::DataVector, name::Symbol)
     end
 end
 
-
 """
 Initialise the data arrays
 """
@@ -77,7 +78,6 @@ function init_data(m)
     _update_data_init!(d, m)
     return d
 end
-
 
 function _update_data_init!(d, m)
     p = m.prop
@@ -128,7 +128,6 @@ function _update_data_init!(d, m)
 
     return d
 end
-
 
 """
     update_data!(d, m)
@@ -233,4 +232,3 @@ function update_data!(d, m)
     d.gdp_deflator_growth_ea[t] = m.rotw.pi_EA
     d.real_gdp_ea[t] = m.rotw.Y_EA
 end
-

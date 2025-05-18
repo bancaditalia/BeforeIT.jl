@@ -1,4 +1,6 @@
+
 using MutableNamedTuples
+
 recursive_namedtuple(x::Any) = x
 recursive_namedtuple(d::Dict) = MutableNamedTuple(; Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
 
@@ -15,7 +17,7 @@ Parameters:
 - typeFloat: (optional, default: Float64): The data type to be used for floating-point values.
 
 Returns:
-- model::Model: The initialized model.
+- model::AbstractModel: The initialized model.
 
 """
 function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}, T, typeInt::DataType = Int64, typeFloat::DataType = Float64)
@@ -52,23 +54,22 @@ function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
     update_variables_with_totals!(model)
 
     return model
-
 end
 
 """
-    update_variables_with_totals!(model::Model)
+    update_variables_with_totals!(model::AbstractModel)
 
 Update the variables in the given `model` with some global quantities obtained from all agents.
 This is the last step in the initialization process and it must be performed after all agents have been initialized.
 
 # Arguments
-- `model::Model`: The model object to update.
+- `model::AbstractModel`: The model object to update.
 
 # Returns
 - Nothing
 
 """
-function update_variables_with_totals!(model::Model)
+function update_variables_with_totals!(model::AbstractModel)
 
     # obtain total income by summing contributions from firm owners, workers and bank owner
     tot_Y_h = sum(model.firms.Y_h) + sum(model.w_act.Y_h) + sum(model.w_inact.Y_h) + model.bank.Y_h

@@ -72,7 +72,6 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
         N_i[G_i .== g] .= randpl(I_s[g], 2.0, N_s[g])
     end
 
-
     Y_i = alpha_bar_i .* N_i
     Q_d_i = copy(Y_i)
     P_i = ones(typeFloat, I)
@@ -123,7 +122,6 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
     DM_d_i = zeros(typeFloat, I)
     N_d_i = zeros(typeInt, I)
     Pi_e_i = zeros(typeFloat, I)
-
 
     firms_args = (G_i, alpha_bar_i, beta_i, kappa_i, w_i, w_bar_i, delta_i, tau_Y_i, tau_K_i, N_i, Y_i, Q_i, Q_d_i, 
                       P_i, S_i, K_i, M_i, L_i, pi_bar_i, D_i, Pi_i, V_i, I_i, E_i, P_bar_i, P_CF_i, DS_i, DM_i, DL_i, 

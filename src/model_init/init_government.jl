@@ -1,5 +1,4 @@
 
-
 """
     init_government(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
 

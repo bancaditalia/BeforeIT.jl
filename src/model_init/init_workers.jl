@@ -1,5 +1,4 @@
 
-
 """
     init_workers(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
 
@@ -82,7 +81,6 @@ function init_workers(parameters, initial_conditions, firms; typeInt = Int64, ty
     
     # inactive workers
     ids = Vector{typeInt}((I + H_W + 1):(I + H_W + H_inact))
-
 
     Y_h = zeros(typeFloat, H_inact)
     for h in 1:H_inact

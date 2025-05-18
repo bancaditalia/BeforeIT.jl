@@ -28,6 +28,7 @@ Literate.markdown(joinpath(indir, "get_parameters_and_initial_conditions.jl"), o
 Literate.markdown(joinpath(indir, "multithreading_speedup.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "change_expectations.jl"), outdir; credit = false)
+Literate.markdown(joinpath(indir, "basic_inheritance.jl"), outdir; credit = false)
 
 
 @info "Building Documentation"
@@ -38,6 +39,7 @@ makedocs(
         "Home" => "index.md",
         "Essentials" => "examples/basic_example.md",
         "Shocked simulations" => "examples/scenario_analysis_via_shock.md",
+        "Essential model extension" => "examples/basic_inheritance.md",
         "Shocked simulations (advanced)" => "examples/scenario_analysis_via_overload.md",
         "Experimentations (advanced)" => "examples/change_expectations.md",
         "Multithreading within the model" => "examples/multithreading_speedup.md",

@@ -1,3 +1,4 @@
+
 """
     run!(model; shock = NoShock())
 
@@ -5,7 +6,7 @@ Run a single simulation based on the provided `model`.
 The simulation runs for a number of epochs specified by `model.prop.T`.
 
 # Arguments
-- `model::Model`: The model configuration used for the simulation.
+- `model::AbstractModel`: The model configuration used for the simulation.
 
 # Returns
 - `data::Data`: The data collected during the simulation.
@@ -32,8 +33,6 @@ function run!(model::AbstractModel; multi_threading = false, shock = NoShock())
 
     return data
 end
-
-
 
 """
     ensemblerun(model, n_sims; shock = NoShock(), multi_threading = true)

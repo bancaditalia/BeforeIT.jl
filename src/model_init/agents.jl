@@ -1,12 +1,9 @@
-export Workers,
-    Firms,
-    Bank,
-    CentralBank,
-    Government,
-    RestOfTheWorld,
-    Aggregates,
-    Model
+
+export Workers, Firms, Bank, CentralBank, Government, 
+       RestOfTheWorld, Aggregates, Model
+
 include("abstract.jl")
+
 """
 This is a Workers. Each field is an array which stores the values for all the workers in
 the economy. Note that the `O_h` field is an integer, while the rest are floats.
@@ -27,7 +24,6 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 struct Workers{T <: AbstractVector, I <: AbstractVector} <: AbstractWorkers
     @worker T I
 end
-
 
 """
 This is a Firms type. Each field is an array which stores the values for all the firms in
@@ -86,7 +82,6 @@ mutable struct Firms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
     @firm T I
 end
 
-
 """
 This is a Bank type. It represents the bank of the model.
 
@@ -110,7 +105,6 @@ mutable struct Bank{P} <: AbstractBank
     @bank P
 end
 
-
 """
 This is a CentralBank type. It represents the central bank of the model.
 
@@ -125,7 +119,6 @@ This is a CentralBank type. It represents the central bank of the model.
 - `E_CB`: Central bank equity
 """
 mutable struct CentralBank{T} <: AbstractCentralBank
-
     @centralBank T
 end
 
@@ -146,7 +139,6 @@ This is a Government type. It represents the government of the model.
 - `P_j`: Price inflation of government goods <- ??
 """
 mutable struct Government{T} <: AbstractGovernment
-
     @government T
 end
 
@@ -181,10 +173,8 @@ This is a RestOfTheWorld type. It represents the rest of the world of the model.
 - `P_l`: Price inflation of exports <- ??
 """
 mutable struct RestOfTheWorld{T} <: AbstractRestOfTheWorld
-
     @restOfTheWorld T
 end
-
 
 """
 This is a Aggregates type. It is used to store the aggregate variables of the economy.
@@ -222,18 +212,21 @@ This is a Model type. It is used to store all the agents of the economy.
 - `rotw`: RestOfTheWorld
 - `agg`: Aggregates
 """
-mutable struct Model <: AbstractModel
-    w_act::AbstractWorkers
-    w_inact::AbstractWorkers
-    firms::AbstractFirms
-    bank::AbstractBank
-    cb::AbstractCentralBank
-    gov::AbstractGovernment
-    rotw::AbstractRestOfTheWorld
-    agg::AbstractAggregates
-    prop::Any
+mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
+                     F<:AbstractFirms,B<:AbstractBank,
+                     C<:AbstractCentralBank,G<:AbstractGovernment,
+                     R<:AbstractRestOfTheWorld,A<:AbstractAggregates,
+                     P} <: AbstractModel
+    w_act::W1
+    w_inact::W2
+    firms::F
+    bank::B
+    cb::C
+    gov::G
+    rotw::R
+    agg::A
+    prop::P
 end
-
 
 # helper functions
 length(f::AbstractFirms) = length(f.G_i)
