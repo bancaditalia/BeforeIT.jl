@@ -194,7 +194,7 @@ where:
 - `out_taxes_capital = tau_K_i * P_i * Y_i`
 - `out_loans = r * (L_i + pos(-D_i))`
 """
-function firms_profits(firms::AbstractFirms, model::Model)
+function firms_profits(firms::AbstractFirms, model::AbstractModel)
 
     # unpack variables not related to firms
     P_bar_HH = model.agg.P_bar_HH

@@ -11,7 +11,7 @@ Update the base interest rate set by the central bank according to the Taylor ru
 # Returns
 - `r_bar`: The updated base interest rate
 """
-function central_bank_rate(cb::AbstractCentralBank, model::Model)
+function central_bank_rate(cb::AbstractCentralBank, model::AbstractModel)
     # unpack arguments
     gamma_EA = model.rotw.gamma_EA
     pi_EA = model.rotw.pi_EA
