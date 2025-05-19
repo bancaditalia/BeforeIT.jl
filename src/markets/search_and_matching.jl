@@ -220,7 +220,7 @@ function update_aggregate_variables!(
     firms.P_CF_i .= P_CF_i
 
     # compute sales as minimum between supply and demand (internal and external)
-    firms.Q_i = min.(firms.Y_i .+ firms.S_i, firms.Q_d_i)
+    firms.Q_i .= min.(firms.Y_i .+ firms.S_i, firms.Q_d_i)
     rotw.Q_m = min.(rotw.Y_m, Q_d_m)
 
     # update households capital stock with investments
@@ -228,7 +228,6 @@ function update_aggregate_variables!(
     w_inact.K_h .+= w_inact.I_h
     firms.K_h .+= firms.I_h
     bank.K_h += bank.I_h
-
 end
 
 function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading)
