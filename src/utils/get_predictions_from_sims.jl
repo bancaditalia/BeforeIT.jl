@@ -99,23 +99,22 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
 
     q = quarterofyear(date)
 
-    variables = ["real_gdp", "nominal_gdp", "real_gva", "nominal_gva",
-                 "real_household_consumption", "nominal_household_consumption",
-                 "real_government_consumption", "nominal_government_consumption",
-                 "real_capitalformation", "nominal_capitalformation",
-                 "real_fixed_capitalformation", "nominal_fixed_capitalformation",
-                 "real_exports", "nominal_exports",
-                 "real_imports", "nominal_imports"]
+    variables = ["gdp", "gva", "household_consumption",
+                 "government_consumption", "capitalformation",
+                 "fixed_capitalformation", "exports", "imports"]
 
-    for var in variables
-        quarterly, annual, growth_annual, growth_quarterly = prepare_quarterly_annual_level_growth(
-            data, sims, var, quarter_num, year_num, number_seeds, q
-        )
+    for name in variables
+        for version in ["real", "nominal"]
+            var = "$(version)_$(name)"
+            quarterly, annual, growth_annual, growth_quarterly = prepare_quarterly_annual_level_growth(
+                data, sims, var, quarter_num, year_num, number_seeds, q
+            )
 
-        model_dict["$(var)_quarterly"] = quarterly
-        model_dict[var] = annual
-        model_dict["$(var)_growth"] = growth_annual
-        model_dict["$(var)_growth_quarterly"] = growth_quarterly
+            model_dict["$(var)_quarterly"] = quarterly
+            model_dict[var] = annual
+            model_dict["$(var)_growth"] = growth_annual
+            model_dict["$(var)_growth_quarterly"] = growth_quarterly
+        end
     end
 
     # Variables where only levels (no growth series) are required
@@ -135,16 +134,10 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
     end
 
     # Deflators
-    deflators = [("gdp", "nominal_gdp", "real_gdp"),
-                 ("gva", "nominal_gva", "real_gva"),
-                 ("household_consumption", "nominal_household_consumption", "real_household_consumption"),
-                 ("government_consumption", "nominal_government_consumption", "real_government_consumption"),
-                 ("capitalformation", "nominal_capitalformation", "real_capitalformation"),
-                 ("fixed_capitalformation", "nominal_fixed_capitalformation", "real_fixed_capitalformation"),
-                 ("exports", "nominal_exports", "real_exports"),
-                 ("imports", "nominal_imports", "real_imports")]
 
-    for (name, nominal_var, real_var) in deflators
+    for name in variables
+        real_var = "real_$(name)"
+        nominal_var = "nominal_$(name)"
         deflator_q, deflator_y, deflator_growth_y, deflator_growth_q = prepare_quarterly_annual_level_growth_deflator(
             model_dict["$(nominal_var)_quarterly"][2:end, :],
             model_dict["$(real_var)_quarterly"][2:end, :],
