@@ -62,7 +62,7 @@
         @test isapprox(mean(L_e_i), 360.694, rtol = 1e-5)
         @test isapprox(mean(firms.P_i), 1.0031, rtol = 1e-4)
     
-        firms.DL_i = Bit.search_and_matching_credit(firms, model) # actual new loans obtained
+        firms.DL_i .= Bit.search_and_matching_credit(firms, model) # actual new loans obtained
         @test isapprox(mean(firms.DL_i[firms.DL_i .> 0]), 95.9791, rtol = 1e-6)
     
         N_i, Oh = Bit.search_and_matching_labour(firms, model)
