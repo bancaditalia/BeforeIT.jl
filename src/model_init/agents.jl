@@ -228,6 +228,18 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
     prop::P
 end
 
+function Model(w_act::W1, w_inact::W2, firms::F, bank::B, cb::C, gov::G, rotw::R, agg::A, prop::P) where {
+    W1<:AbstractWorkers, W2<:AbstractWorkers, F<:AbstractFirms, B<:AbstractBank,
+    C<:AbstractCentralBank, G<:AbstractGovernment, R<:AbstractRestOfTheWorld, A<:Aggregates, P
+}
+    model = Model{W1,W2,F,B,C,G,R,A,P}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop)
+    
+    # update model variables with global quantities (total income, total deposits) obtained from all the agents
+    update_variables_with_totals!(model)
+
+    return model
+end
+
 # helper functions
 length(f::AbstractFirms) = length(f.G_i)
 length(w::AbstractWorkers) = length(w.Y_h)
