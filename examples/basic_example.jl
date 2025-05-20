@@ -15,7 +15,7 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 # We can now initialise the model, by specifying in advance the maximum number of epochs.
 
 T = 16
-model = Bit.init_model(parameters, initial_conditions, T)
+model = Bit.init_model(parameters, initial_conditions, T);
 
 # Note that the it is very simple to inspect the model by typing
 

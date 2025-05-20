@@ -50,9 +50,6 @@ function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
     # model
     model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)
 
-    # update the model with global quantities (total income, total deposits) obtained from all the agents
-    update_variables_with_totals!(model)
-
     return model
 end
 
