@@ -13,53 +13,41 @@ To introduce changes 1 and 2 we need dissagregated data at the household and fir
 """
 
 import BeforeIT as Bit
-using Plots, Dates, FileIO
+using Plots, Dates
 
-# calibration
+# get parameters and initial conditiosn
 T = 12
-year_i = 2019
-quarter = 1
-scale = 0.001
 cal = Bit.ITALY_CALIBRATION
 calibration_date = DateTime(2010, 03, 31)
 
-# standard calibration 
-p, ic = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = scale)
+p, ic = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = 0.001)
 
-# new variables needed for the CANVAS model
-T_estimation_exo = findall(cal.data["quarters_num"] .== Bit.date2num(cal.estimation_date))[1][1]
-T_calibration_exo = findall(cal.data["quarters_num"] .== Bit.date2num(calibration_date))[1][1]
-timescale_sum_output = 1.0 # TODO: to be changed, this should be: timescale * sum(output)
+# expand series with T new time steps in the future
+Y_EA_series = vec(vcat(ic["Y_EA_series"], zeros(Float64, T)))
+pi_EA_series = vec(vcat(ic["pi_EA_series"], zeros(Float64, T)))
+r_bar_series = vec(vcat(ic["r_bar_series"], zeros(Float64, T)))
 
-Y_EA_series = timescale_sum_output .* cal.ea["real_gdp_quarterly"][T_estimation_exo:T_calibration_exo] ./ cal.ea["real_gdp_quarterly"][T_calibration_exo]
-pi_EA_series = diff(log.(cal.ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))
-r_bar_series = r_bar_series = (cal.data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1.0) .^ (1.0 / 4.0) .- 1
-
-typeFloat = Float64
-Y_EA_series = Vector{typeFloat}(vec(vcat(Y_EA_series, zeros(typeFloat, T))))
-pi_EA_series = Vector{typeFloat}(vec(vcat(pi_EA_series, zeros(typeFloat, T))))
-r_bar_series = Vector{typeFloat}(vec(vcat(r_bar_series, zeros(typeFloat, T))))
-
-# new aggregates for the CANVAS model
-mutable struct CentralBankCANVAS{T, I} <: Bit.AbstractCentralBank
-    Bit.@centralBank I
-    r_bar_series::Vector{T}
+# define a new central bank for the CANVAS model
+mutable struct CentralBankCANVAS{Float64} <: Bit.AbstractCentralBank
+    Bit.@centralBank Float64
+    r_bar_series::Vector{Float64}
 end
 
-
-# new firms for the CANVAS model
-mutable struct FirmsCANVAS{T <: AbstractVector, I <: AbstractVector} <: Bit.AbstractFirms
-    Bit.@firm T I
+# define new firms for the CANVAS model
+mutable struct FirmsCANVAS{Float64, Int} <: Bit.AbstractFirms
+    Bit.@firm Float64 Int
 end
 
-mutable struct RoTWCANVAS{T} <: Bit.AbstractRestOfTheWorld
-    Bit.@restOfTheWorld T
-    Y_EA_series::Vector{T}
-    pi_EA_series::Vector{T}
+# define a new rest of the world for the CANVAS model
+mutable struct RestOfTheWorldCANVAS{Float64} <: Bit.AbstractRestOfTheWorld
+    Bit.@restOfTheWorld Float64
+    Y_EA_series::Vector{Float64}
+    pi_EA_series::Vector{Float64}
 end
 
-# new function to update the firms expectation and decisions in the CANVAS model
-function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model)
+# define new functions for the CANVAS-specific agents
+
+function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model::Bit.AbstractModel)
 
     # unpack non-firm variables
     tau_SIF = model.prop.tau_SIF
@@ -74,27 +62,26 @@ function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model)
     pi_e = model.agg.pi_e
 
     # Individual firm quantity and price adjustments
-    I = length(firms.G_i);
-    gamma_d_i = zeros(I);
-    pi_d_i = zeros(I);
+    I = length(firms.G_i)
+    gamma_d_i = zeros(I)
+    pi_d_i = zeros(I)
 
-    for i=1:I
+    for i in 1:I
         if firms.Q_s_i[i] <= firms.Q_d_i[i] && firms.P_i[i] >= P_bar_g[firms.G_i[i]]
-            gamma_d_i[i] = firms.Q_d_i[i] / firms.Q_s_i[i]-1;
-            pi_d_i[i]=0;
+            gamma_d_i[i] = firms.Q_d_i[i] / firms.Q_s_i[i] - 1
+            pi_d_i[i] = 0
         elseif firms.Q_s_i[i] <= firms.Q_d_i[i] && firms.P_i[i] < P_bar_g[firms.G_i[i]]
-            gamma_d_i[i] = 0;
-            pi_d_i[i] = firms.Q_d_i[i] / firms.Q_s_i[i] - 1;
+            gamma_d_i[i] = 0
+            pi_d_i[i] = firms.Q_d_i[i] / firms.Q_s_i[i] - 1
         elseif firms.Q_s_i[i] > firms.Q_d_i[i] && firms.P_i[i] >= P_bar_g[firms.G_i[i]]
-            gamma_d_i[i] = 0;
-            pi_d_i[i] = firms.Q_d_i[i] / firms.Q_s_i[i] - 1;
+            gamma_d_i[i] = 0
+            pi_d_i[i] = firms.Q_d_i[i] / firms.Q_s_i[i] - 1
         elseif firms.Q_s_i[i] > firms.Q_d_i[i] && firms.P_i[i] < P_bar_g[firms.G_i[i]]
-            gamma_d_i[i] = firms.Q_d_i[i] / firms.Q_s_i[i] - 1;
-            pi_d_i[i] = 0;
+            gamma_d_i[i] = firms.Q_d_i[i] / firms.Q_s_i[i] - 1
+            pi_d_i[i] = 0
         end
     end
     #pi_d_i = min.(pi_d_i, 0.3) # cap the price adjustment to 30%. Otherwise it can reach 200% in some cases
-
     Q_s_i = firms.Q_s_i .* (1 .+ gamma_e) .* (1 .+ gamma_d_i)
 
     # price setting
@@ -103,31 +90,23 @@ function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model)
     term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1), dims = 1)
     pi_k_i = firms.delta_i ./ firms.kappa_i .* (P_bar_CF ./ firms.P_i .- 1)
 
-    pi_m_i =  1 ./ firms.beta_i .* (term ./ firms.P_i .- 1)
-
+    pi_m_i = 1 ./ firms.beta_i .* (term ./ firms.P_i .- 1)
     pi_c_i = pi_l_i .+ pi_k_i .+ pi_m_i
-
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e) .* (1 .+ pi_d_i)
-
     I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
 
     # intermediate goods to purchase
     DM_d_i = min.(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.beta_i
-
     # target employment
     N_d_i = max.(1.0, round.(min(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.alpha_bar_i))
-
     # expected profits 
     Pi_e_i = firms.Pi_i .* (1 + pi_e) * (1 + gamma_e)
-
     # target loans
     DD_e_i =
         Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .- (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i) # expected future cash flow
     DL_d_i = max.(0, -DD_e_i - firms.D_i)
-
     # expected capital
     K_e_i = P_bar_CF .* (1 + pi_e) .* firms.K_i
-
     # expected loans
     L_e_i = (1 - theta) .* firms.L_i
 
@@ -138,12 +117,12 @@ function Bit.central_bank_rate(cb::CentralBankCANVAS, model::Bit.AbstractModel)
     # unpack arguments
     gamma_EA = model.rotw.gamma_EA
     pi_EA = model.rotw.pi_EA
-	T_prime = model.prop.T_prime
+    T_prime = model.prop.T_prime
     t = model.agg.t
 
-	a1 = cb.r_bar_series[1:(T_prime + t- 1)]
-    a2 = model.rotw.Y_EA_series[1:(T_prime + t- 1)]
-    a3 = model.rotw.pi_EA_series[1:(T_prime + t- 1)]
+    a1 = cb.r_bar_series[1:(T_prime + t - 1)]
+    a2 = model.rotw.Y_EA_series[1:(T_prime + t - 1)]
+    a3 = model.rotw.pi_EA_series[1:(T_prime + t - 1)]
 
     # update central bank parameters
     rho, r_star, xi_pi, xi_gamma, pi_star = Bit.estimate_taylor_rule(a1, a2, a3)
@@ -159,10 +138,10 @@ function Bit.central_bank_rate(cb::CentralBankCANVAS, model::Bit.AbstractModel)
     return r_bar
 end
 
-function growth_inflation_EA(rotw::RoTWCANVAS, model)
+function Bit.growth_inflation_EA(rotw::RestOfTheWorldCANVAS, model::Bit.AbstractModel)
     # unpack model variables
     epsilon_Y_EA = model.agg.epsilon_Y_EA
-	T_prime = model.prop.T_prime
+    T_prime = model.prop.T_prime
     t = model.agg.t
 
     Y_EA = exp(rotw.alpha_Y_EA * log(rotw.Y_EA) + rotw.beta_Y_EA + epsilon_Y_EA) # GDP EA
@@ -171,7 +150,7 @@ function growth_inflation_EA(rotw::RoTWCANVAS, model)
     pi_EA = exp(rotw.alpha_pi_EA * log(1 + rotw.pi_EA) + rotw.beta_pi_EA + epsilon_pi_EA) - 1   # inflation EA
 
     rotw.pi_EA_series[T_prime + t] = pi_EA
-    rotw.Y_EA_series[T_prime + t] = Y_EA 
+    rotw.Y_EA_series[T_prime + t] = Y_EA
 
     return Y_EA, gamma_EA, pi_EA
 end
@@ -183,27 +162,26 @@ firms.Q_s_i = copy(firms.Q_d_i) # overwrite to avoid division by zero for new fi
 
 # new central bank initialisation
 central_bank_st, args = Bit.init_central_bank(p, ic)
-central_bank = CentralBankCANVAS(args... , r_bar_series) # add new variables to the aggregates
+central_bank = CentralBankCANVAS(args..., r_bar_series) # add new variables to the aggregates
 
 # new rotw initialisation
 rotw_st, args = Bit.init_rotw(p, ic)
-rotw = RoTWCANVAS(args..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
+rotw = RestOfTheWorldCANVAS(args..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
-
-# standard initialisations
-workers_act, workers_inact, V_i_new, _, _ = Bit.init_workers(p, ic, firms)
-firms_st.V_i = V_i_new
-firms.V_i = V_i_new
+# standard initialisations: workers, bank, aggregats, government and properties
+w_act, w_inact, V_i_new, _, _ = Bit.init_workers(p, ic, firms)
+firms_st.V_i .= V_i_new
+firms.V_i .= V_i_new
 bank, _ = Bit.init_bank(p, ic, firms)
-aggregates, _ = Bit.init_aggregates(p, ic,T)
-government, _ = Bit.init_government(p, ic)
-properties = Bit.init_properties(p, T)
+agg, _ = Bit.init_aggregates(p, ic, T)
+gov, _ = Bit.init_government(p, ic)
+prop = Bit.init_properties(p, T)
 
 # define a standard model
-model_std = Bit.Model(workers_act, workers_inact, firms_st, bank, central_bank_st, government, rotw_st, aggregates, properties)
+model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop)
 
 # define a CANVAS model
-model_canvas = Bit.Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, aggregates, properties)
+model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop)
 
 # adjust accounting
 Bit.update_variables_with_totals!(model_std)
