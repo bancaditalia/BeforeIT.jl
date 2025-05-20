@@ -30,7 +30,7 @@ function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
 
     # workers, and update firms vacancies
     workers_act, workers_inact, V_i_new, _, _ = Bit.init_workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
-    firms.V_i = V_i_new
+    firms.V_i .= V_i_new
 
     # bank
     bank, _ = Bit.init_bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)

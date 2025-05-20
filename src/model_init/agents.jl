@@ -78,7 +78,7 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-mutable struct Firms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
+struct Firms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
     @firm T I
 end
 
