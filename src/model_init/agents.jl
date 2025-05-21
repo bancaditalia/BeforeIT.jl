@@ -195,7 +195,7 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `t`: Time index
 
 """
-mutable struct Aggregates{T, I}
+mutable struct Aggregates{T, I} <: AbstractAggregates
     @aggregates T I
 end
 
@@ -215,7 +215,7 @@ This is a Model type. It is used to store all the agents of the economy.
 mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
                      F<:AbstractFirms,B<:AbstractBank,
                      C<:AbstractCentralBank,G<:AbstractGovernment,
-                     R<:AbstractRestOfTheWorld,A<:Aggregates,
+                     R<:AbstractRestOfTheWorld,A<:AbstractAggregates,
                      P} <: AbstractModel
     w_act::W1
     w_inact::W2
