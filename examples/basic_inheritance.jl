@@ -37,10 +37,6 @@ government, rotw, agg, properties)
 new_model = Bit.Model(w_act, w_inact, firms, bank, newcentral_bank,
 government, rotw, agg, properties)
 
-# adjust accounting aften initialisation
-Bit.update_variables_with_totals!(standard_model)
-Bit.update_variables_with_totals!(new_model)
-
 # run a simulation with the new model
 data_vec_standard = Bit.ensemblerun(standard_model, 4);
 data_vec_new = Bit.ensemblerun(new_model, 4);
