@@ -6,7 +6,7 @@ import BeforeIT as Bit
 using FileIO, Dates
 
 year_ = 2010
-number_years = 9
+number_years = 10
 number_quarters = 4 * number_years
 horizon = 12
 number_seeds = 4
