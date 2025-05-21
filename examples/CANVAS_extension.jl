@@ -183,10 +183,6 @@ model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw
 # define a CANVAS model
 model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop)
 
-# adjust accounting
-Bit.update_variables_with_totals!(model_std)
-Bit.update_variables_with_totals!(model_canvas)
-
 # run the model(s)
 data_vector_std = Bit.ensemblerun(model_std, 8)
 data_vector_canvas = Bit.ensemblerun(model_canvas, 8)
