@@ -48,16 +48,8 @@ end
 # define new functions for the CANVAS-specific agents
 
 function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model::Bit.AbstractModel)
-
     # unpack non-firm variables
-    tau_SIF = model.prop.tau_SIF
-    tau_FIRM = model.prop.tau_FIRM
-    theta = model.prop.theta
-    theta_DIV = model.prop.theta_DIV
-    P_bar_HH = model.agg.P_bar_HH
-    P_bar_CF = model.agg.P_bar_CF
     P_bar_g = model.agg.P_bar_g
-    a_sg = model.prop.products.a_sg
     gamma_e = model.agg.gamma_e
     pi_e = model.agg.pi_e
 
@@ -84,33 +76,20 @@ function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model::Bit.Abs
     #pi_d_i = min.(pi_d_i, 0.3) # cap the price adjustment to 30%. Otherwise it can reach 200% in some cases
     Q_s_i = firms.Q_s_i .* (1 .+ gamma_e) .* (1 .+ gamma_d_i)
 
+    # cost push inflation
+    pi_c_i = Bit.cost_push_inflation(firms, model)
     # price setting
-    # dividing equation for pi_c_i into smaller pieces
-    pi_l_i = (1 + tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
-    term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1), dims = 1)
-    pi_k_i = firms.delta_i ./ firms.kappa_i .* (P_bar_CF ./ firms.P_i .- 1)
-
-    pi_m_i = 1 ./ firms.beta_i .* (term ./ firms.P_i .- 1)
-    pi_c_i = pi_l_i .+ pi_k_i .+ pi_m_i
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e) .* (1 .+ pi_d_i)
-    I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
-
-    # intermediate goods to purchase
-    DM_d_i = min.(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.beta_i
-    # target employment
-    N_d_i = max.(1.0, round.(min(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.alpha_bar_i))
+    # target investments in capital, intermediate goods to purchase and employment
+    I_d_i, DM_d_i, N_d_i = Bit.desired_capital_material_employment(firms, Q_s_i)
     # expected profits 
     Pi_e_i = firms.Pi_i .* (1 + pi_e) * (1 + gamma_e)
+    # expected deposits, capital and loans
+    DD_e_i, K_e_i, L_e_i = Bit.expected_deposits_capital_loans(firms, model, Pi_e_i)
     # target loans
-    DD_e_i =
-        Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .- (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i) # expected future cash flow
     DL_d_i = max.(0, -DD_e_i - firms.D_i)
-    # expected capital
-    K_e_i = P_bar_CF .* (1 + pi_e) .* firms.K_i
-    # expected loans
-    L_e_i = (1 - theta) .* firms.L_i
 
-    return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i, pi_d_i, pi_c_i, pi_l_i, pi_k_i, pi_m_i
+    return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
 
 function Bit.central_bank_rate(cb::CentralBankCANVAS, model::Bit.AbstractModel)
