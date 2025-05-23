@@ -52,7 +52,6 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
 
     if multi_threading
         Threads.@threads for (i, gs) in enumerate(chunks(shuffle(1:G); n=Threads.nthreads()))
-            rng = rngs[i]
             for g in gs
                 perform_market!(i, g)
             end
