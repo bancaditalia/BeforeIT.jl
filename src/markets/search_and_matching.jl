@@ -33,7 +33,7 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
 
     # Loop over all goods (internal and foreign)
     function perform_market!(i, g)
-        F_g = findall(G_f .== g)
+        F_g = findall(x -> x == g, G_f)
         S_fg = copy(S_f)
         S_fg_ = copy(S_f_)
 
@@ -222,7 +222,7 @@ function perform_firms_market!(
     DM_nominal_ig = zeros(size(DM_d_ig))
 
     # firms that have demand for good "g" participate as buyers
-    I_g = findall(DM_d_ig .> 0.0)
+    I_g = findall(x -> x > 0.0, DM_d_ig)
 
     # keep firms that have positive stock of good "g"
     filter!(i -> S_fg[i] > 0.0, F_g)
@@ -259,7 +259,7 @@ function perform_firms_market!(
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
-        F_g = findall(G_f .== g)
+        F_g = findall(x -> x == g, G_f)
         filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
@@ -319,7 +319,7 @@ function perform_retail_market!(
         c_G_g[g] .* gov.C_d_j
     ]
     C_real_hg = zeros(size(C_d_hg))
-    H_g = findall(C_d_hg .> 0.0)
+    H_g = findall(x -> x > 0.0, C_d_hg)
 
     filter!(i -> S_fg[i] > 0.0, F_g)
 
@@ -350,7 +350,7 @@ function perform_retail_market!(
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
-        F_g = findall(G_f .== g)
+        F_g = findall(x -> x == g, G_f)
         filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
