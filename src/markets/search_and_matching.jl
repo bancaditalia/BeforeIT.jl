@@ -378,8 +378,6 @@ function perform_retail_market!(
         end
     end
 
-    F_g = F_g[allinds(F_g_active)]
-
     a = @view(C_real_hg[1:H])
     b = @~ C_d_h .* b_HH_g[g] .- pos.(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
     c = @~ C_d_h .* b_HH_g[g] .+ b_CFH_g[g] .* I_d_h .- @view(C_d_hg[1:H])
