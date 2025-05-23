@@ -230,15 +230,15 @@ function perform_firms_market!(
     # continue exchanges until either demand or supply terminates
 
     # weights according to size and price
-    F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
+    F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
-    while !isempty(I_g) && !isempty(F_g_sampler)
+    while !isempty(I_g) && !isempty(F_g_active)
 
         # select buyers at random
         shuffle!(I_g)
         for i in I_g
             # select a random firm according to the probabilities
-            e = rand(F_g_sampler)
+            e = rand(F_g_active)
             f = F_g[e]
 
             # selected firm has sufficient stock
@@ -250,8 +250,8 @@ function perform_firms_market!(
                 DM_d_ig[i] -= S_fg[f]
                 DM_nominal_ig[i] += S_fg[f] * P_f[f]
                 S_fg[f] = 0.0
-                delete!(F_g_sampler, e)
-                isempty(F_g_sampler) && break
+                delete!(F_g_active, e)
+                isempty(F_g_active) && break
             end
         end
         filter!(i -> DM_d_ig[i] > 0.0, I_g)
@@ -263,13 +263,13 @@ function perform_firms_market!(
         filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
-        F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
+        F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
-        while !isempty(I_g) && !isempty(F_g_sampler)
+        while !isempty(I_g) && !isempty(F_g_active)
 
             shuffle!(I_g)
             for i in I_g
-                e = rand(F_g_sampler)
+                e = rand(F_g_active)
                 f = F_g[e]
 
                 if S_fg_[f] > DM_d_ig_[i]
@@ -280,15 +280,15 @@ function perform_firms_market!(
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0.0
-                    delete!(F_g_sampler, e)
-                    isempty(F_g_sampler) && break
+                    delete!(F_g_active, e)
+                    isempty(F_g_active) && break
                 end
             end
             filter!(i -> DM_d_ig_[i] > 0.0, I_g)
         end
     end
 
-    F_g = F_g[allinds(F_g_sampler)]
+    F_g = F_g[allinds(F_g_active)]
 
     a = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos.(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
     b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
@@ -324,13 +324,13 @@ function perform_retail_market!(
     filter!(i -> S_fg[i] > 0.0, F_g)
 
     # weights according to size and price
-    F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
+    F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
-    while !isempty(H_g) && !isempty(F_g_sampler)
+    while !isempty(H_g) && !isempty(F_g_active)
 
         shuffle!(H_g)
         for h in H_g
-            e = rand(F_g_sampler)
+            e = rand(F_g_active)
             f = F_g[e]
 
             if S_fg[f] > C_d_hg[h] / P_f[f]
@@ -341,8 +341,8 @@ function perform_retail_market!(
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
                 S_fg[f] = 0.0
-                delete!(F_g_sampler, e)
-                isempty(F_g_sampler) && break
+                delete!(F_g_active, e)
+                isempty(F_g_active) && break
             end
         end
         filter!(h -> C_d_hg[h] > 0.0, H_g)
@@ -354,13 +354,13 @@ function perform_retail_market!(
         filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
-        F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
+        F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
-        while !isempty(H_g) && !isempty(F_g_sampler)
+        while !isempty(H_g) && !isempty(F_g_active)
 
             shuffle!(H_g)
             for h in H_g
-                e = rand(F_g_sampler)
+                e = rand(F_g_active)
                 f = F_g[e]
 
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
@@ -371,15 +371,15 @@ function perform_retail_market!(
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0.0
-                    delete!(F_g_sampler, e)
-                    isempty(F_g_sampler) && break
+                    delete!(F_g_active, e)
+                    isempty(F_g_active) && break
                 end
             end
             filter!(h -> C_d_hg_[h] > 0.0, H_g)
         end
     end
 
-    F_g = F_g[allinds(F_g_sampler)]
+    F_g = F_g[allinds(F_g_active)]
 
     a = @view(C_real_hg[1:H])
     b = @~ C_d_h .* b_HH_g[g] .- pos.(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)
