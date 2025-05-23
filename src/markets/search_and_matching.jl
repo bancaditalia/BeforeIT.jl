@@ -15,157 +15,65 @@ This function updates the model in-place and does not return any value.
 function search_and_matching!(model::AbstractModel, multi_threading = false)
 
     # unpack models' variables
-    w_act, w_inact, firms, gov, bank, rotw = model.w_act, model.w_inact, model.firms, model.gov, model.bank, model.rotw
-    agg, prop = model.agg, model.prop
+    w_act, w_inact, firms, gov = model.w_act, model.w_inact, model.firms, model.gov
+    bank, rotw, agg, prop = model.bank, model.rotw, model.agg, model.prop
 
     # Initialize variables for firms market
-    a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g =
-        initialize_variables_firms_market(firms, rotw, prop)
+    a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g,
+    P_CF_i_g = initialize_variables_firms_market(firms, rotw, prop)
 
     # Initialize variables
-    I,
-    H,
-    L,
-    J,
-    C_d_h,
-    I_d_h,
-    b_HH_g,
-    b_CFH_g,
-    c_E_g,
-    c_G_g,
-    Q_d_i_g,
-    Q_d_m_g,
-    C_h_t,
-    I_h_t,
-    C_j_g,
-    C_l_g,
-    P_bar_h_g,
-    P_bar_CF_h_g,
-    P_j_g,
-    P_l_g = initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading)
+    I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
+    Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, 
+    P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
+        firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading
+    )
 
     G = size(prop.products.b_HH_g, 1) # number of goods
 
     # Loop over all goods (internal and foreign)
-
-    function loopBody(i, g)
+    function perform_market!(i, g)
         F_g = findall(G_f .== g)
         S_fg = copy(S_f)
         S_fg_ = copy(S_f_)
 
         perform_firms_market!(
-            g,
-            firms,
-            a_sg,
-            b_CF_g,
-            P_f,
-            S_f,
-            S_f_,
-            G_f,
-            I_i_g,
-            DM_i_g,
-            P_bar_i_g,
-            P_CF_i_g,
-            F_g,
-            S_fg,
-            S_fg_,
+            g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g,
+            DM_i_g, P_bar_i_g, P_CF_i_g, F_g, S_fg, S_fg_,
         )
 
         perform_retail_market!(
-            i,
-            g,
-            agg,
-            gov,
-            rotw,
-            I,
-            H,
-            L,
-            J,
-            C_d_h,
-            I_d_h,
-            b_HH_g,
-            b_CFH_g,
-            c_E_g,
-            c_G_g,
-            Q_d_i_g,
-            Q_d_m_g,
-            C_h_t,
-            I_h_t,
-            C_j_g,
-            C_l_g,
-            P_bar_h_g,
-            P_bar_CF_h_g,
-            P_j_g,
-            P_l_g,
-            S_fg,
-            S_fg_,
-            F_g,
-            P_f,
-            S_f,
-            G_f,
+            i, g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
+            b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
+            C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
+            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
         )
     end
 
     if multi_threading
         Threads.@threads for (i, gs) in enumerate(chunks(shuffle(1:G); n=Threads.nthreads()))
+            rng = rngs[i]
             for g in gs
-                loopBody(i, g)
+                perform_market!(i, g)
             end
         end
     else
         for g in 1:G
-            loopBody(1, g)
+            perform_market!(1, g)
         end
     end
 
     update_aggregate_variables!(
-        agg,
-        w_act,
-        w_inact,
-        firms,
-        bank,
-        gov,
-        rotw,
-        P_CF_i_g,
-        I_i_g,
-        P_bar_i_g,
-        DM_i_g,
-        C_h_t,
-        I_h_t,
-        Q_d_i_g,
-        Q_d_m_g,
-        C_j_g,
-        C_l_g,
-        P_bar_h_g,
-        P_bar_CF_h_g,
-        P_j_g,
-        P_l_g,
+        agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
+        P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g,
+        C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
     )
-
 end
 
 function update_aggregate_variables!(
-    agg,
-    w_act,
-    w_inact,
-    firms,
-    bank,
-    gov,
-    rotw,
-    P_CF_i_g,
-    I_i_g,
-    P_bar_i_g,
-    DM_i_g,
-    C_h_t,
-    I_h_t,
-    Q_d_i_g,
-    Q_d_m_g,
-    C_j_g,
-    C_l_g,
-    P_bar_h_g,
-    P_bar_CF_h_g,
-    P_j_g,
-    P_l_g,
+    agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
+    P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g, C_l_g,
+    P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
 )
 
     I = length(firms)
@@ -269,27 +177,9 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     P_j_g = zeros(1, G)
     P_l_g = zeros(1, G)
 
-    return I,
-    H,
-    L,
-    J,
-    C_d_h,
-    I_d_h,
-    b_HH_g,
-    b_CFH_g,
-    c_E_g,
-    c_G_g,
-    Q_d_i_g,
-    Q_d_m_g,
-    C_h_t,
-    I_h_t,
-    C_j_g,
-    C_l_g,
-    P_bar_h_g,
-    P_bar_CF_h_g,
-    P_j_g,
-    P_l_g
-
+    return I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g,
+        Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
+        P_l_g
 end
 
 function initialize_variables_firms_market(firms, rotw, prop)
@@ -321,21 +211,8 @@ end
 Perform the firms market exchange process
 """
 function perform_firms_market!(
-    g,
-    firms,
-    a_sg,
-    b_CF_g,
-    P_f,
-    S_f,
-    S_f_,
-    G_f,
-    I_i_g,
-    DM_i_g,
-    P_bar_i_g,
-    P_CF_i_g,
-    F_g,
-    S_fg,
-    S_fg_,
+    g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g,
+    F_g, S_fg, S_fg_,
 )
     ##############################
     ######## FIRMS MARKET ########
@@ -428,37 +305,9 @@ end
 Perform the retail market exchange process
 """
 function perform_retail_market!(
-    i,
-    g,
-    agg,
-    gov,
-    rotw,
-    I,
-    H,
-    L,
-    J,
-    C_d_h,
-    I_d_h,
-    b_HH_g,
-    b_CFH_g,
-    c_E_g,
-    c_G_g,
-    Q_d_i_g,
-    Q_d_m_g,
-    C_h_t,
-    I_h_t,
-    C_j_g,
-    C_l_g,
-    P_bar_h_g,
-    P_bar_CF_h_g,
-    P_j_g,
-    P_l_g,
-    S_fg,
-    S_fg_,
-    F_g,
-    P_f,
-    S_f,
-    G_f,
+    i, g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g,
+    c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g,
+    P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
 )
     ###############################
     ######## RETAIL MARKET ########
