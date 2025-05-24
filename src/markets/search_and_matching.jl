@@ -258,7 +258,6 @@ function perform_firms_market!(
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
-        F_g = findall(x -> x == g, G_f)
         filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
@@ -349,7 +348,6 @@ function perform_retail_market!(
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
-        F_g = findall(x -> x == g, G_f)
         filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
