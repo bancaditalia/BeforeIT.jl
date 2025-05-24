@@ -286,8 +286,6 @@ function perform_firms_market!(
         end
     end
 
-    F_g = F_g[allinds(F_g_active)]
-
     a = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos.(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
     b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
     c = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
