@@ -33,6 +33,7 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
 
     # Loop over all goods (internal and foreign)
     function perform_market!(i, g)
+        # retrieve all indices with good g
         F_g = findall(x -> x == g, G_f)
         S_fg = copy(S_f)
         S_fg_ = copy(S_f_)
