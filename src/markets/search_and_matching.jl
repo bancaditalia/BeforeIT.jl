@@ -258,7 +258,7 @@ function perform_firms_market!(
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
-        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
+        F_g = filter(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
 
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g)
