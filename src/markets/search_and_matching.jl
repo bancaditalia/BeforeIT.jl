@@ -38,7 +38,7 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
         S_fg_ = copy(S_f_)
 
         perform_firms_market!(
-            g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g,
+            g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, I_i_g,
             DM_i_g, P_bar_i_g, P_CF_i_g, F_g, S_fg, S_fg_,
         )
 
@@ -46,7 +46,7 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
             i, g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
             b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
             C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
-            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
+            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f,
         )
     end
 
@@ -210,7 +210,7 @@ end
 Perform the firms market exchange process
 """
 function perform_firms_market!(
-    g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g,
+    g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g,
     F_g, S_fg, S_fg_,
 )
     ##############################
@@ -305,7 +305,7 @@ Perform the retail market exchange process
 function perform_retail_market!(
     i, g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g,
     c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g,
-    P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
+    P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f,
 )
     ###############################
     ######## RETAIL MARKET ########
