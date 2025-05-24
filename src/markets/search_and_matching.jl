@@ -351,7 +351,7 @@ function perform_retail_market!(
         filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
-        F_g_active = create_weighted_sampler(P_f, S_f, F_g)
+        F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
         while !isempty(H_g) && !isempty(F_g_active)
 
