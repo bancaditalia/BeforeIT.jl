@@ -269,7 +269,7 @@ function perform_firms_market!(
             shuffle!(I_g)
             for i in I_g
                 e = rand(F_g_active)
-                f = F_g[e]
+                f = F_g_[e]
 
                 if S_fg_[f] > DM_d_ig_[i]
                     S_fg[f] -= DM_d_ig_[i]
@@ -358,7 +358,7 @@ function perform_retail_market!(
             shuffle!(H_g)
             for h in H_g
                 e = rand(F_g_active)
-                f = F_g[e]
+                f = F_g_[e]
 
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
                     S_fg[f] -= C_d_hg_[h] / P_f[f]
