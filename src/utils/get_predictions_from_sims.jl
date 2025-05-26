@@ -87,15 +87,24 @@ end
 
 # Main function
 
-function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
+function get_predictions_from_sims(data, quarter_num; sims = nothing)
 
     model_dict = Dict{String, Any}()
 
     year_num = Bit.date2num(DateTime(year(Bit.num2date(quarter_num)) + 1, 1, 1) - Day(1))
     date = Bit.num2date(quarter_num)
 
-    file_name = "data/italy/simulations/$(year(date))Q$(quarterofyear(date)).jld2"
-    sims = load(file_name)["data_vector"]
+    if sims === nothing
+        # Load simulations from file if not provided
+        file_name = "data/italy/simulations/$(year(date))Q$(quarterofyear(date)).jld2"
+        if !isfile(file_name)
+            error("Simulation file $file_name does not exist.")
+        end
+        sims = load(file_name)["data_vector"]
+    end
+
+    number_seeds = size(sims.real_gdp, 2)
+    horizon = size(sims.real_gdp, 1) - 1
 
     q = quarterofyear(date)
 
@@ -164,4 +173,6 @@ function get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
 
     # save the model_dict
     save("data/italy/abm_predictions/$(year(date))Q$(q).jld2", "model_dict", model_dict)
+
+    return model_dict
 end
