@@ -198,4 +198,6 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     agg.Y[prop.T_prime + agg.t] = sum(firms.Y_i)
 
     agg.t += 1
+
+    return model
 end
