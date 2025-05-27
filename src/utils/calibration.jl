@@ -384,6 +384,11 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         fill(NaN, max(0, T_calibration_exo + T - T_calibration_exo_max), 1)
     ]
 
+    # data series needed for CANVAS
+    Y_EA_series = timescale * sum(output) .* ea["real_gdp_quarterly"][T_estimation_exo:T_calibration_exo] ./ ea["real_gdp_quarterly"][T_calibration_exo]
+    pi_EA_series = diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))
+    r_bar_series = (data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1.0) .^ (1.0 / 4.0) .- 1
+
     # define a dictionary of parameters to save in jld2 format
     initial_conditions = [
         ("D_I", D_I),
@@ -407,6 +412,9 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         ("C_G", C_G),
         ("C_E", C_E),
         ("Y_I", Y_I),
+        ("Y_EA_series", Y_EA_series),
+        ("pi_EA_series", pi_EA_series), 
+        ("r_bar_series", r_bar_series)
     ]
     initial_conditions = Dict(initial_conditions)
 

@@ -20,7 +20,7 @@ T = 20
 properties = Bit.init_properties(p, T)
 firms, _ = Bit.init_firms(p, ic)
 w_act, w_inact, V_i_new, _, _ = Bit.init_workers(p, ic, firms)
-firms.V_i = V_i_new
+firms.V_i .= V_i_new
 bank, _ = Bit.init_bank(p, ic, firms)
 government, _ = Bit.init_government(p, ic)
 rotw, _ = Bit.init_rotw(p, ic)
@@ -37,16 +37,9 @@ government, rotw, agg, properties)
 new_model = Bit.Model(w_act, w_inact, firms, bank, newcentral_bank,
 government, rotw, agg, properties)
 
-
-# adjust accounting aften initialisation
-Bit.update_variables_with_totals!(standard_model)
-Bit.update_variables_with_totals!(new_model)
-
-
 # run a simulation with the new model
 data_vec_standard = Bit.ensemblerun(standard_model, 4);
 data_vec_new = Bit.ensemblerun(new_model, 4);
-
 
 # plot the results
 ps = Bit.plot_data_vectors([data_vec_standard, data_vec_new], quantities = [:euribor, :gdp_deflator])

@@ -15,157 +15,65 @@ This function updates the model in-place and does not return any value.
 function search_and_matching!(model::AbstractModel, multi_threading = false)
 
     # unpack models' variables
-    w_act, w_inact, firms, gov, bank, rotw = model.w_act, model.w_inact, model.firms, model.gov, model.bank, model.rotw
-    agg, prop = model.agg, model.prop
+    w_act, w_inact, firms, gov = model.w_act, model.w_inact, model.firms, model.gov
+    bank, rotw, agg, prop = model.bank, model.rotw, model.agg, model.prop
 
     # Initialize variables for firms market
-    a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g =
-        initialize_variables_firms_market(firms, rotw, prop)
+    a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g,
+    P_CF_i_g = initialize_variables_firms_market(firms, rotw, prop)
 
     # Initialize variables
-    I,
-    H,
-    L,
-    J,
-    C_d_h,
-    I_d_h,
-    b_HH_g,
-    b_CFH_g,
-    c_E_g,
-    c_G_g,
-    Q_d_i_g,
-    Q_d_m_g,
-    C_h_t,
-    I_h_t,
-    C_j_g,
-    C_l_g,
-    P_bar_h_g,
-    P_bar_CF_h_g,
-    P_j_g,
-    P_l_g = initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading)
+    I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
+    Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, 
+    P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
+        firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading
+    )
 
     G = size(prop.products.b_HH_g, 1) # number of goods
 
     # Loop over all goods (internal and foreign)
-
-    function loopBody(i, g)
-        F_g = findall(G_f .== g)
+    function perform_market!(i, g)
+        # retrieve all indices with good g
+        F_g = findall(x -> x == g, G_f)
         S_fg = copy(S_f)
         S_fg_ = copy(S_f_)
 
         perform_firms_market!(
-            g,
-            firms,
-            a_sg,
-            b_CF_g,
-            P_f,
-            S_f,
-            S_f_,
-            G_f,
-            I_i_g,
-            DM_i_g,
-            P_bar_i_g,
-            P_CF_i_g,
-            F_g,
-            S_fg,
-            S_fg_,
+            g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, I_i_g, DM_i_g,
+            P_bar_i_g, P_CF_i_g, F_g, S_fg, S_fg_, G_f
         )
 
         perform_retail_market!(
-            i,
-            g,
-            agg,
-            gov,
-            rotw,
-            I,
-            H,
-            L,
-            J,
-            C_d_h,
-            I_d_h,
-            b_HH_g,
-            b_CFH_g,
-            c_E_g,
-            c_G_g,
-            Q_d_i_g,
-            Q_d_m_g,
-            C_h_t,
-            I_h_t,
-            C_j_g,
-            C_l_g,
-            P_bar_h_g,
-            P_bar_CF_h_g,
-            P_j_g,
-            P_l_g,
-            S_fg,
-            S_fg_,
-            F_g,
-            P_f,
-            S_f,
-            G_f,
+            i, g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
+            b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
+            C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
+            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f
         )
     end
 
     if multi_threading
         Threads.@threads for (i, gs) in enumerate(chunks(shuffle(1:G); n=Threads.nthreads()))
             for g in gs
-                loopBody(i, g)
+                perform_market!(i, g)
             end
         end
     else
         for g in 1:G
-            loopBody(1, g)
+            perform_market!(1, g)
         end
     end
 
     update_aggregate_variables!(
-        agg,
-        w_act,
-        w_inact,
-        firms,
-        bank,
-        gov,
-        rotw,
-        P_CF_i_g,
-        I_i_g,
-        P_bar_i_g,
-        DM_i_g,
-        C_h_t,
-        I_h_t,
-        Q_d_i_g,
-        Q_d_m_g,
-        C_j_g,
-        C_l_g,
-        P_bar_h_g,
-        P_bar_CF_h_g,
-        P_j_g,
-        P_l_g,
+        agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
+        P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g,
+        C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
     )
-
 end
 
 function update_aggregate_variables!(
-    agg,
-    w_act,
-    w_inact,
-    firms,
-    bank,
-    gov,
-    rotw,
-    P_CF_i_g,
-    I_i_g,
-    P_bar_i_g,
-    DM_i_g,
-    C_h_t,
-    I_h_t,
-    Q_d_i_g,
-    Q_d_m_g,
-    C_j_g,
-    C_l_g,
-    P_bar_h_g,
-    P_bar_CF_h_g,
-    P_j_g,
-    P_l_g,
+    agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
+    P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g, C_l_g,
+    P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
 )
 
     I = length(firms)
@@ -220,7 +128,7 @@ function update_aggregate_variables!(
     firms.P_CF_i .= P_CF_i
 
     # compute sales as minimum between supply and demand (internal and external)
-    firms.Q_i = min.(firms.Y_i .+ firms.S_i, firms.Q_d_i)
+    firms.Q_i .= min.(firms.Y_i .+ firms.S_i, firms.Q_d_i)
     rotw.Q_m = min.(rotw.Y_m, Q_d_m)
 
     # update households capital stock with investments
@@ -228,7 +136,6 @@ function update_aggregate_variables!(
     w_inact.K_h .+= w_inact.I_h
     firms.K_h .+= firms.I_h
     bank.K_h += bank.I_h
-
 end
 
 function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading)
@@ -270,27 +177,9 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     P_j_g = zeros(1, G)
     P_l_g = zeros(1, G)
 
-    return I,
-    H,
-    L,
-    J,
-    C_d_h,
-    I_d_h,
-    b_HH_g,
-    b_CFH_g,
-    c_E_g,
-    c_G_g,
-    Q_d_i_g,
-    Q_d_m_g,
-    C_h_t,
-    I_h_t,
-    C_j_g,
-    C_l_g,
-    P_bar_h_g,
-    P_bar_CF_h_g,
-    P_j_g,
-    P_l_g
-
+    return I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g,
+        Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
+        P_l_g
 end
 
 function initialize_variables_firms_market(firms, rotw, prop)
@@ -322,21 +211,8 @@ end
 Perform the firms market exchange process
 """
 function perform_firms_market!(
-    g,
-    firms,
-    a_sg,
-    b_CF_g,
-    P_f,
-    S_f,
-    S_f_,
-    G_f,
-    I_i_g,
-    DM_i_g,
-    P_bar_i_g,
-    P_CF_i_g,
-    F_g,
-    S_fg,
-    S_fg_,
+    g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g,
+    F_g, S_fg, S_fg_, G_f,
 )
     ##############################
     ######## FIRMS MARKET ########
@@ -346,7 +222,7 @@ function perform_firms_market!(
     DM_nominal_ig = zeros(size(DM_d_ig))
 
     # firms that have demand for good "g" participate as buyers
-    I_g = findall(DM_d_ig .> 0.0)
+    I_g = findall(x -> x > 0.0, DM_d_ig)
 
     # keep firms that have positive stock of good "g"
     filter!(i -> S_fg[i] > 0.0, F_g)
@@ -354,15 +230,15 @@ function perform_firms_market!(
     # continue exchanges until either demand or supply terminates
 
     # weights according to size and price
-    F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
+    F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
-    while !isempty(I_g) && !isempty(F_g_sampler)
+    while !isempty(I_g) && !isempty(F_g_active)
 
         # select buyers at random
         shuffle!(I_g)
         for i in I_g
             # select a random firm according to the probabilities
-            e = rand(F_g_sampler)
+            e = rand(F_g_active)
             f = F_g[e]
 
             # selected firm has sufficient stock
@@ -374,8 +250,8 @@ function perform_firms_market!(
                 DM_d_ig[i] -= S_fg[f]
                 DM_nominal_ig[i] += S_fg[f] * P_f[f]
                 S_fg[f] = 0.0
-                delete!(F_g_sampler, e)
-                isempty(F_g_sampler) && break
+                delete!(F_g_active, e)
+                isempty(F_g_active) && break
             end
         end
         filter!(i -> DM_d_ig[i] > 0.0, I_g)
@@ -383,18 +259,18 @@ function perform_firms_market!(
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
-        F_g = findall(G_f .== g)
-        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
+        F_g_ = findall(x -> x == g, G_f)
+        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
-        F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
+        F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
-        while !isempty(I_g) && !isempty(F_g_sampler)
+        while !isempty(I_g) && !isempty(F_g_active)
 
             shuffle!(I_g)
             for i in I_g
-                e = rand(F_g_sampler)
-                f = F_g[e]
+                e = rand(F_g_active)
+                f = F_g_[e]
 
                 if S_fg_[f] > DM_d_ig_[i]
                     S_fg[f] -= DM_d_ig_[i]
@@ -404,15 +280,13 @@ function perform_firms_market!(
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0.0
-                    delete!(F_g_sampler, e)
-                    isempty(F_g_sampler) && break
+                    delete!(F_g_active, e)
+                    isempty(F_g_active) && break
                 end
             end
             filter!(i -> DM_d_ig_[i] > 0.0, I_g)
         end
     end
-
-    F_g = F_g[allinds(F_g_sampler)]
 
     a = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos.(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
     b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
@@ -429,37 +303,9 @@ end
 Perform the retail market exchange process
 """
 function perform_retail_market!(
-    i,
-    g,
-    agg,
-    gov,
-    rotw,
-    I,
-    H,
-    L,
-    J,
-    C_d_h,
-    I_d_h,
-    b_HH_g,
-    b_CFH_g,
-    c_E_g,
-    c_G_g,
-    Q_d_i_g,
-    Q_d_m_g,
-    C_h_t,
-    I_h_t,
-    C_j_g,
-    C_l_g,
-    P_bar_h_g,
-    P_bar_CF_h_g,
-    P_j_g,
-    P_l_g,
-    S_fg,
-    S_fg_,
-    F_g,
-    P_f,
-    S_f,
-    G_f,
+    i, g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g,
+    c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g,
+    P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
 )
     ###############################
     ######## RETAIL MARKET ########
@@ -471,18 +317,18 @@ function perform_retail_market!(
         c_G_g[g] .* gov.C_d_j
     ]
     C_real_hg = zeros(size(C_d_hg))
-    H_g = findall(C_d_hg .> 0.0)
+    H_g = findall(x -> x > 0.0, C_d_hg)
 
     filter!(i -> S_fg[i] > 0.0, F_g)
 
     # weights according to size and price
-    F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
+    F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
-    while !isempty(H_g) && !isempty(F_g_sampler)
+    while !isempty(H_g) && !isempty(F_g_active)
 
         shuffle!(H_g)
         for h in H_g
-            e = rand(F_g_sampler)
+            e = rand(F_g_active)
             f = F_g[e]
 
             if S_fg[f] > C_d_hg[h] / P_f[f]
@@ -493,8 +339,8 @@ function perform_retail_market!(
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
                 S_fg[f] = 0.0
-                delete!(F_g_sampler, e)
-                isempty(F_g_sampler) && break
+                delete!(F_g_active, e)
+                isempty(F_g_active) && break
             end
         end
         filter!(h -> C_d_hg[h] > 0.0, H_g)
@@ -502,18 +348,18 @@ function perform_retail_market!(
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
-        F_g = findall(G_f .== g)
-        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g)
+        F_g_ = findall(x -> x == g, G_f)
+        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
-        F_g_sampler = create_weighted_sampler(P_f, S_f, F_g)
+        F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
-        while !isempty(H_g) && !isempty(F_g_sampler)
+        while !isempty(H_g) && !isempty(F_g_active)
 
             shuffle!(H_g)
             for h in H_g
-                e = rand(F_g_sampler)
-                f = F_g[e]
+                e = rand(F_g_active)
+                f = F_g_[e]
 
                 if S_fg_[f] > C_d_hg_[h] / P_f[f]
                     S_fg[f] -= C_d_hg_[h] / P_f[f]
@@ -523,15 +369,13 @@ function perform_retail_market!(
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0.0
-                    delete!(F_g_sampler, e)
-                    isempty(F_g_sampler) && break
+                    delete!(F_g_active, e)
+                    isempty(F_g_active) && break
                 end
             end
             filter!(h -> C_d_hg_[h] > 0.0, H_g)
         end
     end
-
-    F_g = F_g[allinds(F_g_sampler)]
 
     a = @view(C_real_hg[1:H])
     b = @~ C_d_h .* b_HH_g[g] .- pos.(@view(C_d_hg[1:H]) .- b_CFH_g[g] .* I_d_h)

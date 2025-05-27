@@ -1,4 +1,57 @@
 
+function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
+    # unpack non-firm variables
+    P_bar_HH = model.agg.P_bar_HH
+    P_bar_CF = model.agg.P_bar_CF
+    P_bar_g = model.agg.P_bar_g
+    tau_SIF = model.prop.tau_SIF
+    a_sg = model.prop.products.a_sg
+
+    # compute the cost-push inflation
+    term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims=1), dims=1)
+    
+    labour_costs = (1+tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
+    material_costs = 1 ./ firms.beta_i .* (term ./ firms.P_i .- 1)
+    capital_costs = firms.delta_i ./ firms.kappa_i .* (P_bar_CF ./ firms.P_i .- 1)
+    cost_push_inflation = labour_costs .+ material_costs .+ capital_costs
+    return cost_push_inflation
+end
+
+
+function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
+    
+    # target investments in capital
+    I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
+
+    # intermediate goods to purchase
+    DM_d_i = min.(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.beta_i
+
+    # target employment
+    N_d_i = max.(1.0, round.(min(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.alpha_bar_i))
+    return I_d_i, DM_d_i, N_d_i
+end
+
+function expected_deposits_capital_loans(firms::AbstractFirms, model::AbstractModel, Pi_e_i)
+    # unpack non-firm variables
+    tau_FIRM = model.prop.tau_FIRM
+    theta = model.prop.theta
+    theta_DIV = model.prop.theta_DIV
+    P_bar_CF = model.agg.P_bar_CF
+    pi_e = model.agg.pi_e
+
+    # expected deposits
+    DD_e_i =
+        Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .- (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i) # expected future cash flow
+    
+    # expected capital
+    K_e_i = P_bar_CF .* (1 + pi_e) .* firms.K_i
+
+    # expected loans
+    L_e_i = (1 - theta) .* firms.L_i
+
+    return DD_e_i, K_e_i, L_e_i
+end
+
 """
     firms_expectations_and_decisions(firms, model)
 
@@ -24,54 +77,30 @@ employment decisions, expected profits, and desired/expected loans and capital.
 
 """
 function firms_expectations_and_decisions(firms, model)
-
-    # unpack non-firm variables
-    tau_SIF = model.prop.tau_SIF
-    tau_FIRM = model.prop.tau_FIRM
-    theta = model.prop.theta
-    theta_DIV = model.prop.theta_DIV
-    P_bar_HH = model.agg.P_bar_HH
-    P_bar_CF = model.agg.P_bar_CF
-    P_bar_g = model.agg.P_bar_g
-    a_sg = model.prop.products.a_sg
+    # unpack variables not related to firms
     gamma_e = model.agg.gamma_e
     pi_e = model.agg.pi_e
 
     # target quantity
     Q_s_i = firms.Q_d_i * (1 + gamma_e)
 
+    # cost put inflation
+    pi_c_i = cost_push_inflation(firms, model) 
+
     # price setting
-    # dividing equation for pi_c_i into smaller pieces
-    term1 = (1 + tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
-    term2 = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1), dims = 1)
-    term3 = firms.delta_i ./ firms.kappa_i .* (P_bar_CF ./ firms.P_i .- 1)
-
-    pi_c_i = term1 + 1 ./ firms.beta_i .* (term2 ./ firms.P_i .- 1) + term3
-
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e)
 
-    # target investments in capital
-    I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
-
-    # intermediate goods to purchase
-    DM_d_i = min.(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.beta_i
-
-    # target employment
-    N_d_i = max.(1.0, round.(min(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.alpha_bar_i))
+    # target investments in capital, intermediate goods to purchase and employment
+    I_d_i, DM_d_i, N_d_i = desired_capital_material_employment(firms, Q_s_i)
 
     # expected profits 
     Pi_e_i = firms.Pi_i .* (1 + pi_e) * (1 + gamma_e)
 
+    # expected deposits, capital and loans
+    DD_e_i, K_e_i, L_e_i = expected_deposits_capital_loans(firms, model, Pi_e_i)
+    
     # target loans
-    DD_e_i =
-        Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .- (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i) # expected future cash flow
     DL_d_i = max.(0, -DD_e_i - firms.D_i)
-
-    # expected capital
-    K_e_i = P_bar_CF .* (1 + pi_e) .* firms.K_i
-
-    # expected loans
-    L_e_i = (1 - theta) .* firms.L_i
 
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end

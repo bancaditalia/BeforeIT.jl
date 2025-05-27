@@ -55,6 +55,16 @@ struct DataVector{D<:AbstractData}
     vector::Vector{D}
 end
 
+# define the function "iterate" for the DataVector struct
+function Base.iterate(dv::DataVector, state = 1)
+    if state > length(dv.vector)
+        return nothing
+    else
+        return dv.vector[state], state + 1
+    end
+end
+
+
 # Define the getproperty function for the DataVector struct
 # This function allows for the extraction of fields from the Data struct
 # by using the dot syntax, e.g., data_vector.nominal_gdp
@@ -71,6 +81,12 @@ Base.getindex(dv::DataVector, i::Int) = Base.getindex(getfield(dv, :vector), i)
 Base.length(dv::DataVector) = Base.length(getfield(dv, :vector))
 Base.iterate(dv::DataVector) = Base.iterate(getfield(dv, :vector))
 Base.iterate(dv::DataVector, state) = Base.iterate(getfield(dv, :vector), state)
+
+# define a "length" function for the DataVector struct
+function Base.length(dv::DataVector)
+    return length(dv.vector)
+end
+
 
 """
 Initialise the data arrays

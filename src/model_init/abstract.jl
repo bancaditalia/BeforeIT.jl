@@ -9,6 +9,7 @@ abstract type AbstractBank end
 abstract type AbstractCentralBank end
 abstract type AbstractGovernment end
 abstract type AbstractRestOfTheWorld end
+abstract type AbstractAggregates end
 abstract type AbstractModel end
 
 macro worker(T = Vector{Float64}, I = Vector{Int})

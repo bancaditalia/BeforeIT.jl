@@ -57,6 +57,7 @@ include("utils/plot_data_vector.jl")
 include("utils/dmtest.jl")
 include("utils/mztest.jl")
 include("utils/varx.jl")
+include("utils/plot_predictions_vs_real.jl")
 
 # calibration
 include("utils/calibration.jl")

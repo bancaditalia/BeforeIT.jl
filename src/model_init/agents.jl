@@ -78,7 +78,7 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-mutable struct Firms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
+struct Firms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
     @firm T I
 end
 
@@ -195,7 +195,7 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `t`: Time index
 
 """
-mutable struct Aggregates{T, I}
+mutable struct Aggregates{T, I} <: AbstractAggregates
     @aggregates T I
 end
 
@@ -215,7 +215,7 @@ This is a Model type. It is used to store all the agents of the economy.
 mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
                      F<:AbstractFirms,B<:AbstractBank,
                      C<:AbstractCentralBank,G<:AbstractGovernment,
-                     R<:AbstractRestOfTheWorld,A<:Aggregates,
+                     R<:AbstractRestOfTheWorld,A<:AbstractAggregates,
                      P} <: AbstractModel
     w_act::W1
     w_inact::W2
@@ -226,6 +226,18 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
     rotw::R
     agg::A
     prop::P
+    function Model(w_act::W1, w_inact::W2, firms::F, bank::B, cb::C, gov::G, rotw::R, 
+        agg::A, prop::P) where {
+            W1<:AbstractWorkers, W2<:AbstractWorkers, F<:AbstractFirms, B<:AbstractBank,
+            C<:AbstractCentralBank, G<:AbstractGovernment, R<:AbstractRestOfTheWorld, A<:Aggregates, P
+        }
+        model = new{W1,W2,F,B,C,G,R,A,P}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop)
+    
+        # update model variables with global quantities (total income, total deposits) obtained from all the agents
+        update_variables_with_totals!(model)
+
+        return model
+    end
 end
 
 # helper functions

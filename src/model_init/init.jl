@@ -30,7 +30,7 @@ function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
 
     # workers, and update firms vacancies
     workers_act, workers_inact, V_i_new, _, _ = Bit.init_workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
-    firms.V_i = V_i_new
+    firms.V_i .= V_i_new
 
     # bank
     bank, _ = Bit.init_bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
@@ -49,9 +49,6 @@ function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
 
     # model
     model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)
-
-    # update the model with global quantities (total income, total deposits) obtained from all the agents
-    update_variables_with_totals!(model)
 
     return model
 end
