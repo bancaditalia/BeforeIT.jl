@@ -26,5 +26,5 @@ end
 
 for i in 1:number_quarters
     quarter_num = quarters_num[i]
-    Bit.get_predictions_from_sims(data, quarter_num, horizon, number_seeds)
+    Bit.get_predictions_from_sims(data, quarter_num)
 end
