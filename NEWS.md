@@ -1,6 +1,30 @@
 BeforeIT Release Notes
 ======================
 
+0.3.2 (May 2025)
+------------------
+
+* Test on all major platforms by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/48
+* Run tests also on push by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/49
+* Fix doc building on push by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/50
+* Loosen some .toml deps versions by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/51
+* Corrected std type in aggregates marcro by @petres in https://github.com/bancaditalia/BeforeIT.jl/pull/53
+* examples: add basic inheritance examples and related fixes by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/55
+* Improve type stability and other changes by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/56
+* Remove mutability of Firms struct by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/59
+* cal: add Y_EA_series, pi_EA_series and r_bar_series to initial conditions by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/60
+* init: call update variables with totals within Model constructor by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/61
+* CANVAS model by @SGHoekstra in https://github.com/bancaditalia/BeforeIT.jl/pull/54
+* Improve formatting of search_and_matching.jl by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/62
+* utils: modularise get_predictions_from_sims by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/52
+
+**Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.3.1...v0.3.2
+
+0.3.2 (April 2025)
+------------------
+
+**Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.3.0...v0.3.1
+
 0.3.0 (February 2025)
 ------------------
 
