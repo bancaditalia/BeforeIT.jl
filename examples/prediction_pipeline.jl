@@ -10,14 +10,14 @@ parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, cali
 
 # run the model for a number of quarters
 T = 20
-n_sims = 4
+n_sims = 3
 model = Bit.init_model(parameters, initial_conditions, T)
 data_vector = Bit.ensemblerun(model, n_sims)
 
 # obtain predictions from the model simulations
 real_data = Bit.ITALY_CALIBRATION.data
 quarter_num = Bit.date2num(calibration_date) # unique identifier for the quarter
-predictions_dict = Bit.get_predictions_from_sims(data, quarter_num; sims = data_vector)
+predictions_dict = Bit.get_predictions_from_sims(real_data, quarter_num; sims = data_vector)
 
 # plot the predictions against the real data 
 p1 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_gdp_quarterly")

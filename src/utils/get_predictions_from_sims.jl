@@ -24,12 +24,12 @@ function prepare_quarterly_annual_level(data, sims, varname, quarter_num, year_n
     )
 
     quarterly_full = [
-        repeat(data["$(varname)_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds)
+        repeat(data["$(varname)_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds);
         quarterly_forecast
     ]
 
     annual_full = [
-        repeat(data[varname][data["years_num"] .== year_num], 1, number_seeds)
+        repeat(data[varname][data["years_num"] .== year_num], 1, number_seeds);
         Bit.toannual(quarterly_forecast[(5 - q):(end - mod(q, 4)), :]')'
     ]
 
@@ -44,13 +44,13 @@ function prepare_quarterly_annual_level_growth(data, sims, varname, quarter_num,
 
     growth_annual = growth_rate(annual_full)
     growth_annual_full = [
-        repeat(data["$(varname)_growth"][data["years_num"] .== year_num], 1, number_seeds),
+        repeat(data["$(varname)_growth"][data["years_num"] .== year_num], 1, number_seeds);
         growth_annual
     ]
 
     growth_quarterly_full = growth_rate(quarterly_full)
     growth_quarterly_full = [
-        repeat(data["$(varname)_growth_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds),
+        repeat(data["$(varname)_growth_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds);
         growth_quarterly_full
     ]
 
@@ -61,24 +61,24 @@ function prepare_quarterly_annual_level_growth_deflator(nominal, real, data, var
     deflator_quarterly = nominal ./ real
 
     deflator_quarterly_full = [
-        repeat(data["$(varname)_deflator_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds)
+        repeat(data["$(varname)_deflator_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds);
         deflator_quarterly
     ]
 
     deflator_annual = [
-        repeat(data["$(varname)_deflator"][data["years_num"] .== year_num], 1, number_seeds)
+        repeat(data["$(varname)_deflator"][data["years_num"] .== year_num], 1, number_seeds);
         Bit.toannual_mean(deflator_quarterly[(5 - q):(end - mod(q, 4)), :]')'
     ]
 
     deflator_growth_annual = growth_rate(deflator_annual)
     deflator_growth_annual_full = [
-        repeat(data["$(varname)_deflator_growth"][data["years_num"] .== year_num], 1, number_seeds),
+        repeat(data["$(varname)_deflator_growth"][data["years_num"] .== year_num], 1, number_seeds);
         deflator_growth_annual
     ]
 
     deflator_growth_quarterly = growth_rate(deflator_quarterly_full)
     deflator_growth_quarterly_full = [
-        repeat(data["$(varname)_deflator_growth_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds),
+        repeat(data["$(varname)_deflator_growth_quarterly"][data["quarters_num"] .== quarter_num], 1, number_seeds);
         deflator_growth_quarterly
     ]
 

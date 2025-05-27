@@ -24,11 +24,6 @@ predictions_dict = Bit.get_predictions_from_sims(real_data, quarter_num; sims = 
 # for each key in the predictions_dict, check if the values are equal to the reference_predictions
 for key in keys(predictions_dict)
 
-    # skip key if it contains "growth"    
-    if occursin("growth", key)
-        println("Skipping key $key for dimension mismatch.")
-        continue
-    end
     @test isapprox(predictions_dict[key], reference_predictions[key], atol=1e-6, rtol=1e-6)
 
 end
