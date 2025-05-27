@@ -54,6 +54,9 @@ include("utils/positive.jl")
 include("utils/toannual.jl")
 include("utils/get_predictions_from_sims.jl")
 include("utils/plot_data_vector.jl")
+include("utils/dmtest.jl")
+include("utils/mztest.jl")
+include("utils/varx.jl")
 include("utils/plot_predictions_vs_real.jl")
 
 # calibration
