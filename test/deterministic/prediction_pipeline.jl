@@ -18,8 +18,7 @@ data_vector = Bit.ensemblerun(model, n_sims)
 
 # obtain predictions from the model simulations
 real_data = Bit.ITALY_CALIBRATION.data
-quarter_num = Bit.date2num(calibration_date) # unique identifier for the quarter
-predictions_dict = Bit.get_predictions_from_sims(real_data, quarter_num; sims = data_vector)
+predictions_dict = Bit.get_predictions_from_sims(data_vector, real_data, calibration_date)
 
 # for each key in the predictions_dict, check if the values are equal to the reference_predictions
 for key in keys(predictions_dict)
