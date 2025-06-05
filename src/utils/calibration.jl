@@ -10,7 +10,7 @@ Example
 """
 date2num(d::Dates.DateTime) = Dates.value(d - MATLAB_EPOCH) / (1000 * 60 * 60 * 24)
 
-# imverse function of the above
+# inverse function of the above
 const MATLAB_EPOCH = Dates.DateTime(-1, 12, 31)
 num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(round(Int64, n * 1000 * 60 * 60 * 24))
 
@@ -36,6 +36,8 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     T_calibration_exo = findall(data["quarters_num"] .== date2num(calibration_date))[1][1]
     T_calibration_exo_max = length(data["quarters_num"])
     intermediate_consumption = figaro["intermediate_consumption"][:, :, T_calibration]
+    G = size(intermediate_consumption)[1]
+    S = G
     household_consumption = figaro["household_consumption"][:, T_calibration]
     fixed_capitalformation = figaro["fixed_capitalformation"][:, T_calibration]
     exports = figaro["exports"][:, T_calibration]
@@ -71,16 +73,6 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     r_bar = (data["euribor"][T_calibration_exo] .+ 1.0) .^ (1.0 / 4.0) .- 1
 
     omega = 0.85
-    fixed_assets = calibration_data["fixed_assets"][T_calibration]
-    dwellings = calibration_data["dwellings"][T_calibration]
-    fixed_assets_eu7 = calibration_data["fixed_assets_eu7"][:, T_calibration]
-    dwellings_eu7 = calibration_data["dwellings_eu7"][:, T_calibration]
-    nominal_nace64_output_eu7 = calibration_data["nominal_nace64_output_eu7"][:, T_calibration]
-    gross_capitalformation_dwellings = calibration_data["gross_capitalformation_dwellings"][T_calibration]
-    nace64_capital_consumption = calibration_data["nace64_capital_consumption"][:, T_calibration]
-    nominal_nace64_output = calibration_data["nominal_nace64_output"][:, T_calibration]
-    unemployment_rate_quarterly = data["unemployment_rate_quarterly"][T_calibration_exo]
-
 
     # Calculate variables from accounting indentities
     output =
@@ -88,6 +80,28 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         operating_surplus# .+ capital_consumption #TODO: check whether this is this needed or not
     output = output[:, 1]
 
+    ## If fixed_assets and dwellings are given on industry-level
+    if size(calibration_data["fixed_assets"])[1] == G &
+        size(calibration_data["dwellings"])[1] == G
+        fixed_assets = calibration_data["fixed_assets"][:, T_calibration]
+        dwellings = calibration_data["dwellings"][:, T_calibration]
+        fixed_assets_other_than_dwellings =
+            (fixed_assets - dwellings)
+    else
+        fixed_assets = calibration_data["fixed_assets"][T_calibration]
+        dwellings = calibration_data["dwellings"][T_calibration]
+        fixed_assets_eu7 = calibration_data["fixed_assets_eu7"][:, T_calibration]
+        dwellings_eu7 = calibration_data["dwellings_eu7"][:, T_calibration]
+        nominal_nace64_output_eu7 = calibration_data["nominal_nace64_output_eu7"][:, T_calibration]
+        fixed_assets_other_than_dwellings =
+            (fixed_assets - dwellings) * ((fixed_assets_eu7 - dwellings_eu7) ./ nominal_nace64_output_eu7 .* output) /
+            sum((fixed_assets_eu7 - dwellings_eu7) ./ nominal_nace64_output_eu7 .* output)
+    end
+
+    gross_capitalformation_dwellings = calibration_data["gross_capitalformation_dwellings"][T_calibration]
+    nace64_capital_consumption = calibration_data["nace64_capital_consumption"][:, T_calibration]
+    nominal_nace64_output = calibration_data["nominal_nace64_output"][:, T_calibration]
+    unemployment_rate_quarterly = data["unemployment_rate_quarterly"][T_calibration_exo]
     capital_consumption = nace64_capital_consumption ./ nominal_nace64_output .* output
     operating_surplus = operating_surplus - capital_consumption
     taxes_products_export = 0 # TODO: unelegant hard coded zero
@@ -104,9 +118,6 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
             ) .+ taxes_products_household .+ taxes_products_capitalformation_dwellings .+ taxes_products_government .+
             taxes_products_export
         )
-    fixed_assets_other_than_dwellings =
-        (fixed_assets - dwellings) * ((fixed_assets_eu7 - dwellings_eu7) ./ nominal_nace64_output_eu7 .* output) /
-        sum((fixed_assets_eu7 - dwellings_eu7) ./ nominal_nace64_output_eu7 .* output)
     capitalformation_dwellings =
         (gross_capitalformation_dwellings - taxes_products_capitalformation_dwellings) * fixed_capitalformation /
         sum(fixed_capitalformation)
@@ -149,7 +160,7 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     disposable_income =
         sum(wages) + mixed_income + property_income + social_benefits + other_net_transfers -
         household_social_contributions - household_income_tax - capital_taxes
-    unemployed = matlab_round(unemployment_rate_quarterly * sum(employees))
+    unemployed = matlab_round((unemployment_rate_quarterly * sum(employees)) / (1 - unemployment_rate_quarterly))
     inactive = population - sum(max.(max.(1, firms), employees)) - unemployed - sum(max.(1, firms)) - 1
 
 
@@ -184,11 +195,13 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     T_prime = T_calibration_exo - T_estimation_exo + 1
     T = 12
     T_max = T - max(0, T_calibration_exo + T - T_calibration_exo_max)
-    G = size(intermediate_consumption)[1]
-    S = G
     H_act = sum(employees) + unemployed + sum(firms) + 1
     H_inact = inactive
+    # Matlab:
+    # J=round(sum(firms)/(sum(government_consumption)/sum(output)));
     J = matlab_round(sum(firms) / 4)
+    # Matlab:
+    # L=round(sum(firms)/(sum(exports-reexports)/sum(output)));
     L = matlab_round(sum(firms) / 2)
     mu = timescale * firm_interest / firm_debt_quarterly - r_bar
     tau_INC =
@@ -270,73 +283,71 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     C = cov([epsilon_Y_EA epsilon_E epsilon_I])
 
     # define a dictionary of parameters to save in jld2 format
-    params = [
-        ("T", T),
-        ("T_max", T_max),
-        ("S", S),
-        ("G", G),
-        ("H_act", H_act),
-        ("H_inact", H_inact),
-        ("J", J),
-        ("L", L),
-        ("tau_INC", tau_INC),
-        ("tau_FIRM", tau_FIRM),
-        ("tau_VAT", tau_VAT),
-        ("tau_SIF", tau_SIF),
-        ("tau_SIW", tau_SIW),
-        ("tau_EXPORT", tau_EXPORT),
-        ("tau_CF", tau_CF),
-        ("tau_G", tau_G),
-        ("theta_UB", theta_UB),
-        ("psi", psi),
-        ("psi_H", psi_H),
-        ("theta_DIV", theta_DIV),
-        ("theta", theta),
-        ("mu", mu),
-        ("r_G", r_G),
-        ("zeta", zeta),
-        ("zeta_LTV", zeta_LTV),
-        ("zeta_b", zeta_b),
-        ("I_s", I_s),
-        ("alpha_s", alpha_s),
-        ("beta_s", beta_s),
-        ("kappa_s", kappa_s),
-        ("delta_s", delta_s),
-        ("w_s", w_s),
-        ("tau_Y_s", tau_Y_s),
-        ("tau_K_s", tau_K_s),
-        ("b_CF_g", b_CF_g),
-        ("b_CFH_g", b_CFH_g),
-        ("b_HH_g", b_HH_g),
-        ("c_G_g", c_G_g),
-        ("c_E_g", c_E_g),
-        ("c_I_g", c_I_g),
-        ("a_sg", a_sg),
-        ("T_prime", T_prime),
-        ("alpha_pi_EA", alpha_pi_EA),
-        ("beta_pi_EA", beta_pi_EA),
-        ("sigma_pi_EA", sigma_pi_EA),
-        ("alpha_Y_EA", alpha_Y_EA),
-        ("beta_Y_EA", beta_Y_EA),
-        ("sigma_Y_EA", sigma_Y_EA),
-        ("rho", rho),
-        ("r_star", r_star),
-        ("xi_pi", xi_pi),
-        ("xi_gamma", xi_gamma),
-        ("pi_star", pi_star),
-        ("alpha_G", alpha_G),
-        ("beta_G", beta_G),
-        ("sigma_G", sigma_G),
-        ("alpha_E", alpha_E),
-        ("beta_E", beta_E),
-        ("sigma_E", sigma_E),
-        ("alpha_I", alpha_I),
-        ("beta_I", beta_I),
-        ("sigma_I", sigma_I),
-        ("C", C),
-    ]
-
-    params = Dict(params)
+    params = Dict(
+        "T" => T,
+        "T_max" => T_max,
+        "S" => S,
+        "G" => G,
+        "H_act" => H_act,
+        "H_inact" => H_inact,
+        "J" => J,
+        "L" => L,
+        "tau_INC" => tau_INC,
+        "tau_FIRM" => tau_FIRM,
+        "tau_VAT" => tau_VAT,
+        "tau_SIF" => tau_SIF,
+        "tau_SIW" => tau_SIW,
+        "tau_EXPORT" => tau_EXPORT,
+        "tau_CF" => tau_CF,
+        "tau_G" => tau_G,
+        "theta_UB" => theta_UB,
+        "psi" => psi,
+        "psi_H" => psi_H,
+        "theta_DIV" => theta_DIV,
+        "theta" => theta,
+        "mu" => mu,
+        "r_G" => r_G,
+        "zeta" => zeta,
+        "zeta_LTV" => zeta_LTV,
+        "zeta_b" => zeta_b,
+        "I_s" => I_s,
+        "alpha_s" => alpha_s,
+        "beta_s" => beta_s,
+        "kappa_s" => kappa_s,
+        "delta_s" => delta_s,
+        "w_s" => w_s,
+        "tau_Y_s" => tau_Y_s,
+        "tau_K_s" => tau_K_s,
+        "b_CF_g" => b_CF_g,
+        "b_CFH_g" => b_CFH_g,
+        "b_HH_g" => b_HH_g,
+        "c_G_g" => c_G_g,
+        "c_E_g" => c_E_g,
+        "c_I_g" => c_I_g,
+        "a_sg" => a_sg,
+        "T_prime" => T_prime,
+        "alpha_pi_EA" => alpha_pi_EA,
+        "beta_pi_EA" => beta_pi_EA,
+        "sigma_pi_EA" => sigma_pi_EA,
+        "alpha_Y_EA" => alpha_Y_EA,
+        "beta_Y_EA" => beta_Y_EA,
+        "sigma_Y_EA" => sigma_Y_EA,
+        "rho" => rho,
+        "r_star" => r_star,
+        "xi_pi" => xi_pi,
+        "xi_gamma" => xi_gamma,
+        "pi_star" => pi_star,
+        "alpha_G" => alpha_G,
+        "beta_G" => beta_G,
+        "sigma_G" => sigma_G,
+        "alpha_E" => alpha_E,
+        "beta_E" => beta_E,
+        "sigma_E" => sigma_E,
+        "alpha_I" => alpha_I,
+        "beta_I" => beta_I,
+        "sigma_I" => sigma_I,
+        "C" => C
+    )
 
     # Sector initial conditions
     N_s = employees
@@ -391,33 +402,32 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     r_bar_series = (data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1.0) .^ (1.0 / 4.0) .- 1
 
     # define a dictionary of parameters to save in jld2 format
-    initial_conditions = [
-        ("D_I", D_I),
-        ("L_I", L_I),
-        ("omega", omega),
-        ("w_UB", w_UB),
-        ("sb_inact", sb_inact),
-        ("sb_other", sb_other),
-        ("D_H", D_H),
-        ("K_H", K_H),
-        ("L_G", L_G),
-        ("E_k", E_k),
-        ("E_CB", E_CB),
-        ("D_RoW", D_RoW),
-        ("N_s", N_s),
-        ("Y", Y),
-        ("pi", pi),
-        ("Y_EA", Y_EA),
-        ("pi_EA", pi_EA),
-        ("r_bar", r_bar),
-        ("C_G", C_G),
-        ("C_E", C_E),
-        ("Y_I", Y_I),
-        ("Y_EA_series", Y_EA_series),
-        ("pi_EA_series", pi_EA_series), 
-        ("r_bar_series", r_bar_series)
-    ]
-    initial_conditions = Dict(initial_conditions)
+    initial_conditions = Dict(
+        "D_I" => D_I,
+        "L_I" => L_I,
+        "omega" => omega,
+        "w_UB" => w_UB,
+        "sb_inact" => sb_inact,
+        "sb_other" => sb_other,
+        "D_H" => D_H,
+        "K_H" => K_H,
+        "L_G" => L_G,
+        "E_k" => E_k,
+        "E_CB" => E_CB,
+        "D_RoW" => D_RoW,
+        "N_s" => N_s,
+        "Y" => Y,
+        "pi" => pi,
+        "Y_EA" => Y_EA,
+        "pi_EA" => pi_EA,
+        "r_bar" => r_bar,
+        "C_G" => C_G,
+        "C_E" => C_E,
+        "Y_I" => Y_I,
+        "Y_EA_series" => Y_EA_series,
+        "pi_EA_series" => pi_EA_series,
+        "r_bar_series" => r_bar_series
+    )
 
     return params, initial_conditions
 
