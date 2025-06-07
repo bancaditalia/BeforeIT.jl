@@ -20,7 +20,6 @@ function get_accounting_identities(data)
 
 end
 
-
 function get_accounting_identity_banks(model)
 
     cb_balance = model.cb.E_CB + model.rotw.D_RoW - model.gov.L_G + model.bank.D_k
