@@ -6,6 +6,7 @@
 *.jl.mem
 
 *.jld2
+*.tex
 !2010Q1.jld2
 *.h5
 
