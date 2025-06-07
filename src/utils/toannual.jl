@@ -38,7 +38,6 @@ function toannual(ftsa)
     return fts
 end
 
-
 function toannual_mean(ftsa)
 
     m = 4
