@@ -1,4 +1,0 @@
-
-%[nominal_gdp,real_gdp]=simulate_abm_ss(2010,1,1,0);
-
-[nominal_gdp,real_gdp,nominal_gva,real_gva,nominal_household_consumption,real_household_consumption,nominal_government_consumption,real_government_consumption,nominal_capitalformation,real_capitalformation,nominal_fixed_capitalformation,real_fixed_capitalformation,nominal_fixed_capitalformation_clcdwellings,real_fixed_capitalformation_dwellings,nominal_exports,real_exports,nominal_imports,real_imports,operating_surplus,compensation_employees,wages,taxes_production,nominal_sector_gva,real_sector_gva,euribor,gdp_deflator_growth_ea,real_gdp_ea]=simulateabm(2010,1,1,0);

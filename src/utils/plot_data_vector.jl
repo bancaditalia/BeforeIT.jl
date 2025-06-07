@@ -58,7 +58,6 @@ function plot_data_vectors(data_vectors; titlefont = 9, quantities = Bit.default
 	return ps
 end
 
-
 function plot_data(data::Data; titlefont = 9, quantities = default_quantities)
 	ps = []
 	for q in quantities
@@ -71,4 +70,3 @@ function plot_data(data::Data; titlefont = 9, quantities = default_quantities)
 	end
 	return ps
 end
-

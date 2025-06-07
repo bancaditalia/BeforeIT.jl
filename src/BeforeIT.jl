@@ -34,7 +34,7 @@ include("agent_actions/rotw.jl")
 include("agent_actions/bank.jl")
 
 # full epoch
-include("one_step.jl")
+include("one_epoch.jl")
 include("one_simulation.jl")
 
 # data handling
@@ -54,6 +54,9 @@ include("utils/positive.jl")
 include("utils/toannual.jl")
 include("utils/get_predictions_from_sims.jl")
 include("utils/plot_data_vector.jl")
+include("utils/dmtest.jl")
+include("utils/mztest.jl")
+include("utils/varx.jl")
 include("utils/plot_predictions_vs_real.jl")
 
 # calibration
@@ -67,9 +70,6 @@ include("utils/standard_calibration_data.jl")
 
 # shocks
 include("shocks/shocks.jl")
-
-# methods for running over different dates
-include("utils/save_all_predictions.jl")
 
 # precompilation pipeline
 include("precompile.jl")
