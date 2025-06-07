@@ -1,0 +1,8 @@
+repos:
+-   repo: local
+    hooks:
+    -   id: lint
+        name: Lint
+        entry: ./pre_commit.sh
+        language: script
+        always_run: true
