@@ -49,21 +49,21 @@ function error_table_ar(country::String = "italy")
         end
 
         if k == 1
-            h5open("data/" * country * "/analysis/forecast_ar.h5", "w") do file
+            h5open("data/$(country)/analysis/forecast_ar.h5", "w") do file
                 write(file, "forecast", forecast)
             end
             rmse_ar = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             bias_ar = dropdims(nanmean(forecast - actual, 1), dims=1)
             error_ar = forecast - actual
         else
-            h5open("data/" * country * "/analysis/forecast_ar_$(k).h5", "w") do file
+            h5open("data/$(country)/analysis/forecast_ar_$(k).h5", "w") do file
                 write(file, "forecast", forecast)
             end
             rmse_ar_k = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             bias_ar_k = dropdims(nanmean(forecast - actual, 1), dims=1)
             error_ar_k = forecast - actual
 
-            forecast = h5read("data/" * country * "/analysis/forecast_ar.h5","forecast")
+            forecast = h5read("data/$(country)/analysis/forecast_ar.h5","forecast")
             rmse_ar = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
             error_ar = forecast - actual
         end
@@ -88,7 +88,7 @@ function error_table_ar(country::String = "italy")
         latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
         idx = k == 1 ? "" : "_$(k)"
-        open("data/" * country * "/analysis/rmse_ar" * idx * ".tex", "w") do fid
+        open("data/$(country)/analysis/rmse_ar$(idx).tex", "w") do fid
             for line in latex
                 write(fid, line * "\n")
             end
@@ -111,7 +111,7 @@ function error_table_ar(country::String = "italy")
             
             latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-            open("data/" * country * "/analysis/bias_ar.tex", "w") do fid
+            open("data/$(country)/analysis/bias_ar.tex", "w") do fid
                 for line in latex
                     write(fid, line * "\n")
                 end

@@ -7,11 +7,10 @@ using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO
 
 country = "italy"
 cal = Bit.ITALY_CALIBRATION
-parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, DateTime(2010, 03, 31); scale = 0.01)
 
 for calibration_date in collect(DateTime(2010, 03, 31):Dates.Month(3):DateTime(2019, 12, 31))
     params, init_conds = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = 0.0005)
-    save("data/italy/initial_conditions/$(year(calibration_date))Q$(Dates.quarterofyear(calibration_date)).jld2", params)
+    save("data/italy/parameters/$(year(calibration_date))Q$(Dates.quarterofyear(calibration_date)).jld2", params)
     save("data/italy/initial_conditions/$(year(calibration_date))Q$(Dates.quarterofyear(calibration_date)).jld2", init_conds)
 end
 
@@ -30,19 +29,13 @@ end
 year_, number_years = 2010, 10
 number_quarters, horizon, number_seeds, number_sectors  = 4 * number_years, 12, 4, 62
 
-# Load the real time series
-data = Bit.ITALY_CALIBRATION.data
-
-quarters_num = []
-for month in 4:3:((number_years + 1) * 12 + 1)
-    year_m = year_ + (month ÷ 12)
-    mont_m = month % 12
-    date = DateTime(year_m, mont_m, 1) - Day(1)
-    push!(quarters_num, Bit.date2num(date))
-end
-for i in 1:number_quarters
-    quarter_num = quarters_num[i]
-    Bit.get_predictions_from_sims(data, quarter_num)
+for year in 2010:2019
+    for quarter in 1:4
+        date = DateTime(year, quarter*3, daysinmonth(DateTime(year, quarter*3, 1)))
+        sims = load("data/italy/simulations/$(year)Q$(quarter).jld2")["data_vector"]
+        prediction_dict = Bit.get_predictions_from_sims(sims, cal.data, date)
+        save("data/italy/abm_predictions/$(year)Q$(quarter).jld2", "model_dict", prediction_dict)
+    end
 end
 
 include("./examples/analysis/tabs/analysis_utils.jl")
