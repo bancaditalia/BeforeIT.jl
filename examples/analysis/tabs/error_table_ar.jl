@@ -1,20 +1,18 @@
 
-function error_table_ar(country::String)
+function error_table_ar(country::String, ea, data, quarters_num)
 
     tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
     dataFormat, tableColumnAlignment = "%.2f", "r"
     tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
 
-    number_quarters = 4 * 10
-    quarters_num = [Bit.date2num(date) for date in DateTime(2010, 03, 31):Dates.Month(3):DateTime(2019, 12, 31)]
-    max_year = 2019
-    
+    quarters_num = Bit.date2num.(quarters)
+    number_quarters = length(quarters)
+    max_year = year(quarters[end])
+
     horizons = [1, 2, 4, 8, 12]
     number_horizons = length(horizons)
     number_variables = 5
     presample = 4
-
-    data = matread(("data/$(country)/calibration/data/1996.mat"))["data"]
 
     for k = 1:3
         forecast = fill(NaN, number_quarters, number_horizons, number_variables)
