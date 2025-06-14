@@ -1,6 +1,14 @@
 
-function error_table_validation_abm(country::String = "italy")
+function error_table_validation_abm(country::String)
 
+    tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
+    dataFormat, tableColumnAlignment = "%.2f", "r"
+    tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
+
+    number_quarters = 4 * 10
+    quarters_num = [Bit.date2num(date) for date in DateTime(2010, 03, 31):Dates.Month(3):DateTime(2019, 12, 31)]
+    max_year = 2019
+    
     horizons = [1, 2, 4, 8, 12]
     number_horizons = length(horizons)
     number_variables = 8
@@ -11,6 +19,9 @@ function error_table_validation_abm(country::String = "italy")
     quarter_num = quarters_num[1]
     model = load("./data/" * country * "/abm_predictions/" * string(year(Bit.num2date(quarter_num))) * "Q" * string(Dates.quarterofyear(Bit.num2date(quarter_num))) *".jld2","model_dict");
     number_of_seeds = size(model["real_gdp_quarterly"],2)
+
+    ea = matread(("data/$(country)/calibration/ea/1996.mat"))["ea"]
+    data = matread(("data/$(country)/calibration/data/1996.mat"))["data"]
 
     for i in 1:number_quarters
         quarter_num = quarters_num[i]
