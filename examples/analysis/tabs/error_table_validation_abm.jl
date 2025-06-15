@@ -1,5 +1,5 @@
 
-function error_table_validation_abm(country::String, ea, data, quarters_num)
+function error_table_validation_abm(country::String, ea, data, quarters)
 
     quarters_num = Bit.date2num.(quarters)
     number_quarters = length(quarters)

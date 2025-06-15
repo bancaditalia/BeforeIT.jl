@@ -1,9 +1,5 @@
 
-function error_table_var(country::String, ea, data, quarters_num)
-
-    tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
-    dataFormat, tableColumnAlignment = "%.2f", "r"
-    tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
+function error_table_var(country::String, ea, data, quarters)
 
     quarters_num = Bit.date2num.(quarters)
     number_quarters = length(quarters)
