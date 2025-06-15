@@ -26,8 +26,9 @@ include("./examples/analysis/tabs/error_table_validation_abm.jl")
 country = "italy"
 ea = matread(("data/$(country)/calibration/ea/1996.mat"))["ea"]
 data = matread(("data/$(country)/calibration/data/1996.mat"))["data"]
+horizons = [1, 2, 4, 8, 12]
 
-error_table_var(country, ea, data, quarters)
-error_table_validation_var(country, ea, data, quarters)
-error_table_abm(country, ea, data, quarters)
-error_table_validation_abm(country, ea, data, quarters)
+error_table_var(country, ea, data, quarters, horizons)
+error_table_validation_var(country, ea, data, quarters, horizons)
+error_table_abm(country, ea, data, quarters, horizons)
+error_table_validation_abm(country, ea, data, quarters, horizons)

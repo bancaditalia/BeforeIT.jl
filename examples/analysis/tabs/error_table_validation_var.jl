@@ -1,11 +1,10 @@
 
-function error_table_validation_var(country::String, ea, data, quarters)
+function error_table_validation_var(country::String, ea, data, quarters, horizons)
 
     quarters_num = Bit.date2num.(quarters)
     number_quarters = length(quarters)
     max_year = year(quarters[end])
 
-    horizons = [1, 2, 4, 8, 12]
     number_horizons = length(horizons)
     number_variables = 8
     presample = 4

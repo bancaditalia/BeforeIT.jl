@@ -50,7 +50,7 @@ function create_bias_rmse_tables_abm(forecast, actual, horizons, type, number_va
 
     type = type == "validation" ? "validation_" : ""
 
-    tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
+    tableRowLabels = ["$(i)q" for i in horizons]
     dataFormat, tableColumnAlignment = "%.2f", "r"
     tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
 
@@ -111,7 +111,7 @@ end
 function create_bias_rmse_tables_var(forecast, actual, horizons, type, number_variables, k)
     type = type == "validation" ? "validation_" : ""
 
-    tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
+    tableRowLabels = ["$(i)q" for i in horizons]
     dataFormat, tableColumnAlignment = "%.2f", "r"
     tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
 
