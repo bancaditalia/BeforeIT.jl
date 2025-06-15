@@ -5,8 +5,6 @@ function estimate_next_value(data, type = nothing)
     return alpha * data[end] + beta + epsilon
 end
 
-
-
 function estimate(ydata::Union{Matrix{Float64}, Vector{Float64}})
     if typeof(ydata) == Vector{Float64}
         ydata = ydata[:, :]
@@ -17,7 +15,6 @@ function estimate(ydata::Union{Matrix{Float64}, Vector{Float64}})
     epsilon = rand(Normal(0, sqrt(cov(var.u))[1, 1]))
     return alpha, beta, epsilon
 end
-
 
 function estimate_for_calibration_script(ydata::Union{Matrix{Float64}, Vector{Float64}})
     if typeof(ydata) == Vector{Float64}
@@ -30,7 +27,6 @@ function estimate_for_calibration_script(ydata::Union{Matrix{Float64}, Vector{Fl
     epsilon = var.u
     return alpha, beta, sigma, epsilon
 end
-
 
 # function estimate_with_predictors(ydata::Union{Matrix{Float64}, Vector{Float64}}, exo::Matrix)
 
@@ -47,8 +43,6 @@ end
 #     epsilon = rand(Normal(0, sqrt(cov(var.u))))
 #     return alpha, beta, gamma_1, gamma_2, gamma_3, epsilon
 # end
-
-
 
 function estimate_taylor_rule(
     r_bar::Union{Matrix{Float64}, Vector{Float64}},
