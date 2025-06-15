@@ -37,7 +37,6 @@ function error_table_validation_abm(country::String, ea, data, quarters, horizon
                 (1 .+ data["euribor"][data["quarters_num"] .== forecast_quarter_num]).^(1/4)
             )
 
-
             forecast[i, j, :] = hcat(
                 log.(mean(model["real_gdp_quarterly"][repeat(model["quarters_num"] .== forecast_quarter_num,1,number_of_seeds)])),
                 log.(1 .+ mean(model["gdp_deflator_growth_quarterly"][repeat(model["quarters_num"] .== forecast_quarter_num,1,number_of_seeds)])),
