@@ -46,138 +46,96 @@ end
 nanmean(x) = mean(filter(!isnan,x))
 nanmean(x,y) = mapslices(nanmean,x; dims = y)
 
-function create_bias_rmse_tables_abm(forecast, actual, horizons, type, number_variables)
+function calculate_forecast_errors(forecast, actual)
+    error = forecast - actual
+    rmse = dropdims(100 * sqrt.(nanmean(error.^2, 1)), dims=1)
+    bias = dropdims(nanmean(error, 1), dims=1)
+    return rmse, bias, error
+end
 
-    type = type == "validation" ? "validation_" : ""
-
+function write_latex_table(filename, country, input_data_S, horizons)
     tableRowLabels = ["$(i)q" for i in horizons]
     dataFormat, tableColumnAlignment = "%.2f", "r"
     tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
 
-    rmse_validation_abm = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
-    bias_validation_abm = dropdims(nanmean(forecast - actual, 1), dims=1)
-    error_validation_abm = forecast - actual
-
-    forecast = load("data/$(country)/analysis/forecast_$(type)var.jld2")["forecast"]
-
-    rmse_validation_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
-    error_validation_var = forecast - actual
-
-    input_data = - round.(100 * (rmse_validation_abm .- rmse_validation_var) ./ rmse_validation_var, digits=1)
-    input_data_S = fill("", size(input_data))
-
-    for j in 1:length(horizons)
-        h = horizons[j]
-        for l in 1:number_variables
-            dm_error_validation_abm = view(error_validation_abm, :, j, l)[map(!,isnan.(view(error_validation_abm, :, j, l)))]
-            dm_error_validation_var = view(error_validation_var, :, j, l)[map(!,isnan.(view(error_validation_var, :, j, l)))]
-            _, p_value = Bit.dmtest_modified(dm_error_validation_var,dm_error_validation_abm, h)
-            input_data_S[j, l] = string(input_data[j, l]) * "(" * string(round(p_value, digits=2)) *", "* string(stars(p_value)) * ")"
-        end
-    end
-
     latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
 
-    open("data/$(country)/analysis/rmse_$(type)abm.tex", "w") do fid
+    open("data/$(country)/analysis/$(filename)", "w") do fid
         for line in latex
             write(fid, line * "\n")
         end
     end
+end
 
-    input_data = round.(bias_validation_abm, digits=4)
+function generate_dm_test_comparison(error1, error2, rmse1, rmse2, horizons, number_variables)
+    input_data = -round.(100 * (rmse1 .- rmse2) ./ rmse2, digits=1)
     input_data_S = fill("", size(input_data))
 
     for j in 1:length(horizons)
         h = horizons[j]
         for l in 1:number_variables
-            mz_forecast = (view(error_validation_abm, :, j, l) + view(actual, :, j, l))[map(!,isnan.(view(error_validation_abm, :, j, l) + view(actual, :, j, l)))]
-            mz_actual = view(actual, :, j, l)[map(!,isnan.(view(actual, :, j, l)))]
+            dm_error1 = view(error1, :, j, l)[map(!, isnan.(view(error1, :, j, l)))]
+            dm_error2 = view(error2, :, j, l)[map(!, isnan.(view(error2, :, j, l)))]
+            _, p_value = Bit.dmtest_modified(dm_error2, dm_error1, h)
+            input_data_S[j, l] = string(input_data[j, l]) * "(" * string(round(p_value, digits=2)) * ", " * string(stars(p_value)) * ")"
+        end
+    end
+    return input_data_S
+end
+
+function generate_mz_test_bias(error, actual, bias, horizons, number_variables)
+    input_data = round.(bias, digits=4)
+    input_data_S = fill("", size(input_data))
+
+    for j in 1:length(horizons)
+        h = horizons[j]
+        for l in 1:number_variables
+            mz_forecast = (view(error, :, j, l) + view(actual, :, j, l))[map(!, isnan.(view(error, :, j, l) + view(actual, :, j, l)))]
+            mz_actual = view(actual, :, j, l)[map(!, isnan.(view(actual, :, j, l)))]
             _, _, p_value = Bit.mztest(mz_actual, mz_forecast)
-            input_data_S[j, l] = string(input_data[j, l]) * " (" * string(round(p_value, digits=3)) *", "* stars(p_value) * ")"
+            input_data_S[j, l] = string(input_data[j, l]) * " (" * string(round(p_value, digits=3)) * ", " * stars(p_value) * ")"
         end
     end
+    return input_data_S
+end
 
-    latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
+function create_bias_rmse_tables_abm(forecast, actual, horizons, type, number_variables)
+    type_prefix = type == "validation" ? "validation_" : ""
 
-    open("data/$(country)/analysis/bias_$(type)abm.tex", "w") do fid
-        for line in latex
-            write(fid, line * "\n")
-        end
-    end
+    rmse_abm, bias_abm, error_abm = calculate_forecast_errors(forecast, actual)
+
+    forecast_var = load("data/$(country)/analysis/forecast_$(type_prefix)var.jld2")["forecast"]
+    rmse_var, _, error_var = calculate_forecast_errors(forecast_var, actual)
+
+    rmse_comparison_data = generate_dm_test_comparison(error_abm, error_var, rmse_abm, rmse_var, horizons, number_variables)
+    write_latex_table("rmse_$(type_prefix)abm.tex", country, rmse_comparison_data, horizons)
+
+    bias_data = generate_mz_test_bias(error_abm, actual, bias_abm, horizons, number_variables)
+    write_latex_table("bias_$(type_prefix)abm.tex", country, bias_data, horizons)
 
     return nothing
 end
 
 function create_bias_rmse_tables_var(forecast, actual, horizons, type, number_variables, k)
-    type = type == "validation" ? "validation_" : ""
-
-    tableRowLabels = ["$(i)q" for i in horizons]
-    dataFormat, tableColumnAlignment = "%.2f", "r"
-    tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
+    type_prefix = type == "validation" ? "validation_" : ""
 
     if k == 1
-        save("data/$(country)/analysis/forecast_$(type)var.jld2", "forecast", forecast)
-        rmse_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
-        bias_var = dropdims(nanmean(forecast - actual, 1), dims=1)
-        error_var = forecast - actual
+        save("data/$(country)/analysis/forecast_$(type_prefix)var.jld2", "forecast", forecast)
+        rmse_var, bias_var, error_var = calculate_forecast_errors(forecast, actual)
+
+        input_data_rmse = round.(rmse_var, digits=2)
+        write_latex_table("rmse_$(type_prefix)var.tex", country, string.(input_data_rmse), horizons)
+
+        bias_data = generate_mz_test_bias(error_var, actual, bias_var, horizons, number_variables)
+        write_latex_table("bias_$(type_prefix)var.tex", country, bias_data, horizons)
     else
-        save("data/$(country)/analysis/forecast_$(type)var_$(k).jld2", "forecast", forecast)
-        rmse_var_k = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
-        bias_var_k = dropdims(nanmean(forecast - actual, 1), dims=1)
-        error_var_k = forecast - actual
+        save("data/$(country)/analysis/forecast_$(type_prefix)var_$(k).jld2", "forecast", forecast)
+        rmse_var_k, _, error_var_k = calculate_forecast_errors(forecast, actual)
 
-        forecast = load("data/$(country)/analysis/forecast_$(type)var.jld2")["forecast"]
-        rmse_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
-        error_var = forecast - actual
-    end
+        forecast_base_var = load("data/$(country)/analysis/forecast_$(type_prefix)var.jld2")["forecast"]
+        rmse_base_var, _, error_base_var = calculate_forecast_errors(forecast_base_var, actual)
 
-    if k == 1
-        input_data = round.(rmse_var, digits=2)
-        input_data_S = string.(input_data)
-    else
-        input_data = - round.(100 * (rmse_var .- rmse_var_k) ./ rmse_var, digits=1)
-        input_data_S = fill("", size(input_data))
-        for j in 1:length(horizons)
-            h = horizons[j]
-            for l in 1:number_variables
-                dm_error_var_k = view(error_var_k, :, j, l)[map(!,isnan.(view(error_var_k, :, j, l)))]
-                dm_error_var = view(error_var, :, j, l)[map(!,isnan.(view(error_var, :, j, l)))]
-                _, p_value = Bit.dmtest_modified(dm_error_var,dm_error_var_k, h)
-                input_data_S[j, l] = string(input_data[j, l]) * "(" * string(round(p_value, digits=2)) *", "* string(stars(p_value)) * ")"
-            end
-        end
-    end
-    
-    latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
-
-    idx = k == 1 ? "" : "_$(k)"
-    open("data/$(country)/analysis/rmse_$(type)var" * idx * ".tex", "w") do fid
-        for line in latex
-            write(fid, line * "\n")
-        end
-    end
-    
-    if k == 1
-        input_data = round.(bias_var, digits=4)
-        input_data_S = fill("", size(input_data))
-
-        for j in 1:length(horizons)
-            
-            h = horizons[j]
-            for l in 1:number_variables
-                mz_forecast = (view(error_var, :, j, l) + view(actual, :, j, l))[map(!,isnan.(view(error_var, :, j, l) + view(actual, :, j, l)))]
-                mz_actual = view(actual, :, j, l)[map(!,isnan.(view(actual, :, j, l)))]
-                _, _, p_value = Bit.mztest(mz_actual, mz_forecast)
-                input_data_S[j, l] = string(input_data[j, l]) * " (" * string(round(p_value, digits=3)) *", "* stars(p_value) * ")"
-            end
-        end
-        
-        latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
-
-        open("data/$(country)/analysis/bias_$(type)var.tex", "w") do fid
-            for line in latex
-                write(fid, line * "\n")
-            end
-        end
+        rmse_comparison_data = generate_dm_test_comparison(error_var_k, error_base_var, rmse_var_k, rmse_base_var, horizons, number_variables)
+        write_latex_table("rmse_$(type_prefix)var_$(k).tex", country, rmse_comparison_data, horizons)
     end
 end
