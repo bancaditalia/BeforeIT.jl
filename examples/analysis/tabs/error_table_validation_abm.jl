@@ -52,6 +52,6 @@ function error_table_validation_abm(country::String, ea, data, quarters_num)
 
         end
     end
-    forecast = save("data/$(country)/analysis/forecast_validation_abm.jld2", "forecast", forecast)
+    save("data/$(country)/analysis/forecast_validation_abm.jld2", "forecast", forecast)
     create_bias_rmse_tables_abm(forecast, actual, horizons, "validation", number_variables)
 end

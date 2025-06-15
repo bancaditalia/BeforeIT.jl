@@ -65,7 +65,7 @@ function create_bias_rmse_tables_abm(forecast, actual, horizons, type, number_va
     bias_validation_abm = dropdims(nanmean(forecast - actual, 1), dims=1)
     error_validation_abm = forecast - actual
 
-    forecast = load("data/$(country)/analysis/forecast_$(type)abm.jld2")["forecast"]
+    forecast = load("data/$(country)/analysis/forecast_$(type)var.jld2")["forecast"]
 
     rmse_validation_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
     error_validation_var = forecast - actual
