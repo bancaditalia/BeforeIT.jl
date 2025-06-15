@@ -23,7 +23,7 @@ function error_table_validation_var(country::String, ea, data, quarters, horizon
                 forecast_quarter_num = Bit.date2num(lastdayofmonth(Bit.num2date(quarter_num) + Month(3 * horizon)))
                 Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31) && break
 
-                actual[i, j, :] = hcat(collect([
+                actual[i, j, :] = hcat(
                     log.(data["real_gdp_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     log.(1 .+ data["gdp_deflator_growth_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     log.(data["real_government_consumption_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
@@ -32,9 +32,9 @@ function error_table_validation_var(country::String, ea, data, quarters, horizon
                     log.(ea["real_gdp_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     log.(1 .+ ea["gdp_deflator_growth_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     (1 .+ data["euribor"][data["quarters_num"] .== forecast_quarter_num]).^(1/4)
-                    ])...)
+                )
 
-                Y0 = hcat(collect([
+                Y0 = hcat(
                     log.(data["real_gdp_quarterly"][data["quarters_num"] .<= quarter_num]),
                     log.(1 .+ data["gdp_deflator_growth_quarterly"][data["quarters_num"] .<= quarter_num]),
                     log.(data["real_government_consumption_quarterly"][data["quarters_num"] .<= quarter_num]),
@@ -43,7 +43,7 @@ function error_table_validation_var(country::String, ea, data, quarters, horizon
                     log.(ea["real_gdp_quarterly"][data["quarters_num"] .<= quarter_num]),
                     log.(1 .+ ea["gdp_deflator_growth_quarterly"][data["quarters_num"] .<= quarter_num]),
                     cumsum((1 .+ data["euribor"][data["quarters_num"] .<= quarter_num]).^(1/4))
-                    ])...)
+                )
 
                 Y0_diff = diff(Y0[presample - k + 1:end,:]; dims = 1)
                 Y = Bit.forecast_k_steps_VAR(Y0_diff, horizon, intercept = true, lags = k)

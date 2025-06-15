@@ -22,21 +22,21 @@ function error_table_var(country::String, ea, data, quarters, horizons)
                 forecast_quarter_num = Bit.date2num(lastdayofmonth(Bit.num2date(quarter_num) + Month(3 * horizon)))
                 Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31) && break
 
-                actual[i, j, :] = hcat(collect([
+                actual[i, j, :] = hcat(
                     log.(data["real_gdp_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     log.(1 .+ data["gdp_deflator_growth_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     log.(data["real_household_consumption_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     log.(data["real_fixed_capitalformation_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     (1 .+ data["euribor"][data["quarters_num"] .== forecast_quarter_num]).^(1/4)
-                    ])...)
+                )
 
-                Y0 = hcat(collect([
+                Y0 = hcat(
                     log.(data["real_gdp_quarterly"][data["quarters_num"] .<= quarter_num]),
                     log.(data["gdp_deflator_quarterly"][data["quarters_num"] .<= quarter_num]),
                     log.(data["real_household_consumption_quarterly"][data["quarters_num"] .<= quarter_num]),
                     log.(data["real_fixed_capitalformation_quarterly"][data["quarters_num"] .<= quarter_num]),
                     cumsum((1 .+ data["euribor"][data["quarters_num"] .<= quarter_num]).^(1/4))
-                ])...)
+                )
 
                 Y = zeros(horizon, number_variables)
                 Y0_diff = diff(Y0[presample - k:end,:]; dims = 1)
