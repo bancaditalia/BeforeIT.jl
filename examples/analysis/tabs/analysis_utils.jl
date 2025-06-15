@@ -10,9 +10,7 @@ function latexTableContent(input_data::Matrix{String}, tableRowLabels::Vector{St
         push!(latex, "\\begin{document}")
     end
 
-    if booktabs
-        push!(latex, "\\toprule")
-    end
+    booktabs && push!(latex, "\\toprule")
 
     for row in 1:nrows
         row_content = [tableRowLabels[row]]
@@ -26,13 +24,8 @@ function latexTableContent(input_data::Matrix{String}, tableRowLabels::Vector{St
         end
     end
 
-    if booktabs
-        push!(latex, "\\bottomrule")
-    end
-
-    if makeCompleteLatexDocument
-        push!(latex, "\\end{document}")
-    end
+    booktabs && push!(latex, "\\bottomrule")
+    makeCompleteLatexDocument && push!(latex, "\\end{document}")
 
     return latex
 end
