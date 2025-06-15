@@ -24,7 +24,7 @@ mkpath(outdir)
 
 Literate.markdown(joinpath(indir, "basic_example.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "scenario_analysis_via_shock.jl"), outdir; credit = false)
-Literate.markdown(joinpath(indir, "get_parameters_and_initial_conditions.jl"), outdir; credit = false)
+Literate.markdown(joinpath(indir, "prediction_pipeline.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "multithreading_speedup.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "change_expectations.jl"), outdir; credit = false)
@@ -43,7 +43,7 @@ makedocs(
         "Shocked simulations (advanced)" => "examples/scenario_analysis_via_overload.md",
         "Experimentations (advanced)" => "examples/change_expectations.md",
         "Multithreading within the model" => "examples/multithreading_speedup.md",
-        "Calibration" => "examples/get_parameters_and_initial_conditions.md",
+        "Calibration" => "examples/prediction_pipeline.md",
         "Prediction Comparison" => "examples/analysis/create_tables.md",
         "API" => "api.md",
     ],
