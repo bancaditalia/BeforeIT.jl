@@ -65,11 +65,7 @@ function create_bias_rmse_tables_abm(forecast, actual, horizons, type, number_va
     bias_validation_abm = dropdims(nanmean(forecast - actual, 1), dims=1)
     error_validation_abm = forecast - actual
 
-    file_path = "data/$(country)/analysis/forecast_$(type)var.h5"
-    
-    forecast = h5open(file_path, "r") do file
-        read(file["forecast"])
-    end
+    forecast = load("data/$(country)/analysis/forecast_$(type)abm.jld2")["forecast"]
 
     rmse_validation_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
     error_validation_var = forecast - actual
@@ -127,21 +123,17 @@ function create_bias_rmse_tables_var(forecast, actual, horizons, type, number_va
     tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
 
     if k == 1
-        h5open("data/$(country)/analysis/forecast_$(type)var.h5", "w") do file
-            write(file, "forecast", forecast)
-        end
+        save("data/$(country)/analysis/forecast_$(type)var.jld2", "forecast", forecast)
         rmse_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
         bias_var = dropdims(nanmean(forecast - actual, 1), dims=1)
         error_var = forecast - actual
     else
-        h5open("data/$(country)/analysis/forecast_$(type)var_$(k).h5", "w") do file
-            write(file, "forecast", forecast)
-        end
+        save("data/$(country)/analysis/forecast_$(type)var_$(k).jld2", "forecast", forecast)
         rmse_var_k = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
         bias_var_k = dropdims(nanmean(forecast - actual, 1), dims=1)
         error_var_k = forecast - actual
 
-        forecast = h5read("data/$(country)/analysis/forecast_$(type)var.h5","forecast")
+        forecast = load("data/$(country)/analysis/forecast_$(type)var.jld2")["forecast"]
         rmse_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
         error_var = forecast - actual
     end

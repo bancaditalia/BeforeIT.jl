@@ -44,10 +44,7 @@ function error_table_abm(country::String, ea, data, quarters)
                 ])...)
         end
     end
-
-    h5open("data/$(country)/analysis/forecast_abm.h5", "w") do file
-        write(file, "forecast", forecast)
-    end
+    forecast = save("data/$(country)/analysis/forecast_abm.jld2", "forecast", forecast)
     create_bias_rmse_tables_abm(forecast, actual, horizons, "training", number_variables)
 end
 
