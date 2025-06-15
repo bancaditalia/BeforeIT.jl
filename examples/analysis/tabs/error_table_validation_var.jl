@@ -1,10 +1,6 @@
 
 function error_table_validation_var(country::String, ea, data, quarters_num)
 
-    tableRowLabels = ["1q", "2q", "4q", "8q", "12q"]
-    dataFormat, tableColumnAlignment = "%.2f", "r"
-    tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
-
     quarters_num = Bit.date2num.(quarters)
     number_quarters = length(quarters)
     max_year = year(quarters[end])
@@ -24,12 +20,10 @@ function error_table_validation_var(country::String, ea, data, quarters_num)
 
             for j in 1:number_horizons
                 horizon = horizons[j]
-                forecast_quarter_num = Bit.date2num(lastdayofmonth(Bit.num2date(quarter_num) + Month(3 * horizon)))
 
-                if Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31)
-                    break
-                end
-                
+                forecast_quarter_num = Bit.date2num(lastdayofmonth(Bit.num2date(quarter_num) + Month(3 * horizon)))
+                Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31) && break
+
                 actual[i, j, :] = hcat(collect([
                     log.(data["real_gdp_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
                     log.(1 .+ data["gdp_deflator_growth_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
@@ -60,76 +54,8 @@ function error_table_validation_var(country::String, ea, data, quarters_num)
             end
         end
 
-        if k == 1
-            h5open("data/" * country * "/analysis/forecast_validation_var.h5", "w") do file
-                write(file, "forecast", forecast)
-            end
-            rmse_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
-            bias_var = dropdims(nanmean(forecast - actual, 1), dims=1)
-            error_var = forecast - actual
-        else
-            h5open("data/" * country * "/analysis/forecast_validation_var_$(k).h5", "w") do file
-                write(file, "forecast", forecast)
-            end
-            rmse_var_k = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
-            bias_var_k = dropdims(nanmean(forecast - actual, 1), dims=1)
-            error_var_k = forecast - actual
-
-            forecast = h5read("data/" * country * "/analysis/forecast_validation_var.h5","forecast")
-            rmse_var = dropdims(100 * sqrt.(nanmean((forecast - actual).^2,1)), dims=1)
-            error_var = forecast - actual
-        end
-
-
-        if k == 1
-            input_data = round.(rmse_var, digits=2)
-            input_data_S = string.(input_data)
-        else
-            input_data = - round.(100 * (rmse_var .- rmse_var_k) ./ rmse_var, digits=1)
-            input_data_S = fill("", size(input_data))
-            for j in 1:length(horizons)
-                h = horizons[j]
-                for l in 1:number_variables
-                    dm_error_var_k = view(error_var_k, :, j, l)[map(!,isnan.(view(error_var_k, :, j, l)))]
-                    dm_error_var = view(error_var, :, j, l)[map(!,isnan.(view(error_var, :, j, l)))]
-                    _, p_value = Bit.dmtest_modified(dm_error_var,dm_error_var_k, h)
-                    input_data_S[j, l] = string(input_data[j, l]) * "(" * string(round(p_value, digits=2)) *", "* string(stars(p_value)) * ")"
-                end
-            end
-        end
-        
-        latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
-
-        idx = k == 1 ? "" : "_$(k)"
-        open("data/" * country * "/analysis/rmse_validation_var" * idx * ".tex", "w") do fid
-            for line in latex
-                write(fid, line * "\n")
-            end
-        end
-        
-        if k == 1
-            input_data = round.(bias_var, digits=4)
-            input_data_S = fill("", size(input_data))
-
-            for j in 1:length(horizons)
-                
-                h = horizons[j]
-                for l in 1:number_variables
-                    mz_forecast = (view(error_var, :, j, l) + view(actual, :, j, l))[map(!,isnan.(view(error_var, :, j, l) + view(actual, :, j, l)))]
-                    mz_actual = view(actual, :, j, l)[map(!,isnan.(view(actual, :, j, l)))]
-                    _, _, p_value = Bit.mztest(mz_actual, mz_forecast)
-                    input_data_S[j, l] = string(input_data[j, l]) * " (" * string(round(p_value, digits=3)) *", "* stars(p_value) * ")"
-                end
-            end
-            
-            latex = latexTableContent(input_data_S, tableRowLabels, dataFormat, tableColumnAlignment, tableBorders, booktabs, makeCompleteLatexDocument)
-
-            open("data/" * country * "/analysis/bias_validation_var.tex", "w") do fid
-                for line in latex
-                    write(fid, line * "\n")
-                end
-            end
-        end
+        create_bias_rmse_tables_var(forecast, actual, horizons, "validation", number_variables, k)
     end
     return nothing
 end
+
