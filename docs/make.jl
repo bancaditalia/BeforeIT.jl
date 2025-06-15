@@ -29,7 +29,7 @@ Literate.markdown(joinpath(indir, "multithreading_speedup.jl"), outdir; credit =
 Literate.markdown(joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "change_expectations.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "basic_inheritance.jl"), outdir; credit = false)
-Literate.markdown(joinpath(indir, "analysis/create_tables.jl"), outdir; credit = false)
+Literate.markdown(joinpath(indir, "analysis/tabs/create_tables.jl"), outdir; credit = false)
 
 @info "Building Documentation"
 makedocs(
@@ -44,7 +44,7 @@ makedocs(
         "Experimentations (advanced)" => "examples/change_expectations.md",
         "Multithreading within the model" => "examples/multithreading_speedup.md",
         "Calibration" => "examples/prediction_pipeline.md",
-        "Prediction Comparison" => "examples/analysis/create_tables.md",
+        "Prediction Comparison" => "examples/analysis/tabs/create_tables.md",
         "API" => "api.md",
     ],
 )
