@@ -1,4 +1,3 @@
-using Distributions
 
 """
     forecast_k_steps_VAR(data, n_forecasts; intercept = false, lags = 1)
