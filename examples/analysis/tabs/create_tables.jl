@@ -16,11 +16,13 @@ for q in quarters
     save("data/italy/abm_predictions/$(year(q))Q$(quarterofyear(q)).jld2", "model_dict", prediction_dict)
 end
 
-include("./examples/analysis/tabs/analysis_utils.jl")
-include("./examples/analysis/tabs/error_table_var.jl")
-include("./examples/analysis/tabs/error_table_abm.jl")
-include("./examples/analysis/tabs/error_table_validation_var.jl")
-include("./examples/analysis/tabs/error_table_validation_abm.jl")
+# Load some utility functions for creating error tables
+dir = @__DIR__
+include(joinpath(dir, "analysis_utils.jl"))
+include(joinpath(dir, "error_table_var.jl"))
+include(joinpath(dir, "error_table_abm.jl"))
+include(joinpath(dir, "error_table_validation_var.jl"))
+include(joinpath(dir, "error_table_validation_abm.jl"))
 
 country = "italy"
 ea = matread(("data/$(country)/calibration/ea/1996.mat"))["ea"]
