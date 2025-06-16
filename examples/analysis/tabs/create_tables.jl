@@ -1,9 +1,12 @@
-
 # This scripts calls all scripts to create tables for comparing forecasts
 # of the abm and the baseline models (AR, ARX, VAR, VARX)
 
 import BeforeIT as Bit
-using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, HDF5, FileIO, MAT
+
+# install required packages
+import Pkg; Pkg.add("LaTeXStrings")
+
+using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, FileIO, MAT
 
 cal = Bit.ITALY_CALIBRATION
 T, n_sims = 12, 4
