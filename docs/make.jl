@@ -44,7 +44,7 @@ makedocs(
         "Experimentations (advanced)" => "examples/change_expectations.md",
         "Multithreading within the model" => "examples/multithreading_speedup.md",
         "Calibration" => "examples/prediction_pipeline.md",
-        "Prediction Comparison" => "examples/analysis/tabs/create_tables.md",
+        "Prediction Comparison" => "examples/create_tables.md",
         "API" => "api.md",
     ],
 )
