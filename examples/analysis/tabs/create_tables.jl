@@ -2,10 +2,6 @@
 # of the abm and the baseline models (AR, ARX, VAR, VARX)
 
 import BeforeIT as Bit
-
-# install required packages
-import Pkg; Pkg.add("LaTeXStrings")
-
 using Dates, DelimitedFiles, Statistics, Printf, LaTeXStrings, CSV, FileIO, MAT
 
 cal = Bit.ITALY_CALIBRATION
