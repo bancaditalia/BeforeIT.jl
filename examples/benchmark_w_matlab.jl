@@ -89,22 +89,24 @@ labels = ["MATLAB", "Gen. C - 1 core", "Gen. C - 4 cores", "HPC - 1 core*", "HPC
           "BeforeIT.jl - 1 core", "BeforeIT.jl - 4 cores"]
 
 # Create the layout
-fig = Figure(size = (800, 400));
+fig = Figure(size = (900, 400));
 
-ax1 = Axis(fig[1, 1], ylabel="time for one epoch (s)", title="Model with 8 thousand agents")
-ax2 = Axis(fig[1, 2], title="Model with 8 million agents")
+ax1 = Axis(fig[1, 1], ylabel="time for one epoch (s)", title="Model with 8 thousand agents", titlesize=18, xticksvisible=false)
+ax2 = Axis(fig[1, 2], title="Model with 8 million agents", titlesize=18, xticksvisible=false)
 
 times_small = [matlab_mtime_small, c_mtime_small, c_mtime_small_multi, julia_mtime_small, julia_mtime_small_multi]
 barplot!(ax1,
     1:5,
     times_small,
     bar_labels = :y,
+    color = RGBf(((0,155,228)./255)...),
+    strokecolor = :black, strokewidth = 1
 );
-ylims!(ax1, 0, 1.15*maximum(times_small))
+ylims!(ax1, 0, 1.25*maximum(times_small))
 
 ax1.yticklabelspace = 25.0
 ax1.xticks = (1:5, [labels[1:3]..., labels[6:end]...])
-ax1.xticklabelrotation = 45.0
+ax1.xticklabelrotation = π/5
 ax1.xgridvisible = false
 
 times_big = [matlab_mtime_big, c_mtime_big, c_mtime_big_multi, hpc_mtime_big, hpc_mtime_big_multi, 
@@ -114,10 +116,12 @@ ylims!(ax2, 0, 1.15*maximum(times_big))
 barplot!(ax2,
     1:7,
     round.(times_big, digits=1),
-    bar_labels = :y
+    bar_labels = :y,
+    color = RGBf(((0,155,228)./255)...),
+    strokecolor = :black, strokewidth = 1
 );
 ax2.xticks = (1:7, labels)
-ax2.xticklabelrotation = 45.0
+ax2.xticklabelrotation = π/5
 ax2.xgridvisible = false
 
 # Save or display the layout
