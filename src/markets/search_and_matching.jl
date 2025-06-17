@@ -232,7 +232,7 @@ function perform_firms_market!(
     # weights according to size and price
     F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
-    while !isempty(I_g) && !isempty(F_g_active)
+    while !isempty(I_g) && !iszero(F_g_active)
 
         # select buyers at random
         shuffle!(I_g)
@@ -250,8 +250,8 @@ function perform_firms_market!(
                 DM_d_ig[i] -= S_fg[f]
                 DM_nominal_ig[i] += S_fg[f] * P_f[f]
                 S_fg[f] = 0.0
-                delete!(F_g_active, e)
-                isempty(F_g_active) && break
+                F_g_active[e] = 0.0
+                iszero(F_g_active) && break
             end
         end
         filter!(i -> DM_d_ig[i] > 0.0, I_g)
@@ -265,7 +265,7 @@ function perform_firms_market!(
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
-        while !isempty(I_g) && !isempty(F_g_active)
+        while !isempty(I_g) && !iszero(F_g_active)
 
             shuffle!(I_g)
             for i in I_g
@@ -280,8 +280,8 @@ function perform_firms_market!(
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0.0
-                    delete!(F_g_active, e)
-                    isempty(F_g_active) && break
+                    F_g_active[e] = 0.0
+                    iszero(F_g_active) && break
                 end
             end
             filter!(i -> DM_d_ig_[i] > 0.0, I_g)
@@ -324,7 +324,7 @@ function perform_retail_market!(
     # weights according to size and price
     F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
-    while !isempty(H_g) && !isempty(F_g_active)
+    while !isempty(H_g) && !iszero(F_g_active)
 
         shuffle!(H_g)
         for h in H_g
@@ -339,8 +339,8 @@ function perform_retail_market!(
                 C_d_hg[h] -= S_fg[f] * P_f[f]
                 C_real_hg[h] += S_fg[f]
                 S_fg[f] = 0.0
-                delete!(F_g_active, e)
-                isempty(F_g_active) && break
+                F_g_active[e] = 0.0
+                iszero(F_g_active) && break
             end
         end
         filter!(h -> C_d_hg[h] > 0.0, H_g)
@@ -354,7 +354,7 @@ function perform_retail_market!(
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
-        while !isempty(H_g) && !isempty(F_g_active)
+        while !isempty(H_g) && !iszero(F_g_active)
 
             shuffle!(H_g)
             for h in H_g
@@ -369,8 +369,8 @@ function perform_retail_market!(
                     C_d_hg_[h] -= S_fg_[f] * P_f[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0.0
-                    delete!(F_g_active, e)
-                    isempty(F_g_active) && break
+                    F_g_active[e] = 0.0
+                    iszero(F_g_active) && break
                 end
             end
             filter!(h -> C_d_hg_[h] > 0.0, H_g)
@@ -413,9 +413,8 @@ function compute_price_size_weights(P_f, S_f, F_g)
 end
 
 function create_weighted_sampler(P_f, S_f, F_g)
-    sampler = DynamicSampler()
-    isempty(F_g) && return sampler
+    isempty(F_g) && return FixedSizeWeightVector(1)
     w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
-    append!(sampler, 1:length(F_g), w_cum_f_)
+    sampler = FixedSizeWeightVector(w_cum_f_)
     return sampler
 end
