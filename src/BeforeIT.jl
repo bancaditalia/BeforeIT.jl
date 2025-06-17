@@ -3,11 +3,11 @@ module BeforeIT
 import Base: length
 
 using ChunkSplitters
-using DynamicSampling
 using LazyArrays
 using LinearAlgebra
 using Random
 using StatsBase
+using WeightVectors
 
 const Bit = BeforeIT
 
