@@ -14,7 +14,6 @@ date2num(d::Dates.DateTime) = Dates.value(d - MATLAB_EPOCH) / (1000 * 60 * 60 * 
 const MATLAB_EPOCH = Dates.DateTime(-1, 12, 31)
 num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(round(Int64, n * 1000 * 60 * 60 * 24))
 
-
 function get_params_and_initial_conditions(calibration_object, calibration_date; scale = 0.001)
     calibration_data = calibration_object.calibration
     figaro = calibration_object.figaro
@@ -420,5 +419,4 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     initial_conditions = Dict(initial_conditions)
 
     return params, initial_conditions
-
 end
