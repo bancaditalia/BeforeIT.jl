@@ -14,8 +14,8 @@ In this page we document the functions which constitute the bulk of BeforeIT.jl 
 
 ```@autodocs
 Modules = [BeforeIT]
-Order   = [:type, :function]
-Pages   = ["agents.jl"]
+Order   = [:macro, :type, :function]
+Pages   = ["object_macro.jl", "agents.jl"]
 ```
 
 ## Initialisation function
@@ -33,7 +33,6 @@ Modules = [BeforeIT]
 Order   = [:type, :function]
 Pages   = ["one_epoch.jl", "one_simulation.jl"]
 ```
-
 
 ## Firms actions
 

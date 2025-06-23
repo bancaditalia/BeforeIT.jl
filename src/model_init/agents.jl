@@ -1,8 +1,21 @@
 
+include("object_macro.jl")
+
+export AbstractWorkers, AbstractFirms, AbstractBank,
+       AbstractCentralBank, AbstractGovernment, AbstractRestOfTheWorld,
+       AbstractAggregates, AbstractModel
+
 export Workers, Firms, Bank, CentralBank, Government, 
        RestOfTheWorld, Aggregates, Model
 
-include("abstract.jl")
+abstract type AbstractWorkers <: AbstractObject end
+abstract type AbstractFirms <: AbstractObject end
+abstract type AbstractBank <: AbstractObject end
+abstract type AbstractCentralBank <: AbstractObject end
+abstract type AbstractGovernment <: AbstractObject end
+abstract type AbstractRestOfTheWorld <: AbstractObject end
+abstract type AbstractAggregates <: AbstractObject end
+abstract type AbstractModel <: AbstractObject end
 
 """
 This is a Workers. Each field is an array which stores the values for all the workers in
@@ -21,8 +34,17 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `C_h`: Realised consumption
 - `I_h`: Realised investment
 """
-struct Workers{T <: AbstractVector, I <: AbstractVector} <: AbstractWorkers
-    @worker T I
+
+Bit.@object mutable struct Workers{T<:AbstractFloat,I<:Integer}(Object) <: AbstractWorkers
+    Y_h::Vector{T}
+    D_h::Vector{T}
+    K_h::Vector{T}
+    w_h::Vector{T}
+    O_h::Vector{I}
+    C_d_h::Vector{T}
+    I_d_h::Vector{T}
+    C_h::Vector{T}
+    I_h::Vector{T}
 end
 
 """
@@ -78,8 +100,52 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-struct Firms{T <: AbstractVector, I <: AbstractVector} <: AbstractFirms
-    @firm T I
+Bit.@object mutable struct Firms{T<:AbstractFloat,I<:Integer}(Object) <: AbstractFirms
+    G_i::Vector{I}
+    alpha_bar_i::Vector{T}
+    beta_i::Vector{T}
+    kappa_i::Vector{T}
+    w_i::Vector{T}
+    w_bar_i::Vector{T}
+    delta_i::Vector{T}
+    tau_Y_i::Vector{T}
+    tau_K_i::Vector{T}
+    N_i::Vector{I}
+    Y_i::Vector{T}
+    Q_i::Vector{T}
+    Q_d_i::Vector{T}
+    P_i::Vector{T}
+    S_i::Vector{T}
+    K_i::Vector{T}
+    M_i::Vector{T}
+    L_i::Vector{T}
+    pi_bar_i::Vector{T}
+    D_i::Vector{T}
+    Pi_i::Vector{T}
+    V_i::Vector{I}
+    I_i::Vector{T}
+    E_i::Vector{T}
+    P_bar_i::Vector{T}
+    P_CF_i::Vector{T}
+    DS_i::Vector{T}
+    DM_i::Vector{T}
+    DL_i::Vector{T}
+    DL_d_i::Vector{T}
+    K_e_i::Vector{T}
+    L_e_i::Vector{T}
+    Q_s_i::Vector{T}
+    I_d_i::Vector{T}
+    DM_d_i::Vector{T}
+    N_d_i::Vector{I}
+    Pi_e_i::Vector{T}
+    ### Household fields (firms' owners)
+    Y_h::Vector{T}
+    C_d_h::Vector{T}
+    I_d_h::Vector{T}
+    C_h::Vector{T}
+    I_h::Vector{T}
+    K_h::Vector{T}
+    D_h::Vector{T}
 end
 
 """
@@ -101,8 +167,19 @@ This is a Bank type. It represents the bank of the model.
 - `D_h`: Deposits
 
 """
-mutable struct Bank{P} <: AbstractBank
-    @bank P
+Bit.@object mutable struct Bank{T<:AbstractFloat}(Object) <: AbstractBank
+    E_k::T
+    Pi_k::T
+    Pi_e_k::T
+    D_k::T
+    r::T
+    Y_h::T
+    C_d_h::T
+    I_d_h::T
+    C_h::T
+    I_h::T
+    K_h::T
+    D_h::T
 end
 
 """
@@ -118,10 +195,16 @@ This is a CentralBank type. It represents the central bank of the model.
 - `xi_gamma`: Weight placed on economic
 - `E_CB`: Central bank equity
 """
-mutable struct CentralBank{T} <: AbstractCentralBank
-    @centralBank T
+Bit.@object mutable struct CentralBank{T<:AbstractFloat}(Object) <: AbstractCentralBank
+    r_bar::T
+    r_G::T
+    rho::T
+    r_star::T
+    pi_star::T
+    xi_pi::T
+    xi_gamma::T
+    E_CB::T
 end
-
 """
 This is a Government type. It represents the government of the model.
 
@@ -138,8 +221,18 @@ This is a Government type. It represents the government of the model.
 - `C_j`: Realised government consumption
 - `P_j`: Price inflation of government goods <- ??
 """
-mutable struct Government{T} <: AbstractGovernment
-    @government T
+Bit.@object mutable struct Government{T<:AbstractFloat}(Object) <: AbstractGovernment
+    alpha_G::T
+    beta_G::T
+    sigma_G::T
+    Y_G::T
+    C_G::T
+    L_G::T
+    sb_inact::T
+    sb_other::T
+    C_d_j::Vector{T}
+    C_j::T
+    P_j::T
 end
 
 """
@@ -172,8 +265,32 @@ This is a RestOfTheWorld type. It represents the rest of the world of the model.
 - `P_m [vector]`: Price of imports per sector
 - `P_l`: Price inflation of exports <- ??
 """
-mutable struct RestOfTheWorld{T} <: AbstractRestOfTheWorld
-    @restOfTheWorld T
+Bit.@object mutable struct RestOfTheWorld{T<:AbstractFloat}(Object) <: AbstractRestOfTheWorld
+    alpha_E::T
+    beta_E::T
+    sigma_E::T
+    alpha_I::T
+    beta_I::T
+    sigma_I::T
+    Y_EA::T
+    gamma_EA::T
+    pi_EA::T
+    alpha_pi_EA::T
+    beta_pi_EA::T
+    sigma_pi_EA::T
+    alpha_Y_EA::T
+    beta_Y_EA::T
+    sigma_Y_EA::T
+    D_RoW::T
+    Y_I::T
+    C_E::T
+    C_d_l::Vector{T}
+    C_l::T
+    Y_m::Vector{T}
+    Q_m::Vector{T}
+    Q_d_m::Vector{T}
+    P_m::Vector{T}
+    P_l::T
 end
 
 """
@@ -195,8 +312,22 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `t`: Time index
 
 """
-mutable struct Aggregates{T, I} <: AbstractAggregates
-    @aggregates T I
+Bit.@object mutable struct Aggregates{T<:AbstractFloat,I<:Integer}(Object) <: AbstractAggregates
+    Y::Vector{T}
+    pi_::Vector{T}
+    P_bar::T
+    P_bar_g::Vector{T}
+    P_bar_HH::T
+    P_bar_CF::T
+    P_bar_h::T
+    P_bar_CF_h::T
+    Y_e::T
+    gamma_e::T
+    pi_e::T
+    epsilon_Y_EA::T
+    epsilon_E::T
+    epsilon_I::T
+    t::I
 end
 
 """

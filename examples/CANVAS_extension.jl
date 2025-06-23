@@ -28,26 +28,25 @@ pi_EA_series = vec(vcat(ic["pi_EA_series"], zeros(Float64, T)))
 r_bar_series = vec(vcat(ic["r_bar_series"], zeros(Float64, T)))
 
 # define a new central bank for the CANVAS model
-mutable struct CentralBankCANVAS{Float64} <: Bit.AbstractCentralBank
-    Bit.@centralBank Float64
-    r_bar_series::Vector{Float64}
+abstract type AbstractCentralBankCANVAS <: Bit.AbstractCentralBank end
+Bit.@object mutable struct CentralBankCANVAS{T}(CentralBank{T}) <: AbstractCentralBankCANVAS
+    r_bar_series::Vector{T}
 end
 
 # define new firms for the CANVAS model
-mutable struct FirmsCANVAS{Float64, Int} <: Bit.AbstractFirms
-    Bit.@firm Float64 Int
-end
+abstract type AbstractFirmsCANVAS <: Bit.AbstractFirms end
+Bit.@object mutable struct FirmsCANVAS{T,I}(Firms{T,I}) <: AbstractFirmsCANVAS end
 
 # define a new rest of the world for the CANVAS model
-mutable struct RestOfTheWorldCANVAS{Float64} <: Bit.AbstractRestOfTheWorld
-    Bit.@restOfTheWorld Float64
-    Y_EA_series::Vector{Float64}
-    pi_EA_series::Vector{Float64}
+abstract type AbstractRestOfTheWorldCANVAS <: Bit.AbstractRestOfTheWorld end
+Bit.@object mutable struct RestOfTheWorldCANVAS{T}(RestOfTheWorld{T}) <: AbstractRestOfTheWorldCANVAS
+    Y_EA_series::Vector{T}
+    pi_EA_series::Vector{T}
 end
 
 # define new functions for the CANVAS-specific agents
 
-function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model::Bit.AbstractModel)
+function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model::Bit.AbstractModel)
     # unpack non-firm variables
     P_bar_g = model.agg.P_bar_g
     gamma_e = model.agg.gamma_e
@@ -92,7 +91,7 @@ function Bit.firms_expectations_and_decisions(firms::FirmsCANVAS, model::Bit.Abs
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
 
-function Bit.central_bank_rate(cb::CentralBankCANVAS, model::Bit.AbstractModel)
+function Bit.central_bank_rate(cb::AbstractCentralBankCANVAS, model::Bit.AbstractModel)
     # unpack arguments
     gamma_EA = model.rotw.gamma_EA
     pi_EA = model.rotw.pi_EA
@@ -117,7 +116,7 @@ function Bit.central_bank_rate(cb::CentralBankCANVAS, model::Bit.AbstractModel)
     return r_bar
 end
 
-function Bit.growth_inflation_EA(rotw::RestOfTheWorldCANVAS, model::Bit.AbstractModel)
+function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.AbstractModel)
     # unpack model variables
     epsilon_Y_EA = model.agg.epsilon_Y_EA
     T_prime = model.prop.T_prime

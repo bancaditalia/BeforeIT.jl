@@ -1,53 +1,35 @@
 
-abstract type AbstractData end
-
-"""
-    @data(AV = Vector{Float64}, AM = Matrix{Float64})
-
-A macro that defines default types for data structures used in the code. 
-
-# Arguments
-- `AV::Type`: The default type for vectors. Defaults to `Vector{Float64}`.
-- `AM::Type`: The default type for matrices. Defaults to `Matrix{Float64}`.
-
-# Usage
-This macro can be used to standardize the types of vectors and matrices across the codebase, ensuring consistency and reducing the need for repetitive type declarations.
-"""
-macro data(AV = Vector{Float64}, AM = Matrix{Float64})
-    return esc(quote
-        nominal_gdp::$AV
-        real_gdp::$AV
-        nominal_gva::$AV
-        real_gva::$AV
-        nominal_household_consumption::$AV
-        real_household_consumption::$AV
-        nominal_government_consumption::$AV
-        real_government_consumption::$AV
-        nominal_capitalformation::$AV
-        real_capitalformation::$AV
-        nominal_fixed_capitalformation::$AV
-        real_fixed_capitalformation::$AV
-        nominal_fixed_capitalformation_dwellings::$AV
-        real_fixed_capitalformation_dwellings::$AV
-        nominal_exports::$AV
-        real_exports::$AV
-        nominal_imports::$AV
-        real_imports::$AV
-        operating_surplus::$AV
-        compensation_employees::$AV
-        wages::$AV
-        taxes_production::$AV
-        gdp_deflator_growth_ea::$AV
-        real_gdp_ea::$AV
-        euribor::$AV
-        nominal_sector_gva::$AM
-        real_sector_gva::$AM
-    end)
-end
+abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
-struct Data{T, AV <: AbstractVector{T}, AM <: AbstractMatrix{T}} <: AbstractData
-    @data AV AM
+Bit.@object mutable struct Data{T<:AbstractFloat}(Object) <: AbstractData
+    nominal_gdp::Vector{T}
+    real_gdp::Vector{T}
+    nominal_gva::Vector{T}
+    real_gva::Vector{T}
+    nominal_household_consumption::Vector{T}
+    real_household_consumption::Vector{T}
+    nominal_government_consumption::Vector{T}
+    real_government_consumption::Vector{T}
+    nominal_capitalformation::Vector{T}
+    real_capitalformation::Vector{T}
+    nominal_fixed_capitalformation::Vector{T}
+    real_fixed_capitalformation::Vector{T}
+    nominal_fixed_capitalformation_dwellings::Vector{T}
+    real_fixed_capitalformation_dwellings::Vector{T}
+    nominal_exports::Vector{T}
+    real_exports::Vector{T}
+    nominal_imports::Vector{T}
+    real_imports::Vector{T}
+    operating_surplus::Vector{T}
+    compensation_employees::Vector{T}
+    wages::Vector{T}
+    taxes_production::Vector{T}
+    gdp_deflator_growth_ea::Vector{T}
+    real_gdp_ea::Vector{T}
+    euribor::Vector{T}
+    nominal_sector_gva::Matrix{T}
+    real_sector_gva::Matrix{T}
 end
 
 # Define the DataVector struct
@@ -82,7 +64,6 @@ end
 function Base.length(dv::DataVector)
     return length(dv.vector)
 end
-
 
 """
 Initialise the data arrays
