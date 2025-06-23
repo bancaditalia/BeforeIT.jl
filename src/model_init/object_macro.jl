@@ -95,7 +95,7 @@ function compute_base_fields(base_type_spec)
              end
 	   catch
 	    namify(base_type_spec)
-    end
+           end
     base_agent = __OBJECT_GENERATOR__[name]
     @capture(base_agent, mutable struct base_type_general_ <: _ __ end)
     isnothing(base_type_general) && @capture(base_agent, struct base_type_general_ <: _ __ end)
