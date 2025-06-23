@@ -87,15 +87,15 @@ function decompose_struct_base(struct_repr)
 end
 
 function compute_base_fields(base_type_spec)
-	name = try 
-		       if base_type_spec.args[1].head == :.
-                   base_type_spec.args[1].args[2].value
-		       else
-		           namify(base_type_spec)
-		       end
-		   catch
-		       namify(base_type_spec)
-	end
+    name = try 
+	     if base_type_spec.args[1].head == :.
+               base_type_spec.args[1].args[2].value
+	     else
+	       namify(base_type_spec)
+             end
+	   catch
+	    namify(base_type_spec)
+    end
     base_agent = __OBJECT_GENERATOR__[name]
     @capture(base_agent, mutable struct base_type_general_ <: _ __ end)
     isnothing(base_type_general) && @capture(base_agent, struct base_type_general_ <: _ __ end)
