@@ -23,7 +23,7 @@ will always have a keyword constructor defined for it (using `@kwdef`).
 Using `Bit.@object` is the recommended way to create types for BeforeIT.jl.
 
 Structs created with `Bit.@object` by default subtype `Bit.AbstractObject`.
-If you want `YourAgentType` to subtype something other than `Bit.AbstractObject`, use
+If you want `YourObjectType` to subtype something other than `Bit.AbstractObject`, use
 the optional argument `OptionalSupertype`.
 
 ## Usage
