@@ -37,14 +37,14 @@ The macro `Bit.@object` has two primary uses:
 
 The existing minimal object types are:
 
-- [`Workers`](@ref)
-- [`Firms`](@ref)
-- [`Bank`](@ref)
-- [`CentralBank`](@ref)
-- [`Government`](@ref)
-- [`RestOfTheWorld`](@ref)
-- [`Aggregates`](@ref)
-- [`Data`](@ref)
+- `Workers`
+- `Firms`
+- `Bank`
+- `CentralBank`
+- `Government`
+- `RestOfTheWorld`
+- `Aggregates`
+- `Data`
 
 which describe which fields they will contribute to the new type.
 
