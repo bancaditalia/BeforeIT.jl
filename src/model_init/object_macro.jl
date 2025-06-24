@@ -1,9 +1,9 @@
 
-const __OBJECT_GENERATOR__ = Dict{Symbol, Expr}()
+const __OBJECT_EXPR_CONTAINER__ = Dict{Symbol, Expr}()
 
 abstract type AbstractObject end
 struct Object <: AbstractObject end
-__OBJECT_GENERATOR__[:Object] = :(struct Object <: AbstractObject end)
+__OBJECT_EXPR_CONTAINER__[:Object] = :(struct Object <: AbstractObject end)
 
 """
     Bit.@object struct YourObjectType{X}(ObjectTypeToInherit) [<: OptionalSupertype]
@@ -74,7 +74,7 @@ function _object(struct_repr)
           end)
     )
     new_type_no_params = namify(new_type)
-    __OBJECT_GENERATOR__[new_type_no_params] = MacroTools.prewalk(rmlines, expr_new_type)
+    __OBJECT_EXPR_CONTAINER__[new_type_no_params] = MacroTools.prewalk(rmlines, expr_new_type)
     return quote @kwdef $expr_new_type end
 end
 
@@ -96,7 +96,7 @@ function compute_base_fields(base_type_spec)
     @capture(base_type_spec, _.base_type_name_)
     isnothing(base_type_name) && @capture(base_type_spec, _.base_type_name_{__})
     base_type_name = namify(isnothing(base_type_name) ? base_type_spec : base_type_name)
-    base_agent = __OBJECT_GENERATOR__[base_type_name]
+    base_agent = __OBJECT_EXPR_CONTAINER__[base_type_name]
     base_type_general = base_agent.args[2].args[1]
     old_args = base_type_general isa Symbol ? [] : base_type_general.args[2:end]
     new_args = base_type_spec isa Symbol ? [] : base_type_spec.args[2:end]
