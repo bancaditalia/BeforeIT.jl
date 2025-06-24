@@ -35,7 +35,7 @@ end
 
 # define new firms for the CANVAS model
 abstract type AbstractFirmsCANVAS <: Bit.AbstractFirms end
-Bit.@object mutable struct FirmsCANVAS{T,I}(Firms{T,I}) <: AbstractFirmsCANVAS end
+Bit.@object struct FirmsCANVAS{T,I}(Firms{T,I}) <: AbstractFirmsCANVAS end
 
 # define a new rest of the world for the CANVAS model
 abstract type AbstractRestOfTheWorldCANVAS <: Bit.AbstractRestOfTheWorld end
