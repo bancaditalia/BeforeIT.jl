@@ -58,7 +58,7 @@ end
 Consult the CANVAS Extension page in the documentation for a more advanced example
 on how to use the macro.
 """
-macro object(struct_repr) # the macro is almost identical to the @agent macro in Agents.jl
+macro object(struct_repr) # the macro is similar to the @agent macro in Agents.jl
     expr = _object(struct_repr)
     return :(Base.@__doc__($(esc(expr))))
 end
