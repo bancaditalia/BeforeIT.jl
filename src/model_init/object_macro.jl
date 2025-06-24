@@ -67,47 +67,43 @@ end
 function _object(struct_repr)
     new_type, base_type_spec, abstract_type, new_fields = decompose_struct_base(struct_repr)
     base_fields = compute_base_fields(base_type_spec)
-    expr_new_type = :(mutable struct $new_type <: $abstract_type
-                        $(base_fields...)
-                        $(new_fields...)
-                      end)
+    expr_new_type = Expr(
+        :struct, struct_repr.args[1], :($new_type <: $abstract_type),
+        :(begin 
+            $(base_fields...) 
+            $(new_fields...) 
+          end)
+    )
     new_type_no_params = namify(new_type)
     __OBJECT_GENERATOR__[new_type_no_params] = MacroTools.prewalk(rmlines, expr_new_type)
-    @capture(new_type, _{new_params__})
-    new_params === nothing && (new_params = [])
     return quote @kwdef $expr_new_type end
 end
 
 function decompose_struct_base(struct_repr)
-    if !@capture(struct_repr, mutable struct new_type_(base_type_spec_) <: abstract_type_ new_fields__ end)
-        @capture(struct_repr, mutable struct new_type_(base_type_spec_) new_fields__ end)
+    if struct_repr.args[1] == false
+        if !@capture(struct_repr, struct new_type_(base_type_spec_) <: abstract_type_ new_fields__ end)
+            @capture(struct_repr, struct new_type_(base_type_spec_) new_fields__ end)
+        end
+    else
+        if !@capture(struct_repr, mutable struct new_type_(base_type_spec_) <: abstract_type_ new_fields__ end)
+            @capture(struct_repr, mutable struct new_type_(base_type_spec_) new_fields__ end)
+        end
     end
     abstract_type === nothing && (abstract_type = :(Bit.AbstractObject))
     return new_type, base_type_spec, abstract_type, new_fields
 end
 
 function compute_base_fields(base_type_spec)
-    name = try 
-	     if base_type_spec.args[1].head == :.
-               base_type_spec.args[1].args[2].value
-	     else
-	       namify(base_type_spec)
-             end
-	   catch
-	    namify(base_type_spec)
-           end
-    base_agent = __OBJECT_GENERATOR__[name]
-    @capture(base_agent, mutable struct base_type_general_ <: _ __ end)
-    isnothing(base_type_general) && @capture(base_agent, struct base_type_general_ <: _ __ end)
-    isnothing(base_type_general) && @capture(base_agent, mutable struct base_type_general_ <: _ end)
-    isnothing(base_type_general) && @capture(base_agent, struct base_type_general_ <: _ end)
+    @capture(base_type_spec, _.base_type_name_)
+    isnothing(base_type_name) && @capture(base_type_spec, _.base_type_name_{__})
+    base_type_name = namify(isnothing(base_type_name) ? base_type_spec : base_type_name)
+    base_agent = __OBJECT_GENERATOR__[base_type_name]
+    base_type_general = base_agent.args[2].args[1]
     old_args = base_type_general isa Symbol ? [] : base_type_general.args[2:end]
     new_args = base_type_spec isa Symbol ? [] : base_type_spec.args[2:end]
     for (old, new) in zip(old_args, new_args)
         base_agent = MacroTools.postwalk(ex -> ex == old ? new : ex, base_agent)
     end
-    @capture(base_agent, mutable struct _ <: _ base_fields__ end)
-    isnothing(base_fields) && @capture(base_agent, struct _ <: _ base_fields__ end)
-    isnothing(base_fields) && (base_fields = [])
+    @capture(base_agent.args[3], base_fields__)
     return base_fields
 end
