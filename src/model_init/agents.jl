@@ -35,7 +35,7 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `I_h`: Realised investment
 """
 
-Bit.@object mutable struct Workers{T<:AbstractFloat,I<:Integer}(Object) <: AbstractWorkers
+Bit.@object struct Workers{T<:AbstractFloat,I<:Integer}(Object) <: AbstractWorkers
     Y_h::Vector{T}
     D_h::Vector{T}
     K_h::Vector{T}
@@ -100,7 +100,7 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-Bit.@object mutable struct Firms{T<:AbstractFloat,I<:Integer}(Object) <: AbstractFirms
+Bit.@object struct Firms{T<:AbstractFloat,I<:Integer}(Object) <: AbstractFirms
     G_i::Vector{I}
     alpha_bar_i::Vector{T}
     beta_i::Vector{T}
