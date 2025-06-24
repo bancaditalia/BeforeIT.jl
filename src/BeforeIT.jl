@@ -6,6 +6,7 @@ using ChunkSplitters
 using DynamicSampling
 using LazyArrays
 using LinearAlgebra
+using MacroTools
 using Random
 using StatsBase
 
