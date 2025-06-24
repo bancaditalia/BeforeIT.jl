@@ -2,7 +2,7 @@
 abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
-Bit.@object mutable struct Data{T<:AbstractFloat}(Object) <: AbstractData
+Bit.@object struct Data{T<:AbstractFloat}(Object) <: AbstractData
     nominal_gdp::Vector{T}
     real_gdp::Vector{T}
     nominal_gva::Vector{T}
