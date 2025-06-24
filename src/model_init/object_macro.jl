@@ -1,5 +1,4 @@
 
-
 const __OBJECT_GENERATOR__ = Dict{Symbol, Expr}()
 
 abstract type AbstractObject end
