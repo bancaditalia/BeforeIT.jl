@@ -34,7 +34,6 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `C_h`: Realised consumption
 - `I_h`: Realised investment
 """
-
 Bit.@object struct Workers{T<:AbstractFloat,I<:Integer}(Object) <: AbstractWorkers
     Y_h::Vector{T}
     D_h::Vector{T}
@@ -165,7 +164,6 @@ This is a Bank type. It represents the bank of the model.
 - `I_h`: Realised investment
 - `K_h`: Capital stock
 - `D_h`: Deposits
-
 """
 Bit.@object mutable struct Bank{T<:AbstractFloat}(Object) <: AbstractBank
     E_k::T
@@ -205,6 +203,7 @@ Bit.@object mutable struct CentralBank{T<:AbstractFloat}(Object) <: AbstractCent
     xi_gamma::T
     E_CB::T
 end
+
 """
 This is a Government type. It represents the government of the model.
 
@@ -310,7 +309,6 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `gamma_e`: Expected growth
 - `pi_e`: Expected inflation
 - `t`: Time index
-
 """
 Bit.@object mutable struct Aggregates{T<:AbstractFloat,I<:Integer}(Object) <: AbstractAggregates
     Y::Vector{T}
