@@ -50,7 +50,7 @@ which describe which fields they will contribute to the new type.
 ## Example
 
 ```julia
-# you can either constrain the type to Float64 in the definition
+# you can either constrain the type (to Float64 in this case) at definition time
 Bit.@object mutable struct CentralBankNew(CentralBank{Float64}) <: Bit.AbstractCentralBank
     new_field::Float64
 end
