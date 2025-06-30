@@ -104,6 +104,11 @@ function compute_base_fields(base_type_spec)
     base_agent = __OBJECT_EXPR_CONTAINER__[base_type_name]
     base_type_general = base_agent.args[2].args[1]
     old_args = base_type_general isa Symbol ? [] : base_type_general.args[2:end]
+    for i in 1:length(old_args)
+        if old_args[i] isa Expr && old_args[i].head == :<:
+            old_args[i] = old_args[i].args[1]
+        end
+    end
     new_args = base_type_spec isa Symbol ? [] : base_type_spec.args[2:end]
     for (old, new) in zip(old_args, new_args)
         base_agent = MacroTools.postwalk(ex -> ex == old ? new : ex, base_agent)
