@@ -50,8 +50,13 @@ which describe which fields they will contribute to the new type.
 ## Example
 
 ```julia
+# you can either constrain the type to Float64 in the definition
 Bit.@object mutable struct CentralBankNew(CentralBank{Float64}) <: AbstractCentralBank
     new_field::Float64
+end
+# or keep it generic so that you can change it at construction time
+Bit.@object mutable struct CentralBankNew2{T}(CentralBank{T}) <: AbstractCentralBank
+    new_field::T
 end
 ```
 
