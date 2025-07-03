@@ -13,7 +13,7 @@ using Plots, StatsPlots
 parameters = Bit.ITALY2010Q1.parameters
 initial_conditions = Bit.ITALY2010Q1.initial_conditions
 T = 50
-model = Bit.init_model(parameters, initial_conditions, T);
+model = Bit.Model(parameters, initial_conditions, T);
 
 # The model is in scale 1:2000, so it has around 30,000 households
 model.prop.H
@@ -30,10 +30,10 @@ Threads.nthreads()
 Bit.run!(model; multi_threading = false);
 
 # Let's now compare the performance of single threading and multi threading
-model = Bit.init_model(parameters, initial_conditions, T);
+model = Bit.Model(parameters, initial_conditions, T);
 @time data = Bit.run!(model; multi_threading = false);
 
-model = Bit.init_model(parameters, initial_conditions, T);
+model = Bit.Model(parameters, initial_conditions, T);
 @time data = Bit.run!(model; multi_threading = true);
 
 # Is the speedup in line to what we would expect? Yes!

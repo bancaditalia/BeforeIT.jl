@@ -14,7 +14,7 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 # Initialise the model and the data collector
 
 T = 20
-model = Bit.init_model(parameters, initial_conditions, T);
+model = Bit.Model(parameters, initial_conditions, T);
 data = Bit.init_data(model);
 
 # Simulate the model for T quarters

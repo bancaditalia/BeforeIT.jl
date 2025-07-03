@@ -13,7 +13,7 @@ parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, cali
 # run the model for a number of quarters
 T = 12
 n_sims = 2
-model = Bit.init_model(parameters, initial_conditions, T)
+model = Bit.Model(parameters, initial_conditions, T)
 data_vector = Bit.ensemblerun(model, n_sims)
 
 # obtain predictions from the model simulations

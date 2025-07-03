@@ -1,6 +1,6 @@
 
 """
-    init_workers(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
+    Workers(parameters, initial_conditions, firms)
 
 Initialize the workers for the given parameters, initial conditions, and firms.
 
@@ -8,18 +8,13 @@ Initialize the workers for the given parameters, initial conditions, and firms.
 - `parameters`: The parameters for the initialization.
 - `initial_conditions`: The initial conditions for the initialization.
 - `firms`: The already initialized firms.
-- `typeInt`: (optional) The type for integer values. Default is `Int64`.
-- `typeFloat`: (optional) The type for floating-point values. Default is `Float64`.
 
 # Returns
 - The initialized active workers.
 - The initialized inactive workers.
 - The updated firm vacancies V_i_new, this is needed to update the firms.
-- The arguments used to initialize the active workers.
-- The arguments used to initialize the inactive workers.
-
 """
-function init_workers(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
+function Workers(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
  
     H_act = typeInt(parameters["H_act"])
     H_inact = typeInt(parameters["H_inact"])
@@ -99,5 +94,5 @@ function init_workers(parameters, initial_conditions, firms; typeInt = Int64, ty
     w_inact_args = (Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
     workers_inact = Workers(w_inact_args...)
 
-    return workers_act, workers_inact, V_i_new, w_act_args, w_inact_args
+    return workers_act, workers_inact, V_i_new
 end

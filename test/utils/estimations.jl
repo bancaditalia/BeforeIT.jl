@@ -8,7 +8,7 @@ using MAT, Random
 
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    model = Bit.init_model(parameters, initial_conditions, 1)
+    model = Bit.Model(parameters, initial_conditions, 1)
 
     Y, T_prime = model.agg.Y, model.prop.T_prime
 

@@ -5,7 +5,7 @@
     T = 1
 
     for multi_threading in [false, true]
-        model = Bit.init_model(parameters, initial_conditions, T)
+        model = Bit.Model(parameters, initial_conditions, T)
     
         gov = model.gov # government
         cb = model.cb # central bank

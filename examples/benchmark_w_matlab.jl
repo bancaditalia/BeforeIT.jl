@@ -11,7 +11,7 @@ using CairoMakie, Statistics, ThreadPinning
 pinthreads(:cores)
 
 function run(parameters, initial_conditions, T; multi_threading = false)
-    model = Bit.init_model(parameters, initial_conditions, T)
+    model = Bit.Model(parameters, initial_conditions, T)
     data = Bit.init_data(model);
     
     for _ in 1:T

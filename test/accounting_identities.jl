@@ -11,7 +11,7 @@ using Test
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
     T = 1
-    model = Bit.init_model(parameters, initial_conditions, T)
+    model = Bit.Model(parameters, initial_conditions, T)
     data = Bit.init_data(model)
 
     for t in 1:T

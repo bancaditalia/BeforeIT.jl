@@ -1,21 +1,17 @@
 
 """
-    init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+    Firms(parameters, initial_conditions)
 
 Initialize firms with given parameters and initial conditions.
 
 # Arguments
 - `parameters`: The parameters for initializing the firms.
 - `initial_conditions`: The initial conditions for the firms.
-- `typeInt`: (optional) The integer type to be used. Default is `Int64`.
-- `typeFloat`: (optional) The floating-point type to be used. Default is `Float64`.
 
 # Returns
 - firms::Firms: The initialized firms.
-- firms_args::Tuple: The arguments used to initialize the firms.
-
 """
-function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+function Firms(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
 
     # unpacking useful parameters
     I_s = Vector{typeInt}(vec(parameters["I_s"]))
@@ -128,5 +124,5 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
                       DL_d_i, K_e_i, L_e_i, Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
 
     firms = Firms(firms_args...)
-    return firms, firms_args
+    return firms
 end

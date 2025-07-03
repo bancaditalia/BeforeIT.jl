@@ -1,13 +1,6 @@
 
 include("object_macro.jl")
 
-export AbstractWorkers, AbstractFirms, AbstractBank,
-       AbstractCentralBank, AbstractGovernment, AbstractRestOfTheWorld,
-       AbstractAggregates, AbstractModel
-
-export Workers, Firms, Bank, CentralBank, Government, 
-       RestOfTheWorld, Aggregates, Model
-
 abstract type AbstractWorkers <: AbstractObject end
 abstract type AbstractFirms <: AbstractObject end
 abstract type AbstractBank <: AbstractObject end

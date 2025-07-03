@@ -6,7 +6,7 @@ dir = @__DIR__
 
 parameters = Bit.STEADY_STATE2010Q1.parameters
 initial_conditions = Bit.STEADY_STATE2010Q1.initial_conditions
-model = Bit.init_model(parameters, initial_conditions, 1)
+model = Bit.Model(parameters, initial_conditions, 1)
 
 properties = model.prop
 

@@ -16,17 +16,17 @@ p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 T = 20
 
 # initialise all agent types using the corresponding functions
-properties = Bit.init_properties(p, T)
-firms, _ = Bit.init_firms(p, ic)
-w_act, w_inact, V_i_new, _, _ = Bit.init_workers(p, ic, firms)
+properties = Bit.Properties(p, T)
+firms = Bit.Firms(p, ic)
+w_act, w_inact, V_i_new = Bit.Workers(p, ic, firms)
 firms.V_i .= V_i_new
-bank, _ = Bit.init_bank(p, ic, firms)
-government, _ = Bit.init_government(p, ic)
-rotw, _ = Bit.init_rotw(p, ic)
-agg, _ = Bit.init_aggregates(p, ic, T)
+bank = Bit.Bank(p, ic, firms)
+government = Bit.Government(p, ic)
+rotw = Bit.RestOfTheWorld(p, ic)
+agg = Bit.Aggregates(p, ic, T)
 
 # initialise the custom central bank
-standard_central_bank, args = Bit.init_central_bank(p, ic)
+standard_central_bank = Bit.CentralBank(p, ic)
 newcentral_bank = NewCentralBank(args..., 0.02)
 
 # initialise a new model using the new central bank as well as a standard model

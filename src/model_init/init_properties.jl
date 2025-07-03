@@ -1,5 +1,5 @@
 
-function init_properties(parameters::Dict{String, Any}, T::Integer; typeInt::DataType = Int64, typeFloat::DataType = Float64)
+function Properties(parameters::Dict{String, Any}, T::Integer; typeInt::DataType = Int64, typeFloat::DataType = Float64)
     properties = Dict{Symbol, Any}()
     G = typeInt(parameters["G"])
 

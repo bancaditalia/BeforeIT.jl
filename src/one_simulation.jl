@@ -17,7 +17,7 @@ for each epoch using `Bit.step!(model)` and `Bit.update_data!(data, model)` resp
 
 # Example
 ```julia
-model = Bit.init_model(parameters, initial_conditions, T)
+model = Bit.Model(parameters, initial_conditions, T)
 data = run!(model)
 """
 function run!(model::AbstractModel; multi_threading = false, shock = NoShock())
