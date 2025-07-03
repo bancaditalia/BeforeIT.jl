@@ -140,14 +140,14 @@ firms.Q_s_i = copy(firms.Q_d_i) # overwrite to avoid division by zero for new fi
 
 # new central bank initialisation
 central_bank_st = Bit.CentralBank(p, ic)
-central_bank = CentralBankCANVAS(args..., r_bar_series) # add new variables to the aggregates
+central_bank = CentralBankCANVAS((getfield(central_bank_st, x) for x in fieldnames(Bit.CentralBank)..., r_bar_series) # add new variables to the aggregates
 
 # new rotw initialisation
 rotw_st = Bit.RestOfTheWorld(p, ic)
 rotw = RestOfTheWorldCANVAS(args..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
 # standard initialisations: workers, bank, aggregats, government and properties
-w_act, w_inact, V_i_new, _, _ = Bit.init_workers(p, ic, firms)
+w_act, w_inact, V_i_new = Bit.init_workers(p, ic, firms)
 firms_st.V_i .= V_i_new
 firms.V_i .= V_i_new
 bank = Bit.Bank(p, ic, firms)
