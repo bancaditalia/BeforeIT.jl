@@ -7,7 +7,7 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 20
 model = Bit.Model(parameters, initial_conditions, T)
-data = Bit.init_data(model)
+data = Bit.Data(model)
 
 for t in 1:T
     println("Epoch: ", t)

@@ -12,7 +12,7 @@ The simulation runs for a number of epochs specified by `model.prop.T`.
 - `data::Data`: The data collected during the simulation.
 
 # Details
-The function initializes the data using `Bit.init_data(model)`, then iteratively updates the model and data
+The function initializes the data using `Bit.Data(model)`, then iteratively updates the model and data
 for each epoch using `Bit.step!(model)` and `Bit.update_data!(data, model)` respectively.
 
 # Example
@@ -22,7 +22,7 @@ data = run!(model)
 """
 function run!(model::AbstractModel; multi_threading = false, shock = NoShock())
 
-    data = Bit.init_data(model)
+    data = Bit.Data(model)
 
     T = model.prop.T
 

@@ -27,7 +27,7 @@ fieldnames(typeof(model.bank))
 
 # We can now define a data tracker, which will store the time series of the model.
 
-data = Bit.init_data(model);
+data = Bit.Data(model);
 
 # We can run now the model for a number of epochs and progressively update the data tracker.
 

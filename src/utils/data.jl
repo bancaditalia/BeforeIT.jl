@@ -141,7 +141,7 @@ Update the data `d` with the model `m`.
 # Example
 
 ```julia
-data = Bit.init_data(model)
+data = Bit.Data(model)
 step!(model)
 Bit.update_data!(data, model)
 ```
