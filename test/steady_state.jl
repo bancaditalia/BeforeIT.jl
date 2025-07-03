@@ -6,7 +6,7 @@ initial_conditions = Bit.STEADY_STATE2010Q1.initial_conditions
 
 T = 5
 model = Bit.Model(parameters, initial_conditions, T)
-data = Bit.init_data(model)
+data = Bit.Data(model)
 
 for t in 1:T
     println(t)

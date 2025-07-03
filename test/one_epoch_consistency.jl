@@ -10,7 +10,7 @@ initial_conditions = matread(joinpath(dir, "../data/steady_state/initial_conditi
 
 T = 1
 model = Bit.Model(parameters, initial_conditions, T;)
-data = Bit.init_data(model)
+data = Bit.Data(model)
 
 
 println(Bit.get_accounting_identity_banks(model))

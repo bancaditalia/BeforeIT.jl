@@ -10,7 +10,7 @@ initial_conditions = matread(joinpath(dir, "../data/austria/initial_conditions/2
 
 T = 20
 model = Bit.Model(parameters, initial_conditions, T)
-data = Bit.init_data(model)
+data = Bit.Data(model)
 
 n_sims = 3
 data_vector = Bit.ensemblerun(model, n_sims)

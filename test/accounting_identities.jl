@@ -12,7 +12,7 @@ using Test
 
     T = 1
     model = Bit.Model(parameters, initial_conditions, T)
-    data = Bit.init_data(model)
+    data = Bit.Data(model)
 
     for t in 1:T
         Bit.step!(model; multi_threading = false)

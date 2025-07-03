@@ -6,7 +6,7 @@
 
     function run_deterministic(parameters, initial_conditions, T, m)
         model = Bit.Model(parameters, initial_conditions, T;)
-        data = Bit.init_data(model)
+        data = Bit.Data(model)
         for t in 1:(T - 1)
             Bit.step!(model; multi_threading = m)
             Bit.update_data!(data, model)

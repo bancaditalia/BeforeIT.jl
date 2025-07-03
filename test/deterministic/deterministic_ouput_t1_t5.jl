@@ -5,7 +5,7 @@
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     model = Bit.Model(parameters, initial_conditions, T)
-    data = Bit.init_data(model)
+    data = Bit.Data(model)
 
     Bit.step!(model; multi_threading = false)
     Bit.update_data!(data, model)
@@ -31,7 +31,7 @@
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     model = Bit.Model(parameters, initial_conditions, T)
-    data = Bit.init_data(model)
+    data = Bit.Data(model)
     for t in 1:T
         Bit.step!(model; multi_threading = false)
         Bit.update_data!(data, model)
