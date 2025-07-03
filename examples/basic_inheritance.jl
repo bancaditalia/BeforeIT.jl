@@ -26,14 +26,14 @@ rotw = Bit.RestOfTheWorld(p, ic)
 agg = Bit.Aggregates(p, ic, T)
 
 # initialise the custom central bank
-standard_central_bank = Bit.CentralBank(p, ic)
-newcentral_bank = NewCentralBank(args..., 0.02)
+central_bank = Bit.CentralBank(p, ic)
+new_central_bank = NewCentralBank((getfield(central_bank, x) for x in fieldnames(Bit.CentralBank)..., 0.02)
 
 # initialise a new model using the new central bank as well as a standard model
-standard_model = Bit.Model(w_act, w_inact, firms, bank, standard_central_bank,
+standard_model = Bit.Model(w_act, w_inact, firms, bank, central_bank,
 government, rotw, agg, properties)
 
-new_model = Bit.Model(w_act, w_inact, firms, bank, newcentral_bank,
+new_model = Bit.Model(w_act, w_inact, firms, bank, new_central_bank,
 government, rotw, agg, properties)
 
 # run a simulation with the new model
