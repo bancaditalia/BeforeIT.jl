@@ -360,11 +360,11 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
         # add workers to firms
         h = 1
         for i in 1:model.prop.I
-            if model.firms.V_i[i] > 0
+            while model.firms.V_i[i] > 0
                 model.w_act.O_h[h] = i
                 model.w_act.w_h[h] = model.firms.w_bar_i[i]
-                h += model.firms.V_i[i]
-                model.firms.V_i[i] = 0
+                model.firms.V_i[i] -= 1
+                h += 1
             end
         end
 
