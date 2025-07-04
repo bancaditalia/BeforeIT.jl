@@ -156,17 +156,19 @@ bank = Bit.Bank(p, ic, firms)
 agg = Bit.Aggregates(p, ic)
 gov = Bit.Government(p, ic)
 prop = Bit.Properties(p)
+data = Bit.Data(prop)
 
 # define a standard model
-model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop)
+model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop, data)
 
 # define a CANVAS model
-model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop)
+model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop, data)
 
 # run the model(s)
-data_vector_std = Bit.ensemblerun(model_std, T, 8)
-data_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
+model_vector_std = Bit.ensemblerun(model_std, T, 8)
+model_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
 
 # plot the results
-ps = Bit.plot_data_vectors([data_vector_std, data_vector_canvas])
+ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas])
+
 plot(ps..., layout = (3, 3))

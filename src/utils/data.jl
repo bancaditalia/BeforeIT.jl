@@ -36,6 +36,7 @@ end
 struct DataVector{D<:AbstractData}
     vector::Vector{D}
 end
+DataVector(model::AbstractModel) = DataVector(model.data)
 
 # define the function "iterate" for the DataVector struct
 function Base.iterate(dv::DataVector, state = 1)
@@ -68,14 +69,12 @@ end
 """
 Initialise the data arrays
 """
-function Data(m)
-    p = m.prop
+function Data(p)
     d = Data([zeros(1) for _ in 1:25]..., Vector{Float64}[zeros(p.G)], Vector{Float64}[zeros(p.G)])
-    _update_data_init!(d, m)
     return d
 end
 
-function _update_data_init!(d, m)
+function update_data_init!(d, m)
     p = m.prop
 
     tot_Y_h = sum(m.w_act.Y_h) + sum(m.w_inact.Y_h) + sum(m.firms.Y_h) + m.bank.Y_h

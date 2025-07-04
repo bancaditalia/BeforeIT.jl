@@ -23,33 +23,28 @@ fieldnames(typeof(model))
 
 fieldnames(typeof(model.bank))
 
-# We can now define a data tracker, which will store the time series of the model.
-
-data = Bit.Data(model);
-
-# We can run now the model for a number of epochs and progressively update the data tracker.
+# We can run now the model for a number of epochs
 T = 16
 for t in 1:T
     Bit.step!(model; multi_threading = true)
-    Bit.update_data!(data, model)
 end
 
 # Note that we can equivalently run the model for a number of epochs in the single command 
-# `data = Bit.run!(model)`, but writing the loop explicitely is more instructive.
+# `Bit.run!(model)`, but writing the loop explicitely is more instructive.
 
 # We can then plot any time series stored in the data tracker, for example
 
-plot(data.real_gdp, title = "gdp", titlefont = 10)
+plot(model.data.real_gdp, title = "gdp", titlefont = 10)
 
 # Or we can plot multiple time series at once using the function `plot_data`
 
-ps = Bit.plot_data(data, quantities = [:real_gdp, :real_household_consumption, :real_government_consumption, :real_capitalformation, :real_exports, :real_imports, :wages, :euribor, :gdp_deflator])
+ps = Bit.plot_data(model, quantities = [:real_gdp, :real_household_consumption, :real_government_consumption, :real_capitalformation, :real_exports, :real_imports, :wages, :euribor, :gdp_deflator])
 plot(ps..., layout = (3, 3))
 
 # To run multiple monte-carlo repetitions in parallel we can use
 
 model = Bit.Model(parameters, initial_conditions)
-data_vector = Bit.ensemblerun(model, T, 4)
+model_vec = Bit.ensemblerun(model, T, 4)
 
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command 
@@ -61,5 +56,5 @@ Threads.nthreads()
 
 # We can then plot the results of the monte-carlo repetitions using the function `plot_data_vector`
 
-ps = Bit.plot_data_vector(data_vector)
+ps = Bit.plot_data_vector(model_vec)
 plot(ps..., layout = (3, 3))

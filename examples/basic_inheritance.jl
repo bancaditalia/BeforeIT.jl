@@ -35,9 +35,9 @@ new_model = Bit.Model(w_act, w_inact, firms, bank, new_central_bank, government,
 
 # run a simulation with the new model
 T = 20
-data_vec_standard = Bit.ensemblerun(standard_model, T, 4);
-data_vec_new = Bit.ensemblerun(new_model, T, 4);
+model_vec_standard = Bit.ensemblerun(standard_model, T, 4);
+model_vec_new = Bit.ensemblerun(new_model, T, 4);
 
 # plot the results
-ps = Bit.plot_data_vectors([data_vec_standard, data_vec_new], quantities = [:euribor, :gdp_deflator])
+ps = Bit.plot_data_vectors([model_vec_standard, model_vec_new], quantities = [:euribor, :gdp_deflator])
 plot(ps..., layout = (1, 2), size = (600, 300))

@@ -31,6 +31,9 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     w_inact = model.w_inact # inactive workers
     agg = model.agg # aggregates
     prop = model.prop # model properties
+    data = model.data # model data
+
+    agg.t == 0 && (update_data_init!(data, model))
 
     Bit.finance_insolvent_firms!(firms, bank, model)
 
@@ -192,5 +195,6 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     push!(agg.Y, 0.0)
     agg.Y[prop.T_prime + agg.t] = sum(firms.Y_i)
 
+    Bit.update_data!(data, model)
     agg.t += 1
 end

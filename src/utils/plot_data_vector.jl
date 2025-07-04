@@ -13,7 +13,8 @@ const quantity_titles = Dict(
 	:gdp_deflator => "gdp deflator",
 )
 
-function plot_data_vector(data_vector::DataVector; titlefont = 9, quantities = default_quantities)	
+function plot_data_vector(model::AbstractModel; titlefont = 9, quantities = default_quantities)
+	data_vector = DataVector(model)
 	Te = length(data_vector.vector[1].wages)
 	
 	ps = []
@@ -31,7 +32,9 @@ function plot_data_vector(data_vector::DataVector; titlefont = 9, quantities = d
 end
 
 # plot multiple data vectors, one line for each vector
-function plot_data_vectors(data_vectors; titlefont = 9, quantities = Bit.default_quantities)
+function plot_data_vectors(model_vector; titlefont = 9, quantities = Bit.default_quantities)
+
+	data_vectors = DataVector.(model_vector)
 	Te = length(data_vectors[1].vector[1].wages)
 	
 	ps = []
@@ -59,7 +62,7 @@ function plot_data_vectors(data_vectors; titlefont = 9, quantities = Bit.default
 end
 
 
-function plot_data(data::Data; titlefont = 9, quantities = default_quantities)
+function plot_data(model; titlefont = 9, quantities = default_quantities)
 	ps = []
 	for q in quantities
 		title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
