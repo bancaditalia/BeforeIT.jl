@@ -28,20 +28,16 @@ function Bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float
     
     r = r_bar + mu
     
-    Pi_k = 0.0
-
-    Y_h = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k) + sb_other * P_bar_HH
-
-    D_h = D_H * Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
-    K_h = K_H * Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
-    D_k = 0.0
+    Pi_k = typeFloat(0.0)
+    Y_h = typeFloat(0.0)
+    D_h = typeFloat(0.0)
+    K_h = typeFloat(0.0)
+    D_k = typeFloat(0.0)
     
     C_d_h = zero(typeFloat)
     I_d_h = zero(typeFloat)
     C_h = zero(typeFloat)
     I_h = zero(typeFloat)
-    K_h = K_h
-    D_h = D_h
     Pi_e_k = typeFloat(0.0)
 
     bank_args = (E_k, Pi_k, Pi_e_k, D_k, r, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)

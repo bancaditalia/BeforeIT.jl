@@ -384,9 +384,12 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
         w_act.D_h .= prop.D_H * Y_h #/ sum(Y_h)
         w_act.K_h .= prop.K_H * Y_h #/ sum(Y_h)
 
-        # bank initialization depending on firms
+        # bank initialization which depends on firms
         bank.Pi_k = prop.mu * sum(firms.L_i) + prop.r_bar * prop.E_k
         bank.D_k = sum(firms.D_i) + prop.E_k - sum(firms.L_i)
+        bank.Y_h = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, bank.Pi_k) + sb_other * P_bar_HH
+        bank.K_h = prop.D_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
+        bank.D_k = prop.K_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
 
         # update model variables with global quantities (total income, total deposits) obtained from all the agents
         update_variables_with_totals!(model)
