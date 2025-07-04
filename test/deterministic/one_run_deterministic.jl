@@ -6,19 +6,18 @@
 
     function run_deterministic(parameters, initial_conditions, T, m)
         model = Bit.Model(parameters, initial_conditions)
-        data = Bit.Data(model)
         for t in 1:(T - 1)
             Bit.step!(model; multi_threading = m)
-            Bit.update_data!(data, model)
         end
-        return model, data   
+        return model   
     end
 
-    model, data = run_deterministic(parameters, initial_conditions, T, false)
-    model2, data2 = run_deterministic(parameters, initial_conditions, T, false)
-    model3, data3 = run_deterministic(parameters, initial_conditions, T, true)
-    
+    model = run_deterministic(parameters, initial_conditions, T, false)
+    model2 = run_deterministic(parameters, initial_conditions, T, false)
+    model3 = run_deterministic(parameters, initial_conditions, T, true)
+
     # loop over the data fields and compare them
+    data, data2, data3 = model.data, model2.data, model3.data
     for field in fieldnames(typeof(data))
         @test isapprox(getproperty(data, field), getproperty(data2, field), rtol = 0.00001)
         @test isapprox(getproperty(data2, field), getproperty(data3, field), rtol = 0.00001)

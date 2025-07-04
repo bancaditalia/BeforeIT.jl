@@ -5,16 +5,15 @@
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     model = Bit.Model(parameters, initial_conditions)
-    data = Bit.Data(model)
 
     Bit.step!(model; multi_threading = false)
-    Bit.update_data!(data, model)
 
     # import results from matlab run
     output_t1 = matread(joinpath(dir, "../matlab_code/output_t1.mat"))
 
     # confront results between julia and matlab code
 
+    data = model.data
     for fieldname in fieldnames(typeof(data))
         julia_output = getfield(data, fieldname)
         julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ? reduce(hcat, julia_output)' : julia_output
@@ -31,17 +30,15 @@
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     model = Bit.Model(parameters, initial_conditions)
-    data = Bit.Data(model)
     T = 5
     for t in 1:T
         Bit.step!(model; multi_threading = false)
-        Bit.update_data!(data, model)
     end
 
     output_t5 = matread(joinpath(dir, "../matlab_code/output_t5.mat"))
 
     # confront results between julia and matlab code
-
+    data = model.data
     for fieldname in fieldnames(typeof(data))
         julia_output = getfield(data, fieldname)
         julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ? reduce(hcat, julia_output)' : julia_output

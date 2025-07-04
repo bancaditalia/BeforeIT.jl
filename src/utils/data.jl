@@ -36,7 +36,8 @@ end
 struct DataVector{D<:AbstractData}
     vector::Vector{D}
 end
-DataVector(model::AbstractModel) = DataVector(model.data)
+DataVector(model::AbstractModel) = DataVector([model.data])
+DataVector(model_vec::Vector{<:AbstractModel}) = DataVector([model.data for model in model_vec])
 
 # Define the getproperty function for the DataVector struct
 # This function allows for the extraction of fields from the Data struct

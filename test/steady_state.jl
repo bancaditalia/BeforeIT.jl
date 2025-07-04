@@ -5,16 +5,15 @@ parameters = Bit.STEADY_STATE2010Q1.parameters
 initial_conditions = Bit.STEADY_STATE2010Q1.initial_conditions
 
 model = Bit.Model(parameters, initial_conditions)
-data = Bit.Data(model)
 
 T = 5
 for t in 1:T
     println(t)
     Bit.step!(model; multi_threading = false)
-    Bit.update_data!(data, model)
 end
 
 # check that all variables in the "data" struct are constant up to numerical precision
+data = model.data
 for field in fieldnames(typeof(data))
     fielddata = getfield(data, field)
 

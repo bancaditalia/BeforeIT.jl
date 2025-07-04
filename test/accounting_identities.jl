@@ -17,19 +17,19 @@ using Test
     end
 
     # income accounting and production accounting should be equal
-    zero = sum(data.nominal_gva - data.compensation_employees - data.operating_surplus - data.taxes_production)
+    zero = sum(model.data.nominal_gva - model.data.compensation_employees - model.data.operating_surplus - model.data.taxes_production)
     @test isapprox(zero, 0.0, atol = 1e-8)
 
     # compare nominal_gdp to total expenditure
     zero = sum(
-        data.nominal_gdp - data.nominal_household_consumption - data.nominal_government_consumption -
-        data.nominal_capitalformation - data.nominal_exports + data.nominal_imports,
+        model.data.nominal_gdp - model.data.nominal_household_consumption - model.data.nominal_government_consumption -
+        model.data.nominal_capitalformation - model.data.nominal_exports + model.data.nominal_imports,
     )
     @test isapprox(zero, 0.0, atol = 1e-8)
 
     zero = sum(
-        data.real_gdp - data.real_household_consumption - data.real_government_consumption -
-        data.real_capitalformation - data.real_exports + data.real_imports,
+        model.data.real_gdp - data.real_household_consumption - model.data.real_government_consumption -
+        model.data.real_capitalformation - model.data.real_exports + model.data.real_imports,
     )    
     @test isapprox(zero, 0.0, atol = 1e-8)
 

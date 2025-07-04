@@ -9,7 +9,6 @@ parameters = matread(joinpath(dir, "../data/steady_state/parameters/2010Q1.mat")
 initial_conditions = matread(joinpath(dir, "../data/steady_state/initial_conditions/2010Q1.mat"))
 
 model = Bit.Model(parameters, initial_conditions)
-data = Bit.Data(model)
 
 println(Bit.get_accounting_identity_banks(model))
 
@@ -56,7 +55,6 @@ Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i = Bit.firms_e
 )
 
 model.firms.P_i .= new_P_i
-
 
 ####### CREDIT MARKET, LABOUR MARKET AND PRODUCTION #######
 
@@ -276,6 +274,7 @@ model.agg.Y[prop.T_prime + t] = sum(model.firms.Y_i)
 
 Bit.finance_insolvent_firms!(model.firms, model.bank, model.agg.P_bar_CF, prop.zeta_b)
 
+data = model.data
 Bit.update_data!(data, model, prop, 1)
 
 println("Identities")
