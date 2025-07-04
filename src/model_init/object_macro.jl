@@ -80,7 +80,10 @@ function _object(struct_repr)
     )
     new_type_no_params = namify(new_type)
     __OBJECT_EXPR_CONTAINER__[new_type_no_params] = MacroTools.prewalk(rmlines, expr_new_type)
-    return quote @kwdef $expr_new_type end
+    return quote 
+        @kwdef $expr_new_type
+        nothing
+    end
 end
 
 function decompose_struct_base(struct_repr)
