@@ -34,7 +34,7 @@ function Workers(parameters, initial_conditions; typeInt = Int64, typeFloat = Fl
 
     h = one(typeInt)
 
-    w_h = w_UB / theta_UB
+    w_h[O_h .== 0] .= w_UB / theta_UB
     
     Y_h = zeros(typeFloat, H_W)
 

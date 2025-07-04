@@ -357,9 +357,6 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
         }
         model = new{W1,W2,F,B,C,G,R,A,P,D}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
         
-        # initialize data collection
-        update_data_init!(model)
-
         # add workers to firms
         V_i, w_bar_i = firms.V_i, firms.w_bar_i
         O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h
@@ -389,6 +386,9 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
 
         # update model variables with global quantities (total income, total deposits) obtained from all the agents
         update_variables_with_totals!(model)
+
+        # initialize data collection
+        update_data_init!(model)
 
         return model
     end
