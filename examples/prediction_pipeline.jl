@@ -33,12 +33,12 @@ parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, cali
 T = 20
 n_sims = 3
 model = Bit.Model(parameters, initial_conditions)
-data_vector = Bit.ensemblerun(model, T, n_sims);
+model_vector = Bit.ensemblerun(model, T, n_sims);
 
 # We obtain predictions from the model simulations 
 
 real_data = cal.data
-predictions_dict = Bit.get_predictions_from_sims(data_vector, real_data, calibration_date)
+predictions_dict = Bit.get_predictions_from_sims(DataVector(model_vector), real_data, calibration_date)
 
 # Finally, we can plot the predictions against the real data
 
