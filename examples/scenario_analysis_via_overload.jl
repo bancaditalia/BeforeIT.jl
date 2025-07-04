@@ -8,8 +8,8 @@ import BeforeIT as Bit
 
 using Plots, StatsPlots
 
-parameters = Bit.AUSTRIA2010Q1.parameters
-initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+parameters = Bit.AUSTRIA2010Q1.parameters;
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions;
 
 # Initialise the model and the data collector
 model = Bit.Model(parameters, initial_conditions);
@@ -17,7 +17,7 @@ data = Bit.Data(model);
 
 # Simulate the model for T quarters
 T = 20
-data_vec_baseline = Bit.ensemblerun(model, T, 4)
+data_vec_baseline = Bit.ensemblerun(model, T, 4);
 
 # Now, apply a shock to the model and simulate it again
 # Here, we do this by overloading the central_bank_rate function with the wanted behaviour
@@ -33,7 +33,7 @@ function Bit.central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     end
 end
 
-data_vec_shocked = Bit.ensemblerun(model, T, 4)
+data_vec_shocked = Bit.ensemblerun(model, T, 4);
 
 # Finally, we can plot baseline and shocked simulations
 Te = T + 1
