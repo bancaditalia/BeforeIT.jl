@@ -25,10 +25,10 @@ Threads.nthreads()
 
 # Then we need to first compile the code not to count compilation time,
 # we can do that just by executing the function one time
-Bit.run!(model; multi_threading = false);
+T = 50
+Bit.run!(model, T; multi_threading = false);
 
 # Let's now compare the performance of single threading and multi threading
-T = 50
 model = Bit.Model(parameters, initial_conditions);
 @time data = Bit.run!(model, T; multi_threading = false);
 
