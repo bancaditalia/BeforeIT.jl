@@ -34,27 +34,18 @@ function Workers(parameters, initial_conditions; typeInt = Int64, typeFloat = Fl
 
     h = one(typeInt)
 
-    w_h[O_h .== 0] .= w_UB / theta_UB
+    w_h = w_UB / theta_UB
     
     Y_h = zeros(typeFloat, H_W)
 
-    for h in 1:H_W
-        if O_h[h] != 0
-            Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
-        else
-            Y_h[h] = (theta_UB * w_h[h] + sb_other) * P_bar_HH
-        end
-    end
-
-    D_h = D_H * Y_h #/ sum(Y_h)
-    K_h = K_H * Y_h #/ sum(Y_h)
+    D_h = zeros(typeFloat, H_W)
+    K_h = zeros(typeFloat, H_W)
 
     ids = Vector{typeInt}((I + 1):(I + H_W))
     C_d_h = zeros(typeFloat, length(ids))
     I_d_h = zeros(typeFloat, length(ids))
     C_h = zeros(typeFloat, length(ids))
     I_h = zeros(typeFloat, length(ids))
-
     
     # active workers (both employed and unemployed)
     w_act_args = (Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)

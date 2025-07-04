@@ -357,22 +357,38 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
         }
         model = new{W1,W2,F,B,C,G,R,A,P,D}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
         
+        # initialize data collection
+        update_data_init!(model)
+
         # add workers to firms
+        V_i, w_bar_i = firms.V_i, firms.w_bar_i
+        O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h
+        sb_other, tau_SIW, tau_INC, theta_UB = prop.sb_other, prop.tau_SIW, prop.tau_INC, prop.theta_UB
         h = 1
-        for i in 1:model.prop.I
-            while model.firms.V_i[i] > 0
-                model.w_act.O_h[h] = i
-                model.w_act.w_h[h] = model.firms.w_bar_i[i]
-                model.firms.V_i[i] -= 1
+        for i in 1:prop.I
+            while V_i[i] > 0
+                O_h[h] = i
+                w_h[h] = w_bar_i[i]
+                V_i[i] -= 1
                 h += 1
             end
         end
 
+        P_bar_HH = 1.0
+        H_W = prop.H_act - prop.I - 1
+        for h in 1:H_W
+            if O_h[h] != 0
+                Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
+            else
+                Y_h[h] = (theta_UB * w_h[h] + sb_other) * P_bar_HH
+            end
+        end
+
+        w_act.D_h .= prop.D_H * Y_h #/ sum(Y_h)
+        w_act.K_h .= prop.K_H * Y_h #/ sum(Y_h)
+
         # update model variables with global quantities (total income, total deposits) obtained from all the agents
         update_variables_with_totals!(model)
-
-        # initialize data collection
-        update_data_init!(model)
 
         return model
     end

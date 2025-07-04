@@ -21,7 +21,7 @@ bank = Bit.Bank(p, ic, firms)
 government = Bit.Government(p, ic)
 rotw = Bit.RestOfTheWorld(p, ic)
 agg = Bit.Aggregates(p, ic)
-properties = Bit.Properties(p)
+properties = Bit.Properties(p, ic)
 data = Bit.Data(p)
 
 # initialise the custom central bank

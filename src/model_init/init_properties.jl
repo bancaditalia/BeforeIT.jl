@@ -1,5 +1,5 @@
 
-function Properties(parameters::Dict{String, Any}; typeInt::DataType = Int64, typeFloat::DataType = Float64)
+function Properties(parameters::Dict{String, Any}, initial_conditions; typeInt::DataType = Int64, typeFloat::DataType = Float64)
     properties = Dict{Symbol, Any}()
     G = typeInt(parameters["G"])
 
@@ -55,6 +55,10 @@ function Properties(parameters::Dict{String, Any}; typeInt::DataType = Int64, ty
     properties[:products][:a_sg] = a_sg            # Technology coefficient of the gth product in the sth industry
 
     properties[:C] = parameters["C"]
+
+    properties[:D_H] = initial_conditions["D_H"]
+    properties[:K_H] = initial_conditions["K_H"]
+    properties[:sb_other] = initial_conditions["sb_other"]
 
     # convert to NamedTuple
     properties = recursive_namedtuple(properties)

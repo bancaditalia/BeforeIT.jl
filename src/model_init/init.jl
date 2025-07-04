@@ -19,7 +19,7 @@ Returns:
 function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}; typeInt::DataType = Int64, typeFloat::DataType = Float64)
 
     # properties
-    properties = Bit.Properties(parameters; typeInt = typeInt, typeFloat = typeFloat)
+    properties = Bit.Properties(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # firms
     firms = Bit.Firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)

@@ -153,7 +153,7 @@ w_act, w_inact = Bit.Workers(p, ic)
 bank = Bit.Bank(p, ic, firms)
 agg = Bit.Aggregates(p, ic)
 gov = Bit.Government(p, ic)
-prop = Bit.Properties(p)
+prop = Bit.Properties(p, ic)
 data = Bit.Data(p)
 
 # define a standard model
