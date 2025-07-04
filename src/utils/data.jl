@@ -138,8 +138,6 @@ Bit.update_data!(data, model)
 function update_data!(m)
 
     t = m.agg.t
-    t == 2 && update_data_init!(m)
-
     d = m.data
     p = m.prop
     for f in fieldnames(typeof(d))[1:25]

@@ -359,6 +359,7 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
     
         # update model variables with global quantities (total income, total deposits) obtained from all the agents
         update_variables_with_totals!(model)
+        updata_data_init!(model)
 
         return model
     end
