@@ -12,7 +12,7 @@ using Plots
 parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
-# We can now initialise the model, by specifying in advance the maximum number of epochs.
+# We can now initialise the model
 model = Bit.Model(parameters, initial_conditions);
 
 # Note that the it is very simple to inspect the model by typing
