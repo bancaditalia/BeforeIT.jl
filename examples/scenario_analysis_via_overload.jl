@@ -38,7 +38,7 @@ model_vec_shocked = Bit.ensemblerun(model, T, 4);
 Te = T + 1
 StatsPlots.errorline(
     1:Te,
-    DataVector.(model_vec_baseline).real_gdp,
+    DataVector(model_vec_baseline).real_gdp,
     errortype = :sem,
     label = "baseline",
     titlefont = 10,
@@ -47,7 +47,7 @@ StatsPlots.errorline(
 )
 StatsPlots.errorline!(
     1:Te,
-    DataVector.(model_vec_shocked).real_gdp,
+    DataVector(model_vec_shocked).real_gdp,
     errortype = :sem,
     label = "shock",
     titlefont = 10,
