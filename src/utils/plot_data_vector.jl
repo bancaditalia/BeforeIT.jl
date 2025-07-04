@@ -62,6 +62,7 @@ function plot_data_vectors(model_vector; titlefont = 9, quantities = Bit.default
 end
 
 function plot_data(model; titlefont = 9, quantities = default_quantities)
+	data = model.data
 	ps = []
 	for q in quantities
 		title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
