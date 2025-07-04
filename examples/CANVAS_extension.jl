@@ -148,7 +148,7 @@ rotw_st = Bit.RestOfTheWorld(p, ic)
 rotw = RestOfTheWorldCANVAS((getfield(rotw_st, x) for x in fieldnames(Bit.RestOfTheWorld))..., 
     Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
-# standard initialisations: workers, bank, aggregats, government and properties
+# standard initialisations: workers, bank, aggregats, government, properties and data
 w_act, w_inact = Bit.Workers(p, ic)
 bank = Bit.Bank(p, ic)
 agg = Bit.Aggregates(p, ic)
