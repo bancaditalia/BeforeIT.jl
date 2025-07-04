@@ -64,7 +64,8 @@ function Data(p)
     return d
 end
 
-function update_data_init!(d, m)
+function update_data_init!(m)
+    d = m.data
     p = m.prop
 
     tot_Y_h = sum(m.w_act.Y_h) + sum(m.w_inact.Y_h) + sum(m.firms.Y_h) + m.bank.Y_h
@@ -134,8 +135,9 @@ step!(model)
 Bit.update_data!(data, model)
 ```
 """
-function update_data!(d, m)
+function update_data!(m)
 
+    d = m.data
     p = m.prop
     for f in fieldnames(typeof(d))[1:25]
         push!(getfield(d, f), 0.0)
