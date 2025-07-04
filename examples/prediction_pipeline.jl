@@ -32,7 +32,7 @@ parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, cali
 T = 20
 n_sims = 3
 model = Bit.Model(parameters, initial_conditions)
-data_vector = Bit.ensemblerun(model, T, n_sims)
+data_vector = Bit.ensemblerun(model, T, n_sims);
 
 # We obtain predictions from the model simulations 
 
