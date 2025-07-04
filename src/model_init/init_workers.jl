@@ -1,19 +1,18 @@
 
 """
-    Workers(parameters, initial_conditions, firms)
+    Workers(parameters, initial_conditions)
 
-Initialize the workers for the given parameters, initial conditions, and firms.
+Initialize the workers for the given parameters, initial conditions.
 
 # Arguments
 - `parameters`: The parameters for the initialization.
 - `initial_conditions`: The initial conditions for the initialization.
-- `firms`: The already initialized firms.
 
 # Returns
 - The initialized active workers.
 - The initialized inactive workers.
 """
-function Workers(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
+function Workers(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
  
     H_act = typeInt(parameters["H_act"])
     H_inact = typeInt(parameters["H_inact"])
