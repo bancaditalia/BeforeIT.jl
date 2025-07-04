@@ -362,11 +362,11 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
         update_data_init!(model)
 
         h = 1
-        for i in 1:I
-            while firms.V_i[i] > 0
-                O_h[h] = i
-                w_h[h] = firms.w_bar_i[i]
-                firms.V_i[i] -= 1
+        for i in 1:model.prop.I
+            while model.firms.V_i[i] > 0
+                model.w_act.O_h[h] = i
+                model.w_act.w_h[h] = model.firms.w_bar_i[i]
+                model.firms.V_i[i] -= 1
                 h += 1
             end
         end
