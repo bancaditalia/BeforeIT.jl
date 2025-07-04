@@ -33,7 +33,7 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     prop = model.prop # model properties
     data = model.data # model data
 
-    agg.t == 0 && (update_data_init!(data, model))
+    agg.t == 1 && (update_data_init!(data, model))
 
     Bit.finance_insolvent_firms!(firms, bank, model)
 
