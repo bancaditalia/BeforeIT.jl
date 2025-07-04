@@ -8,13 +8,10 @@ dir = @__DIR__
 parameters = matread(joinpath(dir, "../data/steady_state/parameters/2010Q1.mat"))
 initial_conditions = matread(joinpath(dir, "../data/steady_state/initial_conditions/2010Q1.mat"))
 
-T = 1
-model = Bit.Model(parameters, initial_conditions, T;)
+model = Bit.Model(parameters, initial_conditions)
 data = Bit.Data(model)
 
-
 println(Bit.get_accounting_identity_banks(model))
-
 
 """
 Testing an entire epoch of the model
@@ -77,11 +74,8 @@ model.firms.N_i .= temp_N_i
 model.firms.w_i .= Bit.wages_firms(model.firms, Q_s_i)
 model.firms.Y_i .= Bit.production(model.firms, Q_s_i)
 
-
 # update wages for workers
 Bit.update_workers_wages!(model.w_act, model.firms.w_i)
-
-
 
 ####### CONSUMPTION AND INVESTMENT BUDGET #######
 
@@ -148,7 +142,6 @@ Bit.cons_inv_budget_bowner!(
     pi_e,
 )
 
-
 ####### GOVERNMENT SPENDING BUDGET, IMPORT-EXPORT BUDGET #######
 
 # compute government expenditure
@@ -164,7 +157,6 @@ Bit.import_export!(
     epsilon_E,
     epsilon_I,
 )
-
 
 ####### GENERAL SEARCH AND MATCHING FOR ALL GOODS #######
 
@@ -272,7 +264,6 @@ model.firms.D_i .+= DD_i
 model.firms.L_i .= (1 - prop.theta) * model.firms.L_i + DL_i
 
 model.firms.E_i .= Bit.equity_firms(model.firms, prop.products.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF)
-
 
 # update net credit/debit position of rest of the world
 model.rotw.D_RoW -= Bit.new_deposits_rotw(model.rotw, prop.tau_EXPORT)

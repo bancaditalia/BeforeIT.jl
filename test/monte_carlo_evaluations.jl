@@ -8,12 +8,12 @@ dir = @__DIR__
 parameters = matread(joinpath(dir, "../data/austria/parameters/2010Q1.mat"))
 initial_conditions = matread(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
 
-T = 20
-model = Bit.Model(parameters, initial_conditions, T)
+model = Bit.Model(parameters, initial_conditions)
 data = Bit.Data(model)
 
+T = 20
 n_sims = 3
-data_vector = Bit.ensemblerun(model, n_sims)
+data_vector = Bit.ensemblerun(model, T, n_sims)
 
 @test length(data_vector) == n_sims
 @test typeof(data_vector) == Vector{Bit.Data}

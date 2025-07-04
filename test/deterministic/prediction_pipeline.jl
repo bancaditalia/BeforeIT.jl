@@ -1,6 +1,6 @@
+
 import BeforeIT as Bit
 using FileIO, Dates
-
 
 reference_file = joinpath(@__DIR__, "2010Q1.jld2")
 reference_predictions = load(reference_file)["model_dict"]
@@ -13,8 +13,8 @@ parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, cali
 # run the model for a number of quarters
 T = 12
 n_sims = 2
-model = Bit.Model(parameters, initial_conditions, T)
-data_vector = Bit.ensemblerun(model, n_sims)
+model = Bit.Model(parameters, initial_conditions)
+data_vector = Bit.ensemblerun(model, T, n_sims)
 
 # obtain predictions from the model simulations
 real_data = Bit.ITALY_CALIBRATION.data

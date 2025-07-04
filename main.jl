@@ -5,10 +5,10 @@ using Random, Plots
 parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
-T = 20
-model = Bit.Model(parameters, initial_conditions, T)
+model = Bit.Model(parameters, initial_conditions)
 data = Bit.Data(model)
 
+T = 20
 for t in 1:T
     println("Epoch: ", t)
     Bit.step!(model; multi_threading = true)

@@ -13,9 +13,7 @@ parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 # We can now initialise the model, by specifying in advance the maximum number of epochs.
-
-T = 16
-model = Bit.Model(parameters, initial_conditions, T);
+model = Bit.Model(parameters, initial_conditions);
 
 # Note that the it is very simple to inspect the model by typing
 
@@ -30,7 +28,7 @@ fieldnames(typeof(model.bank))
 data = Bit.Data(model);
 
 # We can run now the model for a number of epochs and progressively update the data tracker.
-
+T = 16
 for t in 1:T
     Bit.step!(model; multi_threading = true)
     Bit.update_data!(data, model)
@@ -50,8 +48,8 @@ plot(ps..., layout = (3, 3))
 
 # To run multiple monte-carlo repetitions in parallel we can use
 
-model = Bit.Model(parameters, initial_conditions, T)
-data_vector = Bit.ensemblerun(model, 4)
+model = Bit.Model(parameters, initial_conditions)
+data_vector = Bit.ensemblerun(model, T, 4)
 
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command 

@@ -1,10 +1,10 @@
+
 @testset "time 1 and 5 deterministic" begin
 
     dir = @__DIR__
-    T = 1
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    model = Bit.Model(parameters, initial_conditions, T)
+    model = Bit.Model(parameters, initial_conditions)
     data = Bit.Data(model)
 
     Bit.step!(model; multi_threading = false)
@@ -27,11 +27,11 @@
         end
     end
 
-    T = 5
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    model = Bit.Model(parameters, initial_conditions, T)
+    model = Bit.Model(parameters, initial_conditions)
     data = Bit.Data(model)
+    T = 5
     for t in 1:T
         Bit.step!(model; multi_threading = false)
         Bit.update_data!(data, model)
@@ -43,6 +43,7 @@
 
     for fieldname in fieldnames(typeof(data))
         julia_output = getfield(data, fieldname)
+        julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ? reduce(hcat, julia_output)' : julia_output
         matlab_output = output_t5[string(fieldname)]
 
         if length(julia_output) == 6

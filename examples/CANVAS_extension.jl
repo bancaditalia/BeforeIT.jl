@@ -151,9 +151,9 @@ w_act, w_inact, V_i_new = Bit.init_workers(p, ic, firms)
 firms_st.V_i .= V_i_new
 firms.V_i .= V_i_new
 bank = Bit.Bank(p, ic, firms)
-agg = Bit.Aggregates(p, ic, T)
+agg = Bit.Aggregates(p, ic)
 gov = Bit.Government(p, ic)
-prop = Bit.Properties(p, T)
+prop = Bit.Properties(p)
 
 # define a standard model
 model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop)
@@ -162,8 +162,8 @@ model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw
 model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop)
 
 # run the model(s)
-data_vector_std = Bit.ensemblerun(model_std, 8)
-data_vector_canvas = Bit.ensemblerun(model_canvas, 8)
+data_vector_std = Bit.ensemblerun(model_std, T, 8)
+data_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
 
 # plot the results
 ps = Bit.plot_data_vectors([data_vector_std, data_vector_canvas])

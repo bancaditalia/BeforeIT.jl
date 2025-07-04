@@ -4,10 +4,10 @@ import BeforeIT as Bit
 parameters = Bit.STEADY_STATE2010Q1.parameters
 initial_conditions = Bit.STEADY_STATE2010Q1.initial_conditions
 
-T = 5
-model = Bit.Model(parameters, initial_conditions, T)
+model = Bit.Model(parameters, initial_conditions)
 data = Bit.Data(model)
 
+T = 5
 for t in 1:T
     println(t)
     Bit.step!(model; multi_threading = false)

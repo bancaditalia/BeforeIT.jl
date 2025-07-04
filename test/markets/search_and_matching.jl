@@ -11,7 +11,7 @@ using Test, MAT, StatsBase, Random
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     
     function run_search_and_matching(parameters, initial_conditions, T, m)
-        model = Bit.Model(parameters, initial_conditions, T;)
+        model = Bit.Model(parameters, initial_conditions)
     
         gov = model.gov         # government
         cb = model.cb           # central bank

@@ -1,11 +1,11 @@
+
 @testset "one epoch deterministic" begin
 
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    T = 1
 
     for multi_threading in [false, true]
-        model = Bit.Model(parameters, initial_conditions, T)
+        model = Bit.Model(parameters, initial_conditions)
     
         gov = model.gov # government
         cb = model.cb # central bank

@@ -4,7 +4,7 @@ using CommonSolve: step!
 export step!
 
 """
-    step!(model; multi_threading = false)
+    step!(model; multi_threading = false, shock = Bit.NoShock())
 
 This function simulates a single epoch the economic model, updating various components of the model based 
 the interactions between different economic agents. It accepts a `model` object, which encapsulates the state for the
@@ -31,11 +31,6 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     w_inact = model.w_inact # inactive workers
     agg = model.agg # aggregates
     prop = model.prop # model properties
-
-    # return an error if t is greater than T
-    if agg.t > prop.T + 1
-        error("The model has already reached the final time step.")
-    end
 
     Bit.finance_insolvent_firms!(firms, bank, model)
 
@@ -84,11 +79,9 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     firms.N_i .= N_i
     w_act.O_h .= Oh
 
-
     # update wages and productivity of labour and compute production function (Leontief technology)
     firms.w_i .= Bit.firms_wages(firms)
     firms.Y_i .= Bit.firms_production(firms)
-
 
     # update wages for workers
     Bit.update_workers_wages!(w_act, firms.w_i)
@@ -135,6 +128,7 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     ####### FINAL GENERAL ACCOUNTING #######
 
     # update inflation and update global price index
+    push!(agg.pi_, 0.0)
     agg.pi_[prop.T_prime + agg.t], agg.P_bar = Bit.inflation_priceindex(firms.P_i, firms.Y_i, agg.P_bar)
 
     # update sector-specific price index
@@ -195,6 +189,7 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     bank.D_k = Bit.bank_deposits(bank, model)
 
     # update GDP with the results of the time step
+    push!(agg.Y, 0.0)
     agg.Y[prop.T_prime + agg.t] = sum(firms.Y_i)
 
     agg.t += 1

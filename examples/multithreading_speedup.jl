@@ -7,13 +7,11 @@ import BeforeIT as Bit
 
 using Plots, StatsPlots
 
-# First, we initialise the model, this time we use the Italy 2010Q1 scenario, 
-# and we want to simulate the model for a large number of epochs
+# First, we initialise the model, this time we use the Italy 2010Q1 scenario
 
 parameters = Bit.ITALY2010Q1.parameters
 initial_conditions = Bit.ITALY2010Q1.initial_conditions
-T = 50
-model = Bit.Model(parameters, initial_conditions, T);
+model = Bit.Model(parameters, initial_conditions);
 
 # The model is in scale 1:2000, so it has around 30,000 households
 model.prop.H
@@ -30,10 +28,11 @@ Threads.nthreads()
 Bit.run!(model; multi_threading = false);
 
 # Let's now compare the performance of single threading and multi threading
-model = Bit.Model(parameters, initial_conditions, T);
-@time data = Bit.run!(model; multi_threading = false);
+T = 50
+model = Bit.Model(parameters, initial_conditions);
+@time data = Bit.run!(model, T; multi_threading = false);
 
 model = Bit.Model(parameters, initial_conditions, T);
-@time data = Bit.run!(model; multi_threading = true);
+@time data = Bit.run!(model, T; multi_threading = true);
 
 # Is the speedup in line to what we would expect? Yes!

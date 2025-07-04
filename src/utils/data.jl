@@ -28,8 +28,8 @@ Bit.@object struct Data{T<:AbstractFloat}(Object) <: AbstractData
     gdp_deflator_growth_ea::Vector{T}
     real_gdp_ea::Vector{T}
     euribor::Vector{T}
-    nominal_sector_gva::Matrix{T}
-    real_sector_gva::Matrix{T}
+    nominal_sector_gva::Vector{Vector{T}}
+    real_sector_gva::Vector{Vector{T}}
 end
 
 # Define the DataVector struct
@@ -70,8 +70,7 @@ Initialise the data arrays
 """
 function Data(m)
     p = m.prop
-    T = p.T
-    d = Data([zeros(T + 1) for _ in 1:25]..., zeros(T + 1, p.G), zeros(T + 1, p.G))
+    d = Data([zeros(1) for _ in 1:25]..., Vector{Float64}[zeros(p.G)], Vector{Float64}[zeros(p.G)])
     _update_data_init!(d, m)
     return d
 end
@@ -112,13 +111,13 @@ function _update_data_init!(d, m)
     d.taxes_production[1] = sum(m.firms.tau_K_i .* m.firms.Y_i)
 
     for g in 1:(p.G)
-        d.nominal_sector_gva[1, g] = sum(
+        d.nominal_sector_gva[1][g] = sum(
             m.firms.Y_i[m.firms.G_i .== g] .*
             ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .- 1 ./ m.firms.beta_i[m.firms.G_i .== g]),
         )
     end
 
-    d.real_sector_gva[1, :] = d.nominal_sector_gva[1, :]
+    d.real_sector_gva[1][:] = d.nominal_sector_gva[1][:]
     d.euribor[1] = m.cb.r_bar
     d.gdp_deflator_growth_ea[1] = m.rotw.pi_EA
     d.real_gdp_ea[1] = m.rotw.Y_EA
@@ -147,14 +146,15 @@ Bit.update_data!(data, model)
 ```
 """
 function update_data!(d, m)
+
     p = m.prop
-    t = m.agg.t
-
-    # rise an error if t is not smaller than or equal to T
-    if t > p.T + 1
-        throw(ArgumentError("t is greater than T+1, the maximum size of the data arrays."))
+    for f in fieldnames(typeof(d))[1:25]
+        push!(getfield(d, f), 0.0)
     end
+    push!(d.nominal_sector_gva, zeros(p.G))
+    push!(d.real_sector_gva, zeros(p.G))
 
+    t = m.agg.t
 
     tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
     tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
@@ -211,7 +211,7 @@ function update_data!(d, m)
     d.taxes_production[t] = sum(m.firms.tau_K_i .* m.firms.Y_i .* m.firms.P_i)
 
     for g in 1:(p.G)
-        d.nominal_sector_gva[t, g] =
+        d.nominal_sector_gva[t][g] =
             sum(
                 (1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .* m.firms.P_i[m.firms.G_i .== g] .*
                 m.firms.Y_i[m.firms.G_i .== g],
@@ -219,7 +219,7 @@ function update_data!(d, m)
                 1.0 ./ m.firms.beta_i[m.firms.G_i .== g] .* m.firms.P_bar_i[m.firms.G_i .== g] .*
                 m.firms.Y_i[m.firms.G_i .== g],
             )
-        d.real_sector_gva[t, g] = sum(
+        d.real_sector_gva[t][g] = sum(
             m.firms.Y_i[m.firms.G_i .== g] .*
             ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) - 1.0 ./ m.firms.beta_i[m.firms.G_i .== g]),
         )

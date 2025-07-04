@@ -12,14 +12,12 @@ parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 # Initialise the model and the data collector
-
-T = 16
-model = Bit.Model(parameters, initial_conditions, T);
+model = Bit.Model(parameters, initial_conditions);
 
 # Simulate the baseline model for T quarters, N_reps times, and collect the data
-
+T = 16
 N_reps = 64
-data_vec_baseline = Bit.ensemblerun(model, N_reps)
+data_vec_baseline = Bit.ensemblerun(model, T, N_reps)
 
 # Now, apply a shock to the model and simulate it again.
 # A shock is simply a function that takes the model and changes some of
@@ -65,7 +63,7 @@ consumption_shock = ConsumptionShock(1.02, 4)
 
 # Simulate the model with the shock
 
-data_vec_shocked = Bit.ensemblerun(model, N_reps; shock = consumption_shock)
+data_vec_shocked = Bit.ensemblerun(model, T, N_reps; shock = consumption_shock)
 
 # Compute mean and standard error of GDP for the baseline and shocked simulations
 

@@ -5,7 +5,7 @@
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
     function run_deterministic(parameters, initial_conditions, T, m)
-        model = Bit.Model(parameters, initial_conditions, T;)
+        model = Bit.Model(parameters, initial_conditions)
         data = Bit.Data(model)
         for t in 1:(T - 1)
             Bit.step!(model; multi_threading = m)

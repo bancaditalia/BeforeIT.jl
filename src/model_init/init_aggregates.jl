@@ -7,17 +7,14 @@ Initialize aggregates for the model.
 # Arguments
 - `parameters`: The model parameters.
 - `initial_conditions`: The initial conditions.
-- `T`: The total simulation time.
 
 # Returns
 - `agg`: The initialized aggregates.
 """
-function Aggregates(parameters, initial_conditions, T; typeInt = Int64, typeFloat = Float64)
-    
-    Y = initial_conditions["Y"]
-    pi_ = initial_conditions["pi"]
-    Y = Vector{typeFloat}(vec(vcat(Y, zeros(typeFloat, T))))
-    pi_ = Vector{typeFloat}(vec(vcat(pi_, zeros(typeFloat, T))))
+function Aggregates(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+
+    Y = Vector{typeFloat}(vec(initial_conditions["Y"]))
+    pi_ = Vector{typeFloat}(vec(initial_conditions["pi"]))
 
     G = typeInt(parameters["G"])
 

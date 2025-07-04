@@ -5,22 +5,21 @@ recursive_namedtuple(x::Any) = x
 recursive_namedtuple(d::Dict) = MutableNamedTuple(; Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
 
 """
-    Model(parameters, initial_conditions, T)
+    Model(parameters, initial_conditions)
 
 Initializes the model with given parameters and initial conditions.
 
 Parameters:
 - `parameters`: A dictionary containing the model parameters.
 - initial_conditions: A dictionary containing the initial conditions.
-- T (integer): The time horizon of the model.
 
 Returns:
 - model::AbstractModel: The initialized model.
 """
-function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}, T, typeInt::DataType = Int64, typeFloat::DataType = Float64)
+function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}; typeInt::DataType = Int64, typeFloat::DataType = Float64)
 
     # properties
-    properties = Bit.Properties(parameters, T; typeInt = typeInt, typeFloat = typeFloat)
+    properties = Bit.Properties(parameters; typeInt = typeInt, typeFloat = typeFloat)
 
     # firms
     firms = Bit.Firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
@@ -42,7 +41,7 @@ function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, A
     rotw = Bit.RestOfTheWorld(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # aggregates
-    agg = Bit.Aggregates(parameters, initial_conditions, T; typeInt = typeInt, typeFloat = typeFloat)
+    agg = Bit.Aggregates(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # model
     model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)
