@@ -35,10 +35,10 @@ Bit.run!(model, 40);
 # Plot the results, comparing the two cases as different lines
 
 p1 = plot(model.data.real_gdp, title = "gdp", titlefont = 10, label = "forward looking")
-plot!(p1, data_back.real_gdp, titlefont = 10, label = "backward looking")
+plot!(p1, model2.data.real_gdp, titlefont = 10, label = "backward looking")
 
 p2 = plot(model.data.real_household_consumption, title = "consumption", titlefont = 10)
-plot!(p2, data_back.real_household_consumption, titlefont = 10, label = "backward looking")
+plot!(p2, model2.data.real_household_consumption, titlefont = 10, label = "backward looking")
 
 plot(p1, p2, layout = (2, 1), legend = true)
 
