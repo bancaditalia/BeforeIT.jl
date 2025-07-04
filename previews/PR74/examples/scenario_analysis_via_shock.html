@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Shocked simulations · BeforeIT.jl</title><meta name="title" content="Shocked simulations · BeforeIT.jl"/><meta property="og:title" content="Shocked simulations · BeforeIT.jl"/><meta property="twitter:title" content="Shocked simulations · BeforeIT.jl"/><meta name="description" content="Documentation for BeforeIT.jl."/><meta property="og:description" content="Documentation for BeforeIT.jl."/><meta property="twitter:description" content="Documentation for BeforeIT.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../index.html"><img src="../assets/logo.png" alt="BeforeIT.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../index.html">BeforeIT.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../index.html">Home</a></li><li><a class="tocitem" href="basic_example.html">Essentials</a></li><li class="is-active"><a class="tocitem" href="scenario_analysis_via_shock.html">Shocked simulations</a></li><li><a class="tocitem" href="basic_inheritance.html">Essential model extension</a></li><li><a class="tocitem" href="scenario_analysis_via_overload.html">Shocked simulations (advanced)</a></li><li><a class="tocitem" href="change_expectations.html">Experimentations (advanced)</a></li><li><a class="tocitem" href="multithreading_speedup.html">Multithreading within the model</a></li><li><a class="tocitem" href="prediction_pipeline.html">Calibration and forecast</a></li><li><a class="tocitem" href="../api.html">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href="scenario_analysis_via_shock.html">Shocked simulations</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="scenario_analysis_via_shock.html">Shocked simulations</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/bancaditalia/BeforeIT.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/bancaditalia/BeforeIT.jl/blob/main/examples/scenario_analysis_via_shock.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Scenario-analysis-via-custom-shocks"><a class="docs-heading-anchor" href="#Scenario-analysis-via-custom-shocks">Scenario analysis via custom shocks</a><a id="Scenario-analysis-via-custom-shocks-1"></a><a class="docs-heading-anchor-permalink" href="#Scenario-analysis-via-custom-shocks" title="Permalink"></a></h1><p>In this tutorial we will illustrate how to perform a scenario analysis by running the model multiple times under a specific shock and comparing the results with the unshocked model.</p><pre><code class="language-julia hljs">import BeforeIT as Bit
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Shocked simulations · BeforeIT.jl</title><meta name="title" content="Shocked simulations · BeforeIT.jl"/><meta property="og:title" content="Shocked simulations · BeforeIT.jl"/><meta property="twitter:title" content="Shocked simulations · BeforeIT.jl"/><meta name="description" content="Documentation for BeforeIT.jl."/><meta property="og:description" content="Documentation for BeforeIT.jl."/><meta property="twitter:description" content="Documentation for BeforeIT.jl."/><script data-outdated-warner src="../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../search_index.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../index.html"><img src="../assets/logo.png" alt="BeforeIT.jl logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../index.html">BeforeIT.jl</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../index.html">Home</a></li><li><a class="tocitem" href="basic_example.html">Essentials</a></li><li class="is-active"><a class="tocitem" href="scenario_analysis_via_shock.html">Shocked simulations</a></li><li><a class="tocitem" href="basic_inheritance.html">Essential model extension</a></li><li><a class="tocitem" href="scenario_analysis_via_overload.html">Shocked simulations (advanced)</a></li><li><a class="tocitem" href="change_expectations.html">Experimentations (advanced)</a></li><li><a class="tocitem" href="multithreading_speedup.html">Multithreading within the model</a></li><li><a class="tocitem" href="prediction_pipeline.html">Calibration</a></li><li><a class="tocitem" href="../api.html">API</a></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href="scenario_analysis_via_shock.html">Shocked simulations</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="scenario_analysis_via_shock.html">Shocked simulations</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/bancaditalia/BeforeIT.jl" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/bancaditalia/BeforeIT.jl/blob/main/examples/scenario_analysis_via_shock.jl" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Scenario-analysis-via-custom-shocks"><a class="docs-heading-anchor" href="#Scenario-analysis-via-custom-shocks">Scenario analysis via custom shocks</a><a id="Scenario-analysis-via-custom-shocks-1"></a><a class="docs-heading-anchor-permalink" href="#Scenario-analysis-via-custom-shocks" title="Permalink"></a></h1><p>In this tutorial we will illustrate how to perform a scenario analysis by running the model multiple times under a specific shock and comparing the results with the unshocked model.</p><pre><code class="language-julia hljs">import BeforeIT as Bit
 import StatsBase: mean, std
 using Plots
 
@@ -25,57 +25,57 @@ end</code></pre><p>Define specific shocks, for example a 2% increase in producti
 mean_gdp_shocked = mean(data_vec_shocked.real_gdp, dims = 2)
 sem_gdp_baseline = std(data_vec_baseline.real_gdp, dims = 2) / sqrt(N_reps)
 sem_gdp_shocked = std(data_vec_shocked.real_gdp, dims = 2) / sqrt(N_reps)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
-   0.0
-   1.7087910597059337
-  19.332874342265427
-  34.036728703907166
-  48.680688382178325
-  65.24281594318593
-  82.60100789439731
-  96.76491766434869
- 111.29073090617283
- 121.31020752152371
- 133.6002922908776
- 142.93970959814064
- 150.33128734503097
- 155.46844759371996
- 166.90791879675658
- 174.20864328750514
- 184.54188420000017</code></pre><p>Compute the ratio of shocked to baseline GDP</p><pre><code class="language-julia hljs">gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
+   1.8333689901882087e-12
+   1.5846145493331347
+  17.215756294517092
+  37.17587124182151
+  48.72758125400247
+  65.41115958205755
+  84.16042219645888
+  96.73931296243036
+ 111.45419649414762
+ 118.5940104655811
+ 128.43875687025016
+ 144.91953999040138
+ 161.83331113922844
+ 172.38105871521694
+ 178.09551655660883
+ 185.86704673195752
+ 193.35312624290964</code></pre><p>Compute the ratio of shocked to baseline GDP</p><pre><code class="language-julia hljs">gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
  1.0
- 1.000482327753667
- 1.0057830194997233
- 1.007892223215894
- 1.0095653532135471
- 1.006617820072272
- 1.005378369815575
- 1.0047400640497572
- 1.0047363812789942
- 1.004615612692966
- 1.004536270723786
- 1.0036412808554824
- 1.0036919082392575
- 1.0036166039492016
- 1.003813375717866
- 1.003868044123636
- 1.0043098133682322</code></pre><p>the standard error on a ratio of two variables is computed with the error propagation formula</p><pre><code class="language-julia hljs">sem_gdp_ratio = gdp_ratio .* ((sem_gdp_baseline ./ mean_gdp_baseline).^2 .+ (sem_gdp_shocked ./ mean_gdp_shocked).^2).^0.5</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
- 0.0
- 2.8733493054845606e-5
- 0.00038155014880086435
- 0.0006475752477165653
- 0.000974635442374253
- 0.0013251148332801203
- 0.0016127132644382738
- 0.001887130834243173
- 0.0021495476350544343
- 0.002436122987688638
- 0.0026269809671034088
- 0.0027801234458659616
- 0.002926965281610013
- 0.0031125267464393127
- 0.0033031041125758664
- 0.003410951697955109
- 0.0035410212636358255</code></pre><p>Finally, we can plot the impulse response curve</p><pre><code class="language-julia hljs">plot(
+ 1.000557090404144
+ 1.0057778630587555
+ 1.0079513018598194
+ 1.0073292917165209
+ 1.0031956181556319
+ 1.0018242594531526
+ 1.00008547634612
+ 0.9995933477000858
+ 0.9982998537294356
+ 0.9972972973822255
+ 0.996002450166884
+ 0.9952684367610166
+ 0.9949325924540796
+ 0.9940305863835005
+ 0.9934088218031274
+ 0.9924550494822921</code></pre><p>the standard error on a ratio of two variables is computed with the error propagation formula</p><pre><code class="language-julia hljs">sem_gdp_ratio = gdp_ratio .* ((sem_gdp_baseline ./ mean_gdp_baseline).^2 .+ (sem_gdp_shocked ./ mean_gdp_shocked).^2).^0.5</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
+ 3.580093467121083e-17
+ 2.7536022652288166e-5
+ 0.0004002713273196133
+ 0.0007683657407407131
+ 0.0010479052063501733
+ 0.001389227291932349
+ 0.0016887287428854843
+ 0.0019133297649543569
+ 0.002125006900803964
+ 0.002289137574648535
+ 0.0024549579160571336
+ 0.0026658551549968617
+ 0.0029065570154204368
+ 0.003050565129401839
+ 0.0031773724001577515
+ 0.003283493278007791
+ 0.003416037427780422</code></pre><p>Finally, we can plot the impulse response curve</p><pre><code class="language-julia hljs">plot(
     1:T+1,
     gdp_ratio,
     ribbon = sem_gdp_ratio,
@@ -83,4 +83,4 @@ sem_gdp_shocked = std(data_vec_shocked.real_gdp, dims = 2) / sqrt(N_reps)</code>
     label = &quot;&quot;,
     xlabel = &quot;quarters&quot;,
     ylabel = &quot;GDP change&quot;,
-)</code></pre><img src="scenario_analysis_via_shock-25705a4d.svg" alt="Example block output"/><p>We can save the figure using: savefig(&quot;gdp_shock.png&quot;)</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="basic_example.html">« Essentials</a><a class="docs-footer-nextpage" href="basic_inheritance.html">Essential model extension »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.13.0 on <span class="colophon-date" title="Friday 4 July 2025 12:53">Friday 4 July 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+)</code></pre><img src="scenario_analysis_via_shock-33d9ccf4.svg" alt="Example block output"/><p>We can save the figure using: savefig(&quot;gdp_shock.png&quot;)</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="basic_example.html">« Essentials</a><a class="docs-footer-nextpage" href="basic_inheritance.html">Essential model extension »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.13.0 on <span class="colophon-date" title="Friday 4 July 2025 13:04">Friday 4 July 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
