@@ -1,18 +1,17 @@
 
 """
-    init_bank(parameters, initial_conditions, firms)
+    init_bank(parameters, initial_conditions)
 
-Initialize a bank with the given parameters, initial conditions, and firms.
+Initialize a bank with the given parameters and initial conditions.
 
 # Arguments
 - `parameters`: The parameters.
 - `initial_conditions`: The initial conditions.
-- `firms`: The already initialized firms.
 
 # Returns
 - bank::Bank: The initialized bank.
 """
-function Bank(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
+function Bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
 
     theta_DIV = parameters["theta_DIV"]
     tau_INC = parameters["tau_INC"]
@@ -29,13 +28,13 @@ function Bank(parameters, initial_conditions, firms; typeInt = Int64, typeFloat 
     
     r = r_bar + mu
     
-    Pi_k = mu * sum(firms.L_i) + r_bar * E_k
+    Pi_k = 0.0
 
     Y_h = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k) + sb_other * P_bar_HH
 
     D_h = D_H * Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
     K_h = K_H * Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
-    D_k = sum(firms.D_i) + E_k - sum(firms.L_i) # Need to add sum(D_h) at the end of initialisation
+    D_k = 0.0
     
     C_d_h = zero(typeFloat)
     I_d_h = zero(typeFloat)

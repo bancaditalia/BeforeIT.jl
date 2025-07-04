@@ -28,7 +28,7 @@ function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, A
     workers_act, workers_inact = Bit.Workers(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # bank
-    bank = Bit.Bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
+    bank = Bit.Bank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # central bank
     central_bank = Bit.CentralBank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)

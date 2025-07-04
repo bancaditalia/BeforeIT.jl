@@ -59,6 +59,8 @@ function Properties(parameters::Dict{String, Any}, initial_conditions; typeInt::
     properties[:D_H] = initial_conditions["D_H"]
     properties[:K_H] = initial_conditions["K_H"]
     properties[:sb_other] = initial_conditions["sb_other"]
+    properties[:E_k] = initial_conditions["E_k"]
+    properties[:r_bar] = initial_conditions["r_bar"]
 
     # convert to NamedTuple
     properties = recursive_namedtuple(properties)

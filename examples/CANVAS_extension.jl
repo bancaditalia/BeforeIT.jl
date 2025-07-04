@@ -150,7 +150,7 @@ rotw = RestOfTheWorldCANVAS((getfield(rotw_st, x) for x in fieldnames(Bit.RestOf
 
 # standard initialisations: workers, bank, aggregats, government and properties
 w_act, w_inact = Bit.Workers(p, ic)
-bank = Bit.Bank(p, ic, firms)
+bank = Bit.Bank(p, ic)
 agg = Bit.Aggregates(p, ic)
 gov = Bit.Government(p, ic)
 prop = Bit.Properties(p, ic)
