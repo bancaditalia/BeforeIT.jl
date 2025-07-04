@@ -34,7 +34,7 @@ end
 # plot multiple data vectors, one line for each vector
 function plot_data_vectors(model_vector; titlefont = 9, quantities = Bit.default_quantities)
 
-	data_vectors = DataVector(model_vector)
+	data_vectors = DataVector.(model_vector)
 	Te = length(data_vectors[1].vector[1].wages)
 	
 	ps = []
