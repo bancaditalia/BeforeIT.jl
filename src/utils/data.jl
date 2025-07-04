@@ -60,7 +60,7 @@ Base.iterate(dv::DataVector, state) = Base.iterate(getfield(dv, :vector), state)
 Initialise the data arrays
 """
 function Data(p)
-    G = parameters["G"]
+    G = p["G"]
     d = Data([zeros(1) for _ in 1:25]..., Vector{Float64}[zeros(G)], Vector{Float64}[zeros(G)])
     return d
 end
