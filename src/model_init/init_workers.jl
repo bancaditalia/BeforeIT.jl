@@ -12,7 +12,7 @@ Initialize the workers for the given parameters, initial conditions.
 - The initialized active workers.
 - The initialized inactive workers.
 """
-function Workers(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+function Workers(parameters, initial_conditions)
  
     H_act = typeInt(parameters["H_act"])
     H_inact = typeInt(parameters["H_inact"])

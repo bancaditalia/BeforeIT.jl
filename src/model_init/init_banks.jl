@@ -1,6 +1,6 @@
 
 """
-    init_bank(parameters, initial_conditions)
+    Bank(parameters, initial_conditions)
 
 Initialize a bank with the given parameters and initial conditions.
 
@@ -11,7 +11,7 @@ Initialize a bank with the given parameters and initial conditions.
 # Returns
 - bank::Bank: The initialized bank.
 """
-function Bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+function Bank(parameters, initial_conditions)
 
     theta_DIV = parameters["theta_DIV"]
     tau_INC = parameters["tau_INC"]
@@ -44,19 +44,16 @@ function Bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float
 end
 
 """
-    init_central_bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+    CentralBank(parameters, initial_conditions)
 
 Initialize the central bank with the given parameters and initial conditions.
 
 # Arguments
 - `parameters`: The parameters.
 - `initial_conditions`: The initial conditions.
-- `typeInt`: (optional) The integer type to be used. Default is `Int64`.
-- `typeFloat`: (optional) The floating-point type to be used. Default is `Float64`.
 
 # Returns
 - central_bank::CentralBank: The initialized central bank.
-
 """
 function CentralBank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
     r_bar = initial_conditions["r_bar"]

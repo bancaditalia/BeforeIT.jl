@@ -16,31 +16,31 @@ Parameters:
 Returns:
 - model::AbstractModel: The initialized model.
 """
-function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}; typeInt::DataType = Int64, typeFloat::DataType = Float64)
+function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any})
 
     # properties
-    properties = Bit.Properties(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    properties = Bit.Properties(parameters, initial_conditions)
 
     # firms
-    firms = Bit.Firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    firms = Bit.Firms(parameters, initial_conditions)
 
     # workers, and update firms vacancies
-    workers_act, workers_inact = Bit.Workers(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    workers_act, workers_inact = Bit.Workers(parameters, initial_conditions)
 
     # bank
-    bank = Bit.Bank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    bank = Bit.Bank(parameters, initial_conditions)
 
     # central bank
-    central_bank = Bit.CentralBank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    central_bank = Bit.CentralBank(parameters, initial_conditions)
 
     # government
-    government = Bit.Government(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    government = Bit.Government(parameters, initial_conditions)
 
     # rest of the world
-    rotw = Bit.RestOfTheWorld(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    rotw = Bit.RestOfTheWorld(parameters, initial_conditions)
 
     # aggregates
-    agg = Bit.Aggregates(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    agg = Bit.Aggregates(parameters, initial_conditions)
 
     # data
     data = Bit.Data(parameters)

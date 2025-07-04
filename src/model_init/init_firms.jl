@@ -11,7 +11,7 @@ Initialize firms with given parameters and initial conditions.
 # Returns
 - firms::Firms: The initialized firms.
 """
-function Firms(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+function Firms(parameters, initial_conditions)
 
     # unpacking useful parameters
     I_s = Vector{typeInt}(vec(parameters["I_s"]))

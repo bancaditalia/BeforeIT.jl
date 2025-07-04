@@ -7,10 +7,14 @@ using DynamicSampling
 using LazyArrays
 using LinearAlgebra
 using MacroTools
+using Preferences
 using Random
 using StatsBase
 
 const Bit = BeforeIT
+
+const typeFloat = Float64
+const typeInt = Int
 
 # definition of agents
 include("model_init/agents.jl")

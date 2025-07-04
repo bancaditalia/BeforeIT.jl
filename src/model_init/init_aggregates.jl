@@ -11,7 +11,7 @@ Initialize aggregates for the model.
 # Returns
 - `agg`: The initialized aggregates.
 """
-function Aggregates(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+function Aggregates(parameters, initial_conditions)
 
     Y = Vector{typeFloat}(vec(initial_conditions["Y"]))
     pi_ = Vector{typeFloat}(vec(initial_conditions["pi"]))

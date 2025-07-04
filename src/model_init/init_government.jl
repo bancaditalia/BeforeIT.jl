@@ -11,7 +11,7 @@ Initialize the government agent.
 # Returns
 - The initialized government model.
 """
-function Government(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+function Government(parameters, initial_conditions)
     alpha_G = parameters["alpha_G"]
     beta_G = parameters["beta_G"]
     sigma_G = parameters["sigma_G"]
