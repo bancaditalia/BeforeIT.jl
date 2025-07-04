@@ -62,8 +62,5 @@ function Properties(parameters::Dict{String, Any}, initial_conditions; typeInt::
     properties[:E_k] = initial_conditions["E_k"]
     properties[:r_bar] = initial_conditions["r_bar"]
 
-    # convert to NamedTuple
-    properties = recursive_namedtuple(properties)
-
-    return properties
+    return recursive_namedtuple(properties)
 end

@@ -28,9 +28,5 @@ function Government(parameters, initial_conditions; typeInt = Int64, typeFloat =
     P_j = zero(typeFloat)
     Y_G = zero(typeFloat)
 
-    gov_args = (alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime], L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
-
-    government = Government(gov_args...)
-        
-    return government
+    return Government(alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime], L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
 end

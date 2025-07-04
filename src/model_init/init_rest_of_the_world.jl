@@ -44,35 +44,7 @@ function RestOfTheWorld(parameters, initial_conditions; typeInt = Int64, typeFlo
     Q_d_m = Vector{typeFloat}(zeros(G))
     P_m = Vector{typeFloat}(zeros(G))
 
-    rotw_args = (
-        alpha_E,
-        beta_E,
-        sigma_E,
-        alpha_I,
-        beta_I,
-        sigma_I,
-        Y_EA,
-        gamma_EA,
-        pi_EA,
-        alpha_pi_EA,
-        beta_pi_EA,
-        sigma_pi_EA,
-        alpha_Y_EA,
-        beta_Y_EA,
-        sigma_Y_EA,
-        D_RoW,
-        Y_I[T_prime],
-        C_E[T_prime],
-        C_d_l,
-        C_l,
-        Y_m,
-        Q_m,
-        Q_d_m,
-        P_m,
-        P_l,
-    )
-
-    rotw = RestOfTheWorld(rotw_args...)
-
-    return rotw
+    return RestOfTheWorld(alpha_E, beta_E, sigma_E, alpha_I, beta_I, sigma_I, Y_EA, gamma_EA,
+        pi_EA, alpha_pi_EA, beta_pi_EA, sigma_pi_EA, alpha_Y_EA, beta_Y_EA, sigma_Y_EA, D_RoW,
+        Y_I[T_prime], C_E[T_prime], C_d_l, C_l, Y_m, Q_m, Q_d_m, P_m, P_l)
 end

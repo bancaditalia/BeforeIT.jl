@@ -40,10 +40,7 @@ function Bank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float
     I_h = zero(typeFloat)
     Pi_e_k = typeFloat(0.0)
 
-    bank_args = (E_k, Pi_k, Pi_e_k, D_k, r, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
-    bank = Bank(bank_args...)
-
-    return bank
+    return Bank(E_k, Pi_k, Pi_e_k, D_k, r, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
 end
 
 """

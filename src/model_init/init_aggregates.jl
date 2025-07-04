@@ -33,25 +33,6 @@ function Aggregates(parameters, initial_conditions; typeInt = Int64, typeFloat =
     epsilon_E = zero(typeFloat)
     epsilon_I = zero(typeFloat)
 
-    agg_args = (
-        Y,
-        pi_,
-        P_bar,
-        P_bar_g,
-        P_bar_HH,
-        P_bar_CF,
-        P_bar_h,
-        P_bar_CF_h,
-        Y_e,
-        gamma_e,
-        pi_e,
-        epsilon_Y_EA,
-        epsilon_E,
-        epsilon_I,
-        t,
-    )
-
-    agg = Aggregates(agg_args...)
-
-    return agg
+    return Aggregates(Y, pi_, P_bar, P_bar_g, P_bar_HH, P_bar_CF, P_bar_h, P_bar_CF_h, Y_e,
+        gamma_e, pi_e, epsilon_Y_EA, epsilon_E, epsilon_I, t,)
 end

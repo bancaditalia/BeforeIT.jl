@@ -45,10 +45,7 @@ function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, A
     # data
     data = Bit.Data(parameters)
 
-    # model
-    model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
-
-    return model
+    return Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
 end
 
 """

@@ -48,8 +48,7 @@ function Workers(parameters, initial_conditions; typeInt = Int64, typeFloat = Fl
     I_h = zeros(typeFloat, length(ids))
     
     # active workers (both employed and unemployed)
-    w_act_args = (Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)
-    workers_act = Workers(w_act_args...)
+    workers_act = Workers(Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)
     
     # inactive workers
     ids = Vector{typeInt}((I + H_W + 1):(I + H_W + H_inact))
@@ -68,8 +67,7 @@ function Workers(parameters, initial_conditions; typeInt = Int64, typeFloat = Fl
     C_h = zeros(typeFloat, length(ids))
     I_h = zeros(typeFloat, length(ids))
 
-    w_inact_args = (Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
-    workers_inact = Workers(w_inact_args...)
+    workers_inact = Workers(Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
 
     return workers_act, workers_inact
 end
