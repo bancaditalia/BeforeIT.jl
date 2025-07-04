@@ -12,7 +12,6 @@ Initialize the workers for the given parameters, initial conditions, and firms.
 # Returns
 - The initialized active workers.
 - The initialized inactive workers.
-- The updated firm vacancies V_i_new, this is needed to update the firms.
 """
 function Workers(parameters, initial_conditions, firms; typeInt = Int64, typeFloat = Float64)
  
@@ -35,18 +34,6 @@ function Workers(parameters, initial_conditions, firms; typeInt = Int64, typeFlo
     O_h = zeros(typeInt, H_W)
 
     h = one(typeInt)
-
-    # copy V_i to avoid changing the original
-    V_i_new = copy(firms.V_i)
-    w_bar_i = firms.w_bar_i
-    for i in 1:I
-        while V_i_new[i] > 0
-            O_h[h] = i
-            w_h[h] = w_bar_i[i]
-            V_i_new[i] = V_i_new[i] - 1
-            h = h + 1
-        end
-    end
 
     w_h[O_h .== 0] .= w_UB / theta_UB
     
@@ -94,5 +81,5 @@ function Workers(parameters, initial_conditions, firms; typeInt = Int64, typeFlo
     w_inact_args = (Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
     workers_inact = Workers(w_inact_args...)
 
-    return workers_act, workers_inact, V_i_new
+    return workers_act, workers_inact
 end

@@ -25,8 +25,7 @@ function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, A
     firms = Bit.Firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
     # workers, and update firms vacancies
-    workers_act, workers_inact, V_i_new = Bit.Workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
-    firms.V_i .= V_i_new
+    workers_act, workers_inact = Bit.Workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
 
     # bank
     bank = Bit.Bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)

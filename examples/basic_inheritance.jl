@@ -17,21 +17,21 @@ p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 # initialise all agent types using the corresponding functions
 properties = Bit.Properties(p)
 firms = Bit.Firms(p, ic)
-w_act, w_inact, V_i_new = Bit.Workers(p, ic, firms)
-firms.V_i .= V_i_new
+w_act, w_inact = Bit.Workers(p, ic, firms)
 bank = Bit.Bank(p, ic, firms)
 government = Bit.Government(p, ic)
 rotw = Bit.RestOfTheWorld(p, ic)
 agg = Bit.Aggregates(p, ic)
+data = Bit.Data(properties)
 
 # initialise the custom central bank
 central_bank = Bit.CentralBank(p, ic)
 new_central_bank = NewCentralBank((getfield(central_bank, x) for x in fieldnames(Bit.CentralBank))..., 0.02)
 
 # initialise a new model using the new central bank as well as a standard model
-standard_model = Bit.Model(w_act, w_inact, firms, bank, central_bank, government, rotw, agg, properties)
+standard_model = Bit.Model(w_act, w_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
 
-new_model = Bit.Model(w_act, w_inact, firms, bank, new_central_bank, government, rotw, agg, properties)
+new_model = Bit.Model(w_act, w_inact, firms, bank, new_central_bank, government, rotw, agg, properties, data)
 
 # run a simulation with the new model
 T = 20

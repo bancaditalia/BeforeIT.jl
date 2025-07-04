@@ -361,6 +361,16 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
         update_variables_with_totals!(model)
         update_data_init!(model)
 
+        h = 1
+        for i in 1:I
+            while firms.V_i[i] > 0
+                O_h[h] = i
+                w_h[h] = firms.w_bar_i[i]
+                firms.V_i[i] -= 1
+                h += 1
+            end
+        end
+
         return model
     end
 end
