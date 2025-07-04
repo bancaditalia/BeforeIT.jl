@@ -13,7 +13,7 @@ const quantity_titles = Dict(
 	:gdp_deflator => "gdp deflator",
 )
 
-function plot_data_vector(model::AbstractModel; titlefont = 9, quantities = default_quantities)
+function plot_data_vector(model; titlefont = 9, quantities = default_quantities)
 	data_vector = DataVector(model)
 	Te = length(data_vector.vector[1].wages)
 	
