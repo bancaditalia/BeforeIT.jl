@@ -3,9 +3,8 @@ import BeforeIT as Bit
 using Plots
 
 # define a new central bank object with one extra attribute
-mutable struct NewCentralBank <: Bit.AbstractCentralBank
-    Bit.@centralBank 
-    fixed_rate::Float64 
+Bit.@object mutable struct NewCentralBank(Bit.CentralBank{Float64}) <: Bit.AbstractCentralBank
+    fixed_rate::Float64
 end
 
 # change the default central bank behaviour for the new type
