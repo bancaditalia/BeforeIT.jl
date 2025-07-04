@@ -18,7 +18,7 @@ model_vector = Bit.ensemblerun(model, T, n_sims)
 
 # obtain predictions from the model simulations
 real_data = Bit.ITALY_CALIBRATION.data
-predictions_dict = Bit.get_predictions_from_sims(DataVector(model_vector), real_data, calibration_date)
+predictions_dict = Bit.get_predictions_from_sims(Bit.DataVector(model_vector), real_data, calibration_date)
 
 # for each key in the predictions_dict, check if the values are equal to the reference_predictions
 for key in keys(predictions_dict)

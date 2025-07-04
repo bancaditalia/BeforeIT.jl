@@ -13,7 +13,7 @@ model = Bit.Model(parameters, initial_conditions)
 T = 20
 n_sims = 3
 model_vector = Bit.ensemblerun(model, T, n_sims)
-data_vector = DataVector(model_vector)
+data_vector = Bit.DataVector(model_vector)
 
 @test length(data_vector) == n_sims
 @test typeof(data_vector) == Vector{Bit.Data}

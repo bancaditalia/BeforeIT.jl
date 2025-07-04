@@ -12,7 +12,7 @@ for q in quarters
     params, init_conds = Bit.get_params_and_initial_conditions(cal, q; scale = 0.0005)
     model = Bit.init_model(params, init_conds)
     model_vector = Bit.ensemblerun(model, T, n_sims)
-    prediction_dict = Bit.get_predictions_from_sims(DataVector(model_vector), cal.data, q)
+    prediction_dict = Bit.get_predictions_from_sims(Bit.DataVector(model_vector), cal.data, q)
     save("data/italy/abm_predictions/$(year(q))Q$(quarterofyear(q)).jld2", "model_dict", prediction_dict)
 end
 
