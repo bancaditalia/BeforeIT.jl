@@ -1,6 +1,5 @@
 using Dates
 
-
 # function only useful for testing
 function get_params_and_initial_conditions_steady_state(
     calibration_date,
@@ -441,5 +440,4 @@ function get_params_and_initial_conditions_steady_state(
     initial_conditions = Dict(initial_conditions)
 
     return params, initial_conditions
-
 end

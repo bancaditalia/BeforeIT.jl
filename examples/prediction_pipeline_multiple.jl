@@ -1,3 +1,4 @@
+
 # # Full multiple-prediction pipeline
 
 import BeforeIT as Bit
@@ -30,7 +31,6 @@ Bit.save_all_simulations(folder_name; T = 16, n_sims = 2)
 # Finally, align all simulations with the real data to transform them testable predictions
 real_data = Bit.ITALY_CALIBRATION.data
 Bit.save_all_predictions_from_sims(folder_name, real_data)
-
 
 # Load predictions from some quarter and plot them against the true data
 
