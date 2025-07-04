@@ -149,12 +149,12 @@ rotw = RestOfTheWorldCANVAS((getfield(rotw_st, x) for x in fieldnames(Bit.RestOf
     Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
 # standard initialisations: workers, bank, aggregats, government and properties
-w_act, w_inact = Bit.Workers(p, ic, firms)
+w_act, w_inact = Bit.Workers(p, ic)
 bank = Bit.Bank(p, ic, firms)
 agg = Bit.Aggregates(p, ic)
 gov = Bit.Government(p, ic)
 prop = Bit.Properties(p)
-data = Bit.Data(prop)
+data = Bit.Data(p)
 
 # define a standard model
 model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop, data)
