@@ -338,7 +338,7 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
                      F<:AbstractFirms,B<:AbstractBank,
                      C<:AbstractCentralBank,G<:AbstractGovernment,
                      R<:AbstractRestOfTheWorld,A<:AbstractAggregates,
-                     P} <: AbstractModel
+                     P,D} <: AbstractModel
     w_act::W1
     w_inact::W2
     firms::F

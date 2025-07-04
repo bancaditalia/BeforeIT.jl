@@ -43,8 +43,11 @@ function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, A
     # aggregates
     agg = Bit.Aggregates(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
 
+    # data
+    data = Bit.Data(properties)
+
     # model
-    model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)
+    model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
 
     return model
 end
