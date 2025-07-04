@@ -30,9 +30,9 @@ Bit.run!(model, T; multi_threading = false);
 
 # Let's now compare the performance of single threading and multi threading
 model = Bit.Model(parameters, initial_conditions);
-@time data = Bit.run!(model, T; multi_threading = false);
+@time Bit.run!(model, T; multi_threading = false);
 
 model = Bit.Model(parameters, initial_conditions);
-@time data = Bit.run!(model, T; multi_threading = true);
+@time Bit.run!(model, T; multi_threading = true);
 
 # Is the speedup in line to what we would expect? Yes!
