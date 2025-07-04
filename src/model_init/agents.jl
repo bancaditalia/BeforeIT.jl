@@ -356,20 +356,23 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
             P, D
         }
         model = new{W1,W2,F,B,C,G,R,A,P,D}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
-    
-        # update model variables with global quantities (total income, total deposits) obtained from all the agents
-        update_variables_with_totals!(model)
-        update_data_init!(model)
-
+        
+        # add workers to firms
         h = 1
         for i in 1:model.prop.I
-            while model.firms.V_i[i] > 0
+            if model.firms.V_i[i] > 0
                 model.w_act.O_h[h] = i
                 model.w_act.w_h[h] = model.firms.w_bar_i[i]
-                model.firms.V_i[i] -= 1
-                h += 1
+                h += model.firms.V_i[i]
+                model.firms.V_i[i] = 0
             end
         end
+
+        # update model variables with global quantities (total income, total deposits) obtained from all the agents
+        update_variables_with_totals!(model)
+
+        # initialize data collection
+        update_data_init!(model)
 
         return model
     end
