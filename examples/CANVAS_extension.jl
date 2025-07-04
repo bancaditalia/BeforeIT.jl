@@ -136,7 +136,7 @@ end
 # new firms initialisation
 firms_st = Bit.Firms(p, ic)
 firms = FirmsCANVAS((getfield(firms_st, x) for x in fieldnames(Bit.Firms))...)
-firms.Q_s_i = copy(firms.Q_d_i) # overwrite to avoid division by zero for new firm price and quantity setting mechanism
+firms.Q_s_i .= firms.Q_d_i # overwrite to avoid division by zero for new firm price and quantity setting mechanism
 
 # new central bank initialisation
 central_bank_st = Bit.CentralBank(p, ic)
@@ -149,7 +149,7 @@ rotw = RestOfTheWorldCANVAS((getfield(rotw_st, x) for x in fieldnames(Bit.RestOf
     Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
 # standard initialisations: workers, bank, aggregats, government and properties
-w_act, w_inact, V_i_new = Bit.init_workers(p, ic, firms)
+w_act, w_inact, V_i_new = Bit.Workers(p, ic, firms)
 firms_st.V_i .= V_i_new
 firms.V_i .= V_i_new
 bank = Bit.Bank(p, ic, firms)
