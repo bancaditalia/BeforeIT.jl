@@ -23,9 +23,9 @@ model = Bit.Model(parameters, initial_conditions)
 """
 function run!(model::AbstractModel, T; multi_threading = false, shock = NoShock())
 
-    model.agg.t == 1 && update_data_init!(model)
     for _ in 1:T
         Bit.step!(model; multi_threading = multi_threading, shock = shock)
+        Bit.update_data!(model)
     end
 
     return model
@@ -54,14 +54,12 @@ function ensemblerun(model::AbstractModel, T, n_sims; multi_threading = true, sh
     if multi_threading
         Threads.@threads for i in 1:n_sims
             model_i = deepcopy(model)
-            model_i.agg.t == 1 && update_data_init!(model)
             run!(model_i, T; shock = shock)
             model_vector[i] = model_i
         end
     else
         for i in 1:n_sims
             model_i = deepcopy(model)
-            model_i.agg.t == 1 && update_data_init!(model)
             run!(model_i, T; shock = shock)
             model_vector[i] = model_i
         end

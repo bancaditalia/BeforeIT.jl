@@ -8,6 +8,7 @@
         model = Bit.Model(parameters, initial_conditions)
         for t in 1:(T - 1)
             Bit.step!(model; multi_threading = m)
+            Bit.update_data!(model)
         end
         return model   
     end

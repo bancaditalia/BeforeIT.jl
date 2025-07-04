@@ -8,8 +8,8 @@ model = Bit.Model(parameters, initial_conditions)
 
 T = 5
 for t in 1:T
-    println(t)
     Bit.step!(model; multi_threading = false)
+    Bit.update_data!(model)
 end
 
 # check that all variables in the "data" struct are constant up to numerical precision

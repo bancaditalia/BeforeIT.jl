@@ -137,6 +137,9 @@ Bit.update_data!(data, model)
 """
 function update_data!(m)
 
+    t = m.agg.t
+    t == 2 && update_data_init!(m)
+
     d = m.data
     p = m.prop
     for f in fieldnames(typeof(d))[1:25]
@@ -144,8 +147,6 @@ function update_data!(m)
     end
     push!(d.nominal_sector_gva, zeros(p.G))
     push!(d.real_sector_gva, zeros(p.G))
-
-    t = m.agg.t
 
     tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
     tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
