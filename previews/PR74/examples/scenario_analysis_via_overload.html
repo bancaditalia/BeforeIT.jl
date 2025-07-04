@@ -4,9 +4,8 @@
 using Plots, StatsPlots
 
 parameters = Bit.AUSTRIA2010Q1.parameters;
-initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions;</code></pre><p>Initialise the model and the data collector</p><pre><code class="language-julia hljs">model = Bit.Model(parameters, initial_conditions);
-data = Bit.Data(model);</code></pre><p>Simulate the model for T quarters</p><pre><code class="language-julia hljs">T = 20
-data_vec_baseline = Bit.ensemblerun(model, T, 4);</code></pre><p>Now, apply a shock to the model and simulate it again Here, we do this by overloading the central<em>bank</em>rate function with the wanted behaviour</p><pre><code class="language-julia hljs">function Bit.central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions;</code></pre><p>Initialise the model</p><pre><code class="language-julia hljs">model = Bit.Model(parameters, initial_conditions);</code></pre><p>Simulate the model for T quarters</p><pre><code class="language-julia hljs">T = 20
+model_vec_baseline = Bit.ensemblerun(model, T, 4);</code></pre><p>Now, apply a shock to the model and simulate it again Here, we do this by overloading the central<em>bank</em>rate function with the wanted behaviour</p><pre><code class="language-julia hljs">function Bit.central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     gamma_EA = model.rotw.gamma_EA
     pi_EA = model.rotw.pi_EA
     taylor_rate = Bit.taylor_rule(cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
@@ -17,10 +16,10 @@ data_vec_baseline = Bit.ensemblerun(model, T, 4);</code></pre><p>Now, apply a sh
     end
 end
 
-data_vec_shocked = Bit.ensemblerun(model, T, 4);</code></pre><p>Finally, we can plot baseline and shocked simulations</p><pre><code class="language-julia hljs">Te = T + 1
+model_vec_shocked = Bit.ensemblerun(model, T, 4);</code></pre><p>Finally, we can plot baseline and shocked simulations</p><pre><code class="language-julia hljs">Te = T + 1
 StatsPlots.errorline(
     1:Te,
-    data_vec_baseline.real_gdp,
+    Bit.DataVector(model_vec_baseline).real_gdp,
     errortype = :sem,
     label = &quot;baseline&quot;,
     titlefont = 10,
@@ -29,10 +28,10 @@ StatsPlots.errorline(
 )
 StatsPlots.errorline!(
     1:Te,
-    data_vec_shocked.real_gdp,
+    Bit.DataVector(model_vec_shocked).real_gdp,
     errortype = :sem,
     label = &quot;shock&quot;,
     titlefont = 10,
     xlabel = &quot;quarters&quot;,
     ylabel = &quot;GDP&quot;,
-)</code></pre><img src="scenario_analysis_via_overload-9808bf52.svg" alt="Example block output"/><p>Note that, importantly, once the function <code>central_bank_rate</code> has been changed, the model will use the new interest rate in all the simulations, unless the function is changed again. To restore the original interest rate, you could close and restart the Julia session.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="basic_inheritance.html">« Essential model extension</a><a class="docs-footer-nextpage" href="change_expectations.html">Experimentations (advanced) »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.13.0 on <span class="colophon-date" title="Friday 4 July 2025 13:04">Friday 4 July 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+)</code></pre><img src="scenario_analysis_via_overload-e3ca6e5c.svg" alt="Example block output"/><p>Note that, importantly, once the function <code>central_bank_rate</code> has been changed, the model will use the new interest rate in all the simulations, unless the function is changed again. To restore the original interest rate, you could close and restart the Julia session.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="basic_inheritance.html">« Essential model extension</a><a class="docs-footer-nextpage" href="change_expectations.html">Experimentations (advanced) »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.13.0 on <span class="colophon-date" title="Friday 4 July 2025 18:05">Friday 4 July 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
