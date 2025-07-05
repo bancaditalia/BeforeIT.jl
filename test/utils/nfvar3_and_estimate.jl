@@ -1,7 +1,7 @@
 
 import BeforeIT as Bit
 
-using Test, Random
+using Test, Random, MAT
 
 @testset "nfvar3" begin
     xxi = [[0.2000, -0.5000] [-0.5000, 1.5000]]
@@ -16,15 +16,12 @@ using Test, Random
     @test isapprox(var_.u, u; atol = 1e-14)
 end
 
-using MAT
-
 @testset "estimate" begin
     dir = @__DIR__
 
     init_conds = Bit.AUSTRIA2010Q1.initial_conditions#matopen(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
 
     Y = init_conds["Y"]
-
 
     Random.seed!(123)
     alpha, beta, epsilon_ = Bit.estimate(log.(Y))
@@ -71,7 +68,6 @@ using MAT
         -0.007301768521497
         0.001063268119180
     ]
-
 
     alpha, beta, sigma, epsilon_ = Bit.estimate_for_calibration_script(dummy_series)
 

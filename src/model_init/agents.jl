@@ -1,13 +1,6 @@
 
 include("object_macro.jl")
 
-export AbstractWorkers, AbstractFirms, AbstractBank,
-       AbstractCentralBank, AbstractGovernment, AbstractRestOfTheWorld,
-       AbstractAggregates, AbstractModel
-
-export Workers, Firms, Bank, CentralBank, Government, 
-       RestOfTheWorld, Aggregates, Model
-
 abstract type AbstractWorkers <: AbstractObject end
 abstract type AbstractFirms <: AbstractObject end
 abstract type AbstractBank <: AbstractObject end
@@ -34,16 +27,16 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `C_h`: Realised consumption
 - `I_h`: Realised investment
 """
-Bit.@object struct Workers{T<:AbstractFloat,I<:Integer}(Object) <: AbstractWorkers
-    Y_h::Vector{T}
-    D_h::Vector{T}
-    K_h::Vector{T}
-    w_h::Vector{T}
-    O_h::Vector{I}
-    C_d_h::Vector{T}
-    I_d_h::Vector{T}
-    C_h::Vector{T}
-    I_h::Vector{T}
+Bit.@object struct Workers(Object) <: AbstractWorkers
+    Y_h::Vector{Bit.typeFloat}
+    D_h::Vector{Bit.typeFloat}
+    K_h::Vector{Bit.typeFloat}
+    w_h::Vector{Bit.typeFloat}
+    O_h::Vector{Bit.typeInt}
+    C_d_h::Vector{Bit.typeFloat}
+    I_d_h::Vector{Bit.typeFloat}
+    C_h::Vector{Bit.typeFloat}
+    I_h::Vector{Bit.typeFloat}
 end
 
 """
@@ -99,52 +92,52 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-Bit.@object struct Firms{T<:AbstractFloat,I<:Integer}(Object) <: AbstractFirms
-    G_i::Vector{I}
-    alpha_bar_i::Vector{T}
-    beta_i::Vector{T}
-    kappa_i::Vector{T}
-    w_i::Vector{T}
-    w_bar_i::Vector{T}
-    delta_i::Vector{T}
-    tau_Y_i::Vector{T}
-    tau_K_i::Vector{T}
-    N_i::Vector{I}
-    Y_i::Vector{T}
-    Q_i::Vector{T}
-    Q_d_i::Vector{T}
-    P_i::Vector{T}
-    S_i::Vector{T}
-    K_i::Vector{T}
-    M_i::Vector{T}
-    L_i::Vector{T}
-    pi_bar_i::Vector{T}
-    D_i::Vector{T}
-    Pi_i::Vector{T}
-    V_i::Vector{I}
-    I_i::Vector{T}
-    E_i::Vector{T}
-    P_bar_i::Vector{T}
-    P_CF_i::Vector{T}
-    DS_i::Vector{T}
-    DM_i::Vector{T}
-    DL_i::Vector{T}
-    DL_d_i::Vector{T}
-    K_e_i::Vector{T}
-    L_e_i::Vector{T}
-    Q_s_i::Vector{T}
-    I_d_i::Vector{T}
-    DM_d_i::Vector{T}
-    N_d_i::Vector{I}
-    Pi_e_i::Vector{T}
+Bit.@object struct Firms(Object) <: AbstractFirms
+    G_i::Vector{Bit.typeInt}
+    alpha_bar_i::Vector{Bit.typeFloat}
+    beta_i::Vector{Bit.typeFloat}
+    kappa_i::Vector{Bit.typeFloat}
+    w_i::Vector{Bit.typeFloat}
+    w_bar_i::Vector{Bit.typeFloat}
+    delta_i::Vector{Bit.typeFloat}
+    tau_Y_i::Vector{Bit.typeFloat}
+    tau_K_i::Vector{Bit.typeFloat}
+    N_i::Vector{Bit.typeInt}
+    Y_i::Vector{Bit.typeFloat}
+    Q_i::Vector{Bit.typeFloat}
+    Q_d_i::Vector{Bit.typeFloat}
+    P_i::Vector{Bit.typeFloat}
+    S_i::Vector{Bit.typeFloat}
+    K_i::Vector{Bit.typeFloat}
+    M_i::Vector{Bit.typeFloat}
+    L_i::Vector{Bit.typeFloat}
+    pi_bar_i::Vector{Bit.typeFloat}
+    D_i::Vector{Bit.typeFloat}
+    Pi_i::Vector{Bit.typeFloat}
+    V_i::Vector{Bit.typeInt}
+    I_i::Vector{Bit.typeFloat}
+    E_i::Vector{Bit.typeFloat}
+    P_bar_i::Vector{Bit.typeFloat}
+    P_CF_i::Vector{Bit.typeFloat}
+    DS_i::Vector{Bit.typeFloat}
+    DM_i::Vector{Bit.typeFloat}
+    DL_i::Vector{Bit.typeFloat}
+    DL_d_i::Vector{Bit.typeFloat}
+    K_e_i::Vector{Bit.typeFloat}
+    L_e_i::Vector{Bit.typeFloat}
+    Q_s_i::Vector{Bit.typeFloat}
+    I_d_i::Vector{Bit.typeFloat}
+    DM_d_i::Vector{Bit.typeFloat}
+    N_d_i::Vector{Bit.typeInt}
+    Pi_e_i::Vector{Bit.typeFloat}
     ### Household fields (firms' owners)
-    Y_h::Vector{T}
-    C_d_h::Vector{T}
-    I_d_h::Vector{T}
-    C_h::Vector{T}
-    I_h::Vector{T}
-    K_h::Vector{T}
-    D_h::Vector{T}
+    Y_h::Vector{Bit.typeFloat}
+    C_d_h::Vector{Bit.typeFloat}
+    I_d_h::Vector{Bit.typeFloat}
+    C_h::Vector{Bit.typeFloat}
+    I_h::Vector{Bit.typeFloat}
+    K_h::Vector{Bit.typeFloat}
+    D_h::Vector{Bit.typeFloat}
 end
 
 """
@@ -165,19 +158,19 @@ This is a Bank type. It represents the bank of the model.
 - `K_h`: Capital stock
 - `D_h`: Deposits
 """
-Bit.@object mutable struct Bank{T<:AbstractFloat}(Object) <: AbstractBank
-    E_k::T
-    Pi_k::T
-    Pi_e_k::T
-    D_k::T
-    r::T
-    Y_h::T
-    C_d_h::T
-    I_d_h::T
-    C_h::T
-    I_h::T
-    K_h::T
-    D_h::T
+Bit.@object mutable struct Bank(Object) <: AbstractBank
+    E_k::Bit.typeFloat
+    Pi_k::Bit.typeFloat
+    Pi_e_k::Bit.typeFloat
+    D_k::Bit.typeFloat
+    r::Bit.typeFloat
+    Y_h::Bit.typeFloat
+    C_d_h::Bit.typeFloat
+    I_d_h::Bit.typeFloat
+    C_h::Bit.typeFloat
+    I_h::Bit.typeFloat
+    K_h::Bit.typeFloat
+    D_h::Bit.typeFloat
 end
 
 """
@@ -193,15 +186,15 @@ This is a CentralBank type. It represents the central bank of the model.
 - `xi_gamma`: Weight placed on economic
 - `E_CB`: Central bank equity
 """
-Bit.@object mutable struct CentralBank{T<:AbstractFloat}(Object) <: AbstractCentralBank
-    r_bar::T
-    r_G::T
-    rho::T
-    r_star::T
-    pi_star::T
-    xi_pi::T
-    xi_gamma::T
-    E_CB::T
+Bit.@object mutable struct CentralBank(Object) <: AbstractCentralBank
+    r_bar::Bit.typeFloat
+    r_G::Bit.typeFloat
+    rho::Bit.typeFloat
+    r_star::Bit.typeFloat
+    pi_star::Bit.typeFloat
+    xi_pi::Bit.typeFloat
+    xi_gamma::Bit.typeFloat
+    E_CB::Bit.typeFloat
 end
 
 """
@@ -220,18 +213,18 @@ This is a Government type. It represents the government of the model.
 - `C_j`: Realised government consumption
 - `P_j`: Price inflation of government goods <- ??
 """
-Bit.@object mutable struct Government{T<:AbstractFloat}(Object) <: AbstractGovernment
-    alpha_G::T
-    beta_G::T
-    sigma_G::T
-    Y_G::T
-    C_G::T
-    L_G::T
-    sb_inact::T
-    sb_other::T
-    C_d_j::Vector{T}
-    C_j::T
-    P_j::T
+Bit.@object mutable struct Government(Object) <: AbstractGovernment
+    alpha_G::Bit.typeFloat
+    beta_G::Bit.typeFloat
+    sigma_G::Bit.typeFloat
+    Y_G::Bit.typeFloat
+    C_G::Bit.typeFloat
+    L_G::Bit.typeFloat
+    sb_inact::Bit.typeFloat
+    sb_other::Bit.typeFloat
+    C_d_j::Vector{Bit.typeFloat}
+    C_j::Bit.typeFloat
+    P_j::Bit.typeFloat
 end
 
 """
@@ -264,32 +257,32 @@ This is a RestOfTheWorld type. It represents the rest of the world of the model.
 - `P_m [vector]`: Price of imports per sector
 - `P_l`: Price inflation of exports <- ??
 """
-Bit.@object mutable struct RestOfTheWorld{T<:AbstractFloat}(Object) <: AbstractRestOfTheWorld
-    alpha_E::T
-    beta_E::T
-    sigma_E::T
-    alpha_I::T
-    beta_I::T
-    sigma_I::T
-    Y_EA::T
-    gamma_EA::T
-    pi_EA::T
-    alpha_pi_EA::T
-    beta_pi_EA::T
-    sigma_pi_EA::T
-    alpha_Y_EA::T
-    beta_Y_EA::T
-    sigma_Y_EA::T
-    D_RoW::T
-    Y_I::T
-    C_E::T
-    C_d_l::Vector{T}
-    C_l::T
-    Y_m::Vector{T}
-    Q_m::Vector{T}
-    Q_d_m::Vector{T}
-    P_m::Vector{T}
-    P_l::T
+Bit.@object mutable struct RestOfTheWorld(Object) <: AbstractRestOfTheWorld
+    alpha_E::Bit.typeFloat
+    beta_E::Bit.typeFloat
+    sigma_E::Bit.typeFloat
+    alpha_I::Bit.typeFloat
+    beta_I::Bit.typeFloat
+    sigma_I::Bit.typeFloat
+    Y_EA::Bit.typeFloat
+    gamma_EA::Bit.typeFloat
+    pi_EA::Bit.typeFloat
+    alpha_pi_EA::Bit.typeFloat
+    beta_pi_EA::Bit.typeFloat
+    sigma_pi_EA::Bit.typeFloat
+    alpha_Y_EA::Bit.typeFloat
+    beta_Y_EA::Bit.typeFloat
+    sigma_Y_EA::Bit.typeFloat
+    D_RoW::Bit.typeFloat
+    Y_I::Bit.typeFloat
+    C_E::Bit.typeFloat
+    C_d_l::Vector{Bit.typeFloat}
+    C_l::Bit.typeFloat
+    Y_m::Vector{Bit.typeFloat}
+    Q_m::Vector{Bit.typeFloat}
+    Q_d_m::Vector{Bit.typeFloat}
+    P_m::Vector{Bit.typeFloat}
+    P_l::Bit.typeFloat
 end
 
 """
@@ -310,22 +303,22 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `pi_e`: Expected inflation
 - `t`: Time index
 """
-Bit.@object mutable struct Aggregates{T<:AbstractFloat,I<:Integer}(Object) <: AbstractAggregates
-    Y::Vector{T}
-    pi_::Vector{T}
-    P_bar::T
-    P_bar_g::Vector{T}
-    P_bar_HH::T
-    P_bar_CF::T
-    P_bar_h::T
-    P_bar_CF_h::T
-    Y_e::T
-    gamma_e::T
-    pi_e::T
-    epsilon_Y_EA::T
-    epsilon_E::T
-    epsilon_I::T
-    t::I
+Bit.@object mutable struct Aggregates(Object) <: AbstractAggregates
+    Y::Vector{Bit.typeFloat}
+    pi_::Vector{Bit.typeFloat}
+    P_bar::Bit.typeFloat
+    P_bar_g::Vector{Bit.typeFloat}
+    P_bar_HH::Bit.typeFloat
+    P_bar_CF::Bit.typeFloat
+    P_bar_h::Bit.typeFloat
+    P_bar_CF_h::Bit.typeFloat
+    Y_e::Bit.typeFloat
+    gamma_e::Bit.typeFloat
+    pi_e::Bit.typeFloat
+    epsilon_Y_EA::Bit.typeFloat
+    epsilon_E::Bit.typeFloat
+    epsilon_I::Bit.typeFloat
+    t::Bit.typeInt
 end
 
 """
@@ -345,7 +338,7 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
                      F<:AbstractFirms,B<:AbstractBank,
                      C<:AbstractCentralBank,G<:AbstractGovernment,
                      R<:AbstractRestOfTheWorld,A<:AbstractAggregates,
-                     P} <: AbstractModel
+                     P,D} <: AbstractModel
     w_act::W1
     w_inact::W2
     firms::F
@@ -355,15 +348,54 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
     rotw::R
     agg::A
     prop::P
+    data::D
     function Model(w_act::W1, w_inact::W2, firms::F, bank::B, cb::C, gov::G, rotw::R, 
-        agg::A, prop::P) where {
+        agg::A, prop::P, data::D) where {
             W1<:AbstractWorkers, W2<:AbstractWorkers, F<:AbstractFirms, B<:AbstractBank,
-            C<:AbstractCentralBank, G<:AbstractGovernment, R<:AbstractRestOfTheWorld, A<:Aggregates, P
+            C<:AbstractCentralBank, G<:AbstractGovernment, R<:AbstractRestOfTheWorld, A<:Aggregates,
+            P, D
         }
-        model = new{W1,W2,F,B,C,G,R,A,P}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop)
-    
+        model = new{W1,W2,F,B,C,G,R,A,P,D}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
+        
+        # add workers to firms
+        V_i, w_bar_i = firms.V_i, firms.w_bar_i
+        O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h
+        sb_other, tau_SIW, tau_INC, theta_UB = prop.sb_other, prop.tau_SIW, prop.tau_INC, prop.theta_UB
+        h = 1
+        for i in 1:prop.I
+            while V_i[i] > 0
+                O_h[h] = i
+                w_h[h] = w_bar_i[i]
+                V_i[i] -= 1
+                h += 1
+            end
+        end
+
+        P_bar_HH = 1.0
+        H_W = prop.H_act - prop.I - 1
+        for h in 1:H_W
+            if O_h[h] != 0
+                Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
+            else
+                Y_h[h] = (theta_UB * w_h[h] + sb_other) * P_bar_HH
+            end
+        end
+
+        w_act.D_h .= prop.D_H * Y_h #/ sum(Y_h)
+        w_act.K_h .= prop.K_H * Y_h #/ sum(Y_h)
+
+        # bank initialization which depends on firms
+        bank.Pi_k = prop.mu * sum(firms.L_i) + prop.r_bar * prop.E_k
+        bank.D_k = sum(firms.D_i) + prop.E_k - sum(firms.L_i)
+        bank.Y_h = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, bank.Pi_k) + sb_other * P_bar_HH
+        bank.D_h = prop.D_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
+        bank.K_h = prop.K_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
+
         # update model variables with global quantities (total income, total deposits) obtained from all the agents
         update_variables_with_totals!(model)
+
+        # initialize data collection
+        update_data_init!(model)
 
         return model
     end

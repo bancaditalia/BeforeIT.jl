@@ -4,7 +4,7 @@
 
 Generates n observations distributed as powerlaw
 """
-function randpl(n::Int, alpha::Float64, N::Int)
+function randpl(n::Integer, alpha::Float64, N::Integer)
     @assert alpha >= 1 "alpha must be greater than or equal to 1"
 
     exponent = (-1 / (alpha - 1))

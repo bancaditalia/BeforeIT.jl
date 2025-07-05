@@ -7,10 +7,14 @@ using DynamicSampling
 using LazyArrays
 using LinearAlgebra
 using MacroTools
+using Preferences
 using Random
 using StatsBase
 
 const Bit = BeforeIT
+
+const typeFloat = eval(Meta.parse(@load_preference("typeFloat", default="Float64")))
+const typeInt = eval(Meta.parse(@load_preference("typeInt", default="Int")))
 
 # definition of agents
 include("model_init/agents.jl")

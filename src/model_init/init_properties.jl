@@ -1,9 +1,8 @@
 
-function init_properties(parameters::Dict{String, Any}, T::Integer; typeInt::DataType = Int64, typeFloat::DataType = Float64)
+function Properties(parameters::Dict{String, Any}, initial_conditions)
     properties = Dict{Symbol, Any}()
     G = typeInt(parameters["G"])
 
-    properties[:T] = typeInt(T)
     properties[:G] = typeInt(G)
     properties[:T_prime] = typeInt(parameters["T_prime"])       # Time interval used to estimate parameters for expectations
 
@@ -57,8 +56,11 @@ function init_properties(parameters::Dict{String, Any}, T::Integer; typeInt::Dat
 
     properties[:C] = parameters["C"]
 
-    # convert to NamedTuple
-    properties = recursive_namedtuple(properties)
+    properties[:D_H] = initial_conditions["D_H"]
+    properties[:K_H] = initial_conditions["K_H"]
+    properties[:sb_other] = initial_conditions["sb_other"]
+    properties[:E_k] = initial_conditions["E_k"]
+    properties[:r_bar] = initial_conditions["r_bar"]
 
-    return properties
+    return recursive_namedtuple(properties)
 end

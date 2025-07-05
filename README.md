@@ -68,8 +68,8 @@ parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 20
-model = Bit.init_model(parameters, initial_conditions, T)
-data = Bit.run!(model)
+model = Bit.Model(parameters, initial_conditions)
+Bit.run!(model, T)
 ```
 
 This will simulate the model with the original Austrian parametrisation for 20 quarters and save the results in the `data` object.
@@ -84,7 +84,7 @@ and then try running
 ```julia
 using Plots
 
-plot(data.real_gdp)
+plot(model.data.real_gdp)
 ```
 
 In you want to run the script without opening a REPL, you can copy and paste the above lines into a file,

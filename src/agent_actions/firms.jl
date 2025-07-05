@@ -17,7 +17,6 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     return cost_push_inflation
 end
 
-
 function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
     
     # target investments in capital
@@ -74,7 +73,6 @@ employment decisions, expected profits, and desired/expected loans and capital.
 - `K_e_i`: Vector of expected capital
 - `L_e_i`: Vector of expected loans
 - `P_i`: Vector of  prices
-
 """
 function firms_expectations_and_decisions(firms, model)
     # unpack variables not related to firms
@@ -115,7 +113,6 @@ Calculate the wages set by firms.
 
 # Returns
 - `w_i`: Vector of wages
-
 """
 function firms_wages(firms::AbstractFirms)
 

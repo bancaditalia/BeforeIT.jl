@@ -8,13 +8,9 @@ dir = @__DIR__
 parameters = matread(joinpath(dir, "../data/steady_state/parameters/2010Q1.mat"))
 initial_conditions = matread(joinpath(dir, "../data/steady_state/initial_conditions/2010Q1.mat"))
 
-T = 1
-model = Bit.init_model(parameters, initial_conditions, T;)
-data = Bit.init_data(model)
-
+model = Bit.Model(parameters, initial_conditions)
 
 println(Bit.get_accounting_identity_banks(model))
-
 
 """
 Testing an entire epoch of the model
@@ -60,7 +56,6 @@ Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i = Bit.firms_e
 
 model.firms.P_i .= new_P_i
 
-
 ####### CREDIT MARKET, LABOUR MARKET AND PRODUCTION #######
 
 # firms acquire new loans in a search and match market for credit
@@ -77,11 +72,8 @@ model.firms.N_i .= temp_N_i
 model.firms.w_i .= Bit.wages_firms(model.firms, Q_s_i)
 model.firms.Y_i .= Bit.production(model.firms, Q_s_i)
 
-
 # update wages for workers
 Bit.update_workers_wages!(model.w_act, model.firms.w_i)
-
-
 
 ####### CONSUMPTION AND INVESTMENT BUDGET #######
 
@@ -148,7 +140,6 @@ Bit.cons_inv_budget_bowner!(
     pi_e,
 )
 
-
 ####### GOVERNMENT SPENDING BUDGET, IMPORT-EXPORT BUDGET #######
 
 # compute government expenditure
@@ -164,7 +155,6 @@ Bit.import_export!(
     epsilon_E,
     epsilon_I,
 )
-
 
 ####### GENERAL SEARCH AND MATCHING FOR ALL GOODS #######
 
@@ -273,7 +263,6 @@ model.firms.L_i .= (1 - prop.theta) * model.firms.L_i + DL_i
 
 model.firms.E_i .= Bit.equity_firms(model.firms, prop.products.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF)
 
-
 # update net credit/debit position of rest of the world
 model.rotw.D_RoW -= Bit.new_deposits_rotw(model.rotw, prop.tau_EXPORT)
 
@@ -285,6 +274,7 @@ model.agg.Y[prop.T_prime + t] = sum(model.firms.Y_i)
 
 Bit.finance_insolvent_firms!(model.firms, model.bank, model.agg.P_bar_CF, prop.zeta_b)
 
+data = model.data
 Bit.update_data!(data, model, prop, 1)
 
 println("Identities")
