@@ -1,6 +1,6 @@
 
 """
-    Aggregates(parameters, initial_conditions, T)
+    Aggregates(parameters, initial_conditions)
 
 Initialize aggregates for the model.
 
