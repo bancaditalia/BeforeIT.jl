@@ -4,6 +4,7 @@ import Base: length
 
 using ChunkSplitters
 using DynamicSampling
+using DualNumbers
 using LazyArrays
 using LinearAlgebra
 using MacroTools

@@ -101,7 +101,7 @@ function update_data_init!(m)
     d.wages[1] = sum(m.firms.w_bar_i .* m.firms.N_i)
     d.taxes_production[1] = sum(m.firms.tau_K_i .* m.firms.Y_i)
 
-    for g in 1:(p.G)
+    for g in 1:realpart(p.G)
         d.nominal_sector_gva[1][g] = sum(
             m.firms.Y_i[m.firms.G_i .== g] .*
             ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .- 1 ./ m.firms.beta_i[m.firms.G_i .== g]),
@@ -138,14 +138,14 @@ Bit.update_data!(data, model)
 """
 function update_data!(m)
 
-    t = m.agg.t
+    t = realpart(m.agg.t)
     d = m.data
     p = m.prop
     for f in fieldnames(typeof(d))[1:25]
         push!(getfield(d, f), 0.0)
     end
-    push!(d.nominal_sector_gva, zeros(p.G))
-    push!(d.real_sector_gva, zeros(p.G))
+    push!(d.nominal_sector_gva, zeros(realpart(p.G)))
+    push!(d.real_sector_gva, zeros(realpart(p.G)))
 
     tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
     tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
@@ -201,7 +201,7 @@ function update_data!(m)
     d.wages[t] = sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
     d.taxes_production[t] = sum(m.firms.tau_K_i .* m.firms.Y_i .* m.firms.P_i)
 
-    for g in 1:(p.G)
+    for g in 1:realpart(p.G)
         d.nominal_sector_gva[t][g] =
             sum(
                 (1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .* m.firms.P_i[m.firms.G_i .== g] .*

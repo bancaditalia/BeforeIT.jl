@@ -8,7 +8,7 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     a_sg = model.prop.products.a_sg
 
     # compute the cost-push inflation
-    term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims=1), dims=1)
+    term = dropdims(sum(a_sg[:, realpart.(firms.G_i)] .* P_bar_g, dims=1), dims=1)
     
     labour_costs = (1+tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
     material_costs = 1 ./ firms.beta_i .* (term ./ firms.P_i .- 1)
@@ -354,7 +354,7 @@ function firms_equity(firms, model)
     P_bar_CF = model.agg.P_bar_CF
 
     E_i =
-        firms.D_i + firms.M_i .* sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1)' .+ firms.P_i .* firms.S_i +
+        firms.D_i + firms.M_i .* sum(a_sg[:, realpart.(firms.G_i)] .* P_bar_g, dims = 1)' .+ firms.P_i .* firms.S_i +
         P_bar_CF * firms.K_i - firms.L_i
 
     return E_i

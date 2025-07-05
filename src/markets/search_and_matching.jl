@@ -218,7 +218,7 @@ function perform_firms_market!(
     ######## FIRMS MARKET ########
     ##############################
     
-    DM_d_ig = @view(a_sg[g, firms.G_i]) .* firms.DM_d_i + b_CF_g[g] .* firms.I_d_i
+    DM_d_ig = @view(a_sg[g, realpart.(firms.G_i)]) .* firms.DM_d_i + b_CF_g[g] .* firms.I_d_i
     DM_nominal_ig = zeros(size(DM_d_ig))
 
     # firms that have demand for good "g" participate as buyers
@@ -288,9 +288,10 @@ function perform_firms_market!(
         end
     end
 
-    a = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos.(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
+    s = @view(a_sg[g, realpart.(firms.G_i)])
+    a = @~ s .* firms.DM_d_i .- pos.(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
     b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
-    c = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
+    c = @~ s .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
 
     @~ DM_i_g[:, g] .= a
     @~ I_i_g[:, g] .= b

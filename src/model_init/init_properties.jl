@@ -1,9 +1,8 @@
 
 function Properties(parameters::Dict{String, Any}, initial_conditions)
     properties = Dict{Symbol, Any}()
-    G = typeInt(parameters["G"])
 
-    properties[:G] = typeInt(G)
+    properties[:G] = typeInt(parameters["G"])
     properties[:T_prime] = typeInt(parameters["T_prime"])       # Time interval used to estimate parameters for expectations
 
     properties[:H_act] = typeInt(parameters["H_act"])    # Number of economically active persons

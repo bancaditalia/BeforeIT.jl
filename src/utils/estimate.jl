@@ -12,7 +12,8 @@ function estimate(ydata::Union{Matrix, Vector})
     var = rfvar3(ydata, 1, ones(size(ydata, 1), 1))
     alpha = var.By[1]
     beta = var.Bx[1]
-    epsilon = rand(Normal(0, sqrt(cov(var.u))[1, 1]))
+    # TODO: understand if the real transformations for duals are okay
+    epsilon = rand(Normal(0, realpart(sqrt_cov(var.u)[1, 1])))
     return alpha, beta, epsilon
 end
 
@@ -23,7 +24,7 @@ function estimate_for_calibration_script(ydata::Union{Matrix, Vector})
     var = rfvar3(ydata, 1, ones(size(ydata, 1), 1))
     alpha = var.By[1]
     beta = var.Bx[1]
-    sigma = sqrt(cov(var.u))[1, 1]
+    sigma = sqrt_cov(var.u)[1, 1]
     epsilon = var.u
     return alpha, beta, sigma, epsilon
 end
@@ -68,3 +69,6 @@ function estimate_taylor_rule(
 
     return rho, r_star, xi_pi, xi_gamma, pi_star
 end
+
+sqrt_cov(u) = sqrt(cov(u))
+sqrt_cov(u::Union{Matrix{Dual128}, Matrix{Dual64}}) = Dual.(sqrt(cov(realpart.(u))))

@@ -15,8 +15,8 @@ function Firms(parameters, initial_conditions)
 
     # unpacking useful parameters
     I_s = Vector{typeInt}(vec(parameters["I_s"]))
-    I = typeInt(sum(parameters["I_s"])) # number of firms
-    G = typeInt(parameters["G"])
+    I = Int(sum(parameters["I_s"])) # number of firms
+    G = Int(parameters["G"])
     tau_SIF = parameters["tau_SIF"]
     mu = parameters["mu"]
     theta_DIV = parameters["theta_DIV"]
@@ -46,13 +46,13 @@ function Firms(parameters, initial_conditions)
 
     G_i = zeros(typeInt, I)
     for g in 1:G
-        i = typeInt(sum(parameters["I_s"][1:(g - 1)]))
-        j = typeInt(parameters["I_s"][g])
+        i = Int(sum(parameters["I_s"][1:(g - 1)]))
+        j = Int(parameters["I_s"][g])
         G_i[(i + 1):(i + j)] .= typeInt(g)
     end
 
     for i in 1:I
-        g = typeInt(G_i[i])
+        g = realpart(G_i[i])
         alpha_bar_i[i] = parameters["alpha_s"][g]
         beta_i[i] = parameters["beta_s"][g]
         kappa_i[i] = parameters["kappa_s"][g]
@@ -62,10 +62,9 @@ function Firms(parameters, initial_conditions)
         tau_K_i[i] = parameters["tau_K_s"][g]
     end
 
-
     N_i = zeros(typeInt, I)
     for g in 1:G
-        N_i[G_i .== g] .= randpl(I_s[g], 2.0, N_s[g])
+        N_i[G_i .== g] .= randpl(realpart(I_s[g]), 2.0, N_s[g])
     end
 
     Y_i = alpha_bar_i .* N_i
@@ -90,7 +89,6 @@ function Firms(parameters, initial_conditions)
     end
 
     # firms
-    ids = Vector{typeInt}(1:I)
     w_i = zeros(typeFloat, I) # initial wages, dummy variable for now, really initialised at runtime
     I_i = zeros(typeFloat, I) # initial investments, dummy variable for now, set at runtime
     Q_i = zeros(typeFloat, I) # goods sold, dummy variable for now, set at runtime
@@ -98,12 +96,12 @@ function Firms(parameters, initial_conditions)
     C_d_h = zeros(typeFloat, I)
     I_d_h = zeros(typeFloat, I)
 
-    C_h = zeros(typeFloat, length(ids))
-    I_h = zeros(typeFloat, length(ids))
-    P_bar_i = zeros(typeFloat, length(ids))
-    P_CF_i = zeros(typeFloat, length(ids))
-    DS_i = zeros(typeFloat, length(ids))
-    DM_i = zeros(typeFloat, length(ids))
+    C_h = zeros(typeFloat, I)
+    I_h = zeros(typeFloat, I)
+    P_bar_i = zeros(typeFloat, I)
+    P_CF_i = zeros(typeFloat, I)
+    DS_i = zeros(typeFloat, I)
+    DM_i = zeros(typeFloat, I)
 
     K_h = K_H * Y_h # TODO: K_h[(H_W + H_inact + 1):(H_W + H_inact + I)]
     D_h = D_H * Y_h # TODO: D_h[(H_W + H_inact + 1):(H_W + H_inact + I)]

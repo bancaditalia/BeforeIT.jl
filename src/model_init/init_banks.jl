@@ -55,7 +55,7 @@ Initialize the central bank with the given parameters and initial conditions.
 # Returns
 - central_bank::CentralBank: The initialized central bank.
 """
-function CentralBank(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+function CentralBank(parameters, initial_conditions)
     r_bar = initial_conditions["r_bar"]
     r_G = parameters["r_G"]
     rho = parameters["rho"]

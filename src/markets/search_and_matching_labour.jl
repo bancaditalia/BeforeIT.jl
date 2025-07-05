@@ -34,7 +34,7 @@ function search_and_matching_labour(firms::AbstractFirms, model::AbstractModel)
     for h in H_E
 
         # find employer of worker
-        i = O_h[h]
+        i = realpart(O_h[h])
 
         # if employer has negative vacancies, fire the worker
         if V_i[i] < 0

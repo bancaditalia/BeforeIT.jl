@@ -4,7 +4,7 @@ function update_workers_wages!(w_act, w_i)
     T = eltype(w_act.O_h)
     for (i, h) in enumerate(w_act.O_h)
         if h != zero(T)
-            w_act.w_h[i] = w_i[h]
+            w_act.w_h[i] = w_i[realpart(h)]
         end
     end
 end

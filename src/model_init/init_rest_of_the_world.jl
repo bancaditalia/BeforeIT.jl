@@ -12,8 +12,8 @@ Initialize the rest of the world (rotw) agent.
 - rotw::RestOfTheWorld: The initialized rest of the world agent.
 """
 function RestOfTheWorld(parameters, initial_conditions)
-    L = typeInt(parameters["L"])
-    G = typeInt(parameters["G"])
+    L = Int(parameters["L"])
+    G = Int(parameters["G"])
     alpha_E = parameters["alpha_E"]
     beta_E = parameters["beta_E"]
     sigma_E = parameters["sigma_E"]
@@ -27,7 +27,7 @@ function RestOfTheWorld(parameters, initial_conditions)
     alpha_Y_EA = parameters["alpha_Y_EA"]
     beta_Y_EA = parameters["beta_Y_EA"]
     sigma_Y_EA = parameters["sigma_Y_EA"]
-    T_prime = typeInt(parameters["T_prime"])
+    T_prime = Int(parameters["T_prime"])
 
     Y_EA = initial_conditions["Y_EA"]
     gamma_EA = typeFloat(0.0)
