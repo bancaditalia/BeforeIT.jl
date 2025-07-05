@@ -13,8 +13,8 @@ using StatsBase
 
 const Bit = BeforeIT
 
-const typeFloat = Float64
-const typeInt = Int
+const typeFloat = eval(Symbol(@load_preference("typeFloat", default="Float64")))
+const typeInt = eval(Symbol(@load_preference("typeInt", default="Int")))
 
 # definition of agents
 include("model_init/agents.jl")

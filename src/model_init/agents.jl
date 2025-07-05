@@ -27,16 +27,16 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `C_h`: Realised consumption
 - `I_h`: Realised investment
 """
-Bit.@object struct Workers{T<:AbstractFloat,I<:Integer}(Object) <: AbstractWorkers
-    Y_h::Vector{T}
-    D_h::Vector{T}
-    K_h::Vector{T}
-    w_h::Vector{T}
-    O_h::Vector{I}
-    C_d_h::Vector{T}
-    I_d_h::Vector{T}
-    C_h::Vector{T}
-    I_h::Vector{T}
+Bit.@object struct Workers(Object) <: AbstractWorkers
+    Y_h::Vector{typeFloat}
+    D_h::Vector{typeFloat}
+    K_h::Vector{typeFloat}
+    w_h::Vector{typeFloat}
+    O_h::Vector{typeInt}
+    C_d_h::Vector{typeFloat}
+    I_d_h::Vector{typeFloat}
+    C_h::Vector{typeFloat}
+    I_h::Vector{typeFloat}
 end
 
 """
@@ -92,52 +92,52 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-Bit.@object struct Firms{T<:AbstractFloat,I<:Integer}(Object) <: AbstractFirms
-    G_i::Vector{I}
-    alpha_bar_i::Vector{T}
-    beta_i::Vector{T}
-    kappa_i::Vector{T}
-    w_i::Vector{T}
-    w_bar_i::Vector{T}
-    delta_i::Vector{T}
-    tau_Y_i::Vector{T}
-    tau_K_i::Vector{T}
-    N_i::Vector{I}
-    Y_i::Vector{T}
-    Q_i::Vector{T}
-    Q_d_i::Vector{T}
-    P_i::Vector{T}
-    S_i::Vector{T}
-    K_i::Vector{T}
-    M_i::Vector{T}
-    L_i::Vector{T}
-    pi_bar_i::Vector{T}
-    D_i::Vector{T}
-    Pi_i::Vector{T}
-    V_i::Vector{I}
-    I_i::Vector{T}
-    E_i::Vector{T}
-    P_bar_i::Vector{T}
-    P_CF_i::Vector{T}
-    DS_i::Vector{T}
-    DM_i::Vector{T}
-    DL_i::Vector{T}
-    DL_d_i::Vector{T}
-    K_e_i::Vector{T}
-    L_e_i::Vector{T}
-    Q_s_i::Vector{T}
-    I_d_i::Vector{T}
-    DM_d_i::Vector{T}
-    N_d_i::Vector{I}
-    Pi_e_i::Vector{T}
+Bit.@object struct Firms(Object) <: AbstractFirms
+    G_i::Vector{typeInt}
+    alpha_bar_i::Vector{typeFloat}
+    beta_i::Vector{typeFloat}
+    kappa_i::Vector{typeFloat}
+    w_i::Vector{typeFloat}
+    w_bar_i::Vector{typeFloat}
+    delta_i::Vector{typeFloat}
+    tau_Y_i::Vector{typeFloat}
+    tau_K_i::Vector{typeFloat}
+    N_i::Vector{typeInt}
+    Y_i::Vector{typeFloat}
+    Q_i::Vector{typeFloat}
+    Q_d_i::Vector{typeFloat}
+    P_i::Vector{typeFloat}
+    S_i::Vector{typeFloat}
+    K_i::Vector{typeFloat}
+    M_i::Vector{typeFloat}
+    L_i::Vector{typeFloat}
+    pi_bar_i::Vector{typeFloat}
+    D_i::Vector{typeFloat}
+    Pi_i::Vector{typeFloat}
+    V_i::Vector{typeInt}
+    I_i::Vector{typeFloat}
+    E_i::Vector{typeFloat}
+    P_bar_i::Vector{typeFloat}
+    P_CF_i::Vector{typeFloat}
+    DS_i::Vector{typeFloat}
+    DM_i::Vector{typeFloat}
+    DL_i::Vector{typeFloat}
+    DL_d_i::Vector{typeFloat}
+    K_e_i::Vector{typeFloat}
+    L_e_i::Vector{typeFloat}
+    Q_s_i::Vector{typeFloat}
+    I_d_i::Vector{typeFloat}
+    DM_d_i::Vector{typeFloat}
+    N_d_i::Vector{typeInt}
+    Pi_e_i::Vector{typeFloat}
     ### Household fields (firms' owners)
-    Y_h::Vector{T}
-    C_d_h::Vector{T}
-    I_d_h::Vector{T}
-    C_h::Vector{T}
-    I_h::Vector{T}
-    K_h::Vector{T}
-    D_h::Vector{T}
+    Y_h::Vector{typeFloat}
+    C_d_h::Vector{typeFloat}
+    I_d_h::Vector{typeFloat}
+    C_h::Vector{typeFloat}
+    I_h::Vector{typeFloat}
+    K_h::Vector{typeFloat}
+    D_h::Vector{typeFloat}
 end
 
 """
@@ -158,19 +158,19 @@ This is a Bank type. It represents the bank of the model.
 - `K_h`: Capital stock
 - `D_h`: Deposits
 """
-Bit.@object mutable struct Bank{T<:AbstractFloat}(Object) <: AbstractBank
-    E_k::T
-    Pi_k::T
-    Pi_e_k::T
-    D_k::T
-    r::T
-    Y_h::T
-    C_d_h::T
-    I_d_h::T
-    C_h::T
-    I_h::T
-    K_h::T
-    D_h::T
+Bit.@object mutable struct Bank(Object) <: AbstractBank
+    E_k::typeFloat
+    Pi_k::typeFloat
+    Pi_e_k::typeFloat
+    D_k::typeFloat
+    r::typeFloat
+    Y_h::typeFloat
+    C_d_h::typeFloat
+    I_d_h::typeFloat
+    C_h::typeFloat
+    I_h::typeFloat
+    K_h::typeFloat
+    D_h::typeFloat
 end
 
 """
@@ -186,15 +186,15 @@ This is a CentralBank type. It represents the central bank of the model.
 - `xi_gamma`: Weight placed on economic
 - `E_CB`: Central bank equity
 """
-Bit.@object mutable struct CentralBank{T<:AbstractFloat}(Object) <: AbstractCentralBank
-    r_bar::T
-    r_G::T
-    rho::T
-    r_star::T
-    pi_star::T
-    xi_pi::T
-    xi_gamma::T
-    E_CB::T
+Bit.@object mutable struct CentralBank(Object) <: AbstractCentralBank
+    r_bar::typeFloat
+    r_G::typeFloat
+    rho::typeFloat
+    r_star::typeFloat
+    pi_star::typeFloat
+    xi_pi::typeFloat
+    xi_gamma::typeFloat
+    E_CB::typeFloat
 end
 
 """
@@ -213,18 +213,18 @@ This is a Government type. It represents the government of the model.
 - `C_j`: Realised government consumption
 - `P_j`: Price inflation of government goods <- ??
 """
-Bit.@object mutable struct Government{T<:AbstractFloat}(Object) <: AbstractGovernment
-    alpha_G::T
-    beta_G::T
-    sigma_G::T
-    Y_G::T
-    C_G::T
-    L_G::T
-    sb_inact::T
-    sb_other::T
-    C_d_j::Vector{T}
-    C_j::T
-    P_j::T
+Bit.@object mutable struct Government(Object) <: AbstractGovernment
+    alpha_G::typeFloat
+    beta_G::typeFloat
+    sigma_G::typeFloat
+    Y_G::typeFloat
+    C_G::typeFloat
+    L_G::typeFloat
+    sb_inact::typeFloat
+    sb_other::typeFloat
+    C_d_j::Vector{typeFloat}
+    C_j::typeFloat
+    P_j::typeFloat
 end
 
 """
@@ -257,32 +257,32 @@ This is a RestOfTheWorld type. It represents the rest of the world of the model.
 - `P_m [vector]`: Price of imports per sector
 - `P_l`: Price inflation of exports <- ??
 """
-Bit.@object mutable struct RestOfTheWorld{T<:AbstractFloat}(Object) <: AbstractRestOfTheWorld
-    alpha_E::T
-    beta_E::T
-    sigma_E::T
-    alpha_I::T
-    beta_I::T
-    sigma_I::T
-    Y_EA::T
-    gamma_EA::T
-    pi_EA::T
-    alpha_pi_EA::T
-    beta_pi_EA::T
-    sigma_pi_EA::T
-    alpha_Y_EA::T
-    beta_Y_EA::T
-    sigma_Y_EA::T
-    D_RoW::T
-    Y_I::T
-    C_E::T
-    C_d_l::Vector{T}
-    C_l::T
-    Y_m::Vector{T}
-    Q_m::Vector{T}
-    Q_d_m::Vector{T}
-    P_m::Vector{T}
-    P_l::T
+Bit.@object mutable struct RestOfTheWorld(Object) <: AbstractRestOfTheWorld
+    alpha_E::typeFloat
+    beta_E::typeFloat
+    sigma_E::typeFloat
+    alpha_I::typeFloat
+    beta_I::typeFloat
+    sigma_I::typeFloat
+    Y_EA::typeFloat
+    gamma_EA::typeFloat
+    pi_EA::typeFloat
+    alpha_pi_EA::typeFloat
+    beta_pi_EA::typeFloat
+    sigma_pi_EA::typeFloat
+    alpha_Y_EA::typeFloat
+    beta_Y_EA::typeFloat
+    sigma_Y_EA::typeFloat
+    D_RoW::typeFloat
+    Y_I::typeFloat
+    C_E::typeFloat
+    C_d_l::Vector{typeFloat}
+    C_l::typeFloat
+    Y_m::Vector{typeFloat}
+    Q_m::Vector{typeFloat}
+    Q_d_m::Vector{typeFloat}
+    P_m::Vector{typeFloat}
+    P_l::typeFloat
 end
 
 """
@@ -303,22 +303,22 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `pi_e`: Expected inflation
 - `t`: Time index
 """
-Bit.@object mutable struct Aggregates{T<:AbstractFloat,I<:Integer}(Object) <: AbstractAggregates
-    Y::Vector{T}
-    pi_::Vector{T}
-    P_bar::T
-    P_bar_g::Vector{T}
-    P_bar_HH::T
-    P_bar_CF::T
-    P_bar_h::T
-    P_bar_CF_h::T
-    Y_e::T
-    gamma_e::T
-    pi_e::T
-    epsilon_Y_EA::T
-    epsilon_E::T
-    epsilon_I::T
-    t::I
+Bit.@object mutable struct Aggregates(Object) <: AbstractAggregates
+    Y::Vector{typeFloat}
+    pi_::Vector{typeFloat}
+    P_bar::typeFloat
+    P_bar_g::Vector{typeFloat}
+    P_bar_HH::typeFloat
+    P_bar_CF::typeFloat
+    P_bar_h::typeFloat
+    P_bar_CF_h::typeFloat
+    Y_e::typeFloat
+    gamma_e::typeFloat
+    pi_e::typeFloat
+    epsilon_Y_EA::typeFloat
+    epsilon_E::typeFloat
+    epsilon_I::typeFloat
+    t::typeInt
 end
 
 """

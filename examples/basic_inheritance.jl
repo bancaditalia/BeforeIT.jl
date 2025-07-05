@@ -3,7 +3,7 @@ import BeforeIT as Bit
 using Plots
 
 # define a new central bank object with one extra attribute
-Bit.@object mutable struct NewCentralBank(Bit.CentralBank{Float64}) <: Bit.AbstractCentralBank
+Bit.@object mutable struct NewCentralBank(Bit.CentralBank) <: Bit.AbstractCentralBank
     fixed_rate::Float64
 end
 

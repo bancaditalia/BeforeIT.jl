@@ -29,17 +29,17 @@ r_bar_series = vec(vcat(ic["r_bar_series"], zeros(Float64, T)))
 
 # define a new central bank for the CANVAS model
 abstract type AbstractCentralBankCANVAS <: Bit.AbstractCentralBank end
-Bit.@object mutable struct CentralBankCANVAS(Bit.CentralBank{Float64}) <: AbstractCentralBankCANVAS
+Bit.@object mutable struct CentralBankCANVAS(Bit.CentralBank) <: AbstractCentralBankCANVAS
     r_bar_series::Vector{Float64}
 end
 
 # define new firms for the CANVAS model
 abstract type AbstractFirmsCANVAS <: Bit.AbstractFirms end
-Bit.@object struct FirmsCANVAS(Firms{Float64,Int}) <: AbstractFirmsCANVAS end
+Bit.@object struct FirmsCANVAS(Firms) <: AbstractFirmsCANVAS end
 
 # define a new rest of the world for the CANVAS model
 abstract type AbstractRestOfTheWorldCANVAS <: Bit.AbstractRestOfTheWorld end
-Bit.@object mutable struct RestOfTheWorldCANVAS(Bit.RestOfTheWorld{Float64}) <: AbstractRestOfTheWorldCANVAS
+Bit.@object mutable struct RestOfTheWorldCANVAS(Bit.RestOfTheWorld) <: AbstractRestOfTheWorldCANVAS
     Y_EA_series::Vector{Float64}
     pi_EA_series::Vector{Float64}
 end

@@ -2,34 +2,34 @@
 abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
-Bit.@object struct Data{T<:AbstractFloat}(Object) <: AbstractData
-    nominal_gdp::Vector{T}
-    real_gdp::Vector{T}
-    nominal_gva::Vector{T}
-    real_gva::Vector{T}
-    nominal_household_consumption::Vector{T}
-    real_household_consumption::Vector{T}
-    nominal_government_consumption::Vector{T}
-    real_government_consumption::Vector{T}
-    nominal_capitalformation::Vector{T}
-    real_capitalformation::Vector{T}
-    nominal_fixed_capitalformation::Vector{T}
-    real_fixed_capitalformation::Vector{T}
-    nominal_fixed_capitalformation_dwellings::Vector{T}
-    real_fixed_capitalformation_dwellings::Vector{T}
-    nominal_exports::Vector{T}
-    real_exports::Vector{T}
-    nominal_imports::Vector{T}
-    real_imports::Vector{T}
-    operating_surplus::Vector{T}
-    compensation_employees::Vector{T}
-    wages::Vector{T}
-    taxes_production::Vector{T}
-    gdp_deflator_growth_ea::Vector{T}
-    real_gdp_ea::Vector{T}
-    euribor::Vector{T}
-    nominal_sector_gva::Vector{Vector{T}}
-    real_sector_gva::Vector{Vector{T}}
+Bit.@object struct Data(Object) <: AbstractData
+    nominal_gdp::Vector{typeFloat}
+    real_gdp::Vector{typeFloat}
+    nominal_gva::Vector{typeFloat}
+    real_gva::Vector{typeFloat}
+    nominal_household_consumption::Vector{typeFloat}
+    real_household_consumption::Vector{typeFloat}
+    nominal_government_consumption::Vector{typeFloat}
+    real_government_consumption::Vector{typeFloat}
+    nominal_capitalformation::Vector{typeFloat}
+    real_capitalformation::Vector{typeFloat}
+    nominal_fixed_capitalformation::Vector{typeFloat}
+    real_fixed_capitalformation::Vector{typeFloat}
+    nominal_fixed_capitalformation_dwellings::Vector{typeFloat}
+    real_fixed_capitalformation_dwellings::Vector{typeFloat}
+    nominal_exports::Vector{typeFloat}
+    real_exports::Vector{typeFloat}
+    nominal_imports::Vector{typeFloat}
+    real_imports::Vector{typeFloat}
+    operating_surplus::Vector{typeFloat}
+    compensation_employees::Vector{typeFloat}
+    wages::Vector{typeFloat}
+    taxes_production::Vector{typeFloat}
+    gdp_deflator_growth_ea::Vector{typeFloat}
+    real_gdp_ea::Vector{typeFloat}
+    euribor::Vector{typeFloat}
+    nominal_sector_gva::Vector{Vector{typeFloat}}
+    real_sector_gva::Vector{Vector{typeFloat}}
 end
 
 # Define the DataVector struct
