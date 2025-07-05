@@ -3,33 +3,33 @@ abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
 Bit.@object struct Data(Object) <: AbstractData
-    nominal_gdp::Vector{typeFloat}
-    real_gdp::Vector{typeFloat}
-    nominal_gva::Vector{typeFloat}
-    real_gva::Vector{typeFloat}
-    nominal_household_consumption::Vector{typeFloat}
-    real_household_consumption::Vector{typeFloat}
-    nominal_government_consumption::Vector{typeFloat}
-    real_government_consumption::Vector{typeFloat}
-    nominal_capitalformation::Vector{typeFloat}
-    real_capitalformation::Vector{typeFloat}
-    nominal_fixed_capitalformation::Vector{typeFloat}
-    real_fixed_capitalformation::Vector{typeFloat}
-    nominal_fixed_capitalformation_dwellings::Vector{typeFloat}
-    real_fixed_capitalformation_dwellings::Vector{typeFloat}
-    nominal_exports::Vector{typeFloat}
-    real_exports::Vector{typeFloat}
-    nominal_imports::Vector{typeFloat}
-    real_imports::Vector{typeFloat}
-    operating_surplus::Vector{typeFloat}
-    compensation_employees::Vector{typeFloat}
-    wages::Vector{typeFloat}
-    taxes_production::Vector{typeFloat}
-    gdp_deflator_growth_ea::Vector{typeFloat}
-    real_gdp_ea::Vector{typeFloat}
-    euribor::Vector{typeFloat}
-    nominal_sector_gva::Vector{Vector{typeFloat}}
-    real_sector_gva::Vector{Vector{typeFloat}}
+    nominal_gdp::Vector{Bit.typeFloat}
+    real_gdp::Vector{Bit.typeFloat}
+    nominal_gva::Vector{Bit.typeFloat}
+    real_gva::Vector{Bit.typeFloat}
+    nominal_household_consumption::Vector{Bit.typeFloat}
+    real_household_consumption::Vector{Bit.typeFloat}
+    nominal_government_consumption::Vector{Bit.typeFloat}
+    real_government_consumption::Vector{Bit.typeFloat}
+    nominal_capitalformation::Vector{Bit.typeFloat}
+    real_capitalformation::Vector{Bit.typeFloat}
+    nominal_fixed_capitalformation::Vector{Bit.typeFloat}
+    real_fixed_capitalformation::Vector{Bit.typeFloat}
+    nominal_fixed_capitalformation_dwellings::Vector{Bit.typeFloat}
+    real_fixed_capitalformation_dwellings::Vector{Bit.typeFloat}
+    nominal_exports::Vector{Bit.typeFloat}
+    real_exports::Vector{Bit.typeFloat}
+    nominal_imports::Vector{Bit.typeFloat}
+    real_imports::Vector{Bit.typeFloat}
+    operating_surplus::Vector{Bit.typeFloat}
+    compensation_employees::Vector{Bit.typeFloat}
+    wages::Vector{Bit.typeFloat}
+    taxes_production::Vector{Bit.typeFloat}
+    gdp_deflator_growth_ea::Vector{Bit.typeFloat}
+    real_gdp_ea::Vector{Bit.typeFloat}
+    euribor::Vector{Bit.typeFloat}
+    nominal_sector_gva::Vector{Vector{Bit.typeFloat}}
+    real_sector_gva::Vector{Vector{Bit.typeFloat}}
 end
 
 # Define the DataVector struct

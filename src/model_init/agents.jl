@@ -28,15 +28,15 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `I_h`: Realised investment
 """
 Bit.@object struct Workers(Object) <: AbstractWorkers
-    Y_h::Vector{typeFloat}
-    D_h::Vector{typeFloat}
-    K_h::Vector{typeFloat}
-    w_h::Vector{typeFloat}
-    O_h::Vector{typeInt}
-    C_d_h::Vector{typeFloat}
-    I_d_h::Vector{typeFloat}
-    C_h::Vector{typeFloat}
-    I_h::Vector{typeFloat}
+    Y_h::Vector{Bit.typeFloat}
+    D_h::Vector{Bit.typeFloat}
+    K_h::Vector{Bit.typeFloat}
+    w_h::Vector{Bit.typeFloat}
+    O_h::Vector{Bit.typeInt}
+    C_d_h::Vector{Bit.typeFloat}
+    I_d_h::Vector{Bit.typeFloat}
+    C_h::Vector{Bit.typeFloat}
+    I_h::Vector{Bit.typeFloat}
 end
 
 """
@@ -93,51 +93,51 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `D_h`: Deposits of the owner of the firms
 """
 Bit.@object struct Firms(Object) <: AbstractFirms
-    G_i::Vector{typeInt}
-    alpha_bar_i::Vector{typeFloat}
-    beta_i::Vector{typeFloat}
-    kappa_i::Vector{typeFloat}
-    w_i::Vector{typeFloat}
-    w_bar_i::Vector{typeFloat}
-    delta_i::Vector{typeFloat}
-    tau_Y_i::Vector{typeFloat}
-    tau_K_i::Vector{typeFloat}
-    N_i::Vector{typeInt}
-    Y_i::Vector{typeFloat}
-    Q_i::Vector{typeFloat}
-    Q_d_i::Vector{typeFloat}
-    P_i::Vector{typeFloat}
-    S_i::Vector{typeFloat}
-    K_i::Vector{typeFloat}
-    M_i::Vector{typeFloat}
-    L_i::Vector{typeFloat}
-    pi_bar_i::Vector{typeFloat}
-    D_i::Vector{typeFloat}
-    Pi_i::Vector{typeFloat}
-    V_i::Vector{typeInt}
-    I_i::Vector{typeFloat}
-    E_i::Vector{typeFloat}
-    P_bar_i::Vector{typeFloat}
-    P_CF_i::Vector{typeFloat}
-    DS_i::Vector{typeFloat}
-    DM_i::Vector{typeFloat}
-    DL_i::Vector{typeFloat}
-    DL_d_i::Vector{typeFloat}
-    K_e_i::Vector{typeFloat}
-    L_e_i::Vector{typeFloat}
-    Q_s_i::Vector{typeFloat}
-    I_d_i::Vector{typeFloat}
-    DM_d_i::Vector{typeFloat}
-    N_d_i::Vector{typeInt}
-    Pi_e_i::Vector{typeFloat}
+    G_i::Vector{Bit.typeInt}
+    alpha_bar_i::Vector{Bit.typeFloat}
+    beta_i::Vector{Bit.typeFloat}
+    kappa_i::Vector{Bit.typeFloat}
+    w_i::Vector{Bit.typeFloat}
+    w_bar_i::Vector{Bit.typeFloat}
+    delta_i::Vector{Bit.typeFloat}
+    tau_Y_i::Vector{Bit.typeFloat}
+    tau_K_i::Vector{Bit.typeFloat}
+    N_i::Vector{Bit.typeInt}
+    Y_i::Vector{Bit.typeFloat}
+    Q_i::Vector{Bit.typeFloat}
+    Q_d_i::Vector{Bit.typeFloat}
+    P_i::Vector{Bit.typeFloat}
+    S_i::Vector{Bit.typeFloat}
+    K_i::Vector{Bit.typeFloat}
+    M_i::Vector{Bit.typeFloat}
+    L_i::Vector{Bit.typeFloat}
+    pi_bar_i::Vector{Bit.typeFloat}
+    D_i::Vector{Bit.typeFloat}
+    Pi_i::Vector{Bit.typeFloat}
+    V_i::Vector{Bit.typeInt}
+    I_i::Vector{Bit.typeFloat}
+    E_i::Vector{Bit.typeFloat}
+    P_bar_i::Vector{Bit.typeFloat}
+    P_CF_i::Vector{Bit.typeFloat}
+    DS_i::Vector{Bit.typeFloat}
+    DM_i::Vector{Bit.typeFloat}
+    DL_i::Vector{Bit.typeFloat}
+    DL_d_i::Vector{Bit.typeFloat}
+    K_e_i::Vector{Bit.typeFloat}
+    L_e_i::Vector{Bit.typeFloat}
+    Q_s_i::Vector{Bit.typeFloat}
+    I_d_i::Vector{Bit.typeFloat}
+    DM_d_i::Vector{Bit.typeFloat}
+    N_d_i::Vector{Bit.typeInt}
+    Pi_e_i::Vector{Bit.typeFloat}
     ### Household fields (firms' owners)
-    Y_h::Vector{typeFloat}
-    C_d_h::Vector{typeFloat}
-    I_d_h::Vector{typeFloat}
-    C_h::Vector{typeFloat}
-    I_h::Vector{typeFloat}
-    K_h::Vector{typeFloat}
-    D_h::Vector{typeFloat}
+    Y_h::Vector{Bit.typeFloat}
+    C_d_h::Vector{Bit.typeFloat}
+    I_d_h::Vector{Bit.typeFloat}
+    C_h::Vector{Bit.typeFloat}
+    I_h::Vector{Bit.typeFloat}
+    K_h::Vector{Bit.typeFloat}
+    D_h::Vector{Bit.typeFloat}
 end
 
 """
@@ -159,18 +159,18 @@ This is a Bank type. It represents the bank of the model.
 - `D_h`: Deposits
 """
 Bit.@object mutable struct Bank(Object) <: AbstractBank
-    E_k::typeFloat
-    Pi_k::typeFloat
-    Pi_e_k::typeFloat
-    D_k::typeFloat
-    r::typeFloat
-    Y_h::typeFloat
-    C_d_h::typeFloat
-    I_d_h::typeFloat
-    C_h::typeFloat
-    I_h::typeFloat
-    K_h::typeFloat
-    D_h::typeFloat
+    E_k::Bit.typeFloat
+    Pi_k::Bit.typeFloat
+    Pi_e_k::Bit.typeFloat
+    D_k::Bit.typeFloat
+    r::Bit.typeFloat
+    Y_h::Bit.typeFloat
+    C_d_h::Bit.typeFloat
+    I_d_h::Bit.typeFloat
+    C_h::Bit.typeFloat
+    I_h::Bit.typeFloat
+    K_h::Bit.typeFloat
+    D_h::Bit.typeFloat
 end
 
 """
@@ -187,14 +187,14 @@ This is a CentralBank type. It represents the central bank of the model.
 - `E_CB`: Central bank equity
 """
 Bit.@object mutable struct CentralBank(Object) <: AbstractCentralBank
-    r_bar::typeFloat
-    r_G::typeFloat
-    rho::typeFloat
-    r_star::typeFloat
-    pi_star::typeFloat
-    xi_pi::typeFloat
-    xi_gamma::typeFloat
-    E_CB::typeFloat
+    r_bar::Bit.typeFloat
+    r_G::Bit.typeFloat
+    rho::Bit.typeFloat
+    r_star::Bit.typeFloat
+    pi_star::Bit.typeFloat
+    xi_pi::Bit.typeFloat
+    xi_gamma::Bit.typeFloat
+    E_CB::Bit.typeFloat
 end
 
 """
@@ -214,17 +214,17 @@ This is a Government type. It represents the government of the model.
 - `P_j`: Price inflation of government goods <- ??
 """
 Bit.@object mutable struct Government(Object) <: AbstractGovernment
-    alpha_G::typeFloat
-    beta_G::typeFloat
-    sigma_G::typeFloat
-    Y_G::typeFloat
-    C_G::typeFloat
-    L_G::typeFloat
-    sb_inact::typeFloat
-    sb_other::typeFloat
-    C_d_j::Vector{typeFloat}
-    C_j::typeFloat
-    P_j::typeFloat
+    alpha_G::Bit.typeFloat
+    beta_G::Bit.typeFloat
+    sigma_G::Bit.typeFloat
+    Y_G::Bit.typeFloat
+    C_G::Bit.typeFloat
+    L_G::Bit.typeFloat
+    sb_inact::Bit.typeFloat
+    sb_other::Bit.typeFloat
+    C_d_j::Vector{Bit.typeFloat}
+    C_j::Bit.typeFloat
+    P_j::Bit.typeFloat
 end
 
 """
@@ -258,31 +258,31 @@ This is a RestOfTheWorld type. It represents the rest of the world of the model.
 - `P_l`: Price inflation of exports <- ??
 """
 Bit.@object mutable struct RestOfTheWorld(Object) <: AbstractRestOfTheWorld
-    alpha_E::typeFloat
-    beta_E::typeFloat
-    sigma_E::typeFloat
-    alpha_I::typeFloat
-    beta_I::typeFloat
-    sigma_I::typeFloat
-    Y_EA::typeFloat
-    gamma_EA::typeFloat
-    pi_EA::typeFloat
-    alpha_pi_EA::typeFloat
-    beta_pi_EA::typeFloat
-    sigma_pi_EA::typeFloat
-    alpha_Y_EA::typeFloat
-    beta_Y_EA::typeFloat
-    sigma_Y_EA::typeFloat
-    D_RoW::typeFloat
-    Y_I::typeFloat
-    C_E::typeFloat
-    C_d_l::Vector{typeFloat}
-    C_l::typeFloat
-    Y_m::Vector{typeFloat}
-    Q_m::Vector{typeFloat}
-    Q_d_m::Vector{typeFloat}
-    P_m::Vector{typeFloat}
-    P_l::typeFloat
+    alpha_E::Bit.typeFloat
+    beta_E::Bit.typeFloat
+    sigma_E::Bit.typeFloat
+    alpha_I::Bit.typeFloat
+    beta_I::Bit.typeFloat
+    sigma_I::Bit.typeFloat
+    Y_EA::Bit.typeFloat
+    gamma_EA::Bit.typeFloat
+    pi_EA::Bit.typeFloat
+    alpha_pi_EA::Bit.typeFloat
+    beta_pi_EA::Bit.typeFloat
+    sigma_pi_EA::Bit.typeFloat
+    alpha_Y_EA::Bit.typeFloat
+    beta_Y_EA::Bit.typeFloat
+    sigma_Y_EA::Bit.typeFloat
+    D_RoW::Bit.typeFloat
+    Y_I::Bit.typeFloat
+    C_E::Bit.typeFloat
+    C_d_l::Vector{Bit.typeFloat}
+    C_l::Bit.typeFloat
+    Y_m::Vector{Bit.typeFloat}
+    Q_m::Vector{Bit.typeFloat}
+    Q_d_m::Vector{Bit.typeFloat}
+    P_m::Vector{Bit.typeFloat}
+    P_l::Bit.typeFloat
 end
 
 """
@@ -304,21 +304,21 @@ Note that `t` is an integer, while the rest are floats or vectors of floats.
 - `t`: Time index
 """
 Bit.@object mutable struct Aggregates(Object) <: AbstractAggregates
-    Y::Vector{typeFloat}
-    pi_::Vector{typeFloat}
-    P_bar::typeFloat
-    P_bar_g::Vector{typeFloat}
-    P_bar_HH::typeFloat
-    P_bar_CF::typeFloat
-    P_bar_h::typeFloat
-    P_bar_CF_h::typeFloat
-    Y_e::typeFloat
-    gamma_e::typeFloat
-    pi_e::typeFloat
-    epsilon_Y_EA::typeFloat
-    epsilon_E::typeFloat
-    epsilon_I::typeFloat
-    t::typeInt
+    Y::Vector{Bit.typeFloat}
+    pi_::Vector{Bit.typeFloat}
+    P_bar::Bit.typeFloat
+    P_bar_g::Vector{Bit.typeFloat}
+    P_bar_HH::Bit.typeFloat
+    P_bar_CF::Bit.typeFloat
+    P_bar_h::Bit.typeFloat
+    P_bar_CF_h::Bit.typeFloat
+    Y_e::Bit.typeFloat
+    gamma_e::Bit.typeFloat
+    pi_e::Bit.typeFloat
+    epsilon_Y_EA::Bit.typeFloat
+    epsilon_E::Bit.typeFloat
+    epsilon_I::Bit.typeFloat
+    t::Bit.typeInt
 end
 
 """
