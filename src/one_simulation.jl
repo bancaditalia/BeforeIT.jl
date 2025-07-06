@@ -13,12 +13,15 @@ The simulation runs for a number of epochs specified by `model.prop.T`.
 - `model::AbstractModel`: The model updated during the simulation.
 
 # Details
-The function initializes the data using `Bit.Data(model)`, then iteratively updates the model and data
-for each epoch using `Bit.step!(model)` and `Bit.update_data!(data, model)` respectively.
+The function iteratively updates the model and data for each epoch using `Bit.step!(model)`
+and `Bit.update_data!(model)` respectively.
 
 # Example
 ```julia
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 model = Bit.Model(parameters, initial_conditions)
+run!(model, 2)
 ```
 """
 function run!(model::AbstractModel, T; multi_threading = false, shock = NoShock())
