@@ -19,7 +19,7 @@ Key operations performed include:
 - Government and international trade financial activities, including budgeting and trade balances.
 - General market matching and accounting updates to reflect changes in economic indicators and positions.
 
-The function updates the model in-place and does not return any value.
+The function updates the model in-place and return the model itself.
 """
 function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock = NoShock())
 

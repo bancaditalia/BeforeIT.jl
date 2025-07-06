@@ -25,12 +25,10 @@ run!(model, 2)
 ```
 """
 function run!(model::AbstractModel, T; multi_threading = false, shock = NoShock())
-
     for _ in 1:T
         Bit.step!(model; multi_threading = multi_threading, shock = shock)
         Bit.update_data!(model)
     end
-
     return model
 end
 
@@ -51,9 +49,7 @@ models of dimension `n_sims`.
 Note that the input model is not updated.
 """
 function ensemblerun(model::AbstractModel, T, n_sims; multi_threading = true, shock = NoShock())
-
     model_vector = Vector{Bit.Model}(undef, n_sims)
-
     if multi_threading
         Threads.@threads for i in 1:n_sims
             model_i = deepcopy(model)
@@ -67,6 +63,5 @@ function ensemblerun(model::AbstractModel, T, n_sims; multi_threading = true, sh
             model_vector[i] = model_i
         end
     end
-
     return model_vector
 end
