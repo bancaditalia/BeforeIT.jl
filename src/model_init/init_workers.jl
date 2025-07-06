@@ -35,7 +35,6 @@ function Workers(parameters, initial_conditions)
     w_h[O_h .== 0] .= w_UB / theta_UB
     
     Y_h = zeros(typeFloat, H_W)
-
     D_h = zeros(typeFloat, H_W)
     K_h = zeros(typeFloat, H_W)
 

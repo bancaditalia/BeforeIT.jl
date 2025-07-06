@@ -172,7 +172,7 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     C_l_g = zeros(typeFloat, 1, G)
 
     P_bar_h_g = zeros(typeFloat, 1, G)
-    P_bar_CF_h_g = zeros(typeFloat,1, G)
+    P_bar_CF_h_g = zeros(typeFloat, 1, G)
 
     P_j_g = zeros(typeFloat, 1, G)
     P_l_g = zeros(typeFloat, 1, G)

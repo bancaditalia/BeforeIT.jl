@@ -23,7 +23,7 @@ function Government(parameters, initial_conditions)
     C_G = Vector{typeFloat}(vec(initial_conditions["C_G"]))
     T_prime = Int(parameters["T_prime"])
 
-    C_d_j = Vector{typeFloat}(zeros(J))
+    C_d_j = zeros(typeFloat, J)
     C_j = zero(typeFloat)
     P_j = zero(typeFloat)
     Y_G = zero(typeFloat)

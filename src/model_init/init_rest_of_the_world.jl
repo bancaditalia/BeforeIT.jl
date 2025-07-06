@@ -36,13 +36,13 @@ function RestOfTheWorld(parameters, initial_conditions)
     Y_I = Vector{typeFloat}(vec(initial_conditions["Y_I"]))
     C_E = Vector{typeFloat}(vec(initial_conditions["C_E"]))
 
-    C_d_l = Vector{typeFloat}(zeros(L))
+    C_d_l = zeros(typeFloat, L)
     C_l = zero(typeFloat)
     P_l = zero(typeFloat)
-    Y_m = Vector{typeFloat}(zeros(G))
-    Q_m = Vector{typeFloat}(zeros(G))
-    Q_d_m = Vector{typeFloat}(zeros(G))
-    P_m = Vector{typeFloat}(zeros(G))
+    Y_m = zeros(typeFloat, G)
+    Q_m = zeros(typeFloat, G)
+    Q_d_m = zeros(typeFloat, G)
+    P_m = zeros(typeFloat, G)
 
     return RestOfTheWorld(alpha_E, beta_E, sigma_E, alpha_I, beta_I, sigma_I, Y_EA, gamma_EA,
         pi_EA, alpha_pi_EA, beta_pi_EA, sigma_pi_EA, alpha_Y_EA, beta_Y_EA, sigma_Y_EA, D_RoW,
