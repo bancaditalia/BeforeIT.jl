@@ -28,7 +28,6 @@ end
 
 # Note that we can equivalently run the model for a number of epochs in the single command 
 # `Bit.run!(model)`, but writing the loop explicitely is more instructive.
-
 # We can then plot any time series stored in the data tracker, for example
 plot(model.data.real_gdp, title = "gdp", titlefont = 10)
 
