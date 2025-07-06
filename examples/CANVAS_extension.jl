@@ -45,7 +45,6 @@ Bit.@object mutable struct RestOfTheWorldCANVAS(Bit.RestOfTheWorld) <: AbstractR
 end
 
 # define new functions for the CANVAS-specific agents
-
 function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model::Bit.AbstractModel)
     # unpack non-firm variables
     P_bar_g = model.agg.P_bar_g

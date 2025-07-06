@@ -5,7 +5,6 @@
 # unshocked model.
 
 import BeforeIT as Bit
-
 using Plots, StatsPlots
 
 parameters = Bit.AUSTRIA2010Q1.parameters;
@@ -20,7 +19,6 @@ model_vec_baseline = Bit.ensemblerun(model, T, 4);
 
 # Now, apply a shock to the model and simulate it again
 # Here, we do this by overloading the central_bank_rate function with the wanted behaviour
-
 function Bit.central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     gamma_EA = model.rotw.gamma_EA
     pi_EA = model.rotw.pi_EA

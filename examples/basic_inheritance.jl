@@ -30,7 +30,6 @@ new_central_bank = NewCentralBank((getfield(central_bank, x) for x in fieldnames
 
 # initialise a new model using the new central bank as well as a standard model
 standard_model = Bit.Model(w_act, w_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
-
 new_model = Bit.Model(w_act, w_inact, firms, bank, new_central_bank, government, rotw, agg, properties, data)
 
 # run a simulation with the new model
