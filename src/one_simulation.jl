@@ -1,6 +1,6 @@
 
 """
-    run!(model, T; shock = NoShock())
+    run!(model, T; shock = NoShock(), multi_threading = false)
 
 Run a single simulation based on the provided `model`. 
 The simulation runs for a number of epochs specified by `model.prop.T`.
