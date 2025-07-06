@@ -88,11 +88,11 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
 
     C = Matrix{typeFloat}(parameters["C"])
 
-    D_H = initial_conditions["D_H"]
-    K_H = initial_conditions["K_H"]
-    sb_other = initial_conditions["sb_other"]
-    E_k = initial_conditions["E_k"]
-    r_bar = initial_conditions["r_bar"]
+    D_H = typeFloat(initial_conditions["D_H"])
+    K_H = typeFloat(initial_conditions["K_H"])
+    sb_other = typeFloat(initial_conditions["sb_other"])
+    E_k = typeFloat(initial_conditions["E_k"])
+    r_bar = typeFloat(initial_conditions["r_bar"])
 
     return Properties(G, T_prime, H_act, H_inact, J, L, I_s, I, H, tau_INC, tau_FIRM, tau_VAT, tau_SIF,
         tau_SIW, tau_EXPORT, tau_CF, tau_G, theta_UB, psi, psi_H, mu, theta_DIV, theta, zeta, zeta_LTV,
