@@ -10,7 +10,7 @@ function update_workers_wages!(w_act, w_i)
 end
 
 function _income_w_act(w_h, O_h, tau_SIW, tau_INC, theta_UB, sb_other, P_bar_HH; pi_e = 0.0)
-    Y_h = zeros(length(w_h))
+    Y_h = zeros(typeFloat, length(w_h))
     for h in eachindex(w_h)
         if O_h[h] != 0
             Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH * (1 + pi_e)
@@ -34,7 +34,7 @@ function households_income_act(w_act::AbstractWorkers, model)
 end
 
 function _income_w_inact(H_inact, sb_inact, sb_other, P_bar_HH; pi_e = 0.0)
-    Y_h = zeros(H_inact)
+    Y_h = zeros(typeFloat, H_inact)
     for h in 1:H_inact
         Y_h[h] = (sb_inact + sb_other) * P_bar_HH * (1 + pi_e)
     end
@@ -46,7 +46,7 @@ function households_income_inact(w_inact::AbstractWorkers, model)
 end
 
 function _income_fowner(Pi_i, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; pi_e = 0.0)
-    Y_h = zeros(length(Pi_i))
+    Y_h = zeros(typeFloat, length(Pi_i))
     for i in eachindex(Pi_i)
         Y_h[i] = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_i[i]) + sb_other * P_bar_HH * (1 + pi_e)
     end

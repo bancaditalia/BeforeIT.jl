@@ -22,13 +22,13 @@ function rfvar3(ydata::Matrix, lags::Union{Int, Int64}, xdata::Matrix)
     end
     smpl = [((lags + 1):T);]
     Tsmpl = size(smpl, 1)
-    X = zeros(Tsmpl, nvar, lags)
+    X = zeros(typeFloat, Tsmpl, nvar, lags)
 
     for is in eachindex(smpl)
         X[is, :, :] = ydata[smpl[is] .- (1:lags), :]'
     end
 
-    X = [reshape(X, Tsmpl, nvar * lags) xdata[smpl, :]]
+    X = realpart.([reshape(X, Tsmpl, nvar * lags) xdata[smpl, :]])
     y = ydata[smpl, :]
     vl, di, vr = svd(X, full = false)
     dfx = sum(di .> 100 * eps())
