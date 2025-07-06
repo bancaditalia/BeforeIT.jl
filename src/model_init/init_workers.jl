@@ -14,9 +14,9 @@ Initialize the workers for the given parameters, initial conditions.
 """
 function Workers(parameters, initial_conditions)
  
-    H_act = typeInt(parameters["H_act"])
-    H_inact = typeInt(parameters["H_inact"])
-    I = typeInt(sum(parameters["I_s"]))
+    H_act = Int(parameters["H_act"])
+    H_inact = Int(parameters["H_inact"])
+    I = Int(sum(parameters["I_s"]))
     theta_UB = parameters["theta_UB"]
     tau_SIW = parameters["tau_SIW"]
     tau_INC = parameters["tau_INC"]
@@ -32,27 +32,20 @@ function Workers(parameters, initial_conditions)
     w_h = zeros(typeFloat, H_W)
     O_h = zeros(typeInt, H_W)
 
-    h = one(typeInt)
-
     w_h[O_h .== 0] .= w_UB / theta_UB
     
     Y_h = zeros(typeFloat, H_W)
-
     D_h = zeros(typeFloat, H_W)
     K_h = zeros(typeFloat, H_W)
-
-    ids = Vector{typeInt}((I + 1):(I + H_W))
-    C_d_h = zeros(typeFloat, length(ids))
-    I_d_h = zeros(typeFloat, length(ids))
-    C_h = zeros(typeFloat, length(ids))
-    I_h = zeros(typeFloat, length(ids))
+    C_d_h = zeros(typeFloat, H_W)
+    I_d_h = zeros(typeFloat, H_W)
+    C_h = zeros(typeFloat, H_W)
+    I_h = zeros(typeFloat, H_W)
     
     # active workers (both employed and unemployed)
     workers_act = Workers(Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)
     
     # inactive workers
-    ids = Vector{typeInt}((I + H_W + 1):(I + H_W + H_inact))
-
     Y_h = zeros(typeFloat, H_inact)
     for h in 1:H_inact
         Y_h[h] = (sb_inact + sb_other) * P_bar_HH
@@ -62,10 +55,10 @@ function Workers(parameters, initial_conditions)
 
     w_h_inact = zeros(typeFloat, H_inact)
     O_h_inact = -ones(typeInt, H_inact)
-    C_d_h = zeros(typeFloat, length(ids))
-    I_d_h = zeros(typeFloat, length(ids))
-    C_h = zeros(typeFloat, length(ids))
-    I_h = zeros(typeFloat, length(ids))
+    C_d_h = zeros(typeFloat, H_inact)
+    I_d_h = zeros(typeFloat, H_inact)
+    C_h = zeros(typeFloat, H_inact)
+    I_h = zeros(typeFloat, H_inact)
 
     workers_inact = Workers(Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
 

@@ -162,20 +162,20 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     I_d_h = [w_act.I_d_h; w_inact.I_d_h; firms.I_d_h; bank.I_d_h]
 
     # initialise some vectors of variables to zeros
-    Q_d_i_g = zeros(size(firms.Y_i)..., G)
-    Q_d_m_g = zeros(size(rotw.Y_m)..., G)
+    Q_d_i_g = zeros(typeFloat, size(firms.Y_i)..., G)
+    Q_d_m_g = zeros(typeFloat, size(rotw.Y_m)..., G)
 
-    C_h_t = zeros(H, multi_threading ? Threads.nthreads() : 1)
-    I_h_t = zeros(H, multi_threading ? Threads.nthreads() : 1)
+    C_h_t = zeros(typeFloat, H, multi_threading ? Threads.nthreads() : 1)
+    I_h_t = zeros(typeFloat, H, multi_threading ? Threads.nthreads() : 1)
 
-    C_j_g = zeros(1, G)
-    C_l_g = zeros(1, G)
+    C_j_g = zeros(typeFloat, 1, G)
+    C_l_g = zeros(typeFloat, 1, G)
 
-    P_bar_h_g = zeros(1, G)
-    P_bar_CF_h_g = zeros(1, G)
+    P_bar_h_g = zeros(typeFloat, 1, G)
+    P_bar_CF_h_g = zeros(typeFloat, 1, G)
 
-    P_j_g = zeros(1, G)
-    P_l_g = zeros(1, G)
+    P_j_g = zeros(typeFloat, 1, G)
+    P_l_g = zeros(typeFloat, 1, G)
 
     return I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g,
         Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
@@ -199,10 +199,10 @@ function initialize_variables_firms_market(firms, rotw, prop)
     S_f_ = [S_i_; ones(size(rotw.Y_m)) .* Inf]      # Join S_i_ with an array of Infs of size(Y_m)
     G_f = [firms.G_i; collect(1:G)]                 # enlarge vector of final goods with foreign firms
 
-    I_i_g = zeros(I, G)         # output
-    P_CF_i_g = zeros(I, G)
-    DM_i_g = zeros(I, G)
-    P_bar_i_g = zeros(I, G)
+    I_i_g = zeros(typeFloat, I, G)         # output
+    P_CF_i_g = zeros(typeFloat, I, G)
+    DM_i_g = zeros(typeFloat, I, G)
+    P_bar_i_g = zeros(typeFloat, I, G)
 
     return a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g
 end
@@ -219,7 +219,7 @@ function perform_firms_market!(
     ##############################
     
     DM_d_ig = @view(a_sg[g, firms.G_i]) .* firms.DM_d_i + b_CF_g[g] .* firms.I_d_i
-    DM_nominal_ig = zeros(size(DM_d_ig))
+    DM_nominal_ig = zeros(typeFloat, size(DM_d_ig))
 
     # firms that have demand for good "g" participate as buyers
     I_g = findall(x -> x > 0.0, DM_d_ig)
@@ -316,7 +316,7 @@ function perform_retail_market!(
         c_E_g[g] .* rotw.C_d_l
         c_G_g[g] .* gov.C_d_j
     ]
-    C_real_hg = zeros(size(C_d_hg))
+    C_real_hg = zeros(typeFloat, size(C_d_hg))
     H_g = findall(x -> x > 0.0, C_d_hg)
 
     filter!(i -> S_fg[i] > 0.0, F_g)

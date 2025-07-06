@@ -16,7 +16,7 @@ function Aggregates(parameters, initial_conditions)
     Y = Vector{typeFloat}(vec(initial_conditions["Y"]))
     pi_ = Vector{typeFloat}(vec(initial_conditions["pi"]))
 
-    G = typeInt(parameters["G"])
+    G = Int(parameters["G"])
 
     P_bar = one(typeFloat)
     P_bar_g = ones(typeFloat, G)

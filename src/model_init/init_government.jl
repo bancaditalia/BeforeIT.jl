@@ -18,12 +18,12 @@ function Government(parameters, initial_conditions)
     L_G = initial_conditions["L_G"]
     sb_inact = initial_conditions["sb_inact"]
     sb_other = initial_conditions["sb_other"]
-    J = typeInt(parameters["J"])
+    J = Int(parameters["J"])
 
     C_G = Vector{typeFloat}(vec(initial_conditions["C_G"]))
-    T_prime = typeInt(parameters["T_prime"])
+    T_prime = Int(parameters["T_prime"])
 
-    C_d_j = Vector{typeFloat}(zeros(J))
+    C_d_j = zeros(typeFloat, J)
     C_j = zero(typeFloat)
     P_j = zero(typeFloat)
     Y_G = zero(typeFloat)
