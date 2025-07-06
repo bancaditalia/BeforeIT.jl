@@ -5,7 +5,7 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     P_bar_CF = model.agg.P_bar_CF
     P_bar_g = model.agg.P_bar_g
     tau_SIF = model.prop.tau_SIF
-    a_sg = model.prop.products.a_sg
+    a_sg = model.prop.a_sg
 
     # compute the cost-push inflation
     term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims=1), dims=1)
@@ -349,7 +349,7 @@ where:
 function firms_equity(firms, model)
 
     # unpack variables not related to firms
-    a_sg = model.prop.products.a_sg
+    a_sg = model.prop.a_sg
     P_bar_g = model.agg.P_bar_g
     P_bar_CF = model.agg.P_bar_CF
 

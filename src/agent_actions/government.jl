@@ -14,7 +14,7 @@ Computes government expenditure on consumption and transfers to households.
 """
 function gov_expenditure(gov, model)
     # unpack non-government arguments
-    c_G_g = model.prop.products.c_G_g
+    c_G_g = model.prop.c_G_g
     P_bar_g = model.agg.P_bar_g
     pi_e = model.agg.pi_e
 

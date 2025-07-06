@@ -49,7 +49,7 @@ Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i = Bit.firms_e
     model.agg.P_bar_HH,
     model.agg.P_bar_CF,
     model.agg.P_bar_g,
-    prop.products.a_sg,
+    prop.a_sg,
     gamma_e,
     pi_e,
 )
@@ -143,14 +143,14 @@ Bit.cons_inv_budget_bowner!(
 ####### GOVERNMENT SPENDING BUDGET, IMPORT-EXPORT BUDGET #######
 
 # compute government expenditure
-Bit.government_expenditure!(model.gov, prop.products.c_G_g, model.agg.P_bar_g, pi_e)
+Bit.government_expenditure!(model.gov, prop.c_G_g, model.agg.P_bar_g, pi_e)
 
 # compute demand for export and supply of imports 
 Bit.import_export!(
     model.rotw,
     model.agg.P_bar_g,
-    prop.products.c_E_g,
-    prop.products.c_I_g,
+    prop.c_E_g,
+    prop.c_I_g,
     pi_e,
     epsilon_E,
     epsilon_I,
@@ -182,8 +182,8 @@ model.agg.pi_[prop.T_prime + t], model.agg.P_bar =
 model.agg.P_bar_g .= Bit.sector_specific_priceindex(model.firms, model.rotw, prop.G)
 
 # update CF index and HH (CPI) index
-model.agg.P_bar_CF = sum(prop.products.b_CF_g .* model.agg.P_bar_g)
-model.agg.P_bar_HH = sum(prop.products.b_HH_g .* model.agg.P_bar_g)
+model.agg.P_bar_CF = sum(prop.b_CF_g .* model.agg.P_bar_g)
+model.agg.P_bar_HH = sum(prop.b_HH_g .* model.agg.P_bar_g)
 
 # update firms stocks
 Bit.update_firms_stocks!(model.firms)
@@ -261,7 +261,7 @@ model.firms.D_i .+= DD_i
 
 model.firms.L_i .= (1 - prop.theta) * model.firms.L_i + DL_i
 
-model.firms.E_i .= Bit.equity_firms(model.firms, prop.products.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF)
+model.firms.E_i .= Bit.equity_firms(model.firms, prop.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF)
 
 # update net credit/debit position of rest of the world
 model.rotw.D_RoW -= Bit.new_deposits_rotw(model.rotw, prop.tau_EXPORT)

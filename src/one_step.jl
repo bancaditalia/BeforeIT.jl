@@ -137,8 +137,8 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     agg.P_bar_g .= Bit.sector_specific_priceindex(firms, rotw, prop.G)
 
     # update CF index and HH (CPI) index
-    agg.P_bar_CF = sum(prop.products.b_CF_g .* agg.P_bar_g)
-    agg.P_bar_HH = sum(prop.products.b_HH_g .* agg.P_bar_g)
+    agg.P_bar_CF = sum(prop.b_CF_g .* agg.P_bar_g)
+    agg.P_bar_HH = sum(prop.b_HH_g .* agg.P_bar_g)
 
     # update firms stocks
     K_i, M_i, DS_i, S_i = Bit.firms_stocks(firms)
