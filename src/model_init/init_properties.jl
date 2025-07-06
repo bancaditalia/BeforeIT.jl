@@ -1,6 +1,6 @@
 
 abstract type AbstractProperties <: AbstractObject end
-Bit.@object mutable struct Properties(Object) <: AbstractProperties
+Bit.@object struct Properties(Object) <: AbstractProperties
     G::Bit.typeInt
     T_prime::Bit.typeInt
     H_act::Bit.typeInt
