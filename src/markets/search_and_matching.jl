@@ -29,7 +29,7 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
         firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading
     )
 
-    G = size(prop.products.b_HH_g, 1) # number of goods
+    G = size(prop.b_HH_g, 1) # number of goods
 
     # Loop over all goods (internal and foreign)
     function perform_market!(i, g)
@@ -142,10 +142,10 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     # ... Initialize all the variables ...
 
     # change some variables according to arguments of matlab function
-    b_HH_g = agg.P_bar_g .* prop.products.b_HH_g / sum(agg.P_bar_g .* prop.products.b_HH_g)    #prop.products.b_HH_g
-    b_CFH_g = agg.P_bar_g .* prop.products.b_CFH_g / sum(agg.P_bar_g .* prop.products.b_CFH_g) #prop.products.b_CFH_g
-    c_G_g = agg.P_bar_g .* prop.products.c_G_g / sum(agg.P_bar_g .* prop.products.c_G_g)       #prop.products.c_G_g
-    c_E_g = agg.P_bar_g .* prop.products.c_E_g / sum(agg.P_bar_g .* prop.products.c_E_g)       #prop.products.c_E_g
+    b_HH_g = agg.P_bar_g .* prop.b_HH_g / sum(agg.P_bar_g .* prop.b_HH_g)    #prop.b_HH_g
+    b_CFH_g = agg.P_bar_g .* prop.b_CFH_g / sum(agg.P_bar_g .* prop.b_CFH_g) #prop.b_CFH_g
+    c_G_g = agg.P_bar_g .* prop.c_G_g / sum(agg.P_bar_g .* prop.c_G_g)       #prop.c_G_g
+    c_E_g = agg.P_bar_g .* prop.c_E_g / sum(agg.P_bar_g .* prop.c_E_g)       #prop.c_E_g
 
     G = size(agg.P_bar_g, 1)
 
@@ -186,10 +186,10 @@ function initialize_variables_firms_market(firms, rotw, prop)
     # ... Initialize all the variables ...
 
     # copy product variables for convenience
-    a_sg = prop.products.a_sg
-    b_CF_g = prop.products.b_CF_g
+    a_sg = prop.a_sg
+    b_CF_g = prop.b_CF_g
 
-    G = length(prop.products.b_HH_g) # number of goods
+    G = length(prop.b_HH_g) # number of goods
     I = length(firms)                # number of firms
 
     # join internal and foreign firms arrays

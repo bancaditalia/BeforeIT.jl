@@ -19,7 +19,7 @@ Key operations performed include:
 - Government and international trade financial activities, including budgeting and trade balances.
 - General market matching and accounting updates to reflect changes in economic indicators and positions.
 
-The function updates the model in-place and does not return any value.
+The function updates the model in-place and return the model itself.
 """
 function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock = NoShock())
 
@@ -137,8 +137,8 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     agg.P_bar_g .= Bit.sector_specific_priceindex(firms, rotw, prop.G)
 
     # update CF index and HH (CPI) index
-    agg.P_bar_CF = sum(prop.products.b_CF_g .* agg.P_bar_g)
-    agg.P_bar_HH = sum(prop.products.b_HH_g .* agg.P_bar_g)
+    agg.P_bar_CF = sum(prop.b_CF_g .* agg.P_bar_g)
+    agg.P_bar_HH = sum(prop.b_HH_g .* agg.P_bar_g)
 
     # update firms stocks
     K_i, M_i, DS_i, S_i = Bit.firms_stocks(firms)

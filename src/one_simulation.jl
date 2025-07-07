@@ -1,6 +1,6 @@
 
 """
-    run!(model, T; shock = NoShock())
+    run!(model, T; shock = NoShock(), multi_threading = false)
 
 Run a single simulation based on the provided `model`. 
 The simulation runs for a number of epochs specified by `model.prop.T`.
@@ -13,21 +13,22 @@ The simulation runs for a number of epochs specified by `model.prop.T`.
 - `model::AbstractModel`: The model updated during the simulation.
 
 # Details
-The function initializes the data using `Bit.Data(model)`, then iteratively updates the model and data
-for each epoch using `Bit.step!(model)` and `Bit.update_data!(data, model)` respectively.
+The function iteratively updates the model and data for each epoch using `Bit.step!(model)`
+and `Bit.update_data!(model)` respectively.
 
 # Example
 ```julia
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 model = Bit.Model(parameters, initial_conditions)
+run!(model, 2)
 ```
 """
 function run!(model::AbstractModel, T; multi_threading = false, shock = NoShock())
-
     for _ in 1:T
         Bit.step!(model; multi_threading = multi_threading, shock = shock)
         Bit.update_data!(model)
     end
-
     return model
 end
 
@@ -48,14 +49,14 @@ models of dimension `n_sims`.
 Note that the input model is not updated.
 """
 function ensemblerun(model::AbstractModel, T, n_sims; multi_threading = true, shock = NoShock())
-
     model_vector = Vector{Bit.Model}(undef, n_sims)
-
     if multi_threading
-        Threads.@threads for i in 1:n_sims
-            model_i = deepcopy(model)
-            run!(model_i, T; shock = shock)
-            model_vector[i] = model_i
+        Threads.@threads for c in chunks(1:n_sims, n=Threads.nthreads())
+            for i in c
+                model_i = deepcopy(model)
+                run!(model_i, T; shock = shock)
+                model_vector[i] = model_i
+            end
         end
     else
         for i in 1:n_sims
@@ -64,6 +65,5 @@ function ensemblerun(model::AbstractModel, T, n_sims; multi_threading = true, sh
             model_vector[i] = model_i
         end
     end
-
     return model_vector
 end

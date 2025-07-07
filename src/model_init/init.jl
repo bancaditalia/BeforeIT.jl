@@ -1,9 +1,4 @@
 
-using MutableNamedTuples
-
-recursive_namedtuple(x::Any) = x
-recursive_namedtuple(d::Dict) = MutableNamedTuple(; Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
-
 """
     Model(parameters, initial_conditions)
 

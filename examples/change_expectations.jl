@@ -4,16 +4,13 @@
 # different expectations of the agents in the model.
 
 import BeforeIT as Bit
-
 using Random, Plots
 
 # Import standard parameters and initial conditions
-
 par = Bit.AUSTRIA2010Q1.parameters
 init = Bit.AUSTRIA2010Q1.initial_conditions
 
 # Set the seed, initialise the model and run one simulation
-
 Random.seed!(1234)
 model = Bit.Model(par, init);
 Bit.run!(model, 40);
@@ -21,19 +18,16 @@ Bit.run!(model, 40);
 # Now we can experiment with changing expectations of the agents in the model.
 # We will change the function `estimate_next_value` to make the agents expect 
 # the last value of the time series (so to represent backward looking expectations)
-
 function Bit.estimate_next_value(data)
     return data[end]
 end
 
 # Run the model again, with the same seed
-
 Random.seed!(1234)
 model2 = Bit.Model(par, init);
 Bit.run!(model, 40);
 
 # Plot the results, comparing the two cases as different lines
-
 p1 = plot(model.data.real_gdp, title = "gdp", titlefont = 10, label = "forward looking")
 plot!(p1, model2.data.real_gdp, titlefont = 10, label = "backward looking")
 
@@ -43,7 +37,6 @@ plot!(p2, model2.data.real_household_consumption, titlefont = 10, label = "backw
 plot(p1, p2, layout = (2, 1), legend = true)
 
 # Plot all time series
-
 p1 = plot(model.data.real_gdp, title = "gdp", titlefont = 10)
 plot!(p1, model2.data.real_gdp, titlefont = 10)
 p2 = plot(model.data.real_household_consumption, title = "household cons.", titlefont = 10)

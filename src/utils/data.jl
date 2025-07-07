@@ -202,17 +202,12 @@ function update_data!(m)
     d.taxes_production[t] = sum(m.firms.tau_K_i .* m.firms.Y_i .* m.firms.P_i)
 
     for g in 1:realpart(p.G)
+        g_i = m.firms.G_i .== g
         d.nominal_sector_gva[t][g] =
-            sum(
-                (1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .* m.firms.P_i[m.firms.G_i .== g] .*
-                m.firms.Y_i[m.firms.G_i .== g],
-            ) - sum(
-                1.0 ./ m.firms.beta_i[m.firms.G_i .== g] .* m.firms.P_bar_i[m.firms.G_i .== g] .*
-                m.firms.Y_i[m.firms.G_i .== g],
-            )
-        d.real_sector_gva[t][g] = sum(
-            m.firms.Y_i[m.firms.G_i .== g] .*
-            ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) - 1.0 ./ m.firms.beta_i[m.firms.G_i .== g]),
+            sum((1 .- @view(m.firms.tau_Y_i[g_i])) .* @view(m.firms.P_i[g_i]) .* m.firms.Y_i[g_i]) - 
+            sum(1.0 ./ @view(m.firms.beta_i[g_i]) .* @view(m.firms.P_bar_i[g_i]) .* @view(m.firms.Y_i[g_i]))
+        d.real_sector_gva[t][g] = sum(@view(m.firms.Y_i[g_i]) .*
+            ((1 .- @view(m.firms.tau_Y_i[g_i])) - 1.0 ./ @view(m.firms.beta_i[g_i])),
         )
     end
 

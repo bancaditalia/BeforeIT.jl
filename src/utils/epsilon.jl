@@ -1,13 +1,10 @@
 using LinearAlgebra, Random
 
-function epsilon(C::Matrix{Float64})
-
+function epsilon(C::Matrix)
     if isapprox(sum(C), 0, atol = 1e-8)
         return 0.0, 0.0, 0.0
     end
-
     L, _ = cholesky(C)
-
     # eps_ = rand ? randn(3, 1) : ones(3, 1)
     eps_ = randn(3, 1)
     eps_Y_EA = dot(L[1, :], eps_)
