@@ -439,7 +439,7 @@ function transform_for_differentiability!(args)
     if t1
         new_args = []
         for a in args
-            new_a = a isa Vector ? a .+ ε : a + ε
+            new_a = a isa Vector ? a : a
             push!(new_args, new_a)
         end
         return new_args
