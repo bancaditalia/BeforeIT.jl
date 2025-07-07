@@ -57,8 +57,9 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     I = typeInt(sum(parameters["I_s"]))        # Number of firms
     H = H_act + H_inact # Total number of households
 
-    tau_INC = typeFloat(parameters["tau_INC"])    # Income tax rate
-    tau_FIRM = typeFloat(parameters["tau_FIRM"])   # Corporate tax rate
+    tau_INC = typeFloat(parameters["tau_INC"])   # Income tax rate
+    tau_FIRM = typeFloat(parameters["tau_FIRM"] + 0.1) + ε # Corporate tax rate
+    println("tau_FIRM: $tau_FIRM")
     tau_VAT = typeFloat(parameters["tau_VAT"])    # Value-added tax rate
     tau_SIF = typeFloat(parameters["tau_SIF"])    # Social insurance rate (employers’ contributions)
     tau_SIW = typeFloat(parameters["tau_SIW"])    # Social insurance rate (employees’ contributions)
