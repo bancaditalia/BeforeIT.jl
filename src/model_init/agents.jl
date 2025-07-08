@@ -362,7 +362,7 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
         O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h
         sb_other, tau_SIW, tau_INC, theta_UB = prop.sb_other, prop.tau_SIW, prop.tau_INC, prop.theta_UB
         h = 1
-        for i in 1:prop.I
+        for i in 1:realpart(prop.I)
             while V_i[i] > 0
                 O_h[h] = i
                 w_h[h] = w_bar_i[i]
@@ -373,7 +373,7 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
 
         P_bar_HH = 1.0
         H_W = prop.H_act - prop.I - 1
-        for h in 1:H_W
+        for h in 1:realpart(H_W)
             if O_h[h] != 0
                 Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
             else

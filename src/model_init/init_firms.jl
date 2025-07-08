@@ -52,7 +52,7 @@ function Firms(parameters, initial_conditions)
     end
 
     for i in 1:I
-        g = typeInt(G_i[i])
+        g = realpart(G_i[i])
         alpha_bar_i[i] = parameters["alpha_s"][g]
         beta_i[i] = parameters["beta_s"][g]
         kappa_i[i] = parameters["kappa_s"][g]
@@ -64,7 +64,7 @@ function Firms(parameters, initial_conditions)
 
     N_i = zeros(typeInt, I)
     for g in 1:G
-        N_i[G_i .== g] .= randpl(I_s[g], 2.0, N_s[g])
+        N_i[G_i .== g] .= randpl(realpart(I_s[g]), 2.0, N_s[g])
     end
 
     Y_i = alpha_bar_i .* N_i
@@ -116,7 +116,7 @@ function Firms(parameters, initial_conditions)
     DM_d_i = zeros(typeFloat, I)
     N_d_i = zeros(typeInt, I)
     Pi_e_i = zeros(typeFloat, I)
-
+    
     return Firms(G_i, alpha_bar_i, beta_i, kappa_i, w_i, w_bar_i, delta_i, tau_Y_i, tau_K_i, N_i, Y_i, Q_i, Q_d_i, 
         P_i, S_i, K_i, M_i, L_i, pi_bar_i, D_i, Pi_i, V_i, I_i, E_i, P_bar_i, P_CF_i, DS_i, DM_i, DL_i, 
         DL_d_i, K_e_i, L_e_i, Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
