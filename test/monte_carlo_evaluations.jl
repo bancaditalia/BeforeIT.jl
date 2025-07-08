@@ -1,7 +1,7 @@
 
 import BeforeIT as Bit
 
-using JLD2, FileIO, Test
+using JLD2, Test
 
 dir = @__DIR__
 

@@ -1,6 +1,6 @@
 
 import BeforeIT as Bit
-using FileIO, Dates
+using JLD2, Dates
 
 reference_file = joinpath(@__DIR__, "2010Q1.jld2")
 reference_predictions = load(reference_file)["model_dict"]

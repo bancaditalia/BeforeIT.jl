@@ -1,7 +1,7 @@
 
 import BeforeIT as Bit
 
-using FileIO, Random
+using Random
 using Test
 
 @testset "accounting identities" begin

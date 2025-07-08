@@ -1,6 +1,6 @@
 import BeforeIT as Bit
 
-using FileIO, Plots, StatsPlots, Dates
+using Plots, StatsPlots, Dates
 
 # load data from 1996
 real_data = Bit.ITALY_CALIBRATION.data
