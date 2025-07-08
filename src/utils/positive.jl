@@ -1,4 +1,4 @@
-export pos, neg, round
+export pos, neg, matlab_round
 """
     pos(vector) -> vector
 
