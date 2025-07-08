@@ -2,7 +2,7 @@
 module BeforeITPlots
 
 import BeforeIT as Bit
-using Plots, StatsPlots
+using Plots, StatsPlots, Dates
 
 const default_quantities = [:real_gdp, :real_household_consumption, :real_government_consumption, 
 	:real_capitalformation, :real_exports, :real_imports, :wages, :euribor, :gdp_deflator]
