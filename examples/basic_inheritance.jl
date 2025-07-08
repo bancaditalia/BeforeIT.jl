@@ -26,7 +26,8 @@ data = Bit.Data(p)
 
 # initialise the custom central bank
 central_bank = Bit.CentralBank(p, ic)
-new_central_bank = NewCentralBank((getfield(central_bank, x) for x in fieldnames(Bit.CentralBank))..., 0.02)
+# create a new central bank with the same fields as the original one, and a fixed interest rate
+new_central_bank = NewCentralBank((getfield(central_bank, x) for x in fieldnames(Bit.CentralBank))..., 0.02)  
 
 # initialise a new model using the new central bank as well as a standard model
 standard_model = Bit.Model(w_act, w_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
@@ -38,5 +39,6 @@ model_vec_standard = Bit.ensemblerun(standard_model, T, 4);
 model_vec_new = Bit.ensemblerun(new_model, T, 4);
 
 # plot the results
+using Plots, StatsPlots
 ps = Bit.plot_data_vectors([model_vec_standard, model_vec_new], quantities = [:euribor, :gdp_deflator])
 plot(ps..., layout = (1, 2), size = (600, 300))

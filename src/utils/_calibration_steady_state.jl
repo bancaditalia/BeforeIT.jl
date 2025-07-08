@@ -16,7 +16,6 @@ function get_params_and_initial_conditions_steady_state(
     data["gdp_deflator_quarterly"] = data["nominal_gdp_quarterly"] ./ data["real_gdp_quarterly"]
     ea["gdp_deflator_quarterly"] = ea["nominal_gdp_quarterly"] ./ ea["real_gdp_quarterly"]
 
-
     T_calibration = findall(
         calibration_data["years_num"] .== date2num(DateTime(year(min(calibration_date, max_calibration_date)), 12, 31)),
     )[1][1]
@@ -68,7 +67,6 @@ function get_params_and_initial_conditions_steady_state(
 
     omega = 0.85
 
-
     fixed_assets = calibration_data["fixed_assets"][T_calibration]
     dwellings = calibration_data["dwellings"][T_calibration]
     fixed_assets_eu7 = calibration_data["fixed_assets_eu7"][:, T_calibration]
@@ -78,7 +76,6 @@ function get_params_and_initial_conditions_steady_state(
     nace64_capital_consumption = calibration_data["nace64_capital_consumption"][:, T_calibration]
     nominal_nace64_output = calibration_data["nominal_nace64_output"][:, T_calibration]
     unemployment_rate_quarterly = data["unemployment_rate_quarterly"][T_calibration_exo]
-
 
     # Calculate variables from accounting indentities
     output =
@@ -177,7 +174,6 @@ function get_params_and_initial_conditions_steady_state(
     c_E_g = (exports - reexports) / sum(exports - reexports)
     c_I_g = imports / sum(imports)
 
-
     # Parameters
     T_prime = T_calibration_exo - T_estimation_exo + 1
     T = 12
@@ -274,7 +270,6 @@ function get_params_and_initial_conditions_steady_state(
     alpha_G, beta_G, sigma_G, epsilon_G = Bit.estimate_for_calibration_script(G_est)
     alpha_E, beta_E, sigma_E, epsilon_E = Bit.estimate_for_calibration_script(E_est)
     alpha_I, beta_I, sigma_I, epsilon_I = Bit.estimate_for_calibration_script(I_est)
-
 
     C = cov([epsilon_Y_EA epsilon_E epsilon_I])
 

@@ -1,6 +1,6 @@
 
 import BeforeIT as Bit
-using MAT, Test
+using Test
 
 dir = @__DIR__
 

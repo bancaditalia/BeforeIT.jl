@@ -1,7 +1,7 @@
 
 import BeforeIT as Bit
 
-using MAT, Random
+using Random
 
 @testset "estimation functions" begin
     dir = @__DIR__

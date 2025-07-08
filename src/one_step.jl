@@ -4,11 +4,11 @@ using CommonSolve: step!
 export step!
 
 """
-    step!(model; multi_threading = false, shock = Bit.NoShock())
+    step!(model, T=1; multi_threading = false, shock = Bit.NoShock())
 
-This function simulates a single epoch the economic model, updating various components of the model based 
-the interactions between different economic agents. It accepts a `model` object, which encapsulates the state for the
-simulation, and some optional parameters. `multi_threading` to enable or disable multi-threading.
+This function simulates the economic model for `T` steps, updating various components of the model based 
+the interactions between different economic agents. It accepts a `model` object, which encapsulates the
+state for the simulation, and some optional parameters. `multi_threading` to enable or disable multi-threading.
 `shock` which can be used to shock the model during the stepping.
 
 Key operations performed include:
@@ -21,6 +21,12 @@ Key operations performed include:
 
 The function updates the model in-place and return the model itself.
 """
+function CommonSolve.step!(model::AbstractModel, T; multi_threading = false, shock = NoShock())
+    for _ in 1:T
+        step!(model)
+    end
+    return model
+end
 function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock = NoShock())
 
     gov = model.gov # government
@@ -195,5 +201,6 @@ function CommonSolve.step!(model::AbstractModel; multi_threading = false, shock 
     agg.Y[realpart(prop.T_prime + agg.t)] = sum(firms.Y_i)
 
     agg.t += 1
+
     return model
 end

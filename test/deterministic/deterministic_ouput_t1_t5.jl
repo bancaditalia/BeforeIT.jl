@@ -17,6 +17,7 @@
     data = model.data
     for fieldname in fieldnames(typeof(data))
         julia_output = getfield(data, fieldname)
+        fieldname == :collection_time && continue
         julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ? reduce(hcat, julia_output)' : julia_output
         matlab_output = output_t1[string(fieldname)]
         # need to remove the first step of the julia output since 
@@ -43,6 +44,7 @@
     data = model.data
     for fieldname in fieldnames(typeof(data))
         julia_output = getfield(data, fieldname)
+        fieldname == :collection_time && continue
         julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ? reduce(hcat, julia_output)' : julia_output
         matlab_output = output_t5[string(fieldname)]
 

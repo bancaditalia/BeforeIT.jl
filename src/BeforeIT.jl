@@ -59,11 +59,9 @@ include("utils/epsilon.jl")
 include("utils/positive.jl")
 include("utils/toannual.jl")
 include("utils/get_predictions_from_sims.jl")
-include("utils/plot_data_vector.jl")
 include("utils/dmtest.jl")
 include("utils/mztest.jl")
 include("utils/varx.jl")
-include("utils/plot_predictions_vs_real.jl")
 
 # calibration
 include("utils/calibration.jl")
@@ -82,6 +80,9 @@ include("utils/grad.jl")
 
 # shocks
 include("shocks/shocks.jl")
+
+# external plot functions definitions
+include("utils/plot_functions.jl")
 
 # precompilation pipeline
 include("precompile.jl")

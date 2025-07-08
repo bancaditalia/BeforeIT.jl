@@ -1,6 +1,6 @@
 
 import BeforeIT as Bit
-using FileIO, Dates
+using JLD2, Dates
 
 reference_file = joinpath(@__DIR__, "2010Q1.jld2")
 reference_predictions = load(reference_file)["model_dict"]
@@ -22,8 +22,6 @@ predictions_dict = Bit.get_predictions_from_sims(Bit.DataVector(model_vector), r
 
 # for each key in the predictions_dict, check if the values are equal to the reference_predictions
 for key in keys(predictions_dict)
-
     @test isapprox(predictions_dict[key], reference_predictions[key], atol=1e-6, rtol=1e-6)
-
 end
 

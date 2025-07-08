@@ -6,14 +6,15 @@ parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 model = Bit.Model(parameters, initial_conditions)
-data = Bit.Data(model)
 
 T = 20
 for t in 1:T
-    println("Epoch: ", t)
+    println("Step: ", t)
     Bit.step!(model; multi_threading = true)
-    Bit.update_data!(data, model)
+    Bit.update_data!(model)
 end
+
+data = model.data
 
 p1 = plot(data.real_gdp, title = "gdp", titlefont = 10)
 p2 = plot(data.real_household_consumption, title = "household cons.", titlefont = 10)

@@ -2,7 +2,7 @@
 # # Full prediction pipeline 
 
 import BeforeIT as Bit
-using Dates, Plots
+using Dates, Plots, StatsPlots
 
 # We start from loading the calibration object for italy, which contains 
 # 4 datasets: `calibration_data`, `figaro`, `data`, and `ea`. These are
