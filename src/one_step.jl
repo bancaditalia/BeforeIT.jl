@@ -6,7 +6,7 @@ export step!
 """
     step!(model, T=1; multi_threading = false, shock = Bit.NoShock())
 
-This function steps the economic model for `T` steps, updating various components of the model based 
+This function simulates the economic model for `T` steps, updating various components of the model based 
 the interactions between different economic agents. It accepts a `model` object, which encapsulates the
 state for the simulation, and some optional parameters. `multi_threading` to enable or disable multi-threading.
 `shock` which can be used to shock the model during the stepping.
