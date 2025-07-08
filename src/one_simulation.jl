@@ -3,7 +3,7 @@
     run!(model, T; shock = NoShock(), multi_threading = false)
 
 Run a single simulation based on the provided `model`. 
-The simulation runs for a number of epochs specified by `model.prop.T`.
+The simulation runs for a number of steps T.
 
 # Arguments
 - `model::AbstractModel`: The model configuration used for the simulation.
@@ -13,8 +13,7 @@ The simulation runs for a number of epochs specified by `model.prop.T`.
 - `model::AbstractModel`: The model updated during the simulation.
 
 # Details
-The function iteratively updates the model and data for each epoch using `Bit.step!(model)`
-and `Bit.update_data!(model)` respectively.
+The function iteratively updates the model and data for each step using `Bit.step!(model)`
 
 # Example
 ```julia
@@ -27,7 +26,6 @@ run!(model, 2)
 function run!(model::AbstractModel, T; multi_threading = false, shock = NoShock())
     for _ in 1:T
         Bit.step!(model; multi_threading = multi_threading, shock = shock)
-        Bit.update_data!(model)
     end
     return model
 end

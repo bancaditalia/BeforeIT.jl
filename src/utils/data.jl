@@ -117,23 +117,21 @@ function update_data_init!(m)
 end
 
 """
-    update_data!(d, m)
+    update_data!(m)
 
-Update the data `d` with the model `m`.
+Update the data in the model `m` with the current state of the model.
 
 # Arguments
-- `d`: The data structure to be updated.
 - `m`: The model used to update the data.
 
 # Returns
-- Nothing. The function updates the data structure `d` in place.
+- Nothing. The function updates the data structure `m.data` in place.
 
 # Example
 
 ```julia
 data = Bit.Data(model)
-step!(model)
-Bit.update_data!(data, model)
+Bit.update_data!(model)
 ```
 """
 function update_data!(m)

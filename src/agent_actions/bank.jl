@@ -182,7 +182,7 @@ function finance_insolvent_firms!(firms::AbstractFirms, bank::AbstractBank, mode
     # unpack arguments 
     P_bar_CF, zeta_b = model.agg.P_bar_CF, model.prop.zeta_b
 
-    # find insolvent firms, and re-initialise their variables for the next epoch
+    # find insolvent firms, and re-initialise their variables for the next step
     insolvent = findall((firms.D_i .< 0) .&& (firms.E_i .< 0))
 
     for i in insolvent

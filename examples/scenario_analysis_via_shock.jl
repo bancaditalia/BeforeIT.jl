@@ -59,11 +59,16 @@ consumption_shock = ConsumptionShock(1.02, 4)
 # Simulate the model with the shock
 model_vec_shocked = Bit.ensemblerun(model, T, N_reps; shock = consumption_shock);
 
+# extract the data vectors from the model vectors
+data_vector_baseline = Bit.DataVector(model_vec_baseline);
+data_vector_shocked = Bit.DataVector(model_vec_shocked); 
+
+
 # Compute mean and standard error of GDP for the baseline and shocked simulations
-mean_gdp_baseline = mean(Bit.DataVector(model_vec_baseline).real_gdp, dims = 2)
-mean_gdp_shocked = mean(Bit.DataVector(model_vec_shocked).real_gdp, dims = 2)
-sem_gdp_baseline = std(Bit.DataVector(model_vec_baseline).real_gdp, dims = 2) / sqrt(N_reps)
-sem_gdp_shocked = std(Bit.DataVector(model_vec_shocked).real_gdp, dims = 2) / sqrt(N_reps)
+mean_gdp_baseline = mean(data_vector_baseline.real_gdp, dims = 2)
+mean_gdp_shocked = mean(data_vector_shocked.real_gdp, dims = 2)
+sem_gdp_baseline = std(data_vector_baseline.real_gdp, dims = 2) / sqrt(N_reps)
+sem_gdp_shocked = std(data_vector_shocked.real_gdp, dims = 2) / sqrt(N_reps)
 
 # Compute the ratio of shocked to baseline GDP
 gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline

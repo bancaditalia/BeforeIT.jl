@@ -23,7 +23,6 @@ fieldnames(typeof(model.bank))
 T = 16
 for t in 1:T
     Bit.step!(model; multi_threading = true)
-    Bit.update_data!(model)
 end
 
 # Note that we can equivalently run the model for a number of epochs in the single command 

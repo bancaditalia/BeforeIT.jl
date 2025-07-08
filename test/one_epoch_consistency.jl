@@ -13,7 +13,7 @@ model = Bit.Model(parameters, initial_conditions)
 println(Bit.get_accounting_identity_banks(model))
 
 """
-Testing an entire epoch of the model
+Testing an entire step of the model
 """
 
 ####### GENERAL ESTIMATIONS #######
@@ -274,8 +274,9 @@ model.agg.Y[prop.T_prime + t] = sum(model.firms.Y_i)
 
 Bit.finance_insolvent_firms!(model.firms, model.bank, model.agg.P_bar_CF, prop.zeta_b)
 
+Bit.update_data!(model)
+
 data = model.data
-Bit.update_data!(data, model, prop, 1)
 
 println("Identities")
 println(Bit.get_accounting_identities(data))
