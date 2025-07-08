@@ -37,7 +37,6 @@ function Workers(parameters, initial_conditions)
     Y_h = zeros(typeFloat, H_W)
     D_h = zeros(typeFloat, H_W)
     K_h = zeros(typeFloat, H_W)
-
     C_d_h = zeros(typeFloat, H_W)
     I_d_h = zeros(typeFloat, H_W)
     C_h = zeros(typeFloat, H_W)

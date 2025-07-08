@@ -37,10 +37,6 @@ Bit.@object struct Workers(Object) <: AbstractWorkers
     I_d_h::Vector{Bit.typeFloat}
     C_h::Vector{Bit.typeFloat}
     I_h::Vector{Bit.typeFloat}
-    function Workers(args...)
-        args = transform_for_differentiability!(args)
-        new(args...)
-    end
 end
 
 """
@@ -142,10 +138,6 @@ Bit.@object struct Firms(Object) <: AbstractFirms
     I_h::Vector{Bit.typeFloat}
     K_h::Vector{Bit.typeFloat}
     D_h::Vector{Bit.typeFloat}
-    function Firms(args...)
-        args = transform_for_differentiability!(args)
-        new(args...)
-    end
 end
 
 """
@@ -179,10 +171,6 @@ Bit.@object mutable struct Bank(Object) <: AbstractBank
     I_h::Bit.typeFloat
     K_h::Bit.typeFloat
     D_h::Bit.typeFloat
-    function Bank(args...)
-        args = transform_for_differentiability!(args)
-        new(args...)
-    end
 end
 
 """
@@ -207,10 +195,6 @@ Bit.@object mutable struct CentralBank(Object) <: AbstractCentralBank
     xi_pi::Bit.typeFloat
     xi_gamma::Bit.typeFloat
     E_CB::Bit.typeFloat
-    function CentralBank(args...)
-        args = transform_for_differentiability!(args)
-        new(args...)
-    end
 end
 
 """
@@ -241,10 +225,6 @@ Bit.@object mutable struct Government(Object) <: AbstractGovernment
     C_d_j::Vector{Bit.typeFloat}
     C_j::Bit.typeFloat
     P_j::Bit.typeFloat
-    function Government(args...)
-        args = transform_for_differentiability!(args)
-        new(args...)
-    end
 end
 
 """
@@ -303,10 +283,6 @@ Bit.@object mutable struct RestOfTheWorld(Object) <: AbstractRestOfTheWorld
     Q_d_m::Vector{Bit.typeFloat}
     P_m::Vector{Bit.typeFloat}
     P_l::Bit.typeFloat
-    function RestOfTheWorld(args...)
-        args = transform_for_differentiability!(args)
-        new(args...)
-    end
 end
 
 """
@@ -343,10 +319,6 @@ Bit.@object mutable struct Aggregates(Object) <: AbstractAggregates
     epsilon_E::Bit.typeFloat
     epsilon_I::Bit.typeFloat
     t::Bit.typeInt
-    function Aggregates(args...)
-        args = transform_for_differentiability!(args)
-        new(args...)
-    end
 end
 
 """
@@ -432,18 +404,3 @@ end
 # helper functions
 length(f::AbstractFirms) = length(f.G_i)
 length(w::AbstractWorkers) = length(w.Y_h)
-
-function transform_for_differentiability!(args)
-    t1 = Bit.typeFloat == Dual128 && Bit.typeInt == Dual{Int64}
-    t2 = Bit.typeFloat != Dual128 && Bit.typeInt != Dual{Int64}
-    if t1
-        new_args = []
-        for a in args
-            new_a = a isa Vector ? a : a
-            push!(new_args, new_a)
-        end
-        return new_args
-    end
-    t2 && return args
-    error("Incorrect Float/Int Types")
-end

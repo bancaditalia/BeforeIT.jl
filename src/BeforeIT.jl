@@ -77,6 +77,9 @@ include("utils/standard_calibration_data.jl")
 # methods for running over different dates
 include("utils/save_all_predictions.jl")
 
+# methods for differentiation
+include("utils/grad.jl")
+
 # shocks
 include("shocks/shocks.jl")
 

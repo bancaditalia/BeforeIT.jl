@@ -12,7 +12,6 @@ function estimate(ydata::Union{Matrix, Vector})
     var = rfvar3(ydata, 1, ones(size(ydata, 1), 1))
     alpha = var.By[1]
     beta = var.Bx[1]
-    # TODO: understand if the real transformations for duals are okay
     epsilon = rand(Normal(0, realpart(sqrt_cov(var.u)[1, 1])))
     return alpha, beta, epsilon
 end

@@ -68,6 +68,7 @@ end
 function update_data_init!(m)
     d = m.data
     p = m.prop
+    G = realpart(p.G)
 
     tot_Y_h = sum(m.w_act.Y_h) + sum(m.w_inact.Y_h) + sum(m.firms.Y_h) + m.bank.Y_h
     d.nominal_gdp[1] =
@@ -101,7 +102,7 @@ function update_data_init!(m)
     d.wages[1] = sum(m.firms.w_bar_i .* m.firms.N_i)
     d.taxes_production[1] = sum(m.firms.tau_K_i .* m.firms.Y_i)
 
-    for g in 1:realpart(p.G)
+    for g in 1:G
         d.nominal_sector_gva[1][g] = sum(
             m.firms.Y_i[m.firms.G_i .== g] .*
             ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .- 1 ./ m.firms.beta_i[m.firms.G_i .== g]),
@@ -141,11 +142,12 @@ function update_data!(m)
     t = realpart(m.agg.t)
     d = m.data
     p = m.prop
+    G = realpart(p.G)
     for f in fieldnames(typeof(d))[1:25]
         push!(getfield(d, f), 0.0)
     end
-    push!(d.nominal_sector_gva, zeros(realpart(p.G)))
-    push!(d.real_sector_gva, zeros(realpart(p.G)))
+    push!(d.nominal_sector_gva, zeros(G))
+    push!(d.real_sector_gva, zeros(G))
 
     tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
     tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
@@ -201,7 +203,7 @@ function update_data!(m)
     d.wages[t] = sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
     d.taxes_production[t] = sum(m.firms.tau_K_i .* m.firms.Y_i .* m.firms.P_i)
 
-    for g in 1:realpart(p.G)
+    for g in 1:G
         g_i = m.firms.G_i .== g
         d.nominal_sector_gva[t][g] =
             sum((1 .- @view(m.firms.tau_Y_i[g_i])) .* @view(m.firms.P_i[g_i]) .* m.firms.Y_i[g_i]) - 
