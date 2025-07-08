@@ -11,14 +11,9 @@ using CairoMakie, Statistics, ThreadPinning
 pinthreads(:cores)
 
 function run(parameters, initial_conditions, T; multi_threading = false)
-    model = Bit.init_model(parameters, initial_conditions, T)
-    data = Bit.init_data(model);
-    
-    for _ in 1:T
-        Bit.step!(model; multi_threading = multi_threading)
-        Bit.update_data!(data, model)
-    end
-    return model, data
+    model = Bit.Model(parameters, initial_conditions)
+    Bit.run!(model, T; multi_threading = multi_threading)
+    return model
 end
 
 parameters = Bit.AUSTRIA2010Q1.parameters

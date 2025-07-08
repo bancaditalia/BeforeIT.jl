@@ -11,7 +11,7 @@ This algorithm goes for accuracy without worrying about memory requirements. (si
 The program assumes that the first lags rows of ydata and xdata are real data, not dummies. Dummy observations should go at the end, if any. If pre-sample x's are not available, repeating the initial xdata(lags+1,:) row or copying xdata(lags+1:2*lags,:) into xdata(1:lags,:) are reasonable substitutes. These values are used in forming the persistence priors.
 - `var.snglty`: 0 usually. If the rhs variable matrix is less than full column rank, this is the amount by which it falls short. Coefficients and residuals are computed with a form of generalized inverse in this case.
 """
-function rfvar3(ydata::Matrix{Float64}, lags::Union{Int, Int64}, xdata::Matrix{Float64})
+function rfvar3(ydata::Matrix, lags::Union{Int, Int64}, xdata::Matrix)
     T, nvar = size(ydata)
     nox = isempty(xdata)
     T2, _ = size(xdata)
@@ -22,7 +22,7 @@ function rfvar3(ydata::Matrix{Float64}, lags::Union{Int, Int64}, xdata::Matrix{F
     end
     smpl = [((lags + 1):T);]
     Tsmpl = size(smpl, 1)
-    X = zeros(Tsmpl, nvar, lags)
+    X = zeros(typeFloat, Tsmpl, nvar, lags)
 
     for is in eachindex(smpl)
         X[is, :, :] = ydata[smpl[is] .- (1:lags), :]'

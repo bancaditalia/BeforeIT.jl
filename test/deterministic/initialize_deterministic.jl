@@ -1,11 +1,11 @@
+
 @testset "initialize deterministic" begin
 
     dir = @__DIR__
-    T = 3
 
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    model = Bit.init_model(parameters, initial_conditions, 1)
+    model = Bit.Model(parameters, initial_conditions)
 
     properties = model.prop
 
@@ -88,7 +88,5 @@
             matlab_var = init_vars[string(fn)]
             @test isapprox(julia_var, matlab_var')
         end
-
     end
-
 end

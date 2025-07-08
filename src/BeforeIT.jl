@@ -7,10 +7,14 @@ using DynamicSampling
 using LazyArrays
 using LinearAlgebra
 using MacroTools
+using Preferences
 using Random
 using StatsBase
 
 const Bit = BeforeIT
+
+const typeFloat = eval(Meta.parse(@load_preference("typeFloat", default="Float64")))
+const typeInt = eval(Meta.parse(@load_preference("typeInt", default="Int")))
 
 # definition of agents
 include("model_init/agents.jl")
@@ -54,11 +58,9 @@ include("utils/epsilon.jl")
 include("utils/positive.jl")
 include("utils/toannual.jl")
 include("utils/get_predictions_from_sims.jl")
-include("utils/plot_data_vector.jl")
 include("utils/dmtest.jl")
 include("utils/mztest.jl")
 include("utils/varx.jl")
-include("utils/plot_predictions_vs_real.jl")
 
 # calibration
 include("utils/calibration.jl")
@@ -74,6 +76,9 @@ include("utils/save_all_predictions.jl")
 
 # shocks
 include("shocks/shocks.jl")
+
+# external plot functions definitions
+include("utils/plot_functions.jl")
 
 # precompilation pipeline
 include("precompile.jl")

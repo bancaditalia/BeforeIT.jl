@@ -2,7 +2,7 @@
 # # Full multiple-prediction pipeline
 
 import BeforeIT as Bit
-using FileIO
+using Plots, StatsPlots
 
 # Decide the name of a folder where to store all data
 folder_name = "data/italy"
@@ -33,20 +33,16 @@ real_data = Bit.ITALY_CALIBRATION.data
 Bit.save_all_predictions_from_sims(folder_name, real_data)
 
 # Load predictions from some quarter and plot them against the true data
-
 y = 2014
 q = 2
-
 predictions_dict = load("data/italy/abm_predictions/$(y)Q$(q).jld2")["predictions_dict"]
 
-crop = true
-
-p1 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_gdp_quarterly"; crop = crop)
-p2 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_household_consumption_quarterly"; crop = crop)
-p3 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_fixed_capitalformation_quarterly"; crop = crop)
-p4 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_government_consumption_quarterly"; crop = crop)
-p5 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_exports_quarterly"; crop = crop)
-p6 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_imports_quarterly"; crop = crop)
+p1 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_gdp_quarterly"; crop = true)
+p2 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_household_consumption_quarterly"; crop = true)
+p3 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_fixed_capitalformation_quarterly"; crop = true)
+p4 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_government_consumption_quarterly"; crop = true)
+p5 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_exports_quarterly"; crop = true)
+p6 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_imports_quarterly"; crop = true)
 
 plot(p1, p2, p3, p4, p5, p6, layout = (3, 2), legend = false)
 

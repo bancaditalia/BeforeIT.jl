@@ -36,14 +36,14 @@ The macro `Bit.@object` has two primary uses:
 
 The existing minimal object types are:
 
-- `Workers`
-- `Firms`
-- `Bank`
-- `CentralBank`
-- `Government`
-- `RestOfTheWorld`
-- `Aggregates`
-- `Data`
+- `Bit.Workers`
+- `Bit.Firms`
+- `Bit.Bank`
+- `Bit.CentralBank`
+- `Bit.Government`
+- `Bit.RestOfTheWorld`
+- `Bit.Aggregates`
+- `Bit.Data`
 
 which describe which fields they will contribute to the new type.
 
@@ -51,11 +51,11 @@ which describe which fields they will contribute to the new type.
 
 ```julia
 # you can either constrain the type (to Float64 in this case) at definition time
-Bit.@object mutable struct CentralBankNew(CentralBank{Float64}) <: Bit.AbstractCentralBank
+Bit.@object mutable struct CentralBankNew(CentralBank) <: Bit.AbstractCentralBank
     new_field::Float64
 end
 # or keep it generic so that you can change it at construction time
-Bit.@object mutable struct CentralBankNew2{T}(CentralBank{T}) <: Bit.AbstractCentralBank
+Bit.@object mutable struct CentralBankNew2{T}(CentralBank) <: Bit.AbstractCentralBank
     new_field::T
 end
 ```
@@ -80,7 +80,10 @@ function _object(struct_repr)
     )
     new_type_no_params = namify(new_type)
     __OBJECT_EXPR_CONTAINER__[new_type_no_params] = MacroTools.prewalk(rmlines, expr_new_type)
-    return quote @kwdef $expr_new_type end
+    return quote 
+        @kwdef $expr_new_type
+        nothing
+    end
 end
 
 function decompose_struct_base(struct_repr)

@@ -1,7 +1,7 @@
 
 import BeforeIT as Bit
 
-using MAT, Test
+using Test
 
 import DynamicSampling: DynamicSampler, allinds
 import Random: shuffle!, rand, randn

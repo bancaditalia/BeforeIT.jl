@@ -62,8 +62,9 @@ function save_all_simulations(folder_name; T= 12, n_sims = 4)
         parameters = load(param_file)
         initial_conditions = load(init_file)
         
-        model = Bit.init_model(parameters, initial_conditions, T)
-        data_vector = Bit.ensemblerun(model, n_sims)
+        model = Bit.Model(parameters, initial_conditions)
+        model_vector = Bit.ensemblerun(model, T, n_sims)
+        data_vector = DataVector(model_vector)
         sim_file = joinpath(sim_dir, string(year, "Q", quarter, ".jld2"))
         
         save(sim_file, "data_vector", data_vector)

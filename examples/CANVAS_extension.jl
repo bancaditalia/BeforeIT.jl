@@ -29,23 +29,22 @@ r_bar_series = vec(vcat(ic["r_bar_series"], zeros(Float64, T)))
 
 # define a new central bank for the CANVAS model
 abstract type AbstractCentralBankCANVAS <: Bit.AbstractCentralBank end
-Bit.@object mutable struct CentralBankCANVAS(CentralBank{Float64}) <: AbstractCentralBankCANVAS
+Bit.@object mutable struct CentralBankCANVAS(Bit.CentralBank) <: AbstractCentralBankCANVAS
     r_bar_series::Vector{Float64}
 end
 
 # define new firms for the CANVAS model
 abstract type AbstractFirmsCANVAS <: Bit.AbstractFirms end
-Bit.@object struct FirmsCANVAS(Firms{Float64,Int}) <: AbstractFirmsCANVAS end
+Bit.@object struct FirmsCANVAS(Firms) <: AbstractFirmsCANVAS end
 
 # define a new rest of the world for the CANVAS model
 abstract type AbstractRestOfTheWorldCANVAS <: Bit.AbstractRestOfTheWorld end
-Bit.@object mutable struct RestOfTheWorldCANVAS(RestOfTheWorld{Float64}) <: AbstractRestOfTheWorldCANVAS
+Bit.@object mutable struct RestOfTheWorldCANVAS(Bit.RestOfTheWorld) <: AbstractRestOfTheWorldCANVAS
     Y_EA_series::Vector{Float64}
     pi_EA_series::Vector{Float64}
 end
 
 # define new functions for the CANVAS-specific agents
-
 function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model::Bit.AbstractModel)
     # unpack non-firm variables
     P_bar_g = model.agg.P_bar_g
@@ -134,37 +133,39 @@ function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.
 end
 
 # new firms initialisation
-firms_st, args = Bit.init_firms(p, ic)
-firms = FirmsCANVAS(args...)
-firms.Q_s_i = copy(firms.Q_d_i) # overwrite to avoid division by zero for new firm price and quantity setting mechanism
+firms_st = Bit.Firms(p, ic)
+firms = FirmsCANVAS((getfield(firms_st, x) for x in fieldnames(Bit.Firms))...)
+firms.Q_s_i .= firms.Q_d_i # overwrite to avoid division by zero for new firm price and quantity setting mechanism
 
 # new central bank initialisation
-central_bank_st, args = Bit.init_central_bank(p, ic)
-central_bank = CentralBankCANVAS(args..., r_bar_series) # add new variables to the aggregates
+central_bank_st = Bit.CentralBank(p, ic)
+central_bank = CentralBankCANVAS((getfield(central_bank_st, x) for x in fieldnames(Bit.CentralBank))..., 
+    r_bar_series) # add new variables to the aggregates
 
 # new rotw initialisation
-rotw_st, args = Bit.init_rotw(p, ic)
-rotw = RestOfTheWorldCANVAS(args..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
+rotw_st = Bit.RestOfTheWorld(p, ic)
+rotw = RestOfTheWorldCANVAS((getfield(rotw_st, x) for x in fieldnames(Bit.RestOfTheWorld))..., 
+    Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
-# standard initialisations: workers, bank, aggregats, government and properties
-w_act, w_inact, V_i_new, _, _ = Bit.init_workers(p, ic, firms)
-firms_st.V_i .= V_i_new
-firms.V_i .= V_i_new
-bank, _ = Bit.init_bank(p, ic, firms)
-agg, _ = Bit.init_aggregates(p, ic, T)
-gov, _ = Bit.init_government(p, ic)
-prop = Bit.init_properties(p, T)
+# standard initialisations: workers, bank, aggregats, government, properties and data
+w_act, w_inact = Bit.Workers(p, ic)
+bank = Bit.Bank(p, ic)
+agg = Bit.Aggregates(p, ic)
+gov = Bit.Government(p, ic)
+prop = Bit.Properties(p, ic)
+data = Bit.Data(p)
 
 # define a standard model
-model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop)
+model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop, data)
 
 # define a CANVAS model
-model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop)
+model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop, data)
 
 # run the model(s)
-data_vector_std = Bit.ensemblerun(model_std, 8)
-data_vector_canvas = Bit.ensemblerun(model_canvas, 8)
+model_vector_std = Bit.ensemblerun(model_std, T, 8)
+model_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
 
 # plot the results
-ps = Bit.plot_data_vectors([data_vector_std, data_vector_canvas])
+using Plots, StatsPlots
+ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas])
 plot(ps..., layout = (3, 3))

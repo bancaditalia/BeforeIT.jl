@@ -5,7 +5,7 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     P_bar_CF = model.agg.P_bar_CF
     P_bar_g = model.agg.P_bar_g
     tau_SIF = model.prop.tau_SIF
-    a_sg = model.prop.products.a_sg
+    a_sg = model.prop.a_sg
 
     # compute the cost-push inflation
     term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims=1), dims=1)
@@ -16,7 +16,6 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     cost_push_inflation = labour_costs .+ material_costs .+ capital_costs
     return cost_push_inflation
 end
-
 
 function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
     
@@ -74,7 +73,6 @@ employment decisions, expected profits, and desired/expected loans and capital.
 - `K_e_i`: Vector of expected capital
 - `L_e_i`: Vector of expected loans
 - `P_i`: Vector of  prices
-
 """
 function firms_expectations_and_decisions(firms, model)
     # unpack variables not related to firms
@@ -115,7 +113,6 @@ Calculate the wages set by firms.
 
 # Returns
 - `w_i`: Vector of wages
-
 """
 function firms_wages(firms::AbstractFirms)
 
@@ -352,7 +349,7 @@ where:
 function firms_equity(firms, model)
 
     # unpack variables not related to firms
-    a_sg = model.prop.products.a_sg
+    a_sg = model.prop.a_sg
     P_bar_g = model.agg.P_bar_g
     P_bar_CF = model.agg.P_bar_CF
 

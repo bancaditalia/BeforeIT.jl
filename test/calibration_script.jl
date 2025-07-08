@@ -1,7 +1,7 @@
 
 import BeforeIT as Bit
 
-using MAT, FileIO, Dates
+using MAT, Dates
 
 dir = @__DIR__
 

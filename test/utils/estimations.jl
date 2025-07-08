@@ -1,14 +1,14 @@
 
 import BeforeIT as Bit
 
-using MAT, Random
+using Random
 
 @testset "estimation functions" begin
     dir = @__DIR__
 
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    model = Bit.init_model(parameters, initial_conditions, 1)
+    model = Bit.Model(parameters, initial_conditions)
 
     Y, T_prime = model.agg.Y, model.prop.T_prime
 

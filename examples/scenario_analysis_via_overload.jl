@@ -5,25 +5,20 @@
 # unshocked model.
 
 import BeforeIT as Bit
-
 using Plots, StatsPlots
 
-parameters = Bit.AUSTRIA2010Q1.parameters
-initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+parameters = Bit.AUSTRIA2010Q1.parameters;
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions;
 
-# Initialise the model and the data collector
-
-T = 20
-model = Bit.init_model(parameters, initial_conditions, T);
-data = Bit.init_data(model);
+# Initialise the model
+model = Bit.Model(parameters, initial_conditions);
 
 # Simulate the model for T quarters
-
-data_vec_baseline = Bit.ensemblerun(model, 4)
+T = 20
+model_vec_baseline = Bit.ensemblerun(model, T, 4);
 
 # Now, apply a shock to the model and simulate it again
 # Here, we do this by overloading the central_bank_rate function with the wanted behaviour
-
 function Bit.central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     gamma_EA = model.rotw.gamma_EA
     pi_EA = model.rotw.pi_EA
@@ -35,14 +30,13 @@ function Bit.central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     end
 end
 
-data_vec_shocked = Bit.ensemblerun(model, 4)
+model_vec_shocked = Bit.ensemblerun(model, T, 4);
 
 # Finally, we can plot baseline and shocked simulations
-
 Te = T + 1
 StatsPlots.errorline(
     1:Te,
-    data_vec_baseline.real_gdp,
+    Bit.DataVector(model_vec_baseline).real_gdp,
     errortype = :sem,
     label = "baseline",
     titlefont = 10,
@@ -51,7 +45,7 @@ StatsPlots.errorline(
 )
 StatsPlots.errorline!(
     1:Te,
-    data_vec_shocked.real_gdp,
+    Bit.DataVector(model_vec_shocked).real_gdp,
     errortype = :sem,
     label = "shock",
     titlefont = 10,

@@ -4,7 +4,6 @@ import BeforeIT as Bit
 using Test
 
 @testset "randpl" begin
-
     # Test if sum of the output is equal to N
     n, alpha, N = 48, 2.0, 123 # I_s(1) and N_s(1)
     x = Bit.randpl(n, alpha, N)

@@ -1,56 +1,46 @@
 
-using MutableNamedTuples
-
-recursive_namedtuple(x::Any) = x
-recursive_namedtuple(d::Dict) = MutableNamedTuple(; Dict(k => recursive_namedtuple(v) for (k, v) in d)...)
-
 """
-    init_model(parameters, initial_conditions, T, typeInt = Int64, typeFloat = Float64)
+    Model(parameters, initial_conditions)
 
 Initializes the model with given parameters and initial conditions.
 
 Parameters:
 - `parameters`: A dictionary containing the model parameters.
 - initial_conditions: A dictionary containing the initial conditions.
-- T (integer): The time horizon of the model.
-- typeInt: (optional, default: Int64): The data type to be used for integer values.
-- typeFloat: (optional, default: Float64): The data type to be used for floating-point values.
 
 Returns:
 - model::AbstractModel: The initialized model.
-
 """
-function init_model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any}, T, typeInt::DataType = Int64, typeFloat::DataType = Float64)
+function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any})
 
     # properties
-    properties = Bit.init_properties(parameters, T; typeInt = typeInt, typeFloat = typeFloat)
+    properties = Bit.Properties(parameters, initial_conditions)
 
     # firms
-    firms, _ = Bit.init_firms(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    firms = Bit.Firms(parameters, initial_conditions)
 
     # workers, and update firms vacancies
-    workers_act, workers_inact, V_i_new, _, _ = Bit.init_workers(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
-    firms.V_i .= V_i_new
+    workers_act, workers_inact = Bit.Workers(parameters, initial_conditions)
 
     # bank
-    bank, _ = Bit.init_bank(parameters, initial_conditions, firms; typeInt = typeInt, typeFloat = typeFloat)
+    bank = Bit.Bank(parameters, initial_conditions)
 
     # central bank
-    central_bank, _ = Bit.init_central_bank(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    central_bank = Bit.CentralBank(parameters, initial_conditions)
 
     # government
-    government, _ = Bit.init_government(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    government = Bit.Government(parameters, initial_conditions)
 
     # rest of the world
-    rotw, _ = Bit.init_rotw(parameters, initial_conditions; typeInt = typeInt, typeFloat = typeFloat)
+    rotw = Bit.RestOfTheWorld(parameters, initial_conditions)
 
     # aggregates
-    agg, _ = Bit.init_aggregates(parameters, initial_conditions, T; typeInt = typeInt, typeFloat = typeFloat)
+    agg = Bit.Aggregates(parameters, initial_conditions)
 
-    # model
-    model = Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties)
+    # data
+    data = Bit.Data(parameters)
 
-    return model
+    return Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
 end
 
 """
@@ -64,7 +54,6 @@ This is the last step in the initialization process and it must be performed aft
 
 # Returns
 - Nothing
-
 """
 function update_variables_with_totals!(model::AbstractModel)
 
