@@ -113,7 +113,7 @@ function update_data_init!(m)
     d.euribor[1] = m.cb.r_bar
     d.gdp_deflator_growth_ea[1] = m.rotw.pi_EA
     d.real_gdp_ea[1] = m.rotw.Y_EA
-    collection_time[1] = 1
+    d.collection_time[1] = 1
     return d
 end
 
