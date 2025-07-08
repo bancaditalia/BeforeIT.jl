@@ -1,12 +1,12 @@
 
 import BeforeIT as Bit
 
-using MAT, FileIO, Test
+using JLD2, FileIO, Test
 
 dir = @__DIR__
 
-parameters = matread(joinpath(dir, "../data/austria/parameters/2010Q1.mat"))
-initial_conditions = matread(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
+parameters = load(joinpath(dir, "../data/austria/parameters/2010Q1.jld2"))
+initial_conditions = load(joinpath(dir, "../data/austria/initial_conditions/2010Q1.jld2"))
 
 model = Bit.Model(parameters, initial_conditions)
 
