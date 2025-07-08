@@ -6,6 +6,6 @@ using PrecompileTools
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     @compile_workload let
         model = Bit.Model(parameters, initial_conditions)
-	Bit.step!(model)
+        Bit.step!(model)
     end
 end

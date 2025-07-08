@@ -39,5 +39,6 @@ model_vec_standard = Bit.ensemblerun(standard_model, T, 4);
 model_vec_new = Bit.ensemblerun(new_model, T, 4);
 
 # plot the results
+using Plots, StatsPlots
 ps = Bit.plot_data_vectors([model_vec_standard, model_vec_new], quantities = [:euribor, :gdp_deflator])
 plot(ps..., layout = (1, 2), size = (600, 300))

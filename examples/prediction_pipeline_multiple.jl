@@ -2,7 +2,7 @@
 # # Full multiple-prediction pipeline
 
 import BeforeIT as Bit
-using FileIO
+using FileIO, Plots, StatsPlots
 
 # Decide the name of a folder where to store all data
 folder_name = "data/italy"

@@ -166,6 +166,6 @@ model_vector_std = Bit.ensemblerun(model_std, T, 8)
 model_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
 
 # plot the results
+using Plots, StatsPlots
 ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas])
-
 plot(ps..., layout = (3, 3))
