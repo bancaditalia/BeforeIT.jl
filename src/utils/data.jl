@@ -3,6 +3,7 @@ abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
 Bit.@object struct Data(Object) <: AbstractData
+    collection_time::Vector{Bit.typeInt}
     nominal_gdp::Vector{Bit.typeFloat}
     real_gdp::Vector{Bit.typeFloat}
     nominal_gva::Vector{Bit.typeFloat}
@@ -61,7 +62,7 @@ Initialise the data arrays
 """
 function Data(p)
     G = Int(p["G"])
-    d = Data([zeros(1) for _ in 1:25]..., Vector{Float64}[zeros(G)], Vector{Float64}[zeros(G)])
+    d = Data(zeros(typeInt, 1), [zeros(1) for _ in 1:25]..., Vector{Float64}[zeros(G)], Vector{Float64}[zeros(G)])
     return d
 end
 
@@ -112,7 +113,7 @@ function update_data_init!(m)
     d.euribor[1] = m.cb.r_bar
     d.gdp_deflator_growth_ea[1] = m.rotw.pi_EA
     d.real_gdp_ea[1] = m.rotw.Y_EA
-
+    collection_time[1] = 1
     return d
 end
 
@@ -136,10 +137,11 @@ Bit.update_data!(model)
 """
 function update_data!(m)
 
-    t = m.agg.t
+    t0 = m.agg.t
     d = m.data
+    t = length(d.collection_time)+1
     p = m.prop
-    for f in fieldnames(typeof(d))[1:25]
+    for f in fieldnames(typeof(d))[1:26]
         push!(getfield(d, f), 0.0)
     end
     push!(d.nominal_sector_gva, zeros(p.G))
@@ -212,4 +214,5 @@ function update_data!(m)
     d.euribor[t] = m.cb.r_bar
     d.gdp_deflator_growth_ea[t] = m.rotw.pi_EA
     d.real_gdp_ea[t] = m.rotw.Y_EA
+    d.collection_time[t] = t0
 end
