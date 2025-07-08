@@ -11,6 +11,7 @@ T = 20
 for t in 1:T
     println("Step: ", t)
     Bit.step!(model; multi_threading = true)
+    Bit.update_data!(model)
 end
 
 data = model.data

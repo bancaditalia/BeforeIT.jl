@@ -14,6 +14,7 @@ using Test
     model = Bit.Model(parameters, initial_conditions)
     for t in 1:T
         Bit.step!(model; multi_threading = false)
+        Bit.update_data!(model)
     end
 
     # income accounting and production accounting should be equal

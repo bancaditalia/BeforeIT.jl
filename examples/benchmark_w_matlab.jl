@@ -12,9 +12,7 @@ pinthreads(:cores)
 
 function run(parameters, initial_conditions, T; multi_threading = false)
     model = Bit.Model(parameters, initial_conditions)
-    for _ in 1:T
-        Bit.step!(model; multi_threading = multi_threading)
-    end
+    Bit.run!(model, T; multi_threading = multi_threading)
     return model
 end
 

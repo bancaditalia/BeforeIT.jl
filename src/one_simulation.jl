@@ -26,6 +26,7 @@ run!(model, 2)
 function run!(model::AbstractModel, T; multi_threading = false, shock = NoShock())
     for _ in 1:T
         Bit.step!(model; multi_threading = multi_threading, shock = shock)
+        Bit.update_data!(model)
     end
     return model
 end
