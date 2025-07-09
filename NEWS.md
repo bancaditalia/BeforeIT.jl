@@ -1,6 +1,28 @@
 BeforeIT Release Notes
 ======================
 
+0.4.0 (July 2025)
+------------------
+
+* Add new object macro to improve inheritance by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/73
+* Restore "Added tabular analysis of forecasting performance of ABM" by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/68
+* Fix some issues: get_params_and_initial_conditions by @zauster in https://github.com/bancaditalia/BeforeIT.jl/pull/65
+* A better initialization and stepping interface for BeforeIT types by @Tortar in https://github.com/bancaditalia/BeforeIT.jl/pull/74
+
+## New Contributors
+* @zauster made their first contribution in https://github.com/bancaditalia/BeforeIT.jl/pull/65
+
+**Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.3.3...v0.4.0
+
+0.3.3 (June 2025)
+------------------
+
+* Modular bulk predictions by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/64
+
+
+**Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.3.2...v0.3.3
+
+
 0.3.2 (May 2025)
 ------------------
 
@@ -20,7 +42,7 @@ BeforeIT Release Notes
 
 **Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.3.1...v0.3.2
 
-0.3.2 (April 2025)
+0.3.1 (April 2025)
 ------------------
 
 **Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.3.0...v0.3.1
