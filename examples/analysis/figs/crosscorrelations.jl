@@ -146,7 +146,7 @@ function generate_crosscorrelation_graphs(
     end
 
     # Cycles plots
-    cyclesnames = ["real_gdp_quarterly", "real_capitalformation_quarterly", "real_household_consumption_quarterly"]
+    cyclesnames = ["real_gdp_quarterly", "real_capitalformation_quarterly", "real_household_consumption_quarterly","operating_surplus_quarterly"]
 
     trends = Dict()
     cycles = Dict()

@@ -6,7 +6,6 @@ using Plots, StatsPlots, Dates, FileIO
 
 # Decide the name of a folder where to store all data
 #folder_name = "data/italy"
-folder_name = "data/italy/long_run" # location for cross-correlations data
 
 # Generate parameters and initial conditions from an initial to a final date
 cal = Bit.ITALY_CALIBRATION
@@ -29,7 +28,6 @@ Bit.save_all_params_and_initial_conditions(
 # The whole process is repeatead for all quarters from `2010Q1` to `2019Q4`
 
 #Bit.save_all_simulations(folder_name; T = 16, n_sims = 10)
-Bit.save_all_simulations(folder_name; T = 32, n_sims = 10) # Needed for cross-correlations figures
 
 # Finally, align all simulations with the real data to transform them testable predictions
 real_data = Bit.ITALY_CALIBRATION.data
