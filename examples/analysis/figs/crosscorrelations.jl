@@ -1,4 +1,4 @@
-using StatsBase, DSP, LinearAlgebra, Statistics, Dates
+using StatsBase, LinearAlgebra, Statistics, Dates
 using Plots, StatsPlots
 using MAT, JLD2, FileIO
 import BeforeIT as Bit
@@ -50,17 +50,6 @@ function generate_crosscorrelation_graphs(
     fn = filter(name -> endswith(name, "_quarterly"), fn)
     # Hodrick-Prescott filter implementation
     function hpfilter(y; λ = 1600.0)
-        # First check if DSP.jl has this function
-        if isdefined(DSP, :hpf)
-            try
-                trend = DSP.hpf(y, λ)
-                cycle = y - trend
-                return trend, cycle
-            catch
-                # Fall back to manual implementation
-            end
-        end
-
         # Manual implementation as fallback
         T = length(y)
 

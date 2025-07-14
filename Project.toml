@@ -6,7 +6,6 @@ version = "0.4.0"
 [deps]
 ChunkSplitters = "ae650224-84b6-46f8-82ea-d812ca08434e"
 CommonSolve = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
-DSP = "717857b8-e6f2-59f4-9121-6e50c889abd2"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 DynamicSampling = "2083aeaf-6258-5d07-89fc-32cf5060c837"
