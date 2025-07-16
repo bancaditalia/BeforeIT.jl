@@ -96,9 +96,12 @@ function overwrite_data_init!(m)
     d.nominal_gva[t] = sum(m.firms.Y_i .* ((1 .- m.firms.tau_Y_i) .- 1 ./ m.firms.beta_i))
     d.real_gva[t] = d.nominal_gva[t]
 
-    # Household consumption and investment
+    # Household and government consumption and investment
     d.nominal_household_consumption[t] = tot_Y_h * p.psi
     d.real_household_consumption[t] = d.nominal_household_consumption[t]
+    
+    d.nominal_government_consumption[t] = (1 + p.tau_G) * m.gov.C_G
+    d.real_government_consumption[t] = d.nominal_government_consumption[t]
 
     d.nominal_capitalformation[t] = sum(m.firms.Y_i .* m.firms.delta_i ./ m.firms.kappa_i) + tot_Y_h * p.psi_H
     d.real_capitalformation[t] = d.nominal_capitalformation[t]
