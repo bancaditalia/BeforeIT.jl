@@ -395,7 +395,10 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
         update_variables_with_totals!(model)
 
         # initialize data collection
-        update_data_init!(model)
+        update_data!(model)
+        
+        # for certain variables, we need to overwrite the initial values in a specific way
+        overwrite_data_init!(model)
 
         return model
     end

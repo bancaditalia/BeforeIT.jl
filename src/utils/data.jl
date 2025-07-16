@@ -58,7 +58,9 @@ Base.iterate(dv::DataVector) = Base.iterate(getfield(dv, :vector))
 Base.iterate(dv::DataVector, state) = Base.iterate(getfield(dv, :vector), state)
 
 """
-Initialise the data arrays
+    Data(p)
+
+Initialize a `Data` object with zero-filled arrays.
 """
 function Data(p)
     G = Int(p["G"])
@@ -66,58 +68,74 @@ function Data(p)
     return d
 end
 
-function update_data_init!(m)
+"""
+    overwrite_data_init!(m)
+
+Initialize the data fields in model `m` at time t=1 using the current state of the model.
+"""
+function overwrite_data_init!(m)
+
     d = m.data
     p = m.prop
 
+    # Initialization occurs at t = 1
+    t = 1
+
     tot_Y_h = sum(m.w_act.Y_h) + sum(m.w_inact.Y_h) + sum(m.firms.Y_h) + m.bank.Y_h
-    d.nominal_gdp[1] =
+
+    # GDP and GVA Variables
+    d.nominal_gdp[t] =
         sum(m.firms.Y_i .* (1 .- 1 ./ m.firms.beta_i)) +
         tot_Y_h * p.psi / (1 / p.tau_VAT + 1) +
         p.tau_G * m.gov.C_G +
         tot_Y_h * p.psi_H / (1 / p.tau_CF + 1) +
         p.tau_EXPORT * m.rotw.C_E
-    d.real_gdp[1] = d.nominal_gdp[1]
-    d.nominal_gva[1] = sum(m.firms.Y_i .* ((1 .- m.firms.tau_Y_i) .- 1 ./ m.firms.beta_i))
-    d.real_gva[1] = d.nominal_gva[1]
-    d.nominal_household_consumption[1] = tot_Y_h * p.psi
-    d.real_household_consumption[1] = d.nominal_household_consumption[1]
-    d.nominal_government_consumption[1] = (1 + p.tau_G) * m.gov.C_G
-    d.real_government_consumption[1] = d.nominal_government_consumption[1]
-    d.nominal_capitalformation[1] = sum(m.firms.Y_i .* m.firms.delta_i ./ m.firms.kappa_i) + tot_Y_h * p.psi_H
-    d.real_capitalformation[1] = d.nominal_capitalformation[1]
-    d.nominal_fixed_capitalformation[1] = d.nominal_capitalformation[1]
-    d.real_fixed_capitalformation[1] = d.nominal_capitalformation[1]
-    d.nominal_fixed_capitalformation_dwellings[1] = tot_Y_h * p.psi_H
-    d.real_fixed_capitalformation_dwellings[1] = d.nominal_fixed_capitalformation_dwellings[1]
-    d.nominal_exports[1] = (1 + p.tau_EXPORT) * m.rotw.C_E
-    d.real_exports[1] = d.nominal_exports[1]
-    d.nominal_imports[1] = m.rotw.Y_I
-    d.real_imports[1] = d.nominal_imports[1]
-    d.operating_surplus[1] = sum(
+
+    d.real_gdp[t] = d.nominal_gdp[t]
+
+    d.nominal_gva[t] = sum(m.firms.Y_i .* ((1 .- m.firms.tau_Y_i) .- 1 ./ m.firms.beta_i))
+    d.real_gva[t] = d.nominal_gva[t]
+
+    # Household Consumption and Investment
+    d.nominal_household_consumption[t] = tot_Y_h * p.psi
+    d.real_household_consumption[t] = d.nominal_household_consumption[t]
+
+    d.nominal_capitalformation[t] = sum(m.firms.Y_i .* m.firms.delta_i ./ m.firms.kappa_i) + tot_Y_h * p.psi_H
+    d.real_capitalformation[t] = d.nominal_capitalformation[t]
+
+    d.nominal_fixed_capitalformation[t] = d.nominal_capitalformation[t]
+    d.real_fixed_capitalformation[t] = d.nominal_capitalformation[t]
+
+    d.nominal_fixed_capitalformation_dwellings[t] = tot_Y_h * p.psi_H
+    d.real_fixed_capitalformation_dwellings[t] = d.nominal_fixed_capitalformation_dwellings[t]
+
+    # Operating Surplus and Compensation of Employees
+    d.operating_surplus[t] = sum(
         m.firms.Y_i .* (1 .- ((1 + p.tau_SIF) .* m.firms.w_bar_i ./ m.firms.alpha_bar_i + 1 ./ m.firms.beta_i)) .-
         m.firms.tau_K_i .* m.firms.Y_i .- m.firms.tau_Y_i .* m.firms.Y_i,
     )
-    d.compensation_employees[1] = (1 + p.tau_SIF) * sum(m.firms.w_bar_i .* m.firms.N_i)
-    d.wages[1] = sum(m.firms.w_bar_i .* m.firms.N_i)
-    d.taxes_production[1] = sum(m.firms.tau_K_i .* m.firms.Y_i)
 
-    for g in 1:(p.G)
-        d.nominal_sector_gva[1][g] = sum(
+    d.compensation_employees[t] = (1 + p.tau_SIF) * sum(m.firms.w_bar_i .* m.firms.N_i)
+
+    d.wages[t] = sum(m.firms.w_bar_i .* m.firms.N_i)
+
+    d.taxes_production[t] = sum(m.firms.tau_K_i .* m.firms.Y_i)
+
+    # Sectoral GVA
+    for g in 1:p.G
+        d.nominal_sector_gva[t][g] = sum(
             m.firms.Y_i[m.firms.G_i .== g] .*
             ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .- 1 ./ m.firms.beta_i[m.firms.G_i .== g]),
         )
     end
 
-    d.real_sector_gva[1][:] = d.nominal_sector_gva[1][:]
-    d.euribor[1] = m.cb.r_bar
-    d.gdp_deflator_growth_ea[1] = m.rotw.pi_EA
-    d.real_gdp_ea[1] = m.rotw.Y_EA
-    d.collection_time[1] = 1
-    return d
+    d.real_sector_gva[t][:] = d.nominal_sector_gva[t][:]
+
 end
 
+
 """
+
     update_data!(m)
 
 Update the data in the model `m` with the current state of the model.
@@ -128,12 +146,6 @@ Update the data in the model `m` with the current state of the model.
 # Returns
 - Nothing. The function updates the data structure `m.data` in place.
 
-# Example
-
-```julia
-data = Bit.Data(model)
-Bit.update_data!(model)
-```
 """
 function update_data!(m)
 
