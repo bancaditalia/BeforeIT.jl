@@ -14,7 +14,7 @@ end
 
 p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 
-# initialise all agent types, properties and data using the corresponding functions
+# initialise all agent types and properties using the corresponding functions
 firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
 bank = Bit.Bank(p, ic)
