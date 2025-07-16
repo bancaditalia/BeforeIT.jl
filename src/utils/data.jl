@@ -90,7 +90,7 @@ function update_data!(m::AbstractModel)
     return update_data_step!(m)
 end
 
-Data(p) = Data(typeInt[], [typeFloat[] for _ in 1:25]..., Vector{typeFloat}[], Vector{typeFloat}[])
+Data() = Data(typeInt[], [typeFloat[] for _ in 1:25]..., Vector{typeFloat}[], Vector{typeFloat}[])
 
 function allocate_new_data!(m::AbstractModel)
     d = m.data
