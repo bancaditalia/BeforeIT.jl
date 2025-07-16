@@ -96,7 +96,7 @@ function overwrite_data_init!(m)
     d.nominal_gva[t] = sum(m.firms.Y_i .* ((1 .- m.firms.tau_Y_i) .- 1 ./ m.firms.beta_i))
     d.real_gva[t] = d.nominal_gva[t]
 
-    # Household Consumption and Investment
+    # Household consumption and investment
     d.nominal_household_consumption[t] = tot_Y_h * p.psi
     d.real_household_consumption[t] = d.nominal_household_consumption[t]
 
@@ -109,7 +109,13 @@ function overwrite_data_init!(m)
     d.nominal_fixed_capitalformation_dwellings[t] = tot_Y_h * p.psi_H
     d.real_fixed_capitalformation_dwellings[t] = d.nominal_fixed_capitalformation_dwellings[t]
 
-    # Operating Surplus and Compensation of Employees
+    # Real and nominal exports and imports
+    d.nominal_exports[t] = (1 + p.tau_EXPORT) * m.rotw.C_E
+    d.real_exports[t] = d.nominal_exports[t]    
+    d.nominal_imports[t] = m.rotw.Y_I
+    d.real_imports[t] = d.nominal_imports[t]
+
+    # Operating surplus and compensation of employees
     d.operating_surplus[t] = sum(
         m.firms.Y_i .* (1 .- ((1 + p.tau_SIF) .* m.firms.w_bar_i ./ m.firms.alpha_bar_i + 1 ./ m.firms.beta_i)) .-
         m.firms.tau_K_i .* m.firms.Y_i .- m.firms.tau_Y_i .* m.firms.Y_i,
