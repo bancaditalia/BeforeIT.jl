@@ -78,7 +78,7 @@ to copy-paste the default functions, for example:
 
 ```julia
 function update_data_step!(m::NewModel)
-    @invoke update_data_step!(m::AbstractModel)
+    @invoke Bit.update_data_step!(m::AbstractModel)
     # your new data tracking operations...
 end
 ```
