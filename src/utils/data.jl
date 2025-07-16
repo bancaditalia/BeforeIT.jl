@@ -64,7 +64,7 @@ Initialize a `Data` object with zero-filled arrays.
 """
 function Data(p)
     G = Int(p["G"])
-    d = Data(zeros(typeInt, 1), [zeros(1) for _ in 1:25]..., Vector{Float64}[zeros(G)], Vector{Float64}[zeros(G)])
+    d = Data(zeros(typeInt, 0), [zeros(0) for _ in 1:25]..., Vector{Vector{Float64}}(), Vector{Vector{Float64}}())
     return d
 end
 
