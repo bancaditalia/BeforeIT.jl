@@ -152,7 +152,7 @@ function update_data_init!(m::AbstractModel)
 end
 
 function update_data_step!(m::AbstractModel)
-    d, p, t = m.data, m.prop, length(d.collection_time)
+    d, p, t = m.data, m.prop, length(m.data.collection_time)
     tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
     tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
 
