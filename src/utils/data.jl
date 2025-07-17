@@ -3,34 +3,34 @@ abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
 Bit.@object struct Data(Object) <: AbstractData
-    collection_time::Vector{Bit.typeInt}
-    nominal_gdp::Vector{Bit.typeFloat}
-    real_gdp::Vector{Bit.typeFloat}
-    nominal_gva::Vector{Bit.typeFloat}
-    real_gva::Vector{Bit.typeFloat}
-    nominal_household_consumption::Vector{Bit.typeFloat}
-    real_household_consumption::Vector{Bit.typeFloat}
-    nominal_government_consumption::Vector{Bit.typeFloat}
-    real_government_consumption::Vector{Bit.typeFloat}
-    nominal_capitalformation::Vector{Bit.typeFloat}
-    real_capitalformation::Vector{Bit.typeFloat}
-    nominal_fixed_capitalformation::Vector{Bit.typeFloat}
-    real_fixed_capitalformation::Vector{Bit.typeFloat}
-    nominal_fixed_capitalformation_dwellings::Vector{Bit.typeFloat}
-    real_fixed_capitalformation_dwellings::Vector{Bit.typeFloat}
-    nominal_exports::Vector{Bit.typeFloat}
-    real_exports::Vector{Bit.typeFloat}
-    nominal_imports::Vector{Bit.typeFloat}
-    real_imports::Vector{Bit.typeFloat}
-    operating_surplus::Vector{Bit.typeFloat}
-    compensation_employees::Vector{Bit.typeFloat}
-    wages::Vector{Bit.typeFloat}
-    taxes_production::Vector{Bit.typeFloat}
-    gdp_deflator_growth_ea::Vector{Bit.typeFloat}
-    real_gdp_ea::Vector{Bit.typeFloat}
-    euribor::Vector{Bit.typeFloat}
-    nominal_sector_gva::Vector{Vector{Bit.typeFloat}}
-    real_sector_gva::Vector{Vector{Bit.typeFloat}}
+    collection_time::Vector{Bit.typeInt} = Bit.typeInt[]
+    nominal_gdp::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gdp::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_gva::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gva::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_household_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_household_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_government_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_government_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_fixed_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_fixed_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.Bit.typeFloat[]
+    nominal_exports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_exports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_imports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_imports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    operating_surplus::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    compensation_employees::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    wages::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    taxes_production::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    gdp_deflator_growth_ea::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gdp_ea::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    euribor::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_sector_gva::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
+    real_sector_gva::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
 end
 
 # Define the DataVector struct
@@ -89,8 +89,6 @@ function update_data!(m::AbstractModel)
     t == 1 && return update_data_init!(m)
     return update_data_step!(m)
 end
-
-Data() = Data(typeInt[], [typeFloat[] for _ in 1:25]..., Vector{typeFloat}[], Vector{typeFloat}[])
 
 function allocate_new_data!(m::AbstractModel)
     d = m.data
