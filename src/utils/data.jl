@@ -3,34 +3,34 @@ abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
 Bit.@object struct Data(Object) <: AbstractData
-    collection_time::Vector{Bit.typeInt}
-    nominal_gdp::Vector{Bit.typeFloat}
-    real_gdp::Vector{Bit.typeFloat}
-    nominal_gva::Vector{Bit.typeFloat}
-    real_gva::Vector{Bit.typeFloat}
-    nominal_household_consumption::Vector{Bit.typeFloat}
-    real_household_consumption::Vector{Bit.typeFloat}
-    nominal_government_consumption::Vector{Bit.typeFloat}
-    real_government_consumption::Vector{Bit.typeFloat}
-    nominal_capitalformation::Vector{Bit.typeFloat}
-    real_capitalformation::Vector{Bit.typeFloat}
-    nominal_fixed_capitalformation::Vector{Bit.typeFloat}
-    real_fixed_capitalformation::Vector{Bit.typeFloat}
-    nominal_fixed_capitalformation_dwellings::Vector{Bit.typeFloat}
-    real_fixed_capitalformation_dwellings::Vector{Bit.typeFloat}
-    nominal_exports::Vector{Bit.typeFloat}
-    real_exports::Vector{Bit.typeFloat}
-    nominal_imports::Vector{Bit.typeFloat}
-    real_imports::Vector{Bit.typeFloat}
-    operating_surplus::Vector{Bit.typeFloat}
-    compensation_employees::Vector{Bit.typeFloat}
-    wages::Vector{Bit.typeFloat}
-    taxes_production::Vector{Bit.typeFloat}
-    gdp_deflator_growth_ea::Vector{Bit.typeFloat}
-    real_gdp_ea::Vector{Bit.typeFloat}
-    euribor::Vector{Bit.typeFloat}
-    nominal_sector_gva::Vector{Vector{Bit.typeFloat}}
-    real_sector_gva::Vector{Vector{Bit.typeFloat}}
+    collection_time::Vector{Bit.typeInt} = Bit.typeInt[]
+    nominal_gdp::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gdp::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_gva::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gva::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_household_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_household_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_government_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_government_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_fixed_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_fixed_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.Bit.typeFloat[]
+    nominal_exports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_exports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_imports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_imports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    operating_surplus::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    compensation_employees::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    wages::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    taxes_production::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    gdp_deflator_growth_ea::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gdp_ea::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    euribor::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_sector_gva::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
+    real_sector_gva::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
 end
 
 # Define the DataVector struct
@@ -58,17 +58,49 @@ Base.iterate(dv::DataVector) = Base.iterate(getfield(dv, :vector))
 Base.iterate(dv::DataVector, state) = Base.iterate(getfield(dv, :vector), state)
 
 """
-Initialise the data arrays
+    update_data!(m)
+
+Update the data in the model `m` with the current state of the model. Returns
+the updated model `m`.
+
+If one wants to track more data of the model of what is provided by default, one needs to
+extend all the pipeline for data tracking, which involves to
+
+1. Create a new model struct inheriting from `Bit.Model` with `Bit.@object`
+1. Create a new data struct (e.g. `ExtendedData`) inheriting from `Bit.Data` with `Bit.@object`
+2. Implement a new function `ExtendedData()` which just allocates empty containers for the
+   data tracking
+3. Extend `update_data!` by extending its components (`allocate_new_data!`, `update_data_init!`
+   and `update_data_step!`)
+
+Note that you can use @invoke in point 3. to use the standard functions so that you don't need
+to copy-paste the default functions, for example:
+
+```julia
+function Bit.update_data_step!(m::NewModel)
+    @invoke Bit.update_data_step!(m::AbstractModel)
+    # your new data tracking operations...
+end
+```
 """
-function Data(p)
-    G = Int(p["G"])
-    d = Data(zeros(typeInt, 1), [zeros(1) for _ in 1:25]..., Vector{Float64}[zeros(G)], Vector{Float64}[zeros(G)])
-    return d
+function update_data!(m::AbstractModel)
+    allocate_new_data!(m)
+    t = length(m.data.collection_time)
+    t == 1 && return update_data_init!(m)
+    return update_data_step!(m)
 end
 
-function update_data_init!(m)
+function allocate_new_data!(m::AbstractModel)
     d = m.data
-    p = m.prop
+    for f in fieldnames(typeof(d))[1:26]
+        push!(getfield(d, f), 0.0)
+    end
+    push!(d.nominal_sector_gva, zeros(m.prop.G))
+    push!(d.real_sector_gva, zeros(m.prop.G))
+end
+
+function update_data_init!(m::AbstractModel)
+    d, p = m.data, m.prop
 
     tot_Y_h = sum(m.w_act.Y_h) + sum(m.w_inact.Y_h) + sum(m.firms.Y_h) + m.bank.Y_h
     d.nominal_gdp[1] =
@@ -114,39 +146,11 @@ function update_data_init!(m)
     d.gdp_deflator_growth_ea[1] = m.rotw.pi_EA
     d.real_gdp_ea[1] = m.rotw.Y_EA
     d.collection_time[1] = 1
-    return d
+    return m
 end
 
-"""
-    update_data!(m)
-
-Update the data in the model `m` with the current state of the model.
-
-# Arguments
-- `m`: The model used to update the data.
-
-# Returns
-- Nothing. The function updates the data structure `m.data` in place.
-
-# Example
-
-```julia
-data = Bit.Data(model)
-Bit.update_data!(model)
-```
-"""
-function update_data!(m)
-
-    t0 = m.agg.t
-    d = m.data
-    t = length(d.collection_time)+1
-    p = m.prop
-    for f in fieldnames(typeof(d))[1:26]
-        push!(getfield(d, f), 0.0)
-    end
-    push!(d.nominal_sector_gva, zeros(p.G))
-    push!(d.real_sector_gva, zeros(p.G))
-
+function update_data_step!(m::AbstractModel)
+    d, p, t = m.data, m.prop, length(m.data.collection_time)
     tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
     tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
 
@@ -214,5 +218,6 @@ function update_data!(m)
     d.euribor[t] = m.cb.r_bar
     d.gdp_deflator_growth_ea[t] = m.rotw.pi_EA
     d.real_gdp_ea[t] = m.rotw.Y_EA
-    d.collection_time[t] = t0
+    d.collection_time[t] = m.agg.t
+    return m
 end
