@@ -53,6 +53,7 @@ include("markets/search_and_matching.jl")
 # utils
 include("utils/estimate.jl")
 include("utils/nfvar3.jl")
+include("utils/shuffle.jl")
 include("utils/randpl.jl")
 include("utils/epsilon.jl")
 include("utils/positive.jl")

@@ -20,7 +20,7 @@ function search_and_matching_credit(firms::AbstractFirms, model::AbstractModel)
     DL_i = zeros(typeFloat, size(DL_d_i))
     sum_DL_i = sum(DL_i)
     I_FG = findall(DL_d_i .> 0)
-    shuffle!(I_FG)
+    faster_shuffle!(I_FG)
     s_L_e_i = sum(L_e_i)
     for i in I_FG
         DL_i_p = DL_i[i]
