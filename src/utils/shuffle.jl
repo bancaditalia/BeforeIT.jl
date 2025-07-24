@@ -1,5 +1,5 @@
 
-function faster_shuffle!(vec::AbstractArray)
+function faster_shuffle!(vec)
     rng = Random.default_rng()
     for i in 2:length(vec)
         endi = (i-1) % UInt
