@@ -38,7 +38,7 @@ end
 function shuffle!(v::Vector)
     # do nothing 
 end
-function faster_shuffle!(v::Vector)
+function Bit.faster_shuffle!(v::Vector)
     # do nothing 
 end
 function wsample(v::UnitRange{Int64}, w::Vector{Float64})
