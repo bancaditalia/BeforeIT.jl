@@ -28,7 +28,7 @@ function search_and_matching_labour(firms::AbstractFirms, model::AbstractModel)
 
     # get employed workers in random order
     H_E = findall(O_h .> 0)
-    shuffle!(H_E)
+    faster_shuffle!(H_E)
 
     # fire workers if vacancies are negative
     for h in H_E
@@ -46,12 +46,12 @@ function search_and_matching_labour(firms::AbstractFirms, model::AbstractModel)
 
     # find unemployed workers and positive vacancies
     H_U = findall(O_h .== 0)
-    shuffle!(H_U)
+    faster_shuffle!(H_U)
     I_V = findall(V_i .> 0)
 
     # while there are no more vacancies or unemployed workers
     while !isempty(H_U) && !isempty(I_V)
-        shuffle!(I_V)
+        faster_shuffle!(I_V)
         for i in I_V
             # select random unemployed worker
             h = H_U[1]
