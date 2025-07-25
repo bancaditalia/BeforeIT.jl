@@ -235,7 +235,7 @@ function perform_firms_market!(
     while !isempty(I_g) && !isempty(F_g_active)
 
         # select buyers at random
-        faster_shuffle!(I_g)
+        fshuffle!(I_g)
         for i in I_g
             # select a random firm according to the probabilities
             e = rand(F_g_active)
@@ -267,7 +267,7 @@ function perform_firms_market!(
 
         while !isempty(I_g) && !isempty(F_g_active)
 
-            faster_shuffle!(I_g)
+            fshuffle!(I_g)
             for i in I_g
                 e = rand(F_g_active)
                 f = F_g_[e]
@@ -326,7 +326,7 @@ function perform_retail_market!(
 
     while !isempty(H_g) && !isempty(F_g_active)
 
-        faster_shuffle!(H_g)
+        fshuffle!(H_g)
         for h in H_g
             e = rand(F_g_active)
             f = F_g[e]
@@ -356,7 +356,7 @@ function perform_retail_market!(
 
         while !isempty(H_g) && !isempty(F_g_active)
 
-            faster_shuffle!(H_g)
+            fshuffle!(H_g)
             for h in H_g
                 e = rand(F_g_active)
                 f = F_g_[e]
