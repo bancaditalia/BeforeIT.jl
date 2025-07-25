@@ -1,5 +1,5 @@
 
-function faster_shuffle!(vec)
+function fshuffle!(vec)
     rng = Random.default_rng()
     for i in 2:length(vec)
         endi = (i-1) % UInt
@@ -7,4 +7,14 @@ function faster_shuffle!(vec)
         vec[i], vec[j] = vec[j], vec[i]
     end
     vec
+end
+
+function ufilter!(cond, vec)
+    @inbounds for i in length(vec):-1:1
+        if !cond(vec[i])
+            vec[i], vec[end] = vec[end], vec[i]
+            pop!(vec)
+        end
+    end
+    return vec
 end
