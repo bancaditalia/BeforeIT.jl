@@ -419,13 +419,3 @@ function create_weighted_sampler(P_f, S_f, F_g)
     append!(sampler, 1:length(F_g), w_cum_f_)
     return sampler
 end
-
-function ufilter!(cond, vec)
-    @inbounds for i in length(vec):-1:1
-        if !cond(vec[i])
-            vec[i], vec[end] = vec[end], vec[i]
-            pop!(vec)
-        end
-    end
-    return vec
-end
