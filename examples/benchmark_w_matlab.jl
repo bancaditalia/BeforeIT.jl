@@ -4,6 +4,10 @@
 # by running the same model for the same number of epochs and measuring
 # the time taken.
 
+using Preferences
+
+set_preferences!("BeforeIT", "typeInt" => "Int32", "typeFloat" => "Float32")
+
 import BeforeIT as Bit
 
 using CairoMakie, Statistics, ThreadPinning
@@ -122,3 +126,5 @@ ax2.xgridvisible = false
 display(fig)
 
 save("benchmark_w_matlab.png", fig)
+
+delete_preferences!("BeforeIT", "typeInt", "typeFloat"; force=true)
