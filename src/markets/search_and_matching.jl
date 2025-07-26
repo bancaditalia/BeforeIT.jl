@@ -225,7 +225,7 @@ function perform_firms_market!(
     I_g = findall(x -> x > 0.0, DM_d_ig)
 
     # keep firms that have positive stock of good "g"
-    filter!(i -> S_fg[i] > 0.0, F_g)
+    ufilter!(i -> S_fg[i] > 0.0, F_g)
 
     # continue exchanges until either demand or supply terminates
 
@@ -235,7 +235,7 @@ function perform_firms_market!(
     while !isempty(I_g) && !isempty(F_g_active)
 
         # select buyers at random
-        faster_shuffle!(I_g)
+        fshuffle!(I_g)
         for i in I_g
             # select a random firm according to the probabilities
             e = rand(F_g_active)
@@ -254,20 +254,20 @@ function perform_firms_market!(
                 isempty(F_g_active) && break
             end
         end
-        filter!(i -> DM_d_ig[i] > 0.0, I_g)
+        ufilter!(i -> DM_d_ig[i] > 0.0, I_g)
     end
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
         F_g_ = findall(x -> x == g, G_f)
-        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
+        ufilter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
         while !isempty(I_g) && !isempty(F_g_active)
 
-            faster_shuffle!(I_g)
+            fshuffle!(I_g)
             for i in I_g
                 e = rand(F_g_active)
                 f = F_g_[e]
@@ -284,7 +284,7 @@ function perform_firms_market!(
                     isempty(F_g_active) && break
                 end
             end
-            filter!(i -> DM_d_ig_[i] > 0.0, I_g)
+            ufilter!(i -> DM_d_ig_[i] > 0.0, I_g)
         end
     end
 
@@ -319,14 +319,14 @@ function perform_retail_market!(
     C_real_hg = zeros(typeFloat, size(C_d_hg))
     H_g = findall(x -> x > 0.0, C_d_hg)
 
-    filter!(i -> S_fg[i] > 0.0, F_g)
+    ufilter!(i -> S_fg[i] > 0.0, F_g)
 
     # weights according to size and price
     F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
     while !isempty(H_g) && !isempty(F_g_active)
 
-        faster_shuffle!(H_g)
+        fshuffle!(H_g)
         for h in H_g
             e = rand(F_g_active)
             f = F_g[e]
@@ -343,20 +343,20 @@ function perform_retail_market!(
                 isempty(F_g_active) && break
             end
         end
-        filter!(h -> C_d_hg[h] > 0.0, H_g)
+        ufilter!(h -> C_d_hg[h] > 0.0, H_g)
     end
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
         F_g_ = findall(x -> x == g, G_f)
-        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
+        ufilter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
         while !isempty(H_g) && !isempty(F_g_active)
 
-            faster_shuffle!(H_g)
+            fshuffle!(H_g)
             for h in H_g
                 e = rand(F_g_active)
                 f = F_g_[e]
@@ -373,7 +373,7 @@ function perform_retail_market!(
                     isempty(F_g_active) && break
                 end
             end
-            filter!(h -> C_d_hg_[h] > 0.0, H_g)
+            ufilter!(h -> C_d_hg_[h] > 0.0, H_g)
         end
     end
 
