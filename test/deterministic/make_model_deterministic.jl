@@ -41,6 +41,9 @@ end
 function Bit.fshuffle!(v::Vector)
     # do nothing 
 end
+function Bit.ufilter!(cond, v::Vector)
+    filter!(cond, v)
+end
 function wsample(v::UnitRange{Int64}, w::Vector{Float64})
     return v[1]
 end
