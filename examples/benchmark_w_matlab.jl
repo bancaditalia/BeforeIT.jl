@@ -62,7 +62,7 @@ for i in 1:n_runs
     julia_times_small[i] = @elapsed run(parameters, initial_conditions, T; multi_threading = false);
 end
 julia_times_small ./= T
-julia_times_big = [54.883858, 56.1488075, 56.596231, 54.262554, 57.452511]
+julia_times_big = [46.400777, 47.218013, 46.981572, 46.532327, 46.232614]
 julia_mtime_small = mean(julia_times_small)
 julia_stime_small = std(julia_times_small)
 julia_mtime_big = mean(julia_times_big)
@@ -73,7 +73,7 @@ for i in 1:5
     julia_times_small_multi[i] =  @elapsed run(parameters, initial_conditions, T; multi_threading = true);
 end
 julia_times_small_multi ./= T
-julia_times_big_multi = [28.343228, 28.925582, 28.847876, 28.625557, 28.447293]
+julia_times_big_multi = [21.683823, 21.517169, 21.923911, 21.530070, 21.283416]
 julia_mtime_small_multi = mean(julia_times_small_multi)
 julia_stime_small_multi = std(julia_times_small_multi)
 julia_mtime_big_multi = mean(julia_times_big_multi)
