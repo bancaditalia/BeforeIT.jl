@@ -52,8 +52,8 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
     end
 
     if multi_threading
-        Threads.@threads for g in 1:G
-            perform_market!(g)
+        Threads.@sync for g in 1:G
+            Threads.@spawn perform_market!(g)
         end
     else
         for g in 1:G
