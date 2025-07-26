@@ -8,18 +8,12 @@ import Random: shuffle!, rand, randn
 import StatsBase: wsample
 using Distributions
 
-function allinds(sp::DynamicSampler)
-    inds = collect(Iterators.Flatten((Iterators.map(x -> x[1], b) for b in sp.level_buckets)))
-    return sort!(inds)
-end
-
 function randn()
     return 0.0
 end
 
-function rand(sp::DynamicSampler)
-    inds = collect(Iterators.Flatten((Iterators.map(x -> x[1], b) for b in sp.level_buckets)))
-    return minimum(inds)
+function rand(sp::Bit.WeightVectors.FixedSizeWeightVector)
+    return findfirst(i -> !iszero(sp[i]), 1:length(sp))
 end
 function rand(n::UnitRange)
     return 1

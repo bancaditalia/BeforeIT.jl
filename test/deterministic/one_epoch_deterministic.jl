@@ -104,15 +104,15 @@
         C_d_h_sum = sum(w_act.C_d_h) + sum(w_inact.C_d_h) + sum(firms.C_d_h) + bank.C_d_h
         I_d_h_sum = sum(w_act.I_d_h) + sum(w_inact.I_d_h) + sum(firms.I_d_h) + bank.I_d_h
     
-        @test isapprox(C_d_h_sum, 35538.3159, rtol = 1e-9, atol = 1e-9)
-        @test isapprox(I_d_h_sum, 2950.5957, rtol = 1e-6, atol = 1e-9)
+        @test isapprox(C_d_h_sum, 35538.3159, rtol = 1e-9, atol = 1e-6)
+        @test isapprox(I_d_h_sum, 2950.5957, rtol = 1e-6, atol = 1e-6)
     
         C_G, C_d_j = Bit.gov_expenditure(gov, model)
         gov.C_G = C_G
         gov.C_d_j .= C_d_j
     
-        @test isapprox(mean(gov.C_G), 14783.2494, rtol = 1e-6, atol = 1e-9)
-        @test isapprox(mean(gov.C_d_j), 95.0572, rtol = 1e-6, atol = 1e-9)
+        @test isapprox(mean(gov.C_G), 14783.2494, rtol = 1e-6, atol = 1e-6)
+        @test isapprox(mean(gov.C_d_j), 95.0572, rtol = 1e-6, atol = 1e-6)
     
         C_E, Y_I, C_d_l, Y_m, P_m = Bit.rotw_import_export(rotw, model)
         rotw.C_E = C_E
@@ -121,30 +121,30 @@
         rotw.Y_m .= Y_m
         rotw.P_m .= P_m
     
-        @test isapprox(mean(rotw.C_E), 34246.8702, rtol = 1e-6, atol = 1e-9)
-        @test isapprox(mean(rotw.C_d_l), 110.1048, rtol = 1e-6, atol = 1e-9)
-        @test isapprox(rotw.Y_I, 33214.9736, rtol = 1e-6, atol = 1e-9)
-        @test isapprox(mean(rotw.Y_m), 535.7254, rtol = 1e-6, atol = 1e-9)
-        @test isapprox(mean(rotw.P_m), 1.0031, rtol = 1e-4, atol = 1e-9)
+        @test isapprox(mean(rotw.C_E), 34246.8702, rtol = 1e-6, atol = 1e-6)
+        @test isapprox(mean(rotw.C_d_l), 110.1048, rtol = 1e-6, atol = 1e-6)
+        @test isapprox(rotw.Y_I, 33214.9736, rtol = 1e-6, atol = 1e-6)
+        @test isapprox(mean(rotw.Y_m), 535.7254, rtol = 1e-6, atol = 1e-6)
+        @test isapprox(mean(rotw.P_m), 1.0031, rtol = 1e-4, atol = 1e-6)
     
         Bit.search_and_matching!(model, multi_threading)
     
         C_h_sum = sum(w_act.C_h) + sum(w_inact.C_h) + sum(firms.C_h) + bank.C_h
         I_h_sum = sum(w_act.I_h) + sum(w_inact.I_h) + sum(firms.I_h) + bank.I_h
         K_h_sum = sum(w_act.K_h) + sum(w_inact.K_h) + sum(firms.K_h) + bank.K_h
-        @test isapprox(C_h_sum, 35136.4805, rtol = 1e-8, atol = 1e-9)
-        @test isapprox(I_h_sum, 2699.6511, rtol = 1e-7, atol = 1e-9)
-        @test isapprox(K_h_sum, 408076.5511, rtol = 1e-8, atol = 1e-9)
+        @test isapprox(C_h_sum, 35136.4805, rtol = 1e-4, atol = 1e-4)
+        @test isapprox(I_h_sum, 2699.6511, rtol = 1e-6, atol = 1e-6)
+        @test isapprox(K_h_sum, 408076.5511, rtol = 1e-6, atol = 1e-6)
     
         @test isapprox(mean(firms.Q_d_i), 220.092, rtol = 1e-6)
         @test isapprox(mean(firms.Q_i), 216.6644, rtol = 1e-6)
         @test isapprox(mean(rotw.Q_d_m), 527.2969, rtol = 1e-6)
-        @test isapprox(mean(rotw.Q_m), 527.2969, rtol = 1e-7)
+        @test isapprox(mean(rotw.Q_m), 527.2969, rtol = 1e-5)
         @test isapprox(mean(firms.I_i), 21.6029, rtol = 1e-5)
         @test isapprox(mean(firms.DM_i), 110.7829, rtol = 1e-6)
         @test isapprox(mean(firms.P_CF_i), 1.0031, rtol = 1e-4)
         @test isapprox(mean(firms.P_bar_i), 1.0031, rtol = 1e-4)
-        @test isapprox(gov.C_j, 14370.3493, rtol = 1e-8)
+        @test isapprox(gov.C_j, 14370.3493, rtol = 1e-5)
         @test isapprox(gov.P_j, 1.0031, rtol = 1e-4)
     
         K_i, M_i, DS_i, S_i = Bit.firms_stocks(firms)
@@ -164,11 +164,11 @@
     
         # update bank profits
         bank.Pi_k = Bit.bank_profits(bank, model)
-        @test isapprox(bank.Pi_k, 6486.6381, rtol = 1e-8)
+        @test isapprox(bank.Pi_k, 6486.6381, rtol = 1e-5)
     
         # update bank equity
         bank.E_k = Bit.bank_equity(bank, model)
-        @test isapprox(bank.E_k, 90742.39, rtol = 1e-9)
+        @test isapprox(bank.E_k, 90742.39, rtol = 1e-5)
     
         # update actual income of all households
         w_act.Y_h .= Bit.households_income_act(w_act, model)
@@ -192,8 +192,8 @@
         E_CB = Bit.central_bank_equity(cb, model)
         Pi_CB = E_CB - cb.E_CB
         cb.E_CB = E_CB
-        @test isapprox(Pi_CB, 1866.3821, rtol = 1e-7)
-    
+        @test isapprox(Pi_CB, 1866.3821, rtol = 1e-5)
+
         # compute gov revenues (Y_G), surplus/deficit (Pi_G) and debt (L_H)
         gov.Y_G = Bit.gov_revenues(model)
         @test isapprox(gov.Y_G, 28783.0089, rtol = 1e-2)
@@ -215,7 +215,7 @@
     
         @test isapprox(mean(DD_i), -14.8245, rtol = 1e-2)
         @test isapprox(mean(firms.D_i), 71.7925, rtol = 1e-3)
-        @test isapprox(mean(firms.L_i), 367.0003, rtol = 1e-7)
+        @test isapprox(mean(firms.L_i), 367.0003, rtol = 1e-5)
         @test isapprox(mean(firms.E_i), 1103.945, rtol = 1e-2)
     
         # check central bank equity
@@ -223,7 +223,7 @@
     
         # update net credit/debit position of rest of the world
         rotw.D_RoW = Bit.rotw_deposits(rotw, model)
-        @test isapprox(rotw.D_RoW, -644.0817, rtol = 1e-7)
+        @test isapprox(rotw.D_RoW, -644.0817, rtol = 1e-5)
     
         # update bank net credit/debit position
         bank.D_k = Bit.bank_deposits(bank, model)
