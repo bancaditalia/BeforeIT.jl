@@ -89,8 +89,8 @@ labels = ["MATLAB", "Gen. C - 1 core", "Gen. C - 4 cores", "HPC - 1 core*", "HPC
 # Create the layout
 fig = Figure(size = (900, 400));
 
-ax1 = Axis(fig[1, 1], ylabel="time for one epoch (s)", title="Model with 8 thousand agents", titlesize=18, xticksvisible=false)
-ax2 = Axis(fig[1, 2], title="Model with 8 million agents", titlesize=18, xticksvisible=false)
+ax1 = Axis(fig[1, 1], ylabel="time for one step (s)", title="Model in scale 1:1000", titlesize=18, xticksvisible=false)
+ax2 = Axis(fig[1, 2], title="Model in scale 1:1", titlesize=18, xticksvisible=false)
 
 times_small = [matlab_mtime_small, c_mtime_small, c_mtime_small_multi, julia_mtime_small, julia_mtime_small_multi]
 barplot!(ax1,
@@ -125,6 +125,6 @@ ax2.xgridvisible = false
 # Save or display the layout
 display(fig)
 
-save("benchmark_w_matlab.png", fig)
+save("benchmark_w_matlab.pdf", fig)
 
 delete_preferences!("BeforeIT", "typeInt", "typeFloat"; force=true)
