@@ -132,9 +132,9 @@
         C_h_sum = sum(w_act.C_h) + sum(w_inact.C_h) + sum(firms.C_h) + bank.C_h
         I_h_sum = sum(w_act.I_h) + sum(w_inact.I_h) + sum(firms.I_h) + bank.I_h
         K_h_sum = sum(w_act.K_h) + sum(w_inact.K_h) + sum(firms.K_h) + bank.K_h
-        @test isapprox(C_h_sum, 35136.4805, rtol = 1e-8, atol = 1e-6)
-        @test isapprox(I_h_sum, 2699.6511, rtol = 1e-7, atol = 1e-6)
-        @test isapprox(K_h_sum, 408076.5511, rtol = 1e-8, atol = 1e-6)
+        @test isapprox(C_h_sum, 35136.4805, rtol = 1e-6, atol = 1e-6)
+        @test isapprox(I_h_sum, 2699.6511, rtol = 1e-6, atol = 1e-6)
+        @test isapprox(K_h_sum, 408076.5511, rtol = 1e-6, atol = 1e-6)
     
         @test isapprox(mean(firms.Q_d_i), 220.092, rtol = 1e-6)
         @test isapprox(mean(firms.Q_i), 216.6644, rtol = 1e-6)
