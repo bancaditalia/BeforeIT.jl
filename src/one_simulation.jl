@@ -49,20 +49,14 @@ Note that the input model is not updated.
 """
 function ensemblerun(model::AbstractModel, T, n_sims; multi_threading = true, shock = NoShock())
     model_vector = Vector{Bit.Model}(undef, n_sims)
-    if multi_threading
-        Threads.@threads for c in chunks(1:n_sims, n=Threads.nthreads())
-            for i in c
-                model_i = deepcopy(model)
-                run!(model_i, T; shock = shock)
-                model_vector[i] = model_i
-            end
+    Threads.@sync for i in 1:n_sims
+        model_i = deepcopy(model)
+        if multi_threading 
+            Threads.@spawn run!(model_i, T; shock, multi_threading)
+        else
+            run!(model_i, T; shock)
         end
-    else
-        for i in 1:n_sims
-            model_i = deepcopy(model)
-            run!(model_i, T; shock = shock)
-            model_vector[i] = model_i
-        end
+        model_vector[i] = model_i
     end
     return model_vector
 end
