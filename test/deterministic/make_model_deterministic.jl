@@ -12,7 +12,7 @@ function randn()
     return 0.0
 end
 
-function rand(sp::WeightVectors.FixedSizeWeighVector)
+function rand(sp::Bit.WeightVectors.FixedSizeWeighVector)
     return findfirst(i -> !iszero(sp[i]), 1:length(sp))
 end
 function rand(n::UnitRange)
