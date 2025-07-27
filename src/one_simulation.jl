@@ -52,7 +52,7 @@ function ensemblerun(model::AbstractModel, T, n_sims; multi_threading = true, sh
     Threads.@sync for i in 1:n_sims
         model_i = deepcopy(model)
         if multi_threading 
-            Threads.@spawn run!(model_i, T; shock,) #multi_threading)
+            Threads.@spawn run!(model_i, T; shock, multi_threading)
         else
             run!(model_i, T; shock)
         end
