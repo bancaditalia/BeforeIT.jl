@@ -1,6 +1,6 @@
 
 """
-    run!(model, T; shock = NoShock(), multi_threading = false)
+    run!(model, T; shock = NoShock(), parallel = false)
 
 Run a single simulation based on the provided `model`. 
 The simulation runs for a number of steps T.
@@ -13,7 +13,7 @@ The simulation runs for a number of steps T.
 - `model::AbstractModel`: The model updated during the simulation.
 
 # Details
-The function iteratively updates the model and data for each step using `Bit.step!(model)`
+The function iteratively updates the model and data for each step using `Bit.step!(model)`.
 
 # Example
 ```julia
@@ -23,9 +23,9 @@ model = Bit.Model(parameters, initial_conditions)
 run!(model, 2)
 ```
 """
-function run!(model::AbstractModel, T; multi_threading = false, shock = NoShock())
+function run!(model::AbstractModel, T; parallel = false, shock = NoShock())
     for _ in 1:T
-        Bit.step!(model; multi_threading = multi_threading, shock = shock)
+        Bit.step!(model; parallel = parallel, shock = shock)
         Bit.update_data!(model)
     end
     return model
