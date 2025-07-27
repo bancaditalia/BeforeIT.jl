@@ -2,7 +2,6 @@ module BeforeIT
 
 import Base: length
 
-using ChunkSplitters
 using LazyArrays
 using LinearAlgebra
 using MacroTools
