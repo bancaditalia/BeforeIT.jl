@@ -1,6 +1,6 @@
 # # Multithreading speedup for large models
 
-# In this tutorial we illustrate how to make use of multi threading in `BeforeIT.jl`
+# In this tutorial we illustrate how to make use of multi-threading in `BeforeIT.jl`
 # to allow for faster executions of single simulation runs.
 
 import BeforeIT as Bit
@@ -24,13 +24,13 @@ Threads.nthreads()
 # Then we need to first compile the code not to count compilation time,
 # we can do that just by executing the function one time
 T = 50
-Bit.run!(model, T; multi_threading = false);
+Bit.run!(model, T; parallel = false);
 
-# Let's now compare the performance of single threading and multi threading
+# Let's now compare the performance of single-threading and multi-threading
 model = Bit.Model(parameters, initial_conditions);
-@time Bit.run!(model, T; multi_threading = false);
+@time Bit.run!(model, T; parallel = false);
 
 model = Bit.Model(parameters, initial_conditions);
-@time Bit.run!(model, T; multi_threading = true);
+@time Bit.run!(model, T; parallel = true);
 
 # Is the speedup in line to what we would expect? Yes!

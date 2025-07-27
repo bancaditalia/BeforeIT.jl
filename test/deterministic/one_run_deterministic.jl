@@ -7,7 +7,7 @@
     function run_deterministic(parameters, initial_conditions, T, m)
         model = Bit.Model(parameters, initial_conditions)
         for t in 1:(T - 1)
-            Bit.step!(model; multi_threading = m)
+            Bit.step!(model; parallel = m)
             Bit.update_data!(model)
         end
         return model   

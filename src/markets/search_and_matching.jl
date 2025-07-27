@@ -1,6 +1,6 @@
 
 """
-    search_and_matching!(model, multi_threading::Bool = false)
+    search_and_matching!(model, parallel::Bool = false)
 
 This function performs a search and matching algorithm for firms and for retail markets. It takes in a model object 
 and an optional boolean argument for multi-threading. The function loops over all goods and performs the firms market 
@@ -8,11 +8,11 @@ and retail market operations for each good. Finally, it updates the aggregate va
 
 Args:
 - model: The model object
-- multi_threading: A boolean indicating whether to use multi-threading for the algorithm. Default is false.
+- parallel: A boolean indicating whether to use multi-threading for the algorithm. Default is false.
 
 This function updates the model in-place and does not return any value.
 """
-function search_and_matching!(model::AbstractModel, multi_threading = false)
+function search_and_matching!(model::AbstractModel, parallel = false)
 
     # unpack models' variables
     w_act, w_inact, firms, gov = model.w_act, model.w_inact, model.firms, model.gov
@@ -26,7 +26,7 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
     I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
     Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, 
     P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
-        firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading
+        firms, rotw, prop, agg, w_act, w_inact, gov, bank
     )
 
     G = size(prop.b_HH_g, 1) # number of goods
@@ -51,7 +51,7 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
         )
     end
 
-    if multi_threading
+    if parallel
         Threads.@sync for g in 1:G
             Threads.@spawn perform_market!(g)
         end
@@ -136,7 +136,7 @@ function update_aggregate_variables!(
     bank.K_h += bank.I_h
 end
 
-function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading)
+function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank)
     # ... Initialize all the variables ...
 
     # change some variables according to arguments of matlab function

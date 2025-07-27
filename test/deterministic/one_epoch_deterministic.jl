@@ -4,7 +4,7 @@
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
-    for multi_threading in [false, true]
+    for parallel in [false, true]
         model = Bit.Model(parameters, initial_conditions)
     
         gov = model.gov # government
@@ -127,7 +127,7 @@
         @test isapprox(mean(rotw.Y_m), 535.7254, rtol = 1e-6, atol = 1e-6)
         @test isapprox(mean(rotw.P_m), 1.0031, rtol = 1e-4, atol = 1e-6)
     
-        Bit.search_and_matching!(model, multi_threading)
+        Bit.search_and_matching!(model, parallel)
     
         C_h_sum = sum(w_act.C_h) + sum(w_inact.C_h) + sum(firms.C_h) + bank.C_h
         I_h_sum = sum(w_act.I_h) + sum(w_inact.I_h) + sum(firms.I_h) + bank.I_h

@@ -169,7 +169,7 @@ Bit.search_and_matching!(
     prop,
     DM_d_i,
     I_d_i;
-    multi_threading = false,
+    parallel = false,
 )
 
 ####### FINAL GENERAL ACCOUNTING #######
