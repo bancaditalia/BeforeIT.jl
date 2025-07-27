@@ -32,7 +32,7 @@ function run!(model::AbstractModel, T; multi_threading = false, shock = NoShock(
 end
 
 """
-    ensemblerun(model, T, n_sims; shock = NoShock(), multi_threading = true)
+    ensemblerun(model, T, n_sims; shock = NoShock(), parallel = true)
 
 A function that runs `n_sims` simulations in parallel with multiple threading and returns a vector of 
 models of dimension `n_sims`.
@@ -40,19 +40,19 @@ models of dimension `n_sims`.
 # Arguments
 - `model`: The model configuration used to simulate.
 - `T`: the number of steps to perform.
-- `n_sims`: The number of simulations to run in parallel.
+- `n_sims`: The number of simulations to run.
 
 # Returns
 - `model_vector`: A vector containing the `n_sims` models simulated.
 
 Note that the input model is not updated.
 """
-function ensemblerun(model::AbstractModel, T, n_sims; multi_threading = true, shock = NoShock())
+function ensemblerun(model::AbstractModel, T, n_sims; parallel = true, shock = NoShock())
     model_vector = Vector{Bit.Model}(undef, n_sims)
     Threads.@sync for i in 1:n_sims
         model_i = deepcopy(model)
         if multi_threading 
-            Threads.@spawn run!(model_i, T; shock, multi_threading)
+            Threads.@spawn run!(model_i, T; shock, parallel)
         else
             run!(model_i, T; shock)
         end
