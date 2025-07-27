@@ -14,7 +14,7 @@ parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, cali
 T = 12
 n_sims = 2
 model = Bit.Model(parameters, initial_conditions)
-model_vector = Bit.ensemblerun(model, T, n_sims)
+model_vector = Bit.ensemblerun(model, T, n_sims, multi_threading=false)
 
 # obtain predictions from the model simulations
 real_data = Bit.ITALY_CALIBRATION.data
@@ -22,6 +22,6 @@ predictions_dict = Bit.get_predictions_from_sims(Bit.DataVector(model_vector), r
 
 # for each key in the predictions_dict, check if the values are equal to the reference_predictions
 for key in keys(predictions_dict)
-    @test isapprox(predictions_dict[key], reference_predictions[key], rtol=5e-2)
+    @test isapprox(predictions_dict[key], reference_predictions[key], atol=1e-6, rtol=1e-6)
 end
 
