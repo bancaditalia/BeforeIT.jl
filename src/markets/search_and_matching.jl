@@ -383,8 +383,9 @@ function perform_retail_market!(
     @~ Q_d_i_g[:, g] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
     @~ Q_d_m_g[:, g] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
-    @lock ReentrantLock() @~ C_h_t .+= b
-    @lock ReentrantLock() @~ I_h_t .+= d
+    locks = (ReentrantLock(), ReentrantLock())
+    @lock locks[1] @~ C_h_t .+= b
+    @lock locks[2] @~ I_h_t .+= d
 
     C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
     C_l_g[g] = sum(@~ c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
