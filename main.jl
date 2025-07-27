@@ -10,7 +10,7 @@ model = Bit.Model(parameters, initial_conditions)
 T = 20
 for t in 1:T
     println("Step: ", t)
-    Bit.step!(model; multi_threading = true)
+    Bit.step!(model; parallel = true)
     Bit.update_data!(model)
 end
 

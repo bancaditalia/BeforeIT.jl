@@ -6,7 +6,7 @@
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     model = Bit.Model(parameters, initial_conditions)
 
-    Bit.step!(model; multi_threading = false)
+    Bit.step!(model; parallel = false)
     Bit.update_data!(model)
 
     # import results from matlab run
@@ -34,7 +34,7 @@
     model = Bit.Model(parameters, initial_conditions)
     T = 5
     for t in 1:T
-        Bit.step!(model; multi_threading = false)
+        Bit.step!(model; parallel = false)
         Bit.update_data!(model)
     end
 
