@@ -26,7 +26,7 @@ function search_and_matching!(model::AbstractModel, parallel = false)
     I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
     Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, 
     P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
-        firms, rotw, prop, agg, w_act, w_inact, gov, bank, parallel
+        firms, rotw, prop, agg, w_act, w_inact, gov, bank
     )
 
     G = size(prop.b_HH_g, 1) # number of goods
@@ -136,7 +136,7 @@ function update_aggregate_variables!(
     bank.K_h += bank.I_h
 end
 
-function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, parallel)
+function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank)
     # ... Initialize all the variables ...
 
     # change some variables according to arguments of matlab function
