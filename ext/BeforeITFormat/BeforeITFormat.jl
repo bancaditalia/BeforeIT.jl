@@ -11,6 +11,7 @@ function Bit.format_package()
             endswith(file, ".jl") && Runic.format_file(joinpath(root, file); inplace = true)
         end
     end
+    return
 end
 
 end
