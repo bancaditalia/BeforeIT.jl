@@ -1,4 +1,6 @@
 
+#! format: off
+
 const __OBJECT_EXPR_CONTAINER__ = Dict{Symbol, Expr}()
 
 abstract type AbstractObject end

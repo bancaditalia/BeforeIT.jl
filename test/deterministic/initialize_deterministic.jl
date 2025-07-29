@@ -1,6 +1,5 @@
 
 @testset "initialize deterministic" begin
-
     dir = @__DIR__
 
     parameters = Bit.AUSTRIA2010Q1.parameters
@@ -17,7 +16,6 @@
 
     init_vars = matread(joinpath(dir, "../matlab_code/init_vars_firms.mat"))
     for fieldname in fieldnames(typeof(model.firms))
-
         if fieldname in [
             :w_i,
             :Q_i,
@@ -39,7 +37,7 @@
             :C_d_h,
             :I_d_h,
             :C_h,
-            :I_h,
+            :I_h
         ]
             continue
         end
@@ -57,19 +55,16 @@
 
     init_vars = matread(joinpath(dir, "../matlab_code/init_vars_bank.mat"))
     for fieldname in fieldnames(typeof(model.bank))
-
         if fieldname in [:Pi_e_k, :Y_h, :K_h, :D_h, :C_d_h, :I_d_h, :C_h, :I_h]
             continue
         end
         julia_var = getfield(model.bank, fieldname)
         matlab_var = init_vars[string(fieldname)]
         @test isapprox(julia_var, matlab_var')
-
     end
 
     init_vars = matread(joinpath(dir, "../matlab_code/init_vars_households.mat"))
     for fn in fieldnames(typeof(model.w_act))
-
         if fn in [:C_d_h, :I_d_h, :C_h, :I_h]
             continue
         end
@@ -79,12 +74,10 @@
             matlab_var = init_vars[string(fn)]
             @test isapprox(julia_var, matlab_var')
         else
-            julia_var = [
-                getfield(model.w_act, fn)
-                getfield(model.w_inact, fn)
-                getfield(model.firms, fn)
-                getfield(model.bank, fn)
-            ]
+            julia_var = [getfield(model.w_act, fn)
+                         getfield(model.w_inact, fn)
+                         getfield(model.firms, fn)
+                         getfield(model.bank, fn)]
             matlab_var = init_vars[string(fn)]
             @test isapprox(julia_var, matlab_var')
         end

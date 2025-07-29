@@ -11,7 +11,9 @@ struct InterestRateShock{R, T} <: AbstractShock
     final_time::T
 end
 
-(s::InterestRateShock)(model) = (model.agg.t <= s.final_time) ? model.cb.r_bar = s.rate : nothing
+function (s::InterestRateShock)(model)
+    (model.agg.t <= s.final_time) ? model.cb.r_bar = s.rate : nothing
+end
 
 struct ProductivityShock
     productivity_multiplier::Float64    # productivity multiplier
@@ -28,7 +30,7 @@ struct ConsumptionShock
 end
 
 # A temporary change in the propensity to consume model.prop.psi by the factor s.consumption_multiplier
-function (s::ConsumptionShock)(model::Bit.Model)    
+function (s::ConsumptionShock)(model::Bit.Model)
     if model.agg.t == 1
         model.prop.psi = model.prop.psi * s.consumption_multiplier
     elseif model.agg.t == s.final_time

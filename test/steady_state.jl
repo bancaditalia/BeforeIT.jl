@@ -17,7 +17,8 @@ data = model.data
 for field in fieldnames(typeof(data))
     fielddata = getfield(data, field)
 
-    sector_variables = [:real_sector_gva, :noninal_sector_gva_ea, :nominal_sector_gva, :real]
+    sector_variables = [
+        :real_sector_gva, :noninal_sector_gva_ea, :nominal_sector_gva, :real]
 
     if field ∉ sector_variables
         zero = sum(abs.(fielddata .- mean(fielddata)))

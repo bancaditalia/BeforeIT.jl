@@ -1,5 +1,4 @@
 
-
 """
 Calculate the annual sum of values in the input array `ftsa` by grouping them into blocks of size `m=4`.
 
@@ -21,7 +20,6 @@ fts = toannual([1 2 3 4 5 6 7 8])
 end
 """
 function toannual(ftsa)
-
     m = 4
     fts = zeros(size(ftsa, 1), div(size(ftsa, 2), m))
 
@@ -39,7 +37,6 @@ function toannual(ftsa)
 end
 
 function toannual_mean(ftsa)
-
     m = 4
     fts = zeros(size(ftsa, 1), div(size(ftsa, 2), m))
 

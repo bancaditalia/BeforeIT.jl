@@ -32,7 +32,6 @@ using Random
     xi_gamma_e = -0.250000000000001
     pi_star_e = 0.004962931573204
 
-
     rho, r_star, xi_pi, xi_gamma, pi_star = Bit.estimate_taylor_rule(r_bar, pi_EA, gamma_EA)
 
     @test isapprox(rho, rho_e, rtol = 1e-5)

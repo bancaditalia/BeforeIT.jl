@@ -5,8 +5,10 @@ using MAT, Dates
 
 dir = @__DIR__
 
-parameters_mat = matread(joinpath(dir, "matlab_code/italy_calibration/parameters/2010Q1.mat"))
-initial_conditions_mat = matread(joinpath(dir, "matlab_code/italy_calibration/initial_conditions/2010Q1.mat"))
+parameters_mat = matread(joinpath(
+    dir, "matlab_code/italy_calibration/parameters/2010Q1.mat"))
+initial_conditions_mat = matread(joinpath(
+    dir, "matlab_code/italy_calibration/initial_conditions/2010Q1.mat"))
 
 calibration_data = Bit.ITALY_CALIBRATION.calibration
 figaro = Bit.ITALY_CALIBRATION.figaro
@@ -22,12 +24,12 @@ estimation_date = DateTime(1996, 12, 31)
 calibration_date = DateTime(2010, 03, 31)#-Dates.Month(3)
 parameters, initial_conditions = Bit.get_params_and_initial_conditions(
     (calibration = calibration_data,
-    figaro = figaro,
-    data = data,
-    ea = ea,
-    max_calibration_date = max_calibration_date,
-    estimation_date = estimation_date), calibration_date;
-    scale = 0.001,
+        figaro = figaro,
+        data = data,
+        ea = ea,
+        max_calibration_date = max_calibration_date,
+        estimation_date = estimation_date), calibration_date;
+    scale = 0.001
 )
 
 for key in collect(keys(initial_conditions))[1:end]

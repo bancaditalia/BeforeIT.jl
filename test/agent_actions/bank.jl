@@ -4,7 +4,6 @@ import BeforeIT as Bit
 using Test
 
 @testset "test bank actions" begin
-
     @testset "test bank_profits" begin
         L_i = [1.0, -1.0, 0.0]
         D_i = [1.0, -1.0, 0.0]
@@ -41,7 +40,6 @@ using Test
 
     @testset "finance_insolvent_firms!" begin
         @test 1 == 1
-
     end
 
     @testset "test _deposit_bank" begin
@@ -56,5 +54,4 @@ using Test
         D_h = Bit._bank_deposits(waD_h, wiD_h, fD_h, bD_h, fD_i, bE_k, fL_i)
         @test isapprox(D_h, expected_deposits, atol = 1e-10)
     end
-
 end

@@ -43,7 +43,7 @@
 # Diebold, F.X. and R.S. Mariano (1995), "Comparing predictive accuracy", 
 # Journal of Business & Economic Statistics, 13, 253-263.
 # -------------------------------------------------------------------------
-function dmtest_modified(e1::Vector{Float64}, e2::Vector{Float64}, h::Int=1)    
+function dmtest_modified(e1::Vector{Float64}, e2::Vector{Float64}, h::Int = 1)
     # Check input arguments
     length(e1) != length(e2) && error("Vectors should be of equal length")
 
@@ -51,11 +51,11 @@ function dmtest_modified(e1::Vector{Float64}, e2::Vector{Float64}, h::Int=1)
     n = length(e1)
 
     # Define the loss differential
-    d = abs.(e1).^2 .- abs.(e2).^2
+    d = abs.(e1) .^ 2 .- abs.(e2) .^ 2
 
     # Calculate the variance of the loss differential, taking into account autocorrelation
     if h > 1
-        gamma = [cov(d[1:end-i], d[1+i:end]) for i in 0:h-1] / n
+        gamma = [cov(d[1:(end - i)], d[(1 + i):end]) for i in 0:(h - 1)] / n
         varD = gamma[1] + 2 * sum(gamma[2:h])
     else
         varD = var(d)

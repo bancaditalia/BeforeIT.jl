@@ -12,7 +12,6 @@ Initialize aggregates for the model.
 - `agg`: The initialized aggregates.
 """
 function Aggregates(parameters, initial_conditions)
-
     Y = Vector{typeFloat}(vec(initial_conditions["Y"]))
     pi_ = Vector{typeFloat}(vec(initial_conditions["pi"]))
 
@@ -34,5 +33,5 @@ function Aggregates(parameters, initial_conditions)
     epsilon_I = zero(typeFloat)
 
     return Aggregates(Y, pi_, P_bar, P_bar_g, P_bar_HH, P_bar_CF, P_bar_h, P_bar_CF_h, Y_e,
-        gamma_e, pi_e, epsilon_Y_EA, epsilon_E, epsilon_I, t,)
+        gamma_e, pi_e, epsilon_Y_EA, epsilon_E, epsilon_I, t)
 end

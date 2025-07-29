@@ -1,6 +1,5 @@
 
 @testset "time 1 and 5 deterministic" begin
-
     dir = @__DIR__
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
@@ -18,7 +17,8 @@
     for fieldname in fieldnames(typeof(data))
         julia_output = getfield(data, fieldname)
         fieldname == :collection_time && continue
-        julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ? reduce(hcat, julia_output)' : julia_output
+        julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ?
+                       reduce(hcat, julia_output)' : julia_output
         matlab_output = output_t1[string(fieldname)]
         # need to remove the first step of the julia output since 
         # the matlab test-code does not save the first step
@@ -45,7 +45,8 @@
     for fieldname in fieldnames(typeof(data))
         julia_output = getfield(data, fieldname)
         fieldname == :collection_time && continue
-        julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ? reduce(hcat, julia_output)' : julia_output
+        julia_output = fieldname in [:nominal_sector_gva, :real_sector_gva] ?
+                       reduce(hcat, julia_output)' : julia_output
         matlab_output = output_t5[string(fieldname)]
 
         if length(julia_output) == 6
@@ -54,5 +55,4 @@
             @test isapprox(julia_output[2:end, :], matlab_output, rtol = 1e-5)
         end
     end
-
 end

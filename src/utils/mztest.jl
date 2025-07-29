@@ -43,7 +43,7 @@ function mztest(y::Vector{Float64}, x::Vector{Float64})
     residuals = y - X * β
 
     # Estimate variance of the residuals
-    σ² = sum(residuals.^2) / (n - k)
+    σ² = sum(residuals .^ 2) / (n - k)
 
     # Calculate standard errors of the coefficients
     var_β = σ² * inv(X'X)
@@ -51,8 +51,8 @@ function mztest(y::Vector{Float64}, x::Vector{Float64})
     # Perform the Wald test for the hypothesis that both coefficients are equal to their respective values in the null hypothesis
     H0 = [0, 1]
 
-    coef_diff = β.- H0
-    test_statistic =  coef_diff' * inv(var_β) * coef_diff
+    coef_diff = β .- H0
+    test_statistic = coef_diff' * inv(var_β) * coef_diff
     df = length(H0)  # Degrees of freedom
     p_value = 1 - cdf(Chisq(df), test_statistic)
 

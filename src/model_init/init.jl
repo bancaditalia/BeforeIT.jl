@@ -40,7 +40,8 @@ function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, A
     # data
     data = Bit.Data()
 
-    return Model(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
+    return Model(workers_act, workers_inact, firms, bank, central_bank,
+        government, rotw, agg, properties, data)
 end
 
 """
@@ -58,10 +59,11 @@ This is the last step in the initialization process and it must be performed aft
 function update_variables_with_totals!(model::AbstractModel)
 
     # obtain total income by summing contributions from firm owners, workers and bank owner
-    tot_Y_h = sum(model.firms.Y_h) + sum(model.w_act.Y_h) + sum(model.w_inact.Y_h) + model.bank.Y_h
+    tot_Y_h = sum(model.firms.Y_h) + sum(model.w_act.Y_h) + sum(model.w_inact.Y_h) +
+              model.bank.Y_h
 
     # uptade K_h and D_h in all agent types using total income  
-    model.firms.K_h .= model.firms.K_h / tot_Y_h 
+    model.firms.K_h .= model.firms.K_h / tot_Y_h
     model.firms.D_h .= model.firms.D_h / tot_Y_h
     model.w_act.K_h .= model.w_act.K_h / tot_Y_h
     model.w_act.D_h .= model.w_act.D_h / tot_Y_h
@@ -71,6 +73,7 @@ function update_variables_with_totals!(model::AbstractModel)
     model.bank.D_h = model.bank.D_h / tot_Y_h
 
     # get total deposits and update bank balance sheet
-    tot_D_h = sum(model.firms.D_h) + sum(model.w_act.D_h) + sum(model.w_inact.D_h) + model.bank.D_h
+    tot_D_h = sum(model.firms.D_h) + sum(model.w_act.D_h) + sum(model.w_inact.D_h) +
+              model.bank.D_h
     model.bank.D_k += tot_D_h
 end

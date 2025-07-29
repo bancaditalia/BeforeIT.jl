@@ -10,7 +10,7 @@
             Bit.step!(model; parallel = m)
             Bit.update_data!(model)
         end
-        return model   
+        return model
     end
 
     model = run_deterministic(parameters, initial_conditions, T, false)

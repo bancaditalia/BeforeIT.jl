@@ -24,12 +24,12 @@ The total profits `Pi_k` are calculated as follows:
 ```
 """
 function _bank_profits(
-    L_i::Vector{T},
-    D_i::Vector{T},
-    D_h::Vector{T},
-    D_k::T,
-    r_bar::T,
-    r::T,
+        L_i::Vector{T},
+        D_i::Vector{T},
+        D_h::Vector{T},
+        D_k::T,
+        r_bar::T,
+        r::T
 ) where {T}
     r_terms = reduce(+, L_i)
     r_terms += mapreduce(x -> max(zero(T), -x), +, D_i)
@@ -188,10 +188,12 @@ function finance_insolvent_firms!(firms::AbstractFirms, bank::AbstractBank, mode
     for i in insolvent
 
         # finance insolvent firm from bank
-        bank.E_k = bank.E_k - (firms.L_i[i] - firms.D_i[i] - zeta_b * P_bar_CF * firms.K_i[i])
+        bank.E_k = bank.E_k -
+                   (firms.L_i[i] - firms.D_i[i] - zeta_b * P_bar_CF * firms.K_i[i])
 
         # set variables of newly created firm
-        firms.E_i[i] = firms.E_i[i] + (firms.L_i[i] - firms.D_i[i] - zeta_b * P_bar_CF * firms.K_i[i])
+        firms.E_i[i] = firms.E_i[i] +
+                       (firms.L_i[i] - firms.D_i[i] - zeta_b * P_bar_CF * firms.K_i[i])
         firms.L_i[i] = zeta_b * P_bar_CF * firms.K_i[i]
         firms.D_i[i] = 0.0
     end
@@ -217,7 +219,8 @@ and the bank owner itself, plus the bank's equity, minus the loans of the firms.
 """
 function bank_deposits(bank, model)
     w_act, w_inact, firms = model.w_act, model.w_inact, model.firms
-    return _bank_deposits(w_act.D_h, w_inact.D_h, firms.D_h, bank.D_h, firms.D_i, bank.E_k, firms.L_i)
+    return _bank_deposits(
+        w_act.D_h, w_inact.D_h, firms.D_h, bank.D_h, firms.D_i, bank.E_k, firms.L_i)
 end
 
 """
@@ -241,7 +244,6 @@ The new deposits `D_k` are calculated as the sum of the deposits of the active w
 and the bank owner itself, plus the bank's equity, minus the loans of the firms.
 """
 function _bank_deposits(waD_h, wiD_h, fD_h, bD_h, fD_i, bE_k, fL_i)
-
     tot_D_h = sum(waD_h) + sum(wiD_h) + sum(fD_h) + bD_h
 
     D_k = sum(fD_i) + tot_D_h + bE_k - sum(fL_i)

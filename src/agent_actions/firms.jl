@@ -8,9 +8,10 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     a_sg = model.prop.a_sg
 
     # compute the cost-push inflation
-    term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims=1), dims=1)
-    
-    labour_costs = (1+tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
+    term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1), dims = 1)
+
+    labour_costs = (1 + tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .*
+                   (P_bar_HH ./ firms.P_i .- 1)
     material_costs = 1 ./ firms.beta_i .* (term ./ firms.P_i .- 1)
     capital_costs = firms.delta_i ./ firms.kappa_i .* (P_bar_CF ./ firms.P_i .- 1)
     cost_push_inflation = labour_costs .+ material_costs .+ capital_costs
@@ -18,7 +19,7 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
 end
 
 function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
-    
+
     # target investments in capital
     I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
 
@@ -39,9 +40,9 @@ function expected_deposits_capital_loans(firms::AbstractFirms, model::AbstractMo
     pi_e = model.agg.pi_e
 
     # expected deposits
-    DD_e_i =
-        Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .- (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i) # expected future cash flow
-    
+    DD_e_i = Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .-
+             (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i) # expected future cash flow
+
     # expected capital
     K_e_i = P_bar_CF .* (1 + pi_e) .* firms.K_i
 
@@ -83,7 +84,7 @@ function firms_expectations_and_decisions(firms, model)
     Q_s_i = firms.Q_d_i * (1 + gamma_e)
 
     # cost put inflation
-    pi_c_i = cost_push_inflation(firms, model) 
+    pi_c_i = cost_push_inflation(firms, model)
 
     # price setting
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e)
@@ -96,7 +97,7 @@ function firms_expectations_and_decisions(firms, model)
 
     # expected deposits, capital and loans
     DD_e_i, K_e_i, L_e_i = expected_deposits_capital_loans(firms, model, Pi_e_i)
-    
+
     # target loans
     DL_d_i = max.(0, -DD_e_i - firms.D_i)
 
@@ -115,16 +116,14 @@ Calculate the wages set by firms.
 - `w_i`: Vector of wages
 """
 function firms_wages(firms::AbstractFirms)
-
     Q_s_i = firms.Q_s_i
 
-    w_i =
-        firms.w_bar_i .*
-        min.(
-            1.5,
-            min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
-            (firms.N_i .* firms.alpha_bar_i),
-        )
+    w_i = firms.w_bar_i .*
+          min.(
+        1.5,
+        min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
+        (firms.N_i .* firms.alpha_bar_i)
+    )
     return w_i
 end
 
@@ -144,19 +143,18 @@ The production `Y_i` is computed using a Leontief technology.
 function firms_production(firms::AbstractFirms)
     Q_s_i = firms.Q_s_i
     # compute productivity of labour
-    alpha_i =
-        firms.alpha_bar_i .*
-        min.(
-            1.5,
-            min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
-            (firms.N_i .* firms.alpha_bar_i),
-        )
+    alpha_i = firms.alpha_bar_i .*
+              min.(
+        1.5,
+        min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
+        (firms.N_i .* firms.alpha_bar_i)
+    )
 
     # compute production function of firms (Leontief technology)
-    Y_i = leontief_production(Q_s_i, firms.N_i, alpha_i, firms.K_i, firms.kappa_i, firms.M_i, firms.beta_i)
+    Y_i = leontief_production(
+        Q_s_i, firms.N_i, alpha_i, firms.K_i, firms.kappa_i, firms.M_i, firms.beta_i)
 
     return Y_i
-
 end
 
 """
@@ -186,7 +184,6 @@ function leontief_production(Q_s_i, N_i, alpha_i, K_i, kappa_i, M_i, beta_i)
     Y_i = min.(Q_s_i, min.(N_i .* alpha_i, min.(K_i .* kappa_i, M_i .* beta_i)))
     return Y_i
 end
-
 
 """
     firms_profits(firms, model)
@@ -233,9 +230,9 @@ function firms_profits(firms::AbstractFirms, model::AbstractModel)
     out_taxes_capital = firms.tau_K_i .* firms.P_i .* firms.Y_i
     out_loans = r .* (firms.L_i .+ pos(-firms.D_i))
 
-    Pi_i =
-        in_sales + in_deposits - out_wages - out_expenses - out_depreciation - out_taxes_prods - out_taxes_capital -
-        out_loans
+    Pi_i = in_sales + in_deposits - out_wages - out_expenses - out_depreciation -
+           out_taxes_prods - out_taxes_capital -
+           out_loans
 
     return Pi_i
 end
@@ -284,7 +281,6 @@ function firms_deposits(firms, model)
     r_bar = model.cb.r_bar
     P_bar_HH = model.agg.P_bar_HH
 
-
     sales = firms.P_i .* firms.Q_i
     labour_cost = -(1 + tau_SIF) * firms.w_i .* firms.N_i * P_bar_HH
     material_cost = -firms.DM_i .* firms.P_bar_i
@@ -298,19 +294,18 @@ function firms_deposits(firms, model)
     new_credit = +firms.DL_i
     debt_installment = -theta .* firms.L_i
 
-    DD_i =
-        sales +
-        labour_cost +
-        material_cost +
-        taxes_products +
-        taxes_production +
-        corporate_tax +
-        dividend_payments +
-        interest_payments +
-        interest_received +
-        investment_cost +
-        new_credit +
-        debt_installment
+    DD_i = sales +
+           labour_cost +
+           material_cost +
+           taxes_products +
+           taxes_production +
+           corporate_tax +
+           dividend_payments +
+           interest_payments +
+           interest_received +
+           investment_cost +
+           new_credit +
+           debt_installment
 
     D_i = firms.D_i .+ DD_i
     return D_i
@@ -353,9 +348,9 @@ function firms_equity(firms, model)
     P_bar_g = model.agg.P_bar_g
     P_bar_CF = model.agg.P_bar_CF
 
-    E_i =
-        firms.D_i + firms.M_i .* sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1)' .+ firms.P_i .* firms.S_i +
-        P_bar_CF * firms.K_i - firms.L_i
+    E_i = firms.D_i + firms.M_i .* sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1)' .+
+          firms.P_i .* firms.S_i +
+          P_bar_CF * firms.K_i - firms.L_i
 
     return E_i
 end

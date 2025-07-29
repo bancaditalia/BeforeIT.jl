@@ -22,7 +22,7 @@ function Firms(parameters, initial_conditions)
     theta_DIV = parameters["theta_DIV"]
     tau_INC = parameters["tau_INC"]
     tau_FIRM = parameters["tau_FIRM"]
-    
+
     sb_other = initial_conditions["sb_other"]
     r_bar = initial_conditions["r_bar"]
     D_I = initial_conditions["D_I"]
@@ -75,7 +75,8 @@ function Firms(parameters, initial_conditions)
     M_i = Y_i ./ (omega .* beta_i)
     L_i = L_I .* K_i / sum(K_i)
 
-    pi_bar_i = 1 .- (1 + tau_SIF) .* w_bar_i ./ alpha_bar_i .- delta_i ./ kappa_i .- 1 ./ beta_i .- tau_K_i .- tau_Y_i
+    pi_bar_i = 1 .- (1 + tau_SIF) .* w_bar_i ./ alpha_bar_i .- delta_i ./ kappa_i .-
+               1 ./ beta_i .- tau_K_i .- tau_Y_i
     D_i = D_I .* max.(0, pi_bar_i .* Y_i) / sum(max.(0, pi_bar_i .* Y_i))
 
     r = r_bar + mu
@@ -85,7 +86,8 @@ function Firms(parameters, initial_conditions)
 
     Y_h = zeros(typeFloat, I)
     for i in 1:I
-        Y_h[i] = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_i[i]) + sb_other * P_bar_HH
+        Y_h[i] = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_i[i]) +
+                 sb_other * P_bar_HH
     end
 
     # firms
@@ -117,7 +119,10 @@ function Firms(parameters, initial_conditions)
     N_d_i = zeros(typeInt, I)
     Pi_e_i = zeros(typeFloat, I)
 
-    return Firms(G_i, alpha_bar_i, beta_i, kappa_i, w_i, w_bar_i, delta_i, tau_Y_i, tau_K_i, N_i, Y_i, Q_i, Q_d_i, 
-        P_i, S_i, K_i, M_i, L_i, pi_bar_i, D_i, Pi_i, V_i, I_i, E_i, P_bar_i, P_CF_i, DS_i, DM_i, DL_i, 
-        DL_d_i, K_e_i, L_e_i, Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
+    return Firms(G_i, alpha_bar_i, beta_i, kappa_i, w_i, w_bar_i,
+        delta_i, tau_Y_i, tau_K_i, N_i, Y_i, Q_i, Q_d_i,
+        P_i, S_i, K_i, M_i, L_i, pi_bar_i, D_i, Pi_i, V_i,
+        I_i, E_i, P_bar_i, P_CF_i, DS_i, DM_i, DL_i,
+        DL_d_i, K_e_i, L_e_i, Q_s_i, I_d_i, DM_d_i, N_d_i,
+        Pi_e_i, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
 end

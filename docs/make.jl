@@ -26,7 +26,8 @@ Literate.markdown(joinpath(indir, "basic_example.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "scenario_analysis_via_shock.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "prediction_pipeline.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "multithreading_speedup.jl"), outdir; credit = false)
-Literate.markdown(joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; credit = false)
+Literate.markdown(
+    joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "change_expectations.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "basic_inheritance.jl"), outdir; credit = false)
 # Literate.markdown(joinpath(indir, "analysis/tabs/create_tables.jl"), outdir; credit = false)
@@ -34,7 +35,7 @@ Literate.markdown(joinpath(indir, "basic_inheritance.jl"), outdir; credit = fals
 @info "Building Documentation"
 makedocs(
     sitename = "BeforeIT.jl",
-    format = Documenter.HTML(prettyurls = false, size_threshold=409600),
+    format = Documenter.HTML(prettyurls = false, size_threshold = 409600),
     pages = [
         "Home" => "index.md",
         "Essentials" => "examples/basic_example.md",
@@ -45,8 +46,8 @@ makedocs(
         "Multithreading within the model" => "examples/multithreading_speedup.md",
         "Calibration" => "examples/prediction_pipeline.md",
         # "Prediction Comparison" => "examples/create_tables.md",
-        "API" => "api.md",
-    ],
+        "API" => "api.md"
+    ]
 )
 
 @info "Deploying Documentation"
@@ -56,7 +57,7 @@ if CI
         repo = "github.com/bancaditalia/BeforeIT.jl.git",
         target = "build",
         push_preview = true,
-        devbranch = "main",
+        devbranch = "main"
     )
 end
 println("Finished building and deploying docs.")

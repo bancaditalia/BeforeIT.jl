@@ -42,7 +42,7 @@ function (s::ProductivityShock)(model::Bit.Model)
 end
 
 # A temporary change in the propensity to consume model.prop.psi by the factor s.consumption_multiplier
-function (s::ConsumptionShock)(model::Bit.Model)    
+function (s::ConsumptionShock)(model::Bit.Model)
     if model.agg.t == 1
         model.prop.psi = model.prop.psi * s.consumption_multiplier
     elseif model.agg.t == s.final_time
@@ -61,8 +61,7 @@ model_vec_shocked = Bit.ensemblerun(model, T, N_reps; shock = consumption_shock)
 
 # extract the data vectors from the model vectors
 data_vector_baseline = Bit.DataVector(model_vec_baseline);
-data_vector_shocked = Bit.DataVector(model_vec_shocked); 
-
+data_vector_shocked = Bit.DataVector(model_vec_shocked);
 
 # Compute mean and standard error of GDP for the baseline and shocked simulations
 mean_gdp_baseline = mean(data_vector_baseline.real_gdp, dims = 2)
@@ -74,17 +73,19 @@ sem_gdp_shocked = std(data_vector_shocked.real_gdp, dims = 2) / sqrt(N_reps)
 gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline
 
 # the standard error on a ratio of two variables is computed with the error propagation formula
-sem_gdp_ratio = gdp_ratio .* ((sem_gdp_baseline ./ mean_gdp_baseline).^2 .+ (sem_gdp_shocked ./ mean_gdp_shocked).^2).^0.5
+sem_gdp_ratio = gdp_ratio .*
+                ((sem_gdp_baseline ./ mean_gdp_baseline) .^ 2 .+
+                 (sem_gdp_shocked ./ mean_gdp_shocked) .^ 2) .^ 0.5
 
 # Finally, we can plot the impulse response curve
 plot(
-    1:T+1,
+    1:(T + 1),
     gdp_ratio,
     ribbon = sem_gdp_ratio,
     fillalpha = 0.2,
     label = "",
     xlabel = "quarters",
-    ylabel = "GDP change",
+    ylabel = "GDP change"
 )
 
 # We can save the figure using: savefig("gdp_shock.png")

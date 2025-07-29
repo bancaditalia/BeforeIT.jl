@@ -4,14 +4,11 @@ import BeforeIT as Bit
 using Test
 
 @testset "test estimations actions" begin
-
     @testset "test growth_expectations" begin
         # TODO : how to circumvent estimate?
     end
 
-    @testset "test growth_inflation_EA" begin
-
-    end
+    @testset "test growth_inflation_EA" begin end
 
     @testset "test inflation_priceindex" begin
         P_i = [1.0, 2.0, 3.0]
@@ -32,5 +29,4 @@ using Test
         priceindex = Bit._sector_specific_priceindex(P_i, Y_i, P_m, Q_m)
         @test isapprox(priceindex, expected_priceindex, atol = 1e-10)
     end
-
 end

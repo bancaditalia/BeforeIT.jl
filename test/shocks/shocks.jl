@@ -30,5 +30,4 @@ end
     model.agg.t = 2
     shock(model)
     @test model.cb.r_bar == 0.01
-
 end

@@ -85,7 +85,8 @@ function growth_inflation_EA(rotw::AbstractRestOfTheWorld, model)
     Y_EA = exp(rotw.alpha_Y_EA * log(rotw.Y_EA) + rotw.beta_Y_EA + epsilon_Y_EA) # GDP EA
     gamma_EA = Y_EA / rotw.Y_EA - 1                                              # growht EA
     epsilon_pi_EA = randn() * rotw.sigma_pi_EA
-    pi_EA = exp(rotw.alpha_pi_EA * log(1 + rotw.pi_EA) + rotw.beta_pi_EA + epsilon_pi_EA) - 1   # inflation EA
+    pi_EA = exp(rotw.alpha_pi_EA * log(1 + rotw.pi_EA) + rotw.beta_pi_EA + epsilon_pi_EA) -
+            1   # inflation EA
     return Y_EA, gamma_EA, pi_EA
 end
 
@@ -140,14 +141,15 @@ The sector-specific price index `vec` is calculated as follows:
 vec_g = \\frac{\\sum_{i=1}^N P_i \\cdot Y_i}{\\sum_{i=1}^N Y_i}
 ```
 """
-function sector_specific_priceindex(firms::AbstractFirms, rotw::AbstractRestOfTheWorld, G::Integer)
+function sector_specific_priceindex(
+        firms::AbstractFirms, rotw::AbstractRestOfTheWorld, G::Integer)
     vec = zeros(typeFloat, G)
     for g in 1:G
         vec[g] = _sector_specific_priceindex(
             firms.P_i[firms.G_i .== g],
             firms.Q_i[firms.G_i .== g],
             rotw.P_m[g],
-            rotw.Q_m[g],
+            rotw.Q_m[g]
         )
         # internal = sum(firms.P_i[firms.G_i.==g] .* firms.Q_i[firms.G_i.==g])
         # external = rotw.P_m[g] * rotw.Q_m[g]

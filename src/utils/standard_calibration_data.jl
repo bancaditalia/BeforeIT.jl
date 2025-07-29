@@ -1,12 +1,13 @@
 
 using JLD2, Dates
 
-dir = joinpath(splitpath(dirname(pathof(@__MODULE__)))[1:end-1])
+dir = joinpath(splitpath(dirname(pathof(@__MODULE__)))[1:(end - 1)])
 
 nation = "italy"
 
 # Load calibration data (with figaro input-output tables)
-calibration_data = load(joinpath(dir, "data/" * nation * "/calibration/calibration/2010Q1.jld2"))["calibration_data"]
+calibration_data = load(joinpath(
+    dir, "data/" * nation * "/calibration/calibration/2010Q1.jld2"))["calibration_data"]
 figaro = load(joinpath(dir, "data/" * nation * "/calibration/figaro/2010.jld2"))["figaro"]
 
 # Load time series data
@@ -26,4 +27,5 @@ struct CalibrationData
     estimation_date::DateTime
 end
 
-const ITALY_CALIBRATION = CalibrationData(calibration_data, figaro, data, ea, max_calibration_date, estimation_date)
+const ITALY_CALIBRATION = CalibrationData(
+    calibration_data, figaro, data, ea, max_calibration_date, estimation_date)

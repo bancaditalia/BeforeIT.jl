@@ -43,14 +43,13 @@ Bit.@object mutable struct Properties(Object) <: AbstractProperties
 end
 
 function Properties(parameters::Dict{String, Any}, initial_conditions)
-
     G = typeInt(parameters["G"])
     T_prime = typeInt(parameters["T_prime"])       # Time interval used to estimate parameters for expectations
 
     H_act = typeInt(parameters["H_act"])    # Number of economically active persons
     H_inact = typeInt(parameters["H_inact"])  # Number of economically inactive persons
     # H = I + H_W + H_inact + 1
-    
+
     J = typeInt(parameters["J"])       # Number of government entities
     L = typeInt(parameters["L"])        # Number of foreign consumers
     I_s = Vector{typeInt}(vec(parameters["I_s"]))           # Number of firms/investors in the s-th industry
@@ -78,7 +77,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     zeta_b = typeFloat(parameters["zeta_b"])     # Loan-to-capital ratio for new firms after bankruptcy
 
     # products related parameters
-    b_CF_g = Vector{typeFloat}(vec(parameters["b_CF_g"]  ))   # Capital formation coefficient g-th product (firm investment)
+    b_CF_g = Vector{typeFloat}(vec(parameters["b_CF_g"]))   # Capital formation coefficient g-th product (firm investment)
     b_CFH_g = Vector{typeFloat}(vec(parameters["b_CFH_g"])) # Household investment coefficient of the g-th product
     b_HH_g = Vector{typeFloat}(vec(parameters["b_HH_g"]))   # Consumption coefficient g-th product of households
     c_G_g = Vector{typeFloat}(vec(parameters["c_G_g"]))     # Consumption of the g-th product of the government in mln. Euro
@@ -94,7 +93,10 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     E_k = typeFloat(initial_conditions["E_k"])
     r_bar = typeFloat(initial_conditions["r_bar"])
 
-    return Properties(G, T_prime, H_act, H_inact, J, L, I_s, I, H, tau_INC, tau_FIRM, tau_VAT, tau_SIF,
-        tau_SIW, tau_EXPORT, tau_CF, tau_G, theta_UB, psi, psi_H, mu, theta_DIV, theta, zeta, zeta_LTV,
-        zeta_b, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g, a_sg, C, D_H, K_H, sb_other, E_k, r_bar)
+    return Properties(
+        G, T_prime, H_act, H_inact, J, L, I_s, I, H, tau_INC, tau_FIRM, tau_VAT, tau_SIF,
+        tau_SIW, tau_EXPORT, tau_CF, tau_G, theta_UB, psi,
+        psi_H, mu, theta_DIV, theta, zeta, zeta_LTV,
+        zeta_b, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g,
+        a_sg, C, D_H, K_H, sb_other, E_k, r_bar)
 end

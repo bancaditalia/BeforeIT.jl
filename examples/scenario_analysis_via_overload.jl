@@ -22,7 +22,8 @@ model_vec_baseline = Bit.ensemblerun(model, T, 4);
 function Bit.central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     gamma_EA = model.rotw.gamma_EA
     pi_EA = model.rotw.pi_EA
-    taylor_rate = Bit.taylor_rule(cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
+    taylor_rate = Bit.taylor_rule(
+        cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
     if model.agg.t < 10
         return 0.01
     else
@@ -41,7 +42,7 @@ StatsPlots.errorline(
     label = "baseline",
     titlefont = 10,
     xlabel = "quarters",
-    ylabel = "GDP",
+    ylabel = "GDP"
 )
 StatsPlots.errorline!(
     1:Te,
@@ -50,7 +51,7 @@ StatsPlots.errorline!(
     label = "shock",
     titlefont = 10,
     xlabel = "quarters",
-    ylabel = "GDP",
+    ylabel = "GDP"
 )
 
 # Note that, importantly, once the function `central_bank_rate` has been changed,

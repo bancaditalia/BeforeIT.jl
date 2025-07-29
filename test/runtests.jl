@@ -2,10 +2,10 @@
 import BeforeIT as Bit
 
 using Test
+using Aqua
+using JuliaFormatter
 
 @testset "BeforeIT.jl Tests" begin
-    
-    include("package_sanity_tests.jl")
 
     #utils
     include("utils/positive.jl")
@@ -29,6 +29,16 @@ using Test
 
     # shock tests
     include("shocks/shocks.jl")
+
+    @testset "Code quality (Aqua.jl)" begin
+        Aqua.test_all(Bit, ambiguities = false, unbound_args = false,
+            persistent_tasks = (tmax = 60,)) # Windows might need more time...
+        @test Test.detect_ambiguities(Bit) == Tuple{Method, Method}[]
+    end
+
+    @testset "Code formatting (JuliaFormatter.jl)" begin
+        @test format(Bit; style = SciMLStyle(), verbose = false, overwrite = false)
+    end
 
     # WARNING: this should be the last include
     include("deterministic/runtests_deterministic.jl")

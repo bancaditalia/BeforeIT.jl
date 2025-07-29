@@ -39,13 +39,15 @@ Bit.@object struct FirmsCANVAS(Firms) <: AbstractFirmsCANVAS end
 
 # define a new rest of the world for the CANVAS model
 abstract type AbstractRestOfTheWorldCANVAS <: Bit.AbstractRestOfTheWorld end
-Bit.@object mutable struct RestOfTheWorldCANVAS(Bit.RestOfTheWorld) <: AbstractRestOfTheWorldCANVAS
+Bit.@object mutable struct RestOfTheWorldCANVAS(Bit.RestOfTheWorld) <:
+                           AbstractRestOfTheWorldCANVAS
     Y_EA_series::Vector{Float64}
     pi_EA_series::Vector{Float64}
 end
 
 # define new functions for the CANVAS-specific agents
-function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model::Bit.AbstractModel)
+function Bit.firms_expectations_and_decisions(
+        firms::AbstractFirmsCANVAS, model::Bit.AbstractModel)
     # unpack non-firm variables
     P_bar_g = model.agg.P_bar_g
     gamma_e = model.agg.gamma_e
@@ -109,13 +111,15 @@ function Bit.central_bank_rate(cb::AbstractCentralBankCANVAS, model::Bit.Abstrac
     model.cb.xi_gamma = xi_gamma
     model.cb.pi_star = pi_star
 
-    r_bar = Bit.taylor_rule(cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
+    r_bar = Bit.taylor_rule(
+        cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
 
     cb.r_bar_series[T_prime + t] = r_bar
     return r_bar
 end
 
-function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.AbstractModel)
+function Bit.growth_inflation_EA(
+        rotw::AbstractRestOfTheWorldCANVAS, model::Bit.AbstractModel)
     # unpack model variables
     epsilon_Y_EA = model.agg.epsilon_Y_EA
     T_prime = model.prop.T_prime
@@ -124,7 +128,8 @@ function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.
     Y_EA = exp(rotw.alpha_Y_EA * log(rotw.Y_EA) + rotw.beta_Y_EA + epsilon_Y_EA) # GDP EA
     gamma_EA = Y_EA / rotw.Y_EA - 1                                              # growht EA
     epsilon_pi_EA = randn() * rotw.sigma_pi_EA
-    pi_EA = exp(rotw.alpha_pi_EA * log(1 + rotw.pi_EA) + rotw.beta_pi_EA + epsilon_pi_EA) - 1   # inflation EA
+    pi_EA = exp(rotw.alpha_pi_EA * log(1 + rotw.pi_EA) + rotw.beta_pi_EA + epsilon_pi_EA) -
+            1   # inflation EA
 
     rotw.pi_EA_series[T_prime + t] = pi_EA
     rotw.Y_EA_series[T_prime + t] = Y_EA
@@ -139,12 +144,14 @@ firms.Q_s_i .= firms.Q_d_i # overwrite to avoid division by zero for new firm pr
 
 # new central bank initialisation
 central_bank_st = Bit.CentralBank(p, ic)
-central_bank = CentralBankCANVAS((getfield(central_bank_st, x) for x in fieldnames(Bit.CentralBank))..., 
+central_bank = CentralBankCANVAS(
+    (getfield(central_bank_st, x) for x in fieldnames(Bit.CentralBank))...,
     r_bar_series) # add new variables to the aggregates
 
 # new rotw initialisation
 rotw_st = Bit.RestOfTheWorld(p, ic)
-rotw = RestOfTheWorldCANVAS((getfield(rotw_st, x) for x in fieldnames(Bit.RestOfTheWorld))..., 
+rotw = RestOfTheWorldCANVAS(
+    (getfield(rotw_st, x) for x in fieldnames(Bit.RestOfTheWorld))...,
     Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
 # standard initialisations: workers, bank, aggregats, government, properties and data
@@ -156,10 +163,12 @@ prop = Bit.Properties(p, ic)
 data = Bit.Data()
 
 # define a standard model
-model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop, data)
+model_std = Bit.Model(
+    w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop, data)
 
 # define a CANVAS model
-model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop, data)
+model_canvas = Bit.Model(
+    w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop, data)
 
 # run the model(s)
 model_vector_std = Bit.ensemblerun(model_std, T, 8)

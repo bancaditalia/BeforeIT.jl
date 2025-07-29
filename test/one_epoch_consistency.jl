@@ -6,7 +6,8 @@ using Revise, MAT, Test
 dir = @__DIR__
 
 parameters = matread(joinpath(dir, "../data/steady_state/parameters/2010Q1.mat"))
-initial_conditions = matread(joinpath(dir, "../data/steady_state/initial_conditions/2010Q1.mat"))
+initial_conditions = matread(joinpath(
+    dir, "../data/steady_state/initial_conditions/2010Q1.mat"))
 
 model = Bit.Model(parameters, initial_conditions)
 
@@ -51,7 +52,7 @@ Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i = Bit.firms_e
     model.agg.P_bar_g,
     prop.a_sg,
     gamma_e,
-    pi_e,
+    pi_e
 )
 
 model.firms.P_i .= new_P_i
@@ -59,7 +60,8 @@ model.firms.P_i .= new_P_i
 ####### CREDIT MARKET, LABOUR MARKET AND PRODUCTION #######
 
 # firms acquire new loans in a search and match market for credit
-DL_i = Bit.search_and_matching_credit(DL_d_i, K_e_i, L_e_i, model.bank.E_k, prop.zeta, prop.zeta_LTV) # actual loans obtained
+DL_i = Bit.search_and_matching_credit(
+    DL_d_i, K_e_i, L_e_i, model.bank.E_k, prop.zeta, prop.zeta_LTV) # actual loans obtained
 
 # firms acquire labour in the search and match market for labour
 V_i = N_d_i .- model.firms.N_i
@@ -95,7 +97,7 @@ Bit.cons_inv_budget_w_act!(
     pi_e,
     prop.tau_SIW,
     prop.tau_INC,
-    prop.theta_UB,
+    prop.theta_UB
 )
 
 Bit.cons_inv_budget_w_inact!(
@@ -107,7 +109,7 @@ Bit.cons_inv_budget_w_inact!(
     model.gov.sb_inact,
     model.gov.sb_other,
     model.agg.P_bar_HH,
-    pi_e,
+    pi_e
 )
 
 Bit.cons_inv_budget_fowner!(
@@ -122,7 +124,7 @@ Bit.cons_inv_budget_fowner!(
     Pi_e_i,
     model.gov.sb_other,
     model.agg.P_bar_HH,
-    pi_e,
+    pi_e
 )
 
 Bit.cons_inv_budget_bowner!(
@@ -137,7 +139,7 @@ Bit.cons_inv_budget_bowner!(
     Pi_e_k,
     model.gov.sb_other,
     model.agg.P_bar_HH,
-    pi_e,
+    pi_e
 )
 
 ####### GOVERNMENT SPENDING BUDGET, IMPORT-EXPORT BUDGET #######
@@ -153,7 +155,7 @@ Bit.import_export!(
     prop.c_I_g,
     pi_e,
     epsilon_E,
-    epsilon_I,
+    epsilon_I
 )
 
 ####### GENERAL SEARCH AND MATCHING FOR ALL GOODS #######
@@ -169,14 +171,14 @@ Bit.search_and_matching!(
     prop,
     DM_d_i,
     I_d_i;
-    parallel = false,
+    parallel = false
 )
 
 ####### FINAL GENERAL ACCOUNTING #######
 
 # update inflation and update global price index
-model.agg.pi_[prop.T_prime + t], model.agg.P_bar =
-    Bit.inflation_priceindex(model.firms.P_i, model.firms.Y_i, model.agg.P_bar)
+model.agg.pi_[prop.T_prime + t], model.agg.P_bar = Bit.inflation_priceindex(
+    model.firms.P_i, model.firms.Y_i, model.agg.P_bar)
 
 # update sector-specific price index
 model.agg.P_bar_g .= Bit.sector_specific_priceindex(model.firms, model.rotw, prop.G)
@@ -189,8 +191,8 @@ model.agg.P_bar_HH = sum(prop.b_HH_g .* model.agg.P_bar_g)
 Bit.update_firms_stocks!(model.firms)
 
 # update firms profits
-model.firms.Pi_i .=
-    Bit.firms_profits(model.firms, model.agg.P_bar, model.agg.P_bar_HH, prop.tau_SIF, model.bank.r, model.cb.r_bar)
+model.firms.Pi_i .= Bit.firms_profits(model.firms, model.agg.P_bar, model.agg.P_bar_HH,
+    prop.tau_SIF, model.bank.r, model.cb.r_bar)
 
 # update bank profits
 model.bank.Pi_k = Bit.bank_profits(model.bank, model.w_act, model.firms, model.cb.r_bar)
@@ -206,11 +208,11 @@ model.w_act.Y_h .= Bit.households_income_act(
     prop.tau_INC,
     prop.theta_UB,
     model.gov.sb_other,
-    model.agg.P_bar_HH,
+    model.agg.P_bar_HH
 )
 
-model.w_inact.Y_h .=
-    Bit.income_w_inact(length(model.w_inact), model.gov.sb_inact, model.gov.sb_other, model.agg.P_bar_HH)
+model.w_inact.Y_h .= Bit.income_w_inact(
+    length(model.w_inact), model.gov.sb_inact, model.gov.sb_other, model.agg.P_bar_HH)
 
 model.firms.Y_h .= Bit.income_fowner(
     model.firms.Pi_i,
@@ -218,7 +220,7 @@ model.firms.Y_h .= Bit.income_fowner(
     prop.tau_FIRM,
     prop.theta_DIV,
     model.gov.sb_other,
-    model.agg.P_bar_HH,
+    model.agg.P_bar_HH
 )
 
 model.bank.Y_h = Bit.income_bowner(
@@ -227,17 +229,22 @@ model.bank.Y_h = Bit.income_bowner(
     prop.tau_FIRM,
     prop.theta_DIV,
     model.gov.sb_other,
-    model.agg.P_bar_HH,
+    model.agg.P_bar_HH
 )
 
 # update savings (deposits) of all households
-model.w_act.D_h .+= Bit.new_deposits(model.w_act, prop.tau_VAT, prop.tau_CF, model.cb.r_bar, model.bank.r)
-model.w_inact.D_h .+= Bit.new_deposits(model.w_inact, prop.tau_VAT, prop.tau_CF, model.cb.r_bar, model.bank.r)
-model.firms.D_h .+= Bit.new_deposits(model.firms, prop.tau_VAT, prop.tau_CF, model.cb.r_bar, model.bank.r)
-model.bank.D_h += Bit.new_deposits(model.bank, prop.tau_VAT, prop.tau_CF, model.cb.r_bar, model.bank.r)
+model.w_act.D_h .+= Bit.new_deposits(
+    model.w_act, prop.tau_VAT, prop.tau_CF, model.cb.r_bar, model.bank.r)
+model.w_inact.D_h .+= Bit.new_deposits(
+    model.w_inact, prop.tau_VAT, prop.tau_CF, model.cb.r_bar, model.bank.r)
+model.firms.D_h .+= Bit.new_deposits(
+    model.firms, prop.tau_VAT, prop.tau_CF, model.cb.r_bar, model.bank.r)
+model.bank.D_h += Bit.new_deposits(
+    model.bank, prop.tau_VAT, prop.tau_CF, model.cb.r_bar, model.bank.r)
 
 # update central bank equity
-model.cb.E_CB = Bit.central_bank_equity(model.cb.r_bar, model.bank.D_k, model.gov.L_G, model.cb.r_G)
+model.cb.E_CB = Bit.central_bank_equity(
+    model.cb.r_bar, model.bank.D_k, model.gov.L_G, model.cb.r_G)
 
 # compute government revenues (Y_G), surplus/deficit (Pi_G) and debt (L_H)
 Y_G = Bit.government_revenues(
@@ -247,21 +254,24 @@ Y_G = Bit.government_revenues(
     model.bank,
     model.rotw,
     prop,
-    model.agg.P_bar_HH,
+    model.agg.P_bar_HH
 )
 
 # compute government deficit/surplus
-Pi_G = Bit.government_debt(model.gov, model.w_act, prop, Y_G, model.cb.r_G, model.agg.P_bar_HH)
+Pi_G = Bit.government_debt(
+    model.gov, model.w_act, prop, Y_G, model.cb.r_G, model.agg.P_bar_HH)
 
 model.gov.L_G += Pi_G
 
 # compute firms deposits, loans and equity
-DD_i = Bit.new_deposits_firms(model.firms, DL_i, prop, model.bank.r, model.cb.r_bar, model.agg.P_bar_HH)
+DD_i = Bit.new_deposits_firms(
+    model.firms, DL_i, prop, model.bank.r, model.cb.r_bar, model.agg.P_bar_HH)
 model.firms.D_i .+= DD_i
 
 model.firms.L_i .= (1 - prop.theta) * model.firms.L_i + DL_i
 
-model.firms.E_i .= Bit.equity_firms(model.firms, prop.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF)
+model.firms.E_i .= Bit.equity_firms(
+    model.firms, prop.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF)
 
 # update net credit/debit position of rest of the world
 model.rotw.D_RoW -= Bit.new_deposits_rotw(model.rotw, prop.tau_EXPORT)
@@ -283,12 +293,14 @@ println(Bit.get_accounting_identities(data))
 println(Bit.get_accounting_identity_banks(model))
 
 # income accounting and production accounting should be equal
-zero = sum(data.nominal_gva - data.compensation_employees - data.operating_surplus - data.taxes_production)
+zero = sum(data.nominal_gva - data.compensation_employees - data.operating_surplus -
+           data.taxes_production)
 println(zero)
 
 # compare nominal_gdp to total expenditure
 zero = sum(
-    data.nominal_gdp - data.nominal_household_consumption - data.nominal_government_consumption -
+    data.nominal_gdp - data.nominal_household_consumption -
+    data.nominal_government_consumption -
     data.nominal_capitalformation - data.nominal_exports + data.nominal_imports,
 )
 println(zero)
@@ -296,7 +308,8 @@ println(zero)
 
 # compare real_gdp to total expenditure
 zero = sum(
-    data.real_gdp - data.real_household_consumption - data.real_government_consumption - data.real_capitalformation - data.real_exports + data.real_imports,
+    data.real_gdp - data.real_household_consumption - data.real_government_consumption -
+    data.real_capitalformation - data.real_exports + data.real_imports,
 )
 println(zero)
 
@@ -305,7 +318,7 @@ zero = model.cb.E_CB + model.rotw.D_RoW - model.gov.L_G + model.bank.D_k
 println(zero)
 
 # accounting identity of balance sheet of commercial bank
-zero =
-    sum(model.firms.D_i) + sum(model.w_act.D_h) + sum(model.w_inact.D_h) + sum(model.bank.E_k) - sum(model.firms.L_i) -
-    model.bank.D_k
+zero = sum(model.firms.D_i) + sum(model.w_act.D_h) + sum(model.w_inact.D_h) +
+       sum(model.bank.E_k) - sum(model.firms.L_i) -
+       model.bank.D_k
 println(zero)

@@ -6,7 +6,7 @@ struct InitialState
     initial_conditions::Dict{String, Any}
 end
 
-dir = joinpath(splitpath(dirname(pathof(@__MODULE__)))[1:end-1])
+dir = joinpath(splitpath(dirname(pathof(@__MODULE__)))[1:(end - 1)])
 
 parameters = load(joinpath(dir, "data/austria/parameters/2010Q1.jld2"))
 initial_conditions = load(joinpath(dir, "data/austria/initial_conditions/2010Q1.jld2"))

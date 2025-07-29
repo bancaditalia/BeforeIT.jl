@@ -12,7 +12,6 @@ Initialize a bank with the given parameters and initial conditions.
 - bank::Bank: The initialized bank.
 """
 function Bank(parameters, initial_conditions)
-
     theta_DIV = parameters["theta_DIV"]
     tau_INC = parameters["tau_INC"]
     tau_FIRM = parameters["tau_FIRM"]
@@ -25,15 +24,15 @@ function Bank(parameters, initial_conditions)
     sb_other = initial_conditions["sb_other"]
 
     P_bar_HH = one(typeFloat)
-    
+
     r = r_bar + mu
-    
+
     Pi_k = typeFloat(0.0)
     Y_h = typeFloat(0.0)
     D_h = typeFloat(0.0)
     K_h = typeFloat(0.0)
     D_k = typeFloat(0.0)
-    
+
     C_d_h = zero(typeFloat)
     I_d_h = zero(typeFloat)
     C_h = zero(typeFloat)
@@ -64,9 +63,9 @@ function CentralBank(parameters, initial_conditions)
     xi_pi = parameters["xi_pi"]
     xi_gamma = parameters["xi_gamma"]
     E_CB = initial_conditions["E_CB"]
-    
+
     cb_args = (r_bar, r_G, rho, r_star, pi_star, xi_pi, xi_gamma, E_CB)
     central_bank = CentralBank(cb_args...)
-    
+
     return central_bank
 end

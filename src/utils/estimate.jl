@@ -45,9 +45,9 @@ end
 # end
 
 function estimate_taylor_rule(
-    r_bar::Union{Matrix, Vector},
-    pi_EA::Vector,
-    gamma_EA::Vector,
+        r_bar::Union{Matrix, Vector},
+        pi_EA::Vector,
+        gamma_EA::Vector
 )
     ydata = r_bar
     if typeof(ydata) <: Vector

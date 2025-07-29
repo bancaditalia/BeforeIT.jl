@@ -43,12 +43,14 @@ imports.
 """
 function gov_revenues(model::AbstractModel)
     # unpack objects
-    w_act, w_inact, firms, bank, rotw = model.w_act, model.w_inact, model.firms, model.bank, model.rotw
+    w_act, w_inact, firms, bank, rotw = model.w_act, model.w_inact, model.firms, model.bank,
+    model.rotw
     prop = model.prop
     P_bar_HH = model.agg.P_bar_HH
 
     # unpack parameters
-    tau_SIF, tau_SIW, tau_INC, tau_CF, tau_VAT = prop.tau_SIF, prop.tau_SIW, prop.tau_INC, prop.tau_CF, prop.tau_VAT
+    tau_SIF, tau_SIW, tau_INC, tau_CF, tau_VAT = prop.tau_SIF,
+    prop.tau_SIW, prop.tau_INC, prop.tau_CF, prop.tau_VAT
     tau_FIRM, tau_EXPORT, theta_DIV = prop.tau_FIRM, prop.tau_EXPORT, prop.theta_DIV
 
     # compute total wages, consumption and investment
@@ -60,23 +62,23 @@ function gov_revenues(model::AbstractModel)
     social_security = (tau_SIF + tau_SIW) * tot_wages_emp * P_bar_HH
     labour_income = tau_INC * (1 - tau_SIW) * P_bar_HH * tot_wages_emp
     value_added = tau_VAT * tot_C_h
-    capital_income = tau_INC * (1 - tau_FIRM) * theta_DIV * (sum(pos.(firms.Pi_i)) + pos(bank.Pi_k))
+    capital_income = tau_INC * (1 - tau_FIRM) * theta_DIV *
+                     (sum(pos.(firms.Pi_i)) + pos(bank.Pi_k))
     corporate_income = tau_FIRM * (sum(pos.(firms.Pi_i)) + pos(bank.Pi_k))
     capital_formation = tau_CF * tot_I_h
     products = sum(firms.tau_Y_i .* firms.P_i .* firms.Y_i)
     production = sum(firms.tau_K_i .* firms.P_i .* firms.Y_i)
     export_ = tau_EXPORT * rotw.C_l
 
-    Y_G =
-        social_security +
-        labour_income +
-        value_added +
-        capital_income +
-        corporate_income +
-        capital_formation +
-        products +
-        production +
-        export_
+    Y_G = social_security +
+          labour_income +
+          value_added +
+          capital_income +
+          corporate_income +
+          capital_formation +
+          products +
+          production +
+          export_
 
     return Y_G
 end
@@ -105,8 +107,8 @@ function gov_loans(gov, model)
     O_h = model.w_act.O_h
 
     tot_wages_unemp = sum(w_h[O_h .== 0])
-    social_benefits =
-        H_inact * gov.sb_inact * P_bar_HH + theta_UB * tot_wages_unemp * P_bar_HH + H * gov.sb_other * P_bar_HH
+    social_benefits = H_inact * gov.sb_inact * P_bar_HH +
+                      theta_UB * tot_wages_unemp * P_bar_HH + H * gov.sb_other * P_bar_HH
 
     # deficit = social benefits + consumption + payments on loans - revenues
     Pi_G = social_benefits + gov.C_j + r_G * gov.L_G - gov.Y_G
