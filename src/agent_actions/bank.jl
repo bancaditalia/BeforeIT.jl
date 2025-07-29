@@ -23,13 +23,13 @@ The total profits `Pi_k` are calculated as follows:
 ```
 """
 function _bank_profits(
-    L_i::Vector{T},
-    D_i::Vector{T},
-    D_h::Vector{T},
-    D_k::T,
-    r_bar::T,
-    r::T,
-) where {T}
+        L_i::Vector{T},
+        D_i::Vector{T},
+        D_h::Vector{T},
+        D_k::T,
+        r_bar::T,
+        r::T,
+    ) where {T}
     r_terms = reduce(+, L_i)
     r_terms += mapreduce(x -> max(zero(T), -x), +, D_i)
     r_terms += mapreduce(x -> max(zero(T), -x), +, D_h)
@@ -96,7 +96,7 @@ E_k = E_k + DE_k
 ```
 """
 function bank_equity(bank, model)
-    # unpack non-bank variables    
+    # unpack non-bank variables
     theta_DIV, tau_FIRM = model.prop.theta_DIV, model.prop.tau_FIRM
     DE_k = _bank_net_profits(bank.Pi_k, theta_DIV, tau_FIRM)
     E_k = bank.E_k + DE_k
@@ -178,7 +178,7 @@ Rifinance insolvent firms using bank equity.
 
 """
 function finance_insolvent_firms!(firms::AbstractFirms, bank::AbstractBank, model)
-    # unpack arguments 
+    # unpack arguments
     P_bar_CF, zeta_b = model.agg.P_bar_CF, model.prop.zeta_b
 
     # find insolvent firms, and re-initialise their variables for the next step
@@ -194,6 +194,7 @@ function finance_insolvent_firms!(firms::AbstractFirms, bank::AbstractBank, mode
         firms.L_i[i] = zeta_b * P_bar_CF * firms.K_i[i]
         firms.D_i[i] = 0.0
     end
+    return
 end
 
 """

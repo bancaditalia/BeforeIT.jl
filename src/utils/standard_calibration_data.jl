@@ -1,7 +1,6 @@
-
 using JLD2, Dates
 
-dir = joinpath(splitpath(dirname(pathof(@__MODULE__)))[1:end-1])
+dir = joinpath(splitpath(dirname(pathof(@__MODULE__)))[1:(end - 1)])
 
 nation = "italy"
 

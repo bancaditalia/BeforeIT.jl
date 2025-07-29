@@ -1,4 +1,3 @@
-
 """
     run!(model, T; shock = NoShock(), parallel = false)
 
@@ -51,7 +50,7 @@ function ensemblerun(model::AbstractModel, T, n_sims; parallel = true, shock = N
     model_vector = Vector{Bit.Model}(undef, n_sims)
     Threads.@sync for i in 1:n_sims
         model_i = deepcopy(model)
-        if parallel 
+        if parallel
             Threads.@spawn run!(model_i, T; shock, parallel)
         else
             run!(model_i, T; shock)

@@ -1,4 +1,3 @@
-
 const __OBJECT_EXPR_CONTAINER__ = Dict{Symbol, Expr}()
 
 abstract type AbstractObject end
@@ -73,14 +72,16 @@ function _object(struct_repr)
     base_fields = compute_base_fields(base_type_spec)
     expr_new_type = Expr(
         :struct, struct_repr.args[1], :($new_type <: $abstract_type),
-        :(begin 
-            $(base_fields...) 
-            $(new_fields...) 
-          end)
+        :(
+            begin
+                $(base_fields...)
+                $(new_fields...)
+            end
+        )
     )
     new_type_no_params = namify(new_type)
     __OBJECT_EXPR_CONTAINER__[new_type_no_params] = MacroTools.prewalk(rmlines, expr_new_type)
-    return quote 
+    return quote
         @kwdef $expr_new_type
         nothing
     end
@@ -88,12 +89,28 @@ end
 
 function decompose_struct_base(struct_repr)
     if struct_repr.args[1] == false
-        if !@capture(struct_repr, struct new_type_(base_type_spec_) <: abstract_type_ new_fields__ end)
-            @capture(struct_repr, struct new_type_(base_type_spec_) new_fields__ end)
+        if !@capture(
+                struct_repr, struct new_type_(base_type_spec_) <: abstract_type_
+                    new_fields__
+                end
+            )
+            @capture(
+                struct_repr, struct new_type_(base_type_spec_)
+                    new_fields__
+                end
+            )
         end
     else
-        if !@capture(struct_repr, mutable struct new_type_(base_type_spec_) <: abstract_type_ new_fields__ end)
-            @capture(struct_repr, mutable struct new_type_(base_type_spec_) new_fields__ end)
+        if !@capture(
+                struct_repr, mutable struct new_type_(base_type_spec_) <: abstract_type_
+                    new_fields__
+                end
+            )
+            @capture(
+                struct_repr, mutable struct new_type_(base_type_spec_)
+                    new_fields__
+                end
+            )
         end
     end
     abstract_type === nothing && (abstract_type = :(Bit.AbstractObject))

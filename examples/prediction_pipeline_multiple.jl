@@ -1,4 +1,3 @@
-
 # # Full multiple-prediction pipeline
 
 import BeforeIT as Bit
@@ -22,7 +21,7 @@ Bit.save_all_params_and_initial_conditions(
 )
 
 # Now, run a number "n_sims" of simulations of length "T "for each of the parameters
-# and initial conditions in the folder. The following function loads the parameters 
+# and initial conditions in the folder. The following function loads the parameters
 # and initial conditions, it initialises the prediction, runs the prediction `n_sims` times, and finally
 # saves the `data_vector` into a `.jld2` file with an appropriate name.
 # The whole process is repeatead for all quarters from `2010Q1` to `2019Q4`
@@ -45,4 +44,3 @@ p5 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_exports_quarterly
 p6 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_imports_quarterly"; crop = true)
 
 plot(p1, p2, p3, p4, p5, p6, layout = (3, 2), legend = false)
-

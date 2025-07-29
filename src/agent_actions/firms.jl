@@ -1,4 +1,3 @@
-
 function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     # unpack non-firm variables
     P_bar_HH = model.agg.P_bar_HH
@@ -8,9 +7,9 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     a_sg = model.prop.a_sg
 
     # compute the cost-push inflation
-    term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims=1), dims=1)
-    
-    labour_costs = (1+tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
+    term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1), dims = 1)
+
+    labour_costs = (1 + tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
     material_costs = 1 ./ firms.beta_i .* (term ./ firms.P_i .- 1)
     capital_costs = firms.delta_i ./ firms.kappa_i .* (P_bar_CF ./ firms.P_i .- 1)
     cost_push_inflation = labour_costs .+ material_costs .+ capital_costs
@@ -18,7 +17,7 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
 end
 
 function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
-    
+
     # target investments in capital
     I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
 
@@ -41,7 +40,7 @@ function expected_deposits_capital_loans(firms::AbstractFirms, model::AbstractMo
     # expected deposits
     DD_e_i =
         Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .- (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i) # expected future cash flow
-    
+
     # expected capital
     K_e_i = P_bar_CF .* (1 + pi_e) .* firms.K_i
 
@@ -83,7 +82,7 @@ function firms_expectations_and_decisions(firms, model)
     Q_s_i = firms.Q_d_i * (1 + gamma_e)
 
     # cost put inflation
-    pi_c_i = cost_push_inflation(firms, model) 
+    pi_c_i = cost_push_inflation(firms, model)
 
     # price setting
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e)
@@ -91,12 +90,12 @@ function firms_expectations_and_decisions(firms, model)
     # target investments in capital, intermediate goods to purchase and employment
     I_d_i, DM_d_i, N_d_i = desired_capital_material_employment(firms, Q_s_i)
 
-    # expected profits 
+    # expected profits
     Pi_e_i = firms.Pi_i .* (1 + pi_e) * (1 + gamma_e)
 
     # expected deposits, capital and loans
     DD_e_i, K_e_i, L_e_i = expected_deposits_capital_loans(firms, model, Pi_e_i)
-    
+
     # target loans
     DL_d_i = max.(0, -DD_e_i - firms.D_i)
 
@@ -121,10 +120,10 @@ function firms_wages(firms::AbstractFirms)
     w_i =
         firms.w_bar_i .*
         min.(
-            1.5,
-            min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
+        1.5,
+        min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
             (firms.N_i .* firms.alpha_bar_i),
-        )
+    )
     return w_i
 end
 
@@ -147,10 +146,10 @@ function firms_production(firms::AbstractFirms)
     alpha_i =
         firms.alpha_bar_i .*
         min.(
-            1.5,
-            min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
+        1.5,
+        min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
             (firms.N_i .* firms.alpha_bar_i),
-        )
+    )
 
     # compute production function of firms (Leontief technology)
     Y_i = leontief_production(Q_s_i, firms.N_i, alpha_i, firms.K_i, firms.kappa_i, firms.M_i, firms.beta_i)
@@ -419,7 +418,7 @@ function firms_stocks(firms)
     # update firms intermediate goods and materials
     M_i = firms.M_i - firms.Y_i ./ firms.beta_i + firms.DM_i
 
-    # compute stock of consumer goods (DS_i = production - sales) 
+    # compute stock of consumer goods (DS_i = production - sales)
     DS_i = firms.Y_i - firms.Q_i
     S_i = firms.S_i + DS_i
 

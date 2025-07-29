@@ -1,4 +1,3 @@
-
 """
     rotw_import_export(rotw, model)
 
@@ -16,7 +15,7 @@ Calculate the demand for exports and supply of imports of the rest of the world.
 - `P_m`: Price of imports per sector.
 """
 function rotw_import_export(rotw, model)
-    # unpack 
+    # unpack
     c_E_g = model.prop.c_E_g
     c_I_g = model.prop.c_I_g
     P_bar_g = model.agg.P_bar_g

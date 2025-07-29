@@ -1,4 +1,3 @@
-
 """
     central_bank_rate(cb, model)
 

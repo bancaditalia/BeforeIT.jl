@@ -80,7 +80,7 @@ function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model:
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e) .* (1 .+ pi_d_i)
     # target investments in capital, intermediate goods to purchase and employment
     I_d_i, DM_d_i, N_d_i = Bit.desired_capital_material_employment(firms, Q_s_i)
-    # expected profits 
+    # expected profits
     Pi_e_i = firms.Pi_i .* (1 + pi_e) * (1 + gamma_e)
     # expected deposits, capital and loans
     DD_e_i, K_e_i, L_e_i = Bit.expected_deposits_capital_loans(firms, model, Pi_e_i)
@@ -139,13 +139,17 @@ firms.Q_s_i .= firms.Q_d_i # overwrite to avoid division by zero for new firm pr
 
 # new central bank initialisation
 central_bank_st = Bit.CentralBank(p, ic)
-central_bank = CentralBankCANVAS((getfield(central_bank_st, x) for x in fieldnames(Bit.CentralBank))..., 
-    r_bar_series) # add new variables to the aggregates
+central_bank = CentralBankCANVAS(
+    (getfield(central_bank_st, x) for x in fieldnames(Bit.CentralBank))...,
+    r_bar_series
+) # add new variables to the aggregates
 
 # new rotw initialisation
 rotw_st = Bit.RestOfTheWorld(p, ic)
-rotw = RestOfTheWorldCANVAS((getfield(rotw_st, x) for x in fieldnames(Bit.RestOfTheWorld))..., 
-    Y_EA_series, pi_EA_series) # add new variables to the aggregates
+rotw = RestOfTheWorldCANVAS(
+    (getfield(rotw_st, x) for x in fieldnames(Bit.RestOfTheWorld))...,
+    Y_EA_series, pi_EA_series
+) # add new variables to the aggregates
 
 # standard initialisations: workers, bank, aggregats, government, properties and data
 w_act, w_inact = Bit.Workers(p, ic)

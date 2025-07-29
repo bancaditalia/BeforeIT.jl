@@ -34,7 +34,7 @@ Literate.markdown(joinpath(indir, "basic_inheritance.jl"), outdir; credit = fals
 @info "Building Documentation"
 makedocs(
     sitename = "BeforeIT.jl",
-    format = Documenter.HTML(prettyurls = false, size_threshold=409600),
+    format = Documenter.HTML(prettyurls = false, size_threshold = 409600),
     pages = [
         "Home" => "index.md",
         "Essentials" => "examples/basic_example.md",

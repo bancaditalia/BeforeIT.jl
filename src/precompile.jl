@@ -1,4 +1,3 @@
-
 using PrecompileTools
 
 @setup_workload let

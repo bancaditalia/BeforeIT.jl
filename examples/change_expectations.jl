@@ -16,7 +16,7 @@ model = Bit.Model(par, init);
 Bit.run!(model, 40);
 
 # Now we can experiment with changing expectations of the agents in the model.
-# We will change the function `estimate_next_value` to make the agents expect 
+# We will change the function `estimate_next_value` to make the agents expect
 # the last value of the time series (so to represent backward looking expectations)
 function Bit.estimate_next_value(data)
     return data[end]

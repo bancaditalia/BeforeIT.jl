@@ -1,4 +1,3 @@
-
 import BeforeIT as Bit
 
 parameters = Bit.STEADY_STATE2010Q1.parameters
@@ -21,9 +20,9 @@ for field in fieldnames(typeof(data))
 
     if field ∉ sector_variables
         zero = sum(abs.(fielddata .- mean(fielddata)))
-        @assert isapprox(zero, 0.0, atol = 1e-7)
+        @assert isapprox(zero, 0.0, atol = 1.0e-7)
     else
         zero = sum(abs.(fielddata .- mean(fielddata, dims = 1)))
-        @assert isapprox(zero, 0.0, atol = 1e-6)
+        @assert isapprox(zero, 0.0, atol = 1.0e-6)
     end
 end

@@ -1,7 +1,7 @@
 using LinearAlgebra, Random
 
 function epsilon(C::Matrix)
-    if isapprox(sum(C), 0, atol = 1e-8)
+    if isapprox(sum(C), 0, atol = 1.0e-8)
         return 0.0, 0.0, 0.0
     end
     L, _ = cholesky(C)

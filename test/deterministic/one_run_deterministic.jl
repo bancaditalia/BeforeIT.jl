@@ -1,4 +1,3 @@
-
 @testset "run deterministic" begin
     T = 3
     parameters = Bit.AUSTRIA2010Q1.parameters
@@ -10,7 +9,7 @@
             Bit.step!(model; parallel = m)
             Bit.update_data!(model)
         end
-        return model   
+        return model
     end
 
     model = run_deterministic(parameters, initial_conditions, T, false)

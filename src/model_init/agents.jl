@@ -1,4 +1,3 @@
-
 include("object_macro.jl")
 
 abstract type AbstractWorkers <: AbstractObject end
@@ -334,11 +333,13 @@ This is a Model type. It is used to store all the agents of the economy.
 - `rotw`: RestOfTheWorld
 - `agg`: Aggregates
 """
-mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
-                     F<:AbstractFirms,B<:AbstractBank,
-                     C<:AbstractCentralBank,G<:AbstractGovernment,
-                     R<:AbstractRestOfTheWorld,A<:AbstractAggregates,
-                     P,D} <: AbstractModel
+mutable struct Model{
+        W1 <: AbstractWorkers, W2 <: AbstractWorkers,
+        F <: AbstractFirms, B <: AbstractBank,
+        C <: AbstractCentralBank, G <: AbstractGovernment,
+        R <: AbstractRestOfTheWorld, A <: AbstractAggregates,
+        P, D,
+    } <: AbstractModel
     w_act::W1
     w_inact::W2
     firms::F
@@ -349,14 +350,16 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
     agg::A
     prop::P
     data::D
-    function Model(w_act::W1, w_inact::W2, firms::F, bank::B, cb::C, gov::G, rotw::R, 
-        agg::A, prop::P, data::D) where {
-            W1<:AbstractWorkers, W2<:AbstractWorkers, F<:AbstractFirms, B<:AbstractBank,
-            C<:AbstractCentralBank, G<:AbstractGovernment, R<:AbstractRestOfTheWorld, A<:Aggregates,
-            P, D
+    function Model(
+            w_act::W1, w_inact::W2, firms::F, bank::B, cb::C, gov::G, rotw::R,
+            agg::A, prop::P, data::D
+        ) where {
+            W1 <: AbstractWorkers, W2 <: AbstractWorkers, F <: AbstractFirms, B <: AbstractBank,
+            C <: AbstractCentralBank, G <: AbstractGovernment, R <: AbstractRestOfTheWorld, A <: Aggregates,
+            P, D,
         }
-        model = new{W1,W2,F,B,C,G,R,A,P,D}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
-        
+        model = new{W1, W2, F, B, C, G, R, A, P, D}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
+
         # add workers to firms
         V_i, w_bar_i = firms.V_i, firms.w_bar_i
         O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h

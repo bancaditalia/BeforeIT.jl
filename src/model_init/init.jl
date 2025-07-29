@@ -1,4 +1,3 @@
-
 """
     Model(parameters, initial_conditions)
 
@@ -60,8 +59,8 @@ function update_variables_with_totals!(model::AbstractModel)
     # obtain total income by summing contributions from firm owners, workers and bank owner
     tot_Y_h = sum(model.firms.Y_h) + sum(model.w_act.Y_h) + sum(model.w_inact.Y_h) + model.bank.Y_h
 
-    # uptade K_h and D_h in all agent types using total income  
-    model.firms.K_h .= model.firms.K_h / tot_Y_h 
+    # uptade K_h and D_h in all agent types using total income
+    model.firms.K_h .= model.firms.K_h / tot_Y_h
     model.firms.D_h .= model.firms.D_h / tot_Y_h
     model.w_act.K_h .= model.w_act.K_h / tot_Y_h
     model.w_act.D_h .= model.w_act.D_h / tot_Y_h
@@ -72,5 +71,5 @@ function update_variables_with_totals!(model::AbstractModel)
 
     # get total deposits and update bank balance sheet
     tot_D_h = sum(model.firms.D_h) + sum(model.w_act.D_h) + sum(model.w_inact.D_h) + model.bank.D_h
-    model.bank.D_k += tot_D_h
+    return model.bank.D_k += tot_D_h
 end

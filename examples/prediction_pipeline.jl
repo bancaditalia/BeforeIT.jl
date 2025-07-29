@@ -1,10 +1,9 @@
-
-# # Full prediction pipeline 
+# # Full prediction pipeline
 
 import BeforeIT as Bit
 using Dates, Plots, StatsPlots
 
-# We start from loading the calibration object for italy, which contains 
+# We start from loading the calibration object for italy, which contains
 # 4 datasets: `calibration_data`, `figaro`, `data`, and `ea`. These are
 # saved within `BeforeIT.jl` for the Italian case, and would need to be
 # appropriately generated for other countries.
@@ -31,7 +30,7 @@ n_sims = 3
 model = Bit.Model(parameters, initial_conditions)
 model_vector = Bit.ensemblerun(model, T, n_sims);
 
-# We obtain predictions from the model simulations 
+# We obtain predictions from the model simulations
 real_data = cal.data
 predictions_dict = Bit.get_predictions_from_sims(Bit.DataVector(model_vector), real_data, calibration_date)
 

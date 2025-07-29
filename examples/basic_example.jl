@@ -26,7 +26,7 @@ for t in 1:T
     Bit.update_data!(model)
 end
 
-# Note that we can equivalently run the model for a number of epochs in the single command 
+# Note that we can equivalently run the model for a number of epochs in the single command
 # `Bit.run!(model)`, but writing the loop explicitely is more instructive.
 # We can then plot any time series stored in the data tracker, for example
 plot(model.data.real_gdp, title = "gdp", titlefont = 10)
@@ -40,7 +40,7 @@ model = Bit.Model(parameters, initial_conditions)
 model_vec = Bit.ensemblerun(model, T, 4)
 
 # Note that this will use the number of threads specified when activating the Julia environment.
-# To discover the number of threads available, you can use the command 
+# To discover the number of threads available, you can use the command
 Threads.nthreads()
 
 # To activate Julia with a specific number of threads, say 8, you can use the command

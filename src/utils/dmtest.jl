@@ -1,20 +1,19 @@
-
-#DMTEST: Retrieves the Diebold-Mariano test statistic (1995) for the 
+#DMTEST: Retrieves the Diebold-Mariano test statistic (1995) for the
 # equality of forecast accuracy of two forecasts under general assumptions.
 #
-#   DM = dmtest(e1, e2, ...) calculates the D-M test statistic on the base 
-#   of the loss differential which is defined as the difference of the 
+#   DM = dmtest(e1, e2, ...) calculates the D-M test statistic on the base
+#   of the loss differential which is defined as the difference of the
 #   squared forecast errors
 #
-#   In particular, with the DM statistic one can test the null hypothesis: 
-#   H0: E(d) = 0. The Diebold-Mariano test assumes that the loss 
+#   In particular, with the DM statistic one can test the null hypothesis:
+#   H0: E(d) = 0. The Diebold-Mariano test assumes that the loss
 #   differential process 'd' is stationary and defines the statistic as:
 #   DM = mean(d) / sqrt[ (1/T) * VAR(d) ]  ~ N(0,1),
 #   where VAR(d) is an estimate of the unconditional variance of 'd'.
 #
-#   This function also corrects for the autocorrelation that multi-period 
-#   forecast errors usually exhibit. Note that an efficient h-period 
-#   forecast will have forecast errors following MA(h-1) processes. 
+#   This function also corrects for the autocorrelation that multi-period
+#   forecast errors usually exhibit. Note that an efficient h-period
+#   forecast will have forecast errors following MA(h-1) processes.
 #   Diebold-Mariano use a Newey-West type estimator for sample variance of
 #   the loss differential to account for this concern.
 #
@@ -23,9 +22,9 @@
 #
 #   It should hold that T1 = T2 = T.
 #
-#   DM = DMTEST(e1, e2, 'h') allows you to specify an additional parameter 
-#   value 'h' to account for the autocorrelation in the loss differential 
-#   for multi-period ahead forecasts.   
+#   DM = DMTEST(e1, e2, 'h') allows you to specify an additional parameter
+#   value 'h' to account for the autocorrelation in the loss differential
+#   for multi-period ahead forecasts.
 #       'h'         the forecast horizon, initially set equal to 1
 #
 #   DM = DMTEST(...) returns a constant:
@@ -37,13 +36,13 @@
 #
 # -------------------------------------------------------------------------
 # References
-# K. Bouman. Quantitative methods in international finance and 
+# K. Bouman. Quantitative methods in international finance and
 # macroeconomics. Econometric Institute, 2011. Lecture FEM21004-11.
-# 
-# Diebold, F.X. and R.S. Mariano (1995), "Comparing predictive accuracy", 
+#
+# Diebold, F.X. and R.S. Mariano (1995), "Comparing predictive accuracy",
 # Journal of Business & Economic Statistics, 13, 253-263.
 # -------------------------------------------------------------------------
-function dmtest_modified(e1::Vector{Float64}, e2::Vector{Float64}, h::Int=1)    
+function dmtest_modified(e1::Vector{Float64}, e2::Vector{Float64}, h::Int = 1)
     # Check input arguments
     length(e1) != length(e2) && error("Vectors should be of equal length")
 
@@ -51,11 +50,11 @@ function dmtest_modified(e1::Vector{Float64}, e2::Vector{Float64}, h::Int=1)
     n = length(e1)
 
     # Define the loss differential
-    d = abs.(e1).^2 .- abs.(e2).^2
+    d = abs.(e1) .^ 2 .- abs.(e2) .^ 2
 
     # Calculate the variance of the loss differential, taking into account autocorrelation
     if h > 1
-        gamma = [cov(d[1:end-i], d[1+i:end]) for i in 0:h-1] / n
+        gamma = [cov(d[1:(end - i)], d[(1 + i):end]) for i in 0:(h - 1)] / n
         varD = gamma[1] + 2 * sum(gamma[2:h])
     else
         varD = var(d)

@@ -1,4 +1,3 @@
-
 """
     gov_expenditure(gov::AbstractGovernment, model)
 

@@ -1,4 +1,3 @@
-
 import BeforeIT as Bit
 
 using Revise, MAT, Test
@@ -145,7 +144,7 @@ Bit.cons_inv_budget_bowner!(
 # compute government expenditure
 Bit.government_expenditure!(model.gov, prop.c_G_g, model.agg.P_bar_g, pi_e)
 
-# compute demand for export and supply of imports 
+# compute demand for export and supply of imports
 Bit.import_export!(
     model.rotw,
     model.agg.P_bar_g,
@@ -289,7 +288,7 @@ println(zero)
 # compare nominal_gdp to total expenditure
 zero = sum(
     data.nominal_gdp - data.nominal_household_consumption - data.nominal_government_consumption -
-    data.nominal_capitalformation - data.nominal_exports + data.nominal_imports,
+        data.nominal_capitalformation - data.nominal_exports + data.nominal_imports,
 )
 println(zero)
 # @assert isapprox(zero, 0.0, atol = 1e-7)

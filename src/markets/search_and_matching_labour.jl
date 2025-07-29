@@ -1,4 +1,3 @@
-
 """
     search_and_matching_labour(firms::Firms, model)
 

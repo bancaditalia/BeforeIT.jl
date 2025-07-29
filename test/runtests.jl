@@ -1,10 +1,9 @@
-
 import BeforeIT as Bit
 
 using Test
 
 @testset "BeforeIT.jl Tests" begin
-    
+
     include("package_sanity_tests.jl")
 
     #utils

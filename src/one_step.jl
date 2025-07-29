@@ -1,4 +1,3 @@
-
 import CommonSolve
 using CommonSolve: step!
 export step!
@@ -121,7 +120,7 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock = NoSho
     gov.C_G = C_G
     gov.C_d_j .= C_d_j
 
-    # compute demand for export and supply of imports 
+    # compute demand for export and supply of imports
     C_E, Y_I, C_d_l, Y_m, P_m = Bit.rotw_import_export(rotw, model)
     rotw.C_E = C_E
     rotw.Y_I = Y_I

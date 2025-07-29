@@ -1,4 +1,3 @@
-
 """
     growth_expectations(model)
 

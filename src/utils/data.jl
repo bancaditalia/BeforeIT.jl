@@ -1,4 +1,3 @@
-
 abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
@@ -34,7 +33,7 @@ Bit.@object struct Data(Object) <: AbstractData
 end
 
 # Define the DataVector struct
-struct DataVector{D<:AbstractData}
+struct DataVector{D <: AbstractData}
     vector::Vector{D}
 end
 DataVector(model::AbstractModel) = DataVector([model.data])
@@ -96,7 +95,7 @@ function allocate_new_data!(m::AbstractModel)
         push!(getfield(d, f), 0.0)
     end
     push!(d.nominal_sector_gva, zeros(m.prop.G))
-    push!(d.real_sector_gva, zeros(m.prop.G))
+    return push!(d.real_sector_gva, zeros(m.prop.G))
 end
 
 function update_data_init!(m::AbstractModel)
@@ -128,7 +127,7 @@ function update_data_init!(m::AbstractModel)
     d.real_imports[1] = d.nominal_imports[1]
     d.operating_surplus[1] = sum(
         m.firms.Y_i .* (1 .- ((1 + p.tau_SIF) .* m.firms.w_bar_i ./ m.firms.alpha_bar_i + 1 ./ m.firms.beta_i)) .-
-        m.firms.tau_K_i .* m.firms.Y_i .- m.firms.tau_Y_i .* m.firms.Y_i,
+            m.firms.tau_K_i .* m.firms.Y_i .- m.firms.tau_Y_i .* m.firms.Y_i,
     )
     d.compensation_employees[1] = (1 + p.tau_SIF) * sum(m.firms.w_bar_i .* m.firms.N_i)
     d.wages[1] = sum(m.firms.w_bar_i .* m.firms.N_i)
@@ -137,7 +136,7 @@ function update_data_init!(m::AbstractModel)
     for g in 1:(p.G)
         d.nominal_sector_gva[1][g] = sum(
             m.firms.Y_i[m.firms.G_i .== g] .*
-            ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .- 1 ./ m.firms.beta_i[m.firms.G_i .== g]),
+                ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .- 1 ./ m.firms.beta_i[m.firms.G_i .== g]),
         )
     end
 
@@ -197,9 +196,9 @@ function update_data_step!(m::AbstractModel)
     d.real_imports[t] = sum(m.rotw.Q_m)
     d.operating_surplus[t] = sum(
         m.firms.P_i .* m.firms.Q_i + m.firms.P_i .* m.firms.DS_i -
-        (1 + p.tau_SIF) .* m.firms.w_i .* m.firms.N_i .* m.agg.P_bar_HH -
-        1 ./ m.firms.beta_i .* m.firms.P_bar_i .* m.firms.Y_i - m.firms.tau_Y_i .* m.firms.P_i .* m.firms.Y_i -
-        m.firms.tau_K_i .* m.firms.P_i .* m.firms.Y_i,
+            (1 + p.tau_SIF) .* m.firms.w_i .* m.firms.N_i .* m.agg.P_bar_HH -
+            1 ./ m.firms.beta_i .* m.firms.P_bar_i .* m.firms.Y_i - m.firms.tau_Y_i .* m.firms.P_i .* m.firms.Y_i -
+            m.firms.tau_K_i .* m.firms.P_i .* m.firms.Y_i,
     )
     d.compensation_employees[t] = (1 + p.tau_SIF) * sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
     d.wages[t] = sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
@@ -208,10 +207,11 @@ function update_data_step!(m::AbstractModel)
     for g in 1:(p.G)
         g_i = m.firms.G_i .== g
         d.nominal_sector_gva[t][g] =
-            sum((1 .- @view(m.firms.tau_Y_i[g_i])) .* @view(m.firms.P_i[g_i]) .* m.firms.Y_i[g_i]) - 
+            sum((1 .- @view(m.firms.tau_Y_i[g_i])) .* @view(m.firms.P_i[g_i]) .* m.firms.Y_i[g_i]) -
             sum(1.0 ./ @view(m.firms.beta_i[g_i]) .* @view(m.firms.P_bar_i[g_i]) .* @view(m.firms.Y_i[g_i]))
-        d.real_sector_gva[t][g] = sum(@view(m.firms.Y_i[g_i]) .*
-            ((1 .- @view(m.firms.tau_Y_i[g_i])) - 1.0 ./ @view(m.firms.beta_i[g_i])),
+        d.real_sector_gva[t][g] = sum(
+            @view(m.firms.Y_i[g_i]) .*
+                ((1 .- @view(m.firms.tau_Y_i[g_i])) - 1.0 ./ @view(m.firms.beta_i[g_i])),
         )
     end
 

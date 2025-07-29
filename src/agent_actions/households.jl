@@ -1,4 +1,3 @@
-
 # update wages for workers
 function update_workers_wages!(w_act, w_i)
     T = eltype(w_act.O_h)
@@ -7,6 +6,7 @@ function update_workers_wages!(w_act, w_i)
             w_act.w_h[i] = w_i[h]
         end
     end
+    return
 end
 
 function _income_w_act(w_h, O_h, tau_SIW, tau_INC, theta_UB, sb_other, P_bar_HH; pi_e = 0.0)
@@ -22,7 +22,7 @@ function _income_w_act(w_h, O_h, tau_SIW, tau_INC, theta_UB, sb_other, P_bar_HH;
 end
 
 function households_income_act(w_act::AbstractWorkers, model)
-    _income_w_act(
+    return _income_w_act(
         w_act.w_h,
         w_act.O_h,
         model.prop.tau_SIW,
@@ -42,7 +42,7 @@ function _income_w_inact(H_inact, sb_inact, sb_other, P_bar_HH; pi_e = 0.0)
 end
 
 function households_income_inact(w_inact::AbstractWorkers, model)
-    _income_w_inact(length(w_inact), model.gov.sb_inact, model.gov.sb_other, model.agg.P_bar_HH)
+    return _income_w_inact(length(w_inact), model.gov.sb_inact, model.gov.sb_other, model.agg.P_bar_HH)
 end
 
 function _income_fowner(Pi_i, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; pi_e = 0.0)
@@ -54,7 +54,7 @@ function _income_fowner(Pi_i, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; 
 end
 
 function households_income(firms::AbstractFirms, model)
-    _income_fowner(
+    return _income_fowner(
         firms.Pi_i,
         model.prop.tau_INC,
         model.prop.tau_FIRM,
@@ -70,7 +70,7 @@ function _income_bowner(Pi_k, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; 
 end
 
 function households_income(bank::AbstractBank, model)
-    _income_bowner(
+    return _income_bowner(
         bank.Pi_k,
         model.prop.tau_INC,
         model.prop.tau_FIRM,
@@ -91,7 +91,7 @@ function _budget_w_act(w_h, O_h, psi, psi_H, tau_VAT, tau_CF, sb_other, P_bar_HH
 end
 
 function households_budget_act(w_act::AbstractWorkers, model)
-    _budget_w_act(
+    return _budget_w_act(
         w_act.w_h,
         w_act.O_h,
         model.prop.psi,
@@ -119,7 +119,7 @@ function _budget_w_inact(H_inact, psi, psi_H, tau_VAT, tau_CF, sb_inact, sb_othe
 end
 
 function households_budget_inact(w_inact::AbstractWorkers, model)
-    _budget_w_inact(
+    return _budget_w_inact(
         length(w_inact),
         model.prop.psi,
         model.prop.psi_H,
@@ -144,7 +144,7 @@ function _budget_fowner(psi, psi_H, tau_VAT, tau_CF, tau_INC, tau_FIRM, theta_DI
 end
 
 function households_budget(firms::AbstractFirms, model)
-    _budget_fowner(
+    return _budget_fowner(
         model.prop.psi,
         model.prop.psi_H,
         model.prop.tau_VAT,
@@ -168,7 +168,7 @@ function _budget_bowner(psi, psi_H, tau_VAT, tau_CF, tau_INC, tau_FIRM, theta_DI
 end
 
 function households_budget(bank::AbstractBank, model)
-    _budget_bowner(
+    return _budget_bowner(
         model.prop.psi,
         model.prop.psi_H,
         model.prop.tau_VAT,
