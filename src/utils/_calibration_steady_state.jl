@@ -2,13 +2,13 @@ using Dates
 
 # function only useful for testing
 function get_params_and_initial_conditions_steady_state(calibration_date,
-                                                        calibration_data,
-                                                        figaro,
-                                                        data,
-                                                        ea,
-                                                        max_calibration_date,
-                                                        estimation_date;
-                                                        scale = 0.001)
+        calibration_data,
+        figaro,
+        data,
+        ea,
+        max_calibration_date,
+        estimation_date;
+        scale = 0.001)
 
     # Calculate GDP deflator from levels
     data["gdp_deflator_quarterly"] = data["nominal_gdp_quarterly"] ./
@@ -16,8 +16,9 @@ function get_params_and_initial_conditions_steady_state(calibration_date,
     ea["gdp_deflator_quarterly"] = ea["nominal_gdp_quarterly"] ./ ea["real_gdp_quarterly"]
 
     T_calibration = findall(calibration_data["years_num"] .==
-                            date2num(DateTime(year(min(calibration_date,
-                                                       max_calibration_date)), 12, 31)))[1][1]
+                            date2num(DateTime(
+        year(min(calibration_date,
+            max_calibration_date)), 12, 31)))[1][1]
     T_calibration_quarterly = findall(calibration_data["quarters_num"] .==
                                       date2num(calibration_date))[1][2]
     T_estimation_exo = findall(data["quarters_num"] .== date2num(estimation_date))[1][1]
@@ -72,10 +73,10 @@ function get_params_and_initial_conditions_steady_state(calibration_date,
     fixed_assets_eu7 = calibration_data["fixed_assets_eu7"][:, T_calibration]
     dwellings_eu7 = calibration_data["dwellings_eu7"][:, T_calibration]
     nominal_nace64_output_eu7 = calibration_data["nominal_nace64_output_eu7"][:,
-                                                                              T_calibration]
+        T_calibration]
     gross_capitalformation_dwellings = calibration_data["gross_capitalformation_dwellings"][T_calibration]
     nace64_capital_consumption = calibration_data["nace64_capital_consumption"][:,
-                                                                                T_calibration]
+        T_calibration]
     nominal_nace64_output = calibration_data["nominal_nace64_output"][:, T_calibration]
     unemployment_rate_quarterly = data["unemployment_rate_quarterly"][T_calibration_exo]
 
@@ -89,7 +90,7 @@ function get_params_and_initial_conditions_steady_state(calibration_date,
     operating_surplus = operating_surplus - capital_consumption
     taxes_products_export = 0 # TODO: unelegant hard coded zero
     employers_social_contributions = min(social_contributions,
-                                         sum(compensation_employees) - wages)
+        sum(compensation_employees) - wages)
     fixed_capitalformation = Bit.pos(fixed_capitalformation)
     taxes_products_capitalformation_dwellings = gross_capitalformation_dwellings *
                                                 (1 -
@@ -383,21 +384,22 @@ function get_params_and_initial_conditions_steady_state(calibration_date,
 
     C_G = [timescale *
            sum(government_consumption) *
-           data["real_government_consumption_quarterly"][T_estimation_exo:min(T_calibration_exo +
-                                                                              T,
-                                                                              T_calibration_exo_max)] /
+           data["real_government_consumption_quarterly"][T_estimation_exo:min(
+               T_calibration_exo +
+               T,
+               T_calibration_exo_max)] /
            data["real_government_consumption_quarterly"][T_calibration_exo]
            fill(NaN, max(0, T_calibration_exo + T - T_calibration_exo_max), 1)]
     C_E = [timescale *
            sum(exports - reexports) *
            data["real_exports_quarterly"][T_estimation_exo:min(T_calibration_exo + T,
-                                                               T_calibration_exo_max)] /
+               T_calibration_exo_max)] /
            data["real_exports_quarterly"][T_calibration_exo]
            fill(NaN, max(0, T_calibration_exo + T - T_calibration_exo_max), 1)]
     Y_I = [timescale *
            sum(imports) *
            data["real_imports_quarterly"][T_estimation_exo:min(T_calibration_exo + T,
-                                                               T_calibration_exo_max)] /
+               T_calibration_exo_max)] /
            data["real_imports_quarterly"][T_calibration_exo]
            fill(NaN, max(0, T_calibration_exo + T - T_calibration_exo_max), 1)]
 

@@ -32,13 +32,13 @@ using JuliaFormatter
 
     @testset "Code quality (Aqua.jl)" begin
         Aqua.test_all(Bit, ambiguities = false, unbound_args = false,
-                      persistent_tasks = (tmax = 60,)) # Windows might need more time...
+            persistent_tasks = (tmax = 60,)) # Windows might need more time...
         @test Test.detect_ambiguities(Bit) == Tuple{Method, Method}[]
     end
 
     @testset "Code formatting (JuliaFormatter.jl)" begin
         @test format(Bit; style = SciMLStyle(), yas_style_nesting = true, verbose = false,
-                     overwrite = false)
+            overwrite = false)
     end
 
     # WARNING: this should be the last include

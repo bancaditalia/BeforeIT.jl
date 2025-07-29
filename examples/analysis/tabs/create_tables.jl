@@ -13,9 +13,9 @@ for q in quarters
     model = Bit.init_model(params, init_conds)
     model_vector = Bit.ensemblerun(model, T, n_sims)
     prediction_dict = Bit.get_predictions_from_sims(Bit.DataVector(model_vector), cal.data,
-                                                    q)
+        q)
     save("data/italy/abm_predictions/$(year(q))Q$(quarterofyear(q)).jld2",
-         "model_dict", prediction_dict)
+        "model_dict", prediction_dict)
 end
 
 # Load some utility functions for creating error tables

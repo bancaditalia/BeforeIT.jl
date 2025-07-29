@@ -29,5 +29,5 @@ function Government(parameters, initial_conditions)
     Y_G = zero(typeFloat)
 
     return Government(alpha_G, beta_G, sigma_G, Y_G, C_G[T_prime],
-                      L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
+        L_G, sb_inact, sb_other, C_d_j, C_j, P_j)
 end

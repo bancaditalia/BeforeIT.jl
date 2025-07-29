@@ -63,8 +63,9 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock = NoSho
     ####### FIRM EXPECTATIONS AND DECISIONS #######
 
     # compute firm quantity, price, investment and intermediate-goods, employment decisions, expected profits, and desired/expected loans and capital
-    Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i = Bit.firms_expectations_and_decisions(firms,
-                                                                                                          model)
+    Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i = Bit.firms_expectations_and_decisions(
+        firms,
+        model)
 
     firms.Q_s_i .= Q_s_i
     firms.I_d_i .= I_d_i
@@ -137,8 +138,8 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock = NoSho
     # update inflation and update global price index
     push!(agg.pi_, 0.0)
     agg.pi_[prop.T_prime + agg.t], agg.P_bar = Bit.inflation_priceindex(firms.P_i,
-                                                                        firms.Y_i,
-                                                                        agg.P_bar)
+        firms.Y_i,
+        agg.P_bar)
 
     # update sector-specific price index
     agg.P_bar_g .= Bit.sector_specific_priceindex(firms, rotw, prop.G)

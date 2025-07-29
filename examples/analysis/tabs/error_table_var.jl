@@ -22,29 +22,31 @@ function error_table_var(country::String, ea, data, quarters, horizons)
                                                                    Month(3 * horizon)))
                 Bit.num2date(forecast_quarter_num) > Date(max_year, 12, 31) && break
 
-                actual[i, j, :] = hcat(log.(data["real_gdp_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
-                                       log.(1 .+
-                                            data["gdp_deflator_growth_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
-                                       log.(data["real_household_consumption_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
-                                       log.(data["real_fixed_capitalformation_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
-                                       (1 .+
-                                        data["euribor"][data["quarters_num"] .== forecast_quarter_num]) .^
-                                       (1 / 4))
+                actual[i, j, :] = hcat(
+                    log.(data["real_gdp_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
+                    log.(1 .+
+                         data["gdp_deflator_growth_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
+                    log.(data["real_household_consumption_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
+                    log.(data["real_fixed_capitalformation_quarterly"][data["quarters_num"] .== forecast_quarter_num]),
+                    (1 .+
+                     data["euribor"][data["quarters_num"] .== forecast_quarter_num]) .^
+                    (1 / 4))
 
-                Y0 = hcat(log.(data["real_gdp_quarterly"][data["quarters_num"] .<= quarter_num]),
-                          log.(data["gdp_deflator_quarterly"][data["quarters_num"] .<= quarter_num]),
-                          log.(data["real_household_consumption_quarterly"][data["quarters_num"] .<= quarter_num]),
-                          log.(data["real_fixed_capitalformation_quarterly"][data["quarters_num"] .<= quarter_num]),
-                          cumsum((1 .+
-                                  data["euribor"][data["quarters_num"] .<= quarter_num]) .^
-                                 (1 / 4)))
+                Y0 = hcat(
+                    log.(data["real_gdp_quarterly"][data["quarters_num"] .<= quarter_num]),
+                    log.(data["gdp_deflator_quarterly"][data["quarters_num"] .<= quarter_num]),
+                    log.(data["real_household_consumption_quarterly"][data["quarters_num"] .<= quarter_num]),
+                    log.(data["real_fixed_capitalformation_quarterly"][data["quarters_num"] .<= quarter_num]),
+                    cumsum((1 .+
+                            data["euribor"][data["quarters_num"] .<= quarter_num]) .^
+                           (1 / 4)))
 
                 Y = zeros(horizon, number_variables)
                 Y0_diff = diff(Y0[(presample - k):end, :]; dims = 1)
 
                 for l in 1:number_variables
                     Y[:, l] = Bit.forecast_k_steps_VAR(Y0_diff[:, l], horizon,
-                                                       intercept = true, lags = k)
+                        intercept = true, lags = k)
                 end
 
                 Y[end, [1, 3, 4]] = Y0[end, [1, 3, 4]]' + sum(Y[:, [1, 3, 4]], dims = 1)
@@ -53,7 +55,7 @@ function error_table_var(country::String, ea, data, quarters, horizons)
         end
 
         create_bias_rmse_tables_var(forecast, actual, horizons, "training",
-                                    number_variables, k)
+            number_variables, k)
     end
     return nothing
 end

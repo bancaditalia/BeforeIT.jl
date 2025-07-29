@@ -75,7 +75,7 @@ julia_stime_big = std(julia_times_big)
 julia_times_small_multi = zeros(n_runs)
 for i in 1:5
     julia_times_small_multi[i] = @elapsed run(parameters, initial_conditions, T;
-                                              parallel = true)
+        parallel = true)
 end
 julia_times_small_multi ./= T
 julia_times_big_multi = [21.683823, 21.517169, 21.923911, 21.530070, 21.283416]
@@ -92,17 +92,17 @@ labels = [
 fig = Figure(size = (900, 400));
 
 ax1 = Axis(fig[1, 1], ylabel = "time for one step (s)",
-           title = "Model in scale 1:1000", titlesize = 18, xticksvisible = false)
+    title = "Model in scale 1:1000", titlesize = 18, xticksvisible = false)
 ax2 = Axis(fig[1, 2], title = "Model in scale 1:1", titlesize = 18, xticksvisible = false)
 
 times_small = [matlab_mtime_small, c_mtime_small, c_mtime_small_multi,
     julia_mtime_small, julia_mtime_small_multi]
 barplot!(ax1,
-         1:5,
-         times_small,
-         bar_labels = :y,
-         color = RGBf(((0, 155, 228) ./ 255)...),
-         strokecolor = :black, strokewidth = 1);
+    1:5,
+    times_small,
+    bar_labels = :y,
+    color = RGBf(((0, 155, 228) ./ 255)...),
+    strokecolor = :black, strokewidth = 1);
 ylims!(ax1, 0, 1.25 * maximum(times_small))
 
 ax1.yticklabelspace = 25.0
@@ -116,11 +116,11 @@ times_big = [
 
 ylims!(ax2, 0, 1.15 * maximum(times_big))
 barplot!(ax2,
-         1:7,
-         round.(times_big, digits = 1),
-         bar_labels = :y,
-         color = RGBf(((0, 155, 228) ./ 255)...),
-         strokecolor = :black, strokewidth = 1);
+    1:7,
+    round.(times_big, digits = 1),
+    bar_labels = :y,
+    color = RGBf(((0, 155, 228) ./ 255)...),
+    strokecolor = :black, strokewidth = 1);
 ax2.xticks = (1:7, labels)
 ax2.xticklabelrotation = π / 5
 ax2.xgridvisible = false

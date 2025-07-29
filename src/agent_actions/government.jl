@@ -44,14 +44,14 @@ imports.
 function gov_revenues(model::AbstractModel)
     # unpack objects
     w_act, w_inact, firms, bank, rotw = model.w_act, model.w_inact, model.firms, model.bank,
-                                        model.rotw
+    model.rotw
     prop = model.prop
     P_bar_HH = model.agg.P_bar_HH
 
     # unpack parameters
     tau_SIF, tau_SIW, tau_INC, tau_CF, tau_VAT = prop.tau_SIF,
-                                                 prop.tau_SIW, prop.tau_INC, prop.tau_CF,
-                                                 prop.tau_VAT
+    prop.tau_SIW, prop.tau_INC, prop.tau_CF,
+    prop.tau_VAT
     tau_FIRM, tau_EXPORT, theta_DIV = prop.tau_FIRM, prop.tau_EXPORT, prop.theta_DIV
 
     # compute total wages, consumption and investment

@@ -1,10 +1,10 @@
 
 function save_all_params_and_initial_conditions(calibration_object, folder_name;
-                                                scale = 0.0005,
-                                                first_calibration_date = DateTime(2010, 03,
-                                                                                  31),
-                                                last_calibration_date = DateTime(2011, 12,
-                                                                                 31))
+        scale = 0.0005,
+        first_calibration_date = DateTime(2010, 03,
+            31),
+        last_calibration_date = DateTime(2011, 12,
+            31))
     if isdir(folder_name)
         @warn "The folder $(folder_name) already exists and will be deleted with its content."
         rm(folder_name; force = true, recursive = true)
@@ -15,20 +15,22 @@ function save_all_params_and_initial_conditions(calibration_object, folder_name;
 
     for calibration_date in collect(first_calibration_date:Dates.Month(3):last_calibration_date)
         params, init_conds = Bit.get_params_and_initial_conditions(calibration_object,
-                                                                   calibration_date;
-                                                                   scale = scale)
-        save(parameters_folder *
-             string(year(calibration_date)) *
-             "Q" *
-             string(Dates.quarterofyear(calibration_date)) *
-             ".jld2",
-             params)
-        save(initial_conditions_folder *
-             string(year(calibration_date)) *
-             "Q" *
-             string(Dates.quarterofyear(calibration_date)) *
-             ".jld2",
-             init_conds)
+            calibration_date;
+            scale = scale)
+        save(
+            parameters_folder *
+            string(year(calibration_date)) *
+            "Q" *
+            string(Dates.quarterofyear(calibration_date)) *
+            ".jld2",
+            params)
+        save(
+            initial_conditions_folder *
+            string(year(calibration_date)) *
+            "Q" *
+            string(Dates.quarterofyear(calibration_date)) *
+            ".jld2",
+            init_conds)
     end
 end
 
@@ -94,6 +96,6 @@ function save_all_predictions_from_sims(folder_name, real_data)
         predictions_dict = get_predictions_from_sims(sims, real_data, start_date)
         # save the predictions_dict
         save(folder_name * "/abm_predictions/$(y)Q$(q).jld2",
-             "predictions_dict", predictions_dict)
+            "predictions_dict", predictions_dict)
     end
 end

@@ -33,9 +33,9 @@ plot(model.data.real_gdp, title = "gdp", titlefont = 10)
 
 # Or we can plot multiple time series at once using the function `plot_data`
 ps = Bit.plot_data(model,
-                   quantities = [:real_gdp, :real_household_consumption,
-                       :real_government_consumption, :real_capitalformation,
-                       :real_exports, :real_imports, :wages, :euribor, :gdp_deflator])
+    quantities = [:real_gdp, :real_household_consumption,
+        :real_government_consumption, :real_capitalformation,
+        :real_exports, :real_imports, :wages, :euribor, :gdp_deflator])
 plot(ps..., layout = (3, 3))
 
 # To run multiple monte-carlo repetitions in parallel we can use

@@ -79,11 +79,11 @@ sem_gdp_ratio = gdp_ratio .*
 
 # Finally, we can plot the impulse response curve
 plot(1:(T + 1),
-     gdp_ratio,
-     ribbon = sem_gdp_ratio,
-     fillalpha = 0.2,
-     label = "",
-     xlabel = "quarters",
-     ylabel = "GDP change")
+    gdp_ratio,
+    ribbon = sem_gdp_ratio,
+    fillalpha = 0.2,
+    label = "",
+    xlabel = "quarters",
+    ylabel = "GDP change")
 
 # We can save the figure using: savefig("gdp_shock.png")

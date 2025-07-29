@@ -26,8 +26,8 @@ function search_and_matching!(model::AbstractModel, parallel = false)
     I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
     Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g,
     P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(firms, rotw, prop, agg,
-                                                                    w_act, w_inact, gov,
-                                                                    bank)
+        w_act, w_inact, gov,
+        bank)
 
     G = size(prop.b_HH_g, 1) # number of goods
 
@@ -39,12 +39,12 @@ function search_and_matching!(model::AbstractModel, parallel = false)
         S_fg_ = copy(S_f_)
 
         perform_firms_market!(g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, I_i_g, DM_i_g,
-                              P_bar_i_g, P_CF_i_g, F_g, S_fg, S_fg_, G_f)
+            P_bar_i_g, P_CF_i_g, F_g, S_fg, S_fg_, G_f)
 
         perform_retail_market!(g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
-                               b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
-                               C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
-                               P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f)
+            b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
+            C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
+            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f)
     end
 
     if parallel
@@ -58,16 +58,16 @@ function search_and_matching!(model::AbstractModel, parallel = false)
     end
 
     update_aggregate_variables!(agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g,
-                                I_i_g,
-                                P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g,
-                                C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g)
+        I_i_g,
+        P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g,
+        C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g)
 end
 
 function update_aggregate_variables!(agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g,
-                                     I_i_g,
-                                     P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g,
-                                     C_j_g, C_l_g,
-                                     P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g)
+        I_i_g,
+        P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g,
+        C_j_g, C_l_g,
+        P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g)
     I = length(firms)
     H_W = length(w_act)
     H_inact = length(w_inact)
@@ -131,7 +131,7 @@ function update_aggregate_variables!(agg, w_act, w_inact, firms, bank, gov, rotw
 end
 
 function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov,
-                                            bank)
+        bank)
     # ... Initialize all the variables ...
 
     # change some variables according to arguments of matlab function
@@ -171,8 +171,8 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     P_l_g = zeros(typeFloat, 1, G)
 
     return I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g,
-           Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
-           P_l_g
+    Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
+    P_l_g
 end
 
 function initialize_variables_firms_market(firms, rotw, prop)
@@ -204,8 +204,8 @@ end
 Perform the firms market exchange process
 """
 function perform_firms_market!(g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, I_i_g, DM_i_g,
-                               P_bar_i_g, P_CF_i_g,
-                               F_g, S_fg, S_fg_, G_f)
+        P_bar_i_g, P_CF_i_g,
+        F_g, S_fg, S_fg_, G_f)
     ##############################
     ######## FIRMS MARKET ########
     ##############################
@@ -295,10 +295,10 @@ end
 Perform the retail market exchange process
 """
 function perform_retail_market!(g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g,
-                                b_CFH_g,
-                                c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g,
-                                P_bar_h_g,
-                                P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f)
+        b_CFH_g,
+        c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g,
+        P_bar_h_g,
+        P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f)
     ###############################
     ######## RETAIL MARKET ########
     ###############################

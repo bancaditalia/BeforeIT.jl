@@ -17,7 +17,7 @@ function central_bank_rate(cb::AbstractCentralBank, model::AbstractModel)
     pi_EA = model.rotw.pi_EA
 
     r_bar = taylor_rule(cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma,
-                        gamma_EA, pi_EA)
+        gamma_EA, pi_EA)
     return r_bar
 end
 
@@ -46,7 +46,7 @@ r_t = ρ * r_{t-1} + (1 - ρ) * (r^* + π^* + ξ_π * (π_t - π^*) + ξ_γ * γ
 ```
 """
 function taylor_rule(rho::T, r_bar::T, r_star::T, pi_star::T, xi_pi::T,
-                     xi_gamma::T, gamma_EA::T, pi_EA::T) where {T}
+        xi_gamma::T, gamma_EA::T, pi_EA::T) where {T}
     rate = rho * r_bar +
            (one(T) - rho) *
            (r_star + pi_star + xi_pi * (pi_EA - pi_star) + xi_gamma * gamma_EA)

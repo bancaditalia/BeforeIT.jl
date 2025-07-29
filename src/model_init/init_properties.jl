@@ -94,9 +94,9 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     r_bar = typeFloat(initial_conditions["r_bar"])
 
     return Properties(G, T_prime, H_act, H_inact, J, L, I_s, I, H, tau_INC, tau_FIRM,
-                      tau_VAT, tau_SIF,
-                      tau_SIW, tau_EXPORT, tau_CF, tau_G, theta_UB, psi,
-                      psi_H, mu, theta_DIV, theta, zeta, zeta_LTV,
-                      zeta_b, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g,
-                      a_sg, C, D_H, K_H, sb_other, E_k, r_bar)
+        tau_VAT, tau_SIF,
+        tau_SIW, tau_EXPORT, tau_CF, tau_G, theta_UB, psi,
+        psi_H, mu, theta_DIV, theta, zeta, zeta_LTV,
+        zeta_b, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g,
+        a_sg, C, D_H, K_H, sb_other, E_k, r_bar)
 end

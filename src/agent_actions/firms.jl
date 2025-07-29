@@ -120,8 +120,8 @@ function firms_wages(firms::AbstractFirms)
 
     w_i = firms.w_bar_i .*
           min.(1.5,
-               min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
-               (firms.N_i .* firms.alpha_bar_i))
+        min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
+        (firms.N_i .* firms.alpha_bar_i))
     return w_i
 end
 
@@ -143,13 +143,13 @@ function firms_production(firms::AbstractFirms)
     # compute productivity of labour
     alpha_i = firms.alpha_bar_i .*
               min.(1.5,
-                   min.(Q_s_i,
-                        min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
-                   (firms.N_i .* firms.alpha_bar_i))
+        min.(Q_s_i,
+            min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
+        (firms.N_i .* firms.alpha_bar_i))
 
     # compute production function of firms (Leontief technology)
     Y_i = leontief_production(Q_s_i, firms.N_i, alpha_i, firms.K_i, firms.kappa_i,
-                              firms.M_i, firms.beta_i)
+        firms.M_i, firms.beta_i)
 
     return Y_i
 end

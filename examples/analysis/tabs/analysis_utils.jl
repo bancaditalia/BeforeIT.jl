@@ -1,8 +1,8 @@
 
 function latexTableContent(input_data::Matrix{String}, tableRowLabels::Vector{String},
-                           dataFormat::String, tableColumnAlignment, tableBorders::Bool,
-                           booktabs::Bool,
-                           makeCompleteLatexDocument::Bool)
+        dataFormat::String, tableColumnAlignment, tableBorders::Bool,
+        booktabs::Bool,
+        makeCompleteLatexDocument::Bool)
     nrows, ncols = size(input_data)
     latex = []
 
@@ -60,8 +60,8 @@ function write_latex_table(filename, country, input_data_S, horizons)
     tableBorders, booktabs, makeCompleteLatexDocument = false, false, false
 
     latex = latexTableContent(input_data_S, tableRowLabels, dataFormat,
-                              tableColumnAlignment,
-                              tableBorders, booktabs, makeCompleteLatexDocument)
+        tableColumnAlignment,
+        tableBorders, booktabs, makeCompleteLatexDocument)
 
     open("data/$(country)/analysis/$(filename)", "w") do fid
         for line in latex
@@ -71,7 +71,7 @@ function write_latex_table(filename, country, input_data_S, horizons)
 end
 
 function generate_dm_test_comparison(error1, error2, rmse1, rmse2, horizons,
-                                     number_variables)
+        number_variables)
     input_data = -round.(100 * (rmse1 .- rmse2) ./ rmse2, digits = 1)
     input_data_S = fill("", size(input_data))
 
@@ -97,14 +97,14 @@ function generate_mz_test_bias(error, actual, bias, horizons, number_variables)
         h = horizons[j]
         for l in 1:number_variables
             mz_forecast = (view(error, :, j, l) + view(actual, :, j, l))[map(!,
-                                                                             isnan.(view(error,
-                                                                                         :,
-                                                                                         j,
-                                                                                         l) +
-                                                                                    view(actual,
-                                                                                         :,
-                                                                                         j,
-                                                                                         l)))]
+                isnan.(view(error,
+                    :,
+                    j,
+                    l) +
+                       view(actual,
+                    :,
+                    j,
+                    l)))]
             mz_actual = view(actual, :, j, l)[map(!, isnan.(view(actual, :, j, l)))]
             _, _, p_value = Bit.mztest(mz_actual, mz_forecast)
             input_data_S[j, l] = string(input_data[j, l]) * " (" *
@@ -124,11 +124,11 @@ function create_bias_rmse_tables_abm(forecast, actual, horizons, type, number_va
     rmse_var, _, error_var = calculate_forecast_errors(forecast_var, actual)
 
     rmse_comparison_data = generate_dm_test_comparison(error_abm, error_var, rmse_abm,
-                                                       rmse_var, horizons, number_variables)
+        rmse_var, horizons, number_variables)
     write_latex_table("rmse_$(type_prefix)abm.tex", country, rmse_comparison_data, horizons)
 
     bias_data = generate_mz_test_bias(error_abm, actual, bias_abm, horizons,
-                                      number_variables)
+        number_variables)
     write_latex_table("bias_$(type_prefix)abm.tex", country, bias_data, horizons)
 
     return nothing
@@ -139,30 +139,30 @@ function create_bias_rmse_tables_var(forecast, actual, horizons, type, number_va
 
     if k == 1
         save("data/$(country)/analysis/forecast_$(type_prefix)var.jld2",
-             "forecast", forecast)
+            "forecast", forecast)
         rmse_var, bias_var, error_var = calculate_forecast_errors(forecast, actual)
 
         input_data_rmse = round.(rmse_var, digits = 2)
         write_latex_table("rmse_$(type_prefix)var.tex", country, string.(input_data_rmse),
-                          horizons)
+            horizons)
 
         bias_data = generate_mz_test_bias(error_var, actual, bias_var, horizons,
-                                          number_variables)
+            number_variables)
         write_latex_table("bias_$(type_prefix)var.tex", country, bias_data, horizons)
     else
         save("data/$(country)/analysis/forecast_$(type_prefix)var_$(k).jld2",
-             "forecast", forecast)
+            "forecast", forecast)
         rmse_var_k, _, error_var_k = calculate_forecast_errors(forecast, actual)
 
         forecast_base_var = load("data/$(country)/analysis/forecast_$(type_prefix)var.jld2")["forecast"]
         rmse_base_var, _, error_base_var = calculate_forecast_errors(forecast_base_var,
-                                                                     actual)
+            actual)
 
         rmse_comparison_data = generate_dm_test_comparison(error_var_k, error_base_var,
-                                                           rmse_var_k,
-                                                           rmse_base_var, horizons,
-                                                           number_variables)
+            rmse_var_k,
+            rmse_base_var, horizons,
+            number_variables)
         write_latex_table("rmse_$(type_prefix)var_$(k).tex", country, rmse_comparison_data,
-                          horizons)
+            horizons)
     end
 end

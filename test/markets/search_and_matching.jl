@@ -35,8 +35,9 @@ using Test, MAT, StatsBase, Random
 
         bank.r = Bit.bank_rate(bank, model)
 
-        Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i = Bit.firms_expectations_and_decisions(firms,
-                                                                                                              model)
+        Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i = Bit.firms_expectations_and_decisions(
+            firms,
+            model)
 
         firms.Q_s_i .= Q_s_i
         firms.I_d_i .= I_d_i
@@ -94,12 +95,12 @@ using Test, MAT, StatsBase, Random
     #       both single-threaded and multi-threaded execution
     for m in [true, false]
         bank, w_act, w_inact, firms, gov, rotw = run_search_and_matching(parameters,
-                                                                         initial_conditions,
-                                                                         T, m)
+            initial_conditions,
+            T, m)
         @test isapprox(mean([bank.I_h, w_act.I_h..., w_inact.I_h..., firms.I_h...]),
-                       0.32975, atol = 3 * 0.0025351)
+            0.32975, atol = 3 * 0.0025351)
         @test isapprox(mean([bank.C_h, w_act.C_h..., w_inact.C_h..., firms.C_h...]),
-                       3.973, atol = 3 * 0.029366)
+            3.973, atol = 3 * 0.029366)
         @test isapprox(mean(firms.I_i), 20.5075, atol = 3 * 0.12763)
         @test isapprox(mean(firms.DM_i), 109.3163, atol = 3 * 0.68033)
         @test isapprox(mean(firms.P_bar_i), 1.0031, atol = 3 * 0.0044726)

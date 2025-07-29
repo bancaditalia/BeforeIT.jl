@@ -24,8 +24,8 @@ println(cal.estimation_date)
 # We can calibrate the model on a specific quarter as follows
 calibration_date = DateTime(2014, 03, 31)
 parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal,
-                                                                       calibration_date;
-                                                                       scale = 0.0001)
+    calibration_date;
+    scale = 0.0001)
 
 # We run the model for a number of quarters
 T = 20
@@ -36,19 +36,19 @@ model_vector = Bit.ensemblerun(model, T, n_sims);
 # We obtain predictions from the model simulations 
 real_data = cal.data
 predictions_dict = Bit.get_predictions_from_sims(Bit.DataVector(model_vector), real_data,
-                                                 calibration_date)
+    calibration_date)
 
 # Finally, we can plot the predictions against the real data
 p1 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_gdp_quarterly"; crop = true)
 p2 = Bit.plot_model_vs_real(predictions_dict, real_data,
-                            "real_household_consumption_quarterly"; crop = true)
+    "real_household_consumption_quarterly"; crop = true)
 p3 = Bit.plot_model_vs_real(predictions_dict, real_data,
-                            "real_fixed_capitalformation_quarterly"; crop = true)
+    "real_fixed_capitalformation_quarterly"; crop = true)
 p4 = Bit.plot_model_vs_real(predictions_dict, real_data,
-                            "real_government_consumption_quarterly"; crop = true)
+    "real_government_consumption_quarterly"; crop = true)
 p5 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_exports_quarterly";
-                            crop = true)
+    crop = true)
 p6 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_imports_quarterly";
-                            crop = true)
+    crop = true)
 
 plot(p1, p2, p3, p4, p5, p6, layout = (3, 2), legend = false)

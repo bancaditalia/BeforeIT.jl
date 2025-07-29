@@ -24,11 +24,11 @@ The total profits `Pi_k` are calculated as follows:
 ```
 """
 function _bank_profits(L_i::Vector{T},
-                       D_i::Vector{T},
-                       D_h::Vector{T},
-                       D_k::T,
-                       r_bar::T,
-                       r::T) where {T}
+        D_i::Vector{T},
+        D_h::Vector{T},
+        D_k::T,
+        r_bar::T,
+        r::T) where {T}
     r_terms = reduce(+, L_i)
     r_terms += mapreduce(x -> max(zero(T), -x), +, D_i)
     r_terms += mapreduce(x -> max(zero(T), -x), +, D_h)
@@ -218,7 +218,7 @@ and the bank owner itself, plus the bank's equity, minus the loans of the firms.
 function bank_deposits(bank, model)
     w_act, w_inact, firms = model.w_act, model.w_inact, model.firms
     return _bank_deposits(w_act.D_h, w_inact.D_h, firms.D_h, bank.D_h, firms.D_i, bank.E_k,
-                          firms.L_i)
+        firms.L_i)
 end
 
 """
