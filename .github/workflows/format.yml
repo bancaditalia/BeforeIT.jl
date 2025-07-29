@@ -35,4 +35,3 @@ jobs:
         with:
           tool_name: Runic
           fail_level: warning
-          filter_mode: nofilter
