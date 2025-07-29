@@ -97,14 +97,7 @@ function generate_mz_test_bias(error, actual, bias, horizons, number_variables)
         h = horizons[j]
         for l in 1:number_variables
             mz_forecast = (view(error, :, j, l) + view(actual, :, j, l))[map(!,
-                isnan.(view(error,
-                    :,
-                    j,
-                    l) +
-                       view(actual,
-                    :,
-                    j,
-                    l)))]
+                isnan.(view(error, :, j, l) + view(actual, :, j, l)))]
             mz_actual = view(actual, :, j, l)[map(!, isnan.(view(actual, :, j, l)))]
             _, _, p_value = Bit.mztest(mz_actual, mz_forecast)
             input_data_S[j, l] = string(input_data[j, l]) * " (" *
