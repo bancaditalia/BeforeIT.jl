@@ -2,9 +2,7 @@ import BeforeIT as Bit
 
 using Test
 
-import DynamicSampling: DynamicSampler, allinds
 import Random: shuffle!, rand, randn
-import StatsBase: wsample
 using Distributions
 
 function randn()
@@ -36,7 +34,4 @@ function Bit.fshuffle!(v::Vector)
 end
 function Bit.ufilter!(cond, v::Vector)
     return filter!(cond, v)
-end
-function wsample(v::UnitRange{Int64}, w::Vector{Float64})
-    return v[1]
 end

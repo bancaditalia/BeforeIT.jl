@@ -77,8 +77,8 @@ include("utils/save_all_predictions.jl")
 # shocks
 include("shocks/shocks.jl")
 
-# external plot functions definitions
-include("utils/plot_functions.jl")
+# external functions definitions
+include("utils/extensions.jl")
 
 # precompilation pipeline
 include("precompile.jl")
