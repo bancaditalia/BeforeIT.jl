@@ -37,7 +37,8 @@ using JuliaFormatter
     end
 
     @testset "Code formatting (JuliaFormatter.jl)" begin
-        @test format(Bit; style = SciMLStyle(), verbose = false, overwrite = false)
+        @test format(Bit; style = SciMLStyle(), yas_style_nesting = true, verbose = false,
+                     overwrite = false)
     end
 
     # WARNING: this should be the last include
