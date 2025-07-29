@@ -121,6 +121,10 @@ julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();'
 julia --proj test/runtests.jl
 ```
 
+### Format the Package
+```bash
+julia --proj format.jl
+```
 
 ## Current Authors
 

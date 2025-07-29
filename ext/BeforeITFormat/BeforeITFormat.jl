@@ -1,4 +1,3 @@
-
 module BeforeITFormat
 
 import BeforeIT as Bit
