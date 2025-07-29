@@ -9,15 +9,13 @@ const default_quantities = [
     :real_capitalformation, :real_exports, :real_imports, :wages, :euribor, :gdp_deflator]
 
 # define a table that maps the quantities to concise names
-const quantity_titles = Dict(
-    :real_gdp => "gdp",
-    :real_household_consumption => "household cons.",
-    :real_government_consumption => "gov. cons.",
-    :real_capitalformation => "capital form.",
-    :real_exports => "exports",
-    :real_imports => "imports",
-    :gdp_deflator => "gdp deflator"
-)
+const quantity_titles = Dict(:real_gdp => "gdp",
+                             :real_household_consumption => "household cons.",
+                             :real_government_consumption => "gov. cons.",
+                             :real_capitalformation => "capital form.",
+                             :real_exports => "exports",
+                             :real_imports => "imports",
+                             :gdp_deflator => "gdp deflator")
 
 function Bit.plot_data_vector(model; titlefont = 9, quantities = default_quantities)
     data_vector = Bit.DataVector(model)
@@ -30,20 +28,22 @@ function Bit.plot_data_vector(model; titlefont = 9, quantities = default_quantit
         title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
         if q == :gdp_deflator
             push!(ps,
-                errorline(1:Te, data_vector.nominal_gdp ./ data_vector.real_gdp,
-                    errorstyle = :ribbon, title = title, titlefont = titlefont, legend = false))
+                  errorline(1:Te, data_vector.nominal_gdp ./ data_vector.real_gdp,
+                            errorstyle = :ribbon, title = title, titlefont = titlefont,
+                            legend = false))
         else
             push!(ps,
-                errorline(1:Te, getproperty(data_vector, q),
-                    errorstyle = :ribbon, title = title, titlefont = titlefont, legend = false))
+                  errorline(1:Te, getproperty(data_vector, q),
+                            errorstyle = :ribbon, title = title, titlefont = titlefont,
+                            legend = false))
         end
     end
     return ps
 end
 
 # plot multiple data vectors, one line for each vector
-function Bit.plot_data_vectors(
-        model_vector; titlefont = 9, quantities = Bit.default_quantities)
+function Bit.plot_data_vectors(model_vector; titlefont = 9,
+                               quantities = Bit.default_quantities)
     data_vectors = Bit.DataVector.(model_vector)
     Te = length(data_vectors[1].vector[1].wages)
 
@@ -55,19 +55,21 @@ function Bit.plot_data_vectors(
         if q == :gdp_deflator
             dv = data_vectors[1]
             p = errorline(1:Te, dv.nominal_gdp ./ dv.real_gdp,
-                errorstyle = :ribbon, title = title, titlefont = titlefont, legend = false)
+                          errorstyle = :ribbon, title = title, titlefont = titlefont,
+                          legend = false)
             for dv in data_vectors[2:end]
                 errorline!(1:Te, dv.nominal_gdp ./ dv.real_gdp,
-                    errorstyle = :ribbon, titlefont = titlefont, legend = false)
+                           errorstyle = :ribbon, titlefont = titlefont, legend = false)
             end
             push!(ps, p)
         else
             dv = data_vectors[1]
             p = errorline(1:Te, getproperty(dv, q),
-                errorstyle = :ribbon, title = title, titlefont = titlefont, legend = false)
+                          errorstyle = :ribbon, title = title, titlefont = titlefont,
+                          legend = false)
             for dv in data_vectors[2:end]
                 errorline!(1:Te, getproperty(dv, q),
-                    errorstyle = :ribbon, titlefont = titlefont, legend = false)
+                           errorstyle = :ribbon, titlefont = titlefont, legend = false)
             end
             push!(ps, p)
         end
@@ -82,12 +84,12 @@ function Bit.plot_data(model; titlefont = 9, quantities = default_quantities)
         title = haskey(quantity_titles, q) ? quantity_titles[q] : string(q)
         if q == :gdp_deflator
             push!(ps,
-                plot(data.nominal_gdp ./ data.real_gdp,
-                    title = title, titlefont = titlefont, legend = false))
+                  plot(data.nominal_gdp ./ data.real_gdp,
+                       title = title, titlefont = titlefont, legend = false))
         else
             push!(ps,
-                plot(getproperty(data, q),
-                    title = title, titlefont = titlefont, legend = false))
+                  plot(getproperty(data, q),
+                       title = title, titlefont = titlefont, legend = false))
         end
     end
     return ps
@@ -152,12 +154,11 @@ function Bit.plot_model_vs_real(model, real, varname; crop = true)
     end
 
     p = plot(real[x_nums], 1e6 * real[varname], label = "real", title = title,
-        titlefontsize = 9, xlimits = xlimits, ylimits = ylimits, xticks = (
-            num_ticks, year_ticks),
-        xrotation = 20, tickfontsize = 7
-    )
+             titlefontsize = 9, xlimits = xlimits, ylimits = ylimits,
+             xticks = (num_ticks, year_ticks),
+             xrotation = 20, tickfontsize = 7)
     StatsPlots.errorline!(model[x_nums], 1e6 * model[varname],
-        errorstyle = :ribbon, label = "model", errortype = :std)
+                          errorstyle = :ribbon, label = "model", errortype = :std)
     return p
 end
 

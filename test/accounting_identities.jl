@@ -23,20 +23,16 @@ using Test
     @test isapprox(zero, 0.0, atol = 1e-8)
 
     # compare nominal_gdp to total expenditure
-    zero = sum(
-        model.data.nominal_gdp - model.data.nominal_household_consumption -
-        model.data.nominal_government_consumption -
-        model.data.nominal_capitalformation - model.data.nominal_exports +
-        model.data.nominal_imports,
-    )
+    zero = sum(model.data.nominal_gdp - model.data.nominal_household_consumption -
+               model.data.nominal_government_consumption -
+               model.data.nominal_capitalformation - model.data.nominal_exports +
+               model.data.nominal_imports)
     @test isapprox(zero, 0.0, atol = 1e-8)
 
-    zero = sum(
-        model.data.real_gdp - model.data.real_household_consumption -
-        model.data.real_government_consumption -
-        model.data.real_capitalformation - model.data.real_exports +
-        model.data.real_imports,
-    )
+    zero = sum(model.data.real_gdp - model.data.real_household_consumption -
+               model.data.real_government_consumption -
+               model.data.real_capitalformation - model.data.real_exports +
+               model.data.real_imports)
     @test isapprox(zero, 0.0, atol = 1e-8)
 
     # accounting identity of balance sheet of central bank

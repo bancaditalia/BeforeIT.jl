@@ -4,17 +4,16 @@ function get_accounting_identities(data)
                                 data.operating_surplus - data.taxes_production)
 
     # compare nominal_gdp to total expenditure
-    gdp_and_expenditure = sum(
-        data.nominal_gdp - data.nominal_household_consumption -
-        data.nominal_government_consumption -
-        data.nominal_capitalformation - data.nominal_exports + data.nominal_imports,
-    )
+    gdp_and_expenditure = sum(data.nominal_gdp - data.nominal_household_consumption -
+                              data.nominal_government_consumption -
+                              data.nominal_capitalformation - data.nominal_exports +
+                              data.nominal_imports)
 
     # compare real_gdp to total expenditure
-    gdp_and_expenditure_real = sum(
-        data.real_gdp - data.real_household_consumption - data.real_government_consumption -
-        data.real_capitalformation - data.real_exports + data.real_imports,
-    )
+    gdp_and_expenditure_real = sum(data.real_gdp - data.real_household_consumption -
+                                   data.real_government_consumption -
+                                   data.real_capitalformation - data.real_exports +
+                                   data.real_imports)
 
     return income_and_production, gdp_and_expenditure, gdp_and_expenditure_real
 end

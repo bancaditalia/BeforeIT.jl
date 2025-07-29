@@ -44,11 +44,9 @@ end
 #     return alpha, beta, gamma_1, gamma_2, gamma_3, epsilon
 # end
 
-function estimate_taylor_rule(
-        r_bar::Union{Matrix, Vector},
-        pi_EA::Vector,
-        gamma_EA::Vector
-)
+function estimate_taylor_rule(r_bar::Union{Matrix, Vector},
+                              pi_EA::Vector,
+                              gamma_EA::Vector)
     ydata = r_bar
     if typeof(ydata) <: Vector
         ydata = ydata[:, :]

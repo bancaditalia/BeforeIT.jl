@@ -141,16 +141,14 @@ The sector-specific price index `vec` is calculated as follows:
 vec_g = \\frac{\\sum_{i=1}^N P_i \\cdot Y_i}{\\sum_{i=1}^N Y_i}
 ```
 """
-function sector_specific_priceindex(
-        firms::AbstractFirms, rotw::AbstractRestOfTheWorld, G::Integer)
+function sector_specific_priceindex(firms::AbstractFirms, rotw::AbstractRestOfTheWorld,
+                                    G::Integer)
     vec = zeros(typeFloat, G)
     for g in 1:G
-        vec[g] = _sector_specific_priceindex(
-            firms.P_i[firms.G_i .== g],
-            firms.Q_i[firms.G_i .== g],
-            rotw.P_m[g],
-            rotw.Q_m[g]
-        )
+        vec[g] = _sector_specific_priceindex(firms.P_i[firms.G_i .== g],
+                                             firms.Q_i[firms.G_i .== g],
+                                             rotw.P_m[g],
+                                             rotw.Q_m[g])
         # internal = sum(firms.P_i[firms.G_i.==g] .* firms.Q_i[firms.G_i.==g])
         # external = rotw.P_m[g] * rotw.Q_m[g]
         # tot_quantity = sum(firms.Q_i[firms.G_i.==g]) + rotw.Q_m[g]

@@ -38,8 +38,8 @@
         bank.r = Bit.bank_rate(bank, model)
         @test isapprox(bank.r, 0.028476, rtol = 1e-4)
 
-        Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i = Bit.firms_expectations_and_decisions(
-            firms, model)
+        Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i = Bit.firms_expectations_and_decisions(firms,
+                                                                                                              model)
 
         firms.Q_s_i .= Q_s_i
         firms.I_d_i .= I_d_i

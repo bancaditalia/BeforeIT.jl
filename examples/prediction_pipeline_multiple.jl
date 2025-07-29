@@ -13,13 +13,11 @@ first_calibration_date = DateTime(2014, 03, 31)
 last_calibration_date = DateTime(2014, 12, 31)
 
 # Save all the generated parameters and initial conditions in the selected folder
-Bit.save_all_params_and_initial_conditions(
-    cal,
-    folder_name;
-    scale = 0.0005,
-    first_calibration_date = first_calibration_date,
-    last_calibration_date = last_calibration_date
-)
+Bit.save_all_params_and_initial_conditions(cal,
+                                           folder_name;
+                                           scale = 0.0005,
+                                           first_calibration_date = first_calibration_date,
+                                           last_calibration_date = last_calibration_date)
 
 # Now, run a number "n_sims" of simulations of length "T "for each of the parameters
 # and initial conditions in the folder. The following function loads the parameters 
@@ -38,15 +36,15 @@ q = 2
 predictions_dict = load("data/italy/abm_predictions/$(y)Q$(q).jld2")["predictions_dict"]
 
 p1 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_gdp_quarterly"; crop = true)
-p2 = Bit.plot_model_vs_real(
-    predictions_dict, real_data, "real_household_consumption_quarterly"; crop = true)
-p3 = Bit.plot_model_vs_real(
-    predictions_dict, real_data, "real_fixed_capitalformation_quarterly"; crop = true)
-p4 = Bit.plot_model_vs_real(
-    predictions_dict, real_data, "real_government_consumption_quarterly"; crop = true)
-p5 = Bit.plot_model_vs_real(
-    predictions_dict, real_data, "real_exports_quarterly"; crop = true)
-p6 = Bit.plot_model_vs_real(
-    predictions_dict, real_data, "real_imports_quarterly"; crop = true)
+p2 = Bit.plot_model_vs_real(predictions_dict, real_data,
+                            "real_household_consumption_quarterly"; crop = true)
+p3 = Bit.plot_model_vs_real(predictions_dict, real_data,
+                            "real_fixed_capitalformation_quarterly"; crop = true)
+p4 = Bit.plot_model_vs_real(predictions_dict, real_data,
+                            "real_government_consumption_quarterly"; crop = true)
+p5 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_exports_quarterly";
+                            crop = true)
+p6 = Bit.plot_model_vs_real(predictions_dict, real_data, "real_imports_quarterly";
+                            crop = true)
 
 plot(p1, p2, p3, p4, p5, p6, layout = (3, 2), legend = false)

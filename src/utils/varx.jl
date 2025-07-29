@@ -52,8 +52,8 @@ function _generate_stochastic_epsilon(n_vars, sigma)
     return epsilon
 end
 
-function forecast_k_steps_VAR(
-        data, n_forecasts; intercept = false, lags = 1, stochastic = false)
+function forecast_k_steps_VAR(data, n_forecasts; intercept = false, lags = 1,
+                              stochastic = false)
     forecasted_values = Matrix{Float64}(undef, 0, size(data, 2))
     current_data = copy(data)
 
@@ -90,14 +90,15 @@ Forecasts the next `n_forecasts` steps of a Vector Autoregression with exogenous
 # Returns
 - `forecasted_values::Matrix{Float64}`: A matrix containing the forecasted values for the next `n_forecasts` steps.
 """
-function forecast_k_steps_VARX(
-        data, exogenous, n_forecasts; intercept = false, lags = 1, stochastic = false)
+function forecast_k_steps_VARX(data, exogenous, n_forecasts; intercept = false, lags = 1,
+                               stochastic = false)
     forecasted_values = Matrix{Float64}(undef, 0, size(data, 2))
     current_data = copy(data)
 
-    alpha, beta, gamma, sigma, _ = estimate_VARX(
-        current_data, exogenous[2:(size(current_data, 1) + 1), :];
-        intercept = intercept, lags = lags)
+    alpha, beta, gamma, sigma, _ = estimate_VARX(current_data,
+                                                 exogenous[2:(size(current_data, 1) + 1),
+                                                           :];
+                                                 intercept = intercept, lags = lags)
     alpha = _prepare_alpha(alpha, size(current_data, 2), lags)
 
     for i in 1:n_forecasts
@@ -116,8 +117,8 @@ function forecast_k_steps_VARX(
     return forecasted_values
 end
 
-function estimate_VAR(
-        ydata::Union{Matrix{Float64}, Vector{Float64}}; intercept = false, lags = 1)
+function estimate_VAR(ydata::Union{Matrix{Float64}, Vector{Float64}}; intercept = false,
+                      lags = 1)
     if typeof(ydata) == Vector{Float64}
         ydata = ydata[:, :]
     end
@@ -136,7 +137,8 @@ function estimate_VAR(
 end
 
 function estimate_VARX(ydata::Union{Matrix{Float64}, Vector{Float64}},
-        xdata::Union{Matrix{Float64}, Vector{Float64}}; intercept = false, lags = 1)
+                       xdata::Union{Matrix{Float64}, Vector{Float64}}; intercept = false,
+                       lags = 1)
     typeof(ydata) == Vector{Float64} && (ydata = ydata[:, :])
     typeof(xdata) == Vector{Float64} && (xdata = xdata[:, :])
     intercept && (xdata = hcat(ones(size(xdata, 1), 1), xdata))

@@ -25,7 +25,8 @@ function search_and_matching_credit(firms::AbstractFirms, model::AbstractModel)
     for i in I_FG
         DL_i_p = DL_i[i]
         DL_i[i] = max(0.0,
-            min(DL_d_i[i], zeta_LTV * K_e_i[i] - L_e_i[i], E_k / zeta - s_L_e_i - sum_DL_i))
+                      min(DL_d_i[i], zeta_LTV * K_e_i[i] - L_e_i[i],
+                          E_k / zeta - s_L_e_i - sum_DL_i))
         sum_DL_i += (DL_i[i] - DL_i_p)
     end
     return DL_i

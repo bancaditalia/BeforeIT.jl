@@ -864,8 +864,8 @@ TODO
 function Random.rand(rng::AbstractRNG, st::Random.SamplerTrivial{<:AbstractWeightVector})
     _rand(rng, st[].m)
 end
-function Random.Sampler(
-        ::Type{<:Random.AbstractRNG}, w::AbstractWeightVector, ::Random.Repetition)
+function Random.Sampler(::Type{<:Random.AbstractRNG}, w::AbstractWeightVector,
+                        ::Random.Repetition)
     Random.SamplerTrivial(w)
 end
 Random.gentype(::Type{<:AbstractWeightVector}) = Int
@@ -1283,8 +1283,8 @@ function set_global_shift_decrease!(m::Memory, m3::UInt64, m5 = m[5]) # Decrease
     m[5] = m5
 end
 
-Base.@propagate_inbounds function update_weight!(
-        m::Memory{UInt64}, i, shifted_significand_sum)
+Base.@propagate_inbounds function update_weight!(m::Memory{UInt64}, i,
+                                                 shifted_significand_sum)
     weight = _convert(UInt64, shifted_significand_sum) + 1
     old_weight = m[i]
     m[i] = weight

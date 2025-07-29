@@ -128,21 +128,20 @@ function update_data_init!(m::AbstractModel)
     d.real_exports[1] = d.nominal_exports[1]
     d.nominal_imports[1] = m.rotw.Y_I
     d.real_imports[1] = d.nominal_imports[1]
-    d.operating_surplus[1] = sum(
-        m.firms.Y_i .* (1 .- ((1 + p.tau_SIF) .* m.firms.w_bar_i ./ m.firms.alpha_bar_i +
-          1 ./ m.firms.beta_i)) .-
-        m.firms.tau_K_i .* m.firms.Y_i .- m.firms.tau_Y_i .* m.firms.Y_i,
-    )
+    d.operating_surplus[1] = sum(m.firms.Y_i .*
+                                 (1 .- ((1 + p.tau_SIF) .* m.firms.w_bar_i ./
+                                   m.firms.alpha_bar_i +
+                                   1 ./ m.firms.beta_i)) .-
+                                 m.firms.tau_K_i .* m.firms.Y_i .-
+                                 m.firms.tau_Y_i .* m.firms.Y_i)
     d.compensation_employees[1] = (1 + p.tau_SIF) * sum(m.firms.w_bar_i .* m.firms.N_i)
     d.wages[1] = sum(m.firms.w_bar_i .* m.firms.N_i)
     d.taxes_production[1] = sum(m.firms.tau_K_i .* m.firms.Y_i)
 
     for g in 1:(p.G)
-        d.nominal_sector_gva[1][g] = sum(
-            m.firms.Y_i[m.firms.G_i .== g] .*
-            ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .-
-             1 ./ m.firms.beta_i[m.firms.G_i .== g]),
-        )
+        d.nominal_sector_gva[1][g] = sum(m.firms.Y_i[m.firms.G_i .== g] .*
+                                         ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .-
+                                          1 ./ m.firms.beta_i[m.firms.G_i .== g]))
     end
 
     d.real_sector_gva[1][:] = d.nominal_sector_gva[1][:]
@@ -198,13 +197,12 @@ function update_data_step!(m::AbstractModel)
     d.real_exports[t] = (1 + p.tau_EXPORT) * m.rotw.C_l / m.rotw.P_l
     d.nominal_imports[t] = sum(m.rotw.P_m .* m.rotw.Q_m)
     d.real_imports[t] = sum(m.rotw.Q_m)
-    d.operating_surplus[t] = sum(
-        m.firms.P_i .* m.firms.Q_i + m.firms.P_i .* m.firms.DS_i -
-        (1 + p.tau_SIF) .* m.firms.w_i .* m.firms.N_i .* m.agg.P_bar_HH -
-        1 ./ m.firms.beta_i .* m.firms.P_bar_i .* m.firms.Y_i -
-        m.firms.tau_Y_i .* m.firms.P_i .* m.firms.Y_i -
-        m.firms.tau_K_i .* m.firms.P_i .* m.firms.Y_i,
-    )
+    d.operating_surplus[t] = sum(m.firms.P_i .* m.firms.Q_i + m.firms.P_i .* m.firms.DS_i -
+                                 (1 + p.tau_SIF) .* m.firms.w_i .* m.firms.N_i .*
+                                 m.agg.P_bar_HH -
+                                 1 ./ m.firms.beta_i .* m.firms.P_bar_i .* m.firms.Y_i -
+                                 m.firms.tau_Y_i .* m.firms.P_i .* m.firms.Y_i -
+                                 m.firms.tau_K_i .* m.firms.P_i .* m.firms.Y_i)
     d.compensation_employees[t] = (1 + p.tau_SIF) * sum(m.firms.w_i .* m.firms.N_i) *
                                   m.agg.P_bar_HH
     d.wages[t] = sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
@@ -219,8 +217,7 @@ function update_data_step!(m::AbstractModel)
                                          @view(m.firms.Y_i[g_i]))
         d.real_sector_gva[t][g] = sum(@view(m.firms.Y_i[g_i]) .*
                                       ((1 .- @view(m.firms.tau_Y_i[g_i])) -
-                                       1.0 ./ @view(m.firms.beta_i[g_i])),
-        )
+                                       1.0 ./ @view(m.firms.beta_i[g_i])))
     end
 
     d.euribor[t] = m.cb.r_bar
