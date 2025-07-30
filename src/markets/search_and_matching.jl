@@ -23,7 +23,7 @@ function search_and_matching!(model::AbstractModel, parallel = false)
 
     # Initialize variables
     I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
-        Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g,
+        Q_d_i_g, Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g,
         P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
         firms, rotw, prop, agg, w_act, w_inact, gov, bank
     )
@@ -45,7 +45,7 @@ function search_and_matching!(model::AbstractModel, parallel = false)
         return perform_retail_market!(
             g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
             b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
-            C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
+            C_h, I_h, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
             P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f
         )
     end
@@ -56,14 +56,14 @@ function search_and_matching!(model::AbstractModel, parallel = false)
 
     return update_aggregate_variables!(
         agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
-        P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g,
+        P_bar_i_g, DM_i_g, C_h, I_h, Q_d_i_g, Q_d_m_g, C_j_g,
         C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
     )
 end
 
 function update_aggregate_variables!(
         agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
-        P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g, C_l_g,
+        P_bar_i_g, DM_i_g, C_h, I_h, Q_d_i_g, Q_d_m_g, C_j_g, C_l_g,
         P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
     )
 
@@ -79,9 +79,6 @@ function update_aggregate_variables!(
 
     Q_d_i = vec(sum(Q_d_i_g, dims = 2))
     Q_d_m = vec(sum(Q_d_m_g, dims = 2))
-
-    C_h = sum(C_h_t, dims = 2)
-    I_h = sum(I_h_t, dims = 2)
 
     gov.C_j = sum(C_j_g)
     rotw.C_l = sum(C_l_g)
@@ -156,8 +153,8 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     Q_d_i_g = zeros(typeFloat, size(firms.Y_i)..., G)
     Q_d_m_g = zeros(typeFloat, size(rotw.Y_m)..., G)
 
-    C_h_t = zeros(typeFloat, H)
-    I_h_t = zeros(typeFloat, H)
+    C_h = zeros(typeFloat, H)
+    I_h = zeros(typeFloat, H)
 
     C_j_g = zeros(typeFloat, 1, G)
     C_l_g = zeros(typeFloat, 1, G)
@@ -169,7 +166,7 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     P_l_g = zeros(typeFloat, 1, G)
 
     return I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g,
-        Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
+        Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
         P_l_g
 end
 
@@ -295,7 +292,7 @@ Perform the retail market exchange process
 """
 function perform_retail_market!(
         g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g,
-        c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g,
+        c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g,
         P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
     )
     ###############################
@@ -377,8 +374,8 @@ function perform_retail_market!(
     @~ Q_d_m_g[:, g] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
     @lock ReentrantLock() begin
-        @~ C_h_t .+= b
-        @~ I_h_t .+= d
+        @~ C_h .+= b
+        @~ I_h .+= d
     end
 
     C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
