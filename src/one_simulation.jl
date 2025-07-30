@@ -57,9 +57,11 @@ function ensemblerun(model::AbstractModel, T, n_sims; parallel = true, shock = N
 end
 
 macro maybe_threads(cond, loop)
-    if $(esc(cond))
-        Threads.@threads $(esc(loop))
-    else
-        $(esc(loop))
+    quote
+        if $(esc(cond))
+            Threads.@threads $(esc(loop))
+        else
+            $(esc(loop))
+        end
     end
 end
