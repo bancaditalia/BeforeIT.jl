@@ -50,7 +50,7 @@ function search_and_matching!(model::AbstractModel, parallel = false)
         )
     end
 
-    Threads.@threads for g in 1:G
+    Threads.@maybe_threads parallel for g in 1:G
         perform_market!(g)
     end
 
