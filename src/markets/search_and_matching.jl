@@ -50,14 +50,8 @@ function search_and_matching!(model::AbstractModel, parallel = false)
         )
     end
 
-    if parallel
-        Threads.@sync for g in 1:G
-            Threads.@spawn perform_market!(g)
-        end
-    else
-        for g in 1:G
-            perform_market!(g)
-        end
+    @maybe_threads parallel for g in 1:G
+        perform_market!(g)
     end
 
     return update_aggregate_variables!(

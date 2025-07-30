@@ -14,6 +14,18 @@ const Bit = BeforeIT
 const typeFloat = eval(Meta.parse(@load_preference("typeFloat", default = "Float64")))
 const typeInt = eval(Meta.parse(@load_preference("typeInt", default = "Int")))
 
+macro maybe_threads(cond, loop)
+    return esc(
+        quote
+            if $cond
+                Threads.@threads $loop
+            else
+                $loop
+            end
+        end
+    )
+end
+
 # definition of agents
 include("model_init/agents.jl")
 
