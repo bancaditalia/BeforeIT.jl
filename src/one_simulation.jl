@@ -48,7 +48,7 @@ Note that the input model is not updated.
 """
 function ensemblerun(model::AbstractModel, T, n_sims; parallel = true, shock = NoShock())
     model_vector = Vector{Bit.Model}(undef, n_sims)
-    Threads.@maybe_threads parallel for i in 1:n_sims
+    @maybe_threads parallel for i in 1:n_sims
         model_i = deepcopy(model)
         run!(model_i, T; shock, parallel)
         model_vector[i] = model_i
