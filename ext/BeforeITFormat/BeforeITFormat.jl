@@ -8,7 +8,7 @@ function Bit.format_package(; check=false)
     root_dir = joinpath(@__DIR__, "..", "..")
     for (root, dirs, files) in walkdir(root_dir)
         for file in files
-            if endswith(file, ".jl") && !startswith(file, "BeforeITFormat")
+            if endswith(file, ".jl")
                 if check
                     if Runic.main(["--check", "$(joinpath(root, file))"]) == 1
                         return false
