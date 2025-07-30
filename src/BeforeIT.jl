@@ -15,11 +15,10 @@ const typeFloat = eval(Meta.parse(@load_preference("typeFloat", default = "Float
 const typeInt = eval(Meta.parse(@load_preference("typeInt", default = "Int")))
 
 macro maybe_threads(cond, loop)
-    s = VERSION >= v"1.11" ? QuoteNode(:greedy) : QuoteNode(:dynamic)
     return esc(
         quote
             if $cond
-                Threads.@threads $s $loop
+                $Threads.@sync $(Expr(:for, loop.args[1], :($Threads.@spawn $(loop.args[2]))))
             else
                 $loop
             end
