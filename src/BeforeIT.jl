@@ -20,7 +20,7 @@ macro maybe_threads(cond, loop)
             if $cond && VERSION >= v"1.11"
                 Threads.@threads :greedy $loop
             elseif $cond
-                Threads.@threads :dynamic $loop
+                Threads.@threads $loop
             else
                 $loop
             end
