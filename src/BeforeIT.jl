@@ -17,8 +17,10 @@ const typeInt = eval(Meta.parse(@load_preference("typeInt", default = "Int")))
 macro maybe_threads(cond, loop)
     return esc(
         quote
-            if $cond
-                Threads.@threads $loop
+            if $cond && VERSION >= v"1.11"
+                Threads.@threads :greedy $loop
+            elseif $cond
+                Threads.@threads :dynamic $loop
             else
                 $loop
             end
