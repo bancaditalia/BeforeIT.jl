@@ -15,13 +15,13 @@ const typeFloat = eval(Meta.parse(@load_preference("typeFloat", default = "Float
 const typeInt = eval(Meta.parse(@load_preference("typeInt", default = "Int")))
 
 macro maybe_threads(cond, loop)
-    quote
-        if $(esc(cond))
-            Threads.@threads $(esc(loop))
+    esc(quote
+        if $cond
+            Threads.@threads $loop
         else
-            $(esc(loop))
+            $loop
         end
-    end
+    end)
 end
 
 # definition of agents
