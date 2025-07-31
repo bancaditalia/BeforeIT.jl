@@ -1,6 +1,6 @@
-## Extending BeforeIT using macros and multiple dispatch
+# # Extending BeforeIT using macros and multiple dispatch
 
-## Extension by Specialization
+# # Extension by Specialization
 
 import BeforeIT as Bit
 using Plots
@@ -53,7 +53,7 @@ using Plots, StatsPlots
 ps = Bit.plot_data_vectors([model_vec_standard, model_vec_new], quantities = [:euribor, :gdp_deflator])
 plot(ps..., layout = (1, 2), size = (600, 300))
 
-## Extension by Invocation
+# # Extension by Invocation
 
 # First, we create as before a new model type
 Bit.@object struct NewModel2(Bit.Model) <: Bit.AbstractModel end
@@ -70,7 +70,8 @@ end
 # variables
 function Bit.update_data!(m::NewModel2)
     @invoke Bit.update_data!(m::Bit.AbstractModel)
-    return push!(m.data.N_employed, sum(m.firms.N_i))
+    push!(m.data.N_employed, sum(m.firms.N_i))
+    return m
 end
 
 # We then initialize the model as usual
