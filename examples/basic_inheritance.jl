@@ -10,7 +10,7 @@ using Plots
 Bit.@object struct NewModel(Bit.Model) <: Bit.AbstractModel end
 
 # In BeforeIT, new objects can be created to add new behaviours. For instance,
-# we can define a new central bank object with one extra attribute:
+# we can define a new central bank object with one extra attribute
 Bit.@object mutable struct NewCentralBank(Bit.CentralBank) <: Bit.AbstractCentralBank
     fixed_rate::Float64
 end
@@ -55,9 +55,8 @@ plot(ps..., layout = (1, 2), size = (600, 300))
 # First, we create as before a new model type
 Bit.@object struct NewModel2(Bit.Model) <: Bit.AbstractModel end
 
-# Now, let's say that differently from before, one wants to track the number of employees in
-# the economy, something not included by default when running a simulation. To do so, we create
-# a new data type with
+# Now, let's say that one wants to track the number of employees in the economy, something
+# not included by default when running a simulation. To do so, we create a new data type with
 Bit.@object mutable struct MoreData(Bit.Data) <: Bit.AbstractData
     N_employed::Vector{Int} = Int[]
 end
