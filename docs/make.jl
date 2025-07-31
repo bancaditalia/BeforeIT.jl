@@ -35,7 +35,7 @@ makedocs(
     format = Documenter.HTML(prettyurls = false, size_threshold = 409600),
     pages = [
         "Home" => "index.md",
-        "Essentials" => "examples/basic_example.md",
+        "Basics" => "examples/basic_example.md",
         "Shocked simulations" => "examples/scenario_analysis_via_shock.md",
         "Essential model extension" => "examples/basic_inheritance.md",
         "Multithreading within the model" => "examples/multithreading_speedup.md",
