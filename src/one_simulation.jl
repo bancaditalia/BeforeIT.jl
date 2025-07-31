@@ -46,8 +46,8 @@ models of dimension `n_sims`.
 
 Note that the input model is not updated.
 """
-function ensemblerun(model::AbstractModel, T, n_sims; parallel = true, shock = NoShock())
-    model_vector = Vector{Bit.Model}(undef, n_sims)
+function ensemblerun(model::M, T, n_sims; parallel = true, shock = NoShock()) where {M}
+    model_vector = Vector{M}(undef, n_sims)
     @maybe_threads parallel for i in 1:n_sims
         model_i = deepcopy(model)
         run!(model_i, T; shock, parallel)

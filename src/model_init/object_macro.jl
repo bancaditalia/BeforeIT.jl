@@ -68,10 +68,13 @@ macro object(struct_repr) # the macro is similar to the @agent macro in Agents.j
 end
 
 function _object(struct_repr)
-    new_type, base_type_spec, abstract_type, new_fields = decompose_struct_base(struct_repr)
-    base_fields = compute_base_fields(base_type_spec)
+    new_type_name, new_type_args, base_type_spec, abstract_type, new_fields = decompose_struct_base(struct_repr)
+    base_fields, base_args = compute_base_fields(base_type_spec)
+    new_args = union(new_type_args, base_args)
+    new_name_params = new_args != [] ? :($new_type_name{$(new_args...)} <: $abstract_type) : 
+                                       (:($new_type_name <: $abstract_type))
     expr_new_type = Expr(
-        :struct, struct_repr.args[1], :($new_type <: $abstract_type),
+        :struct, struct_repr.args[1], new_name_params,
         :(
             begin
                 $(base_fields...)
@@ -79,7 +82,7 @@ function _object(struct_repr)
             end
         )
     )
-    new_type_no_params = namify(new_type)
+    new_type_no_params = namify(new_type_name)
     __OBJECT_EXPR_CONTAINER__[new_type_no_params] = MacroTools.prewalk(rmlines, expr_new_type)
     return quote
         @kwdef $expr_new_type
@@ -114,7 +117,12 @@ function decompose_struct_base(struct_repr)
         end
     end
     abstract_type === nothing && (abstract_type = :(Bit.AbstractObject))
-    return new_type, base_type_spec, abstract_type, new_fields
+    @capture(new_type, new_type_name_{new_type_args__})
+    if isnothing(new_type_name)
+        new_type_name = new_type
+        new_type_args = []
+    end
+    return new_type_name, new_type_args, base_type_spec, abstract_type, new_fields
 end
 
 function compute_base_fields(base_type_spec)
@@ -129,10 +137,13 @@ function compute_base_fields(base_type_spec)
             old_args[i] = old_args[i].args[1]
         end
     end
+    @capture(base_type_spec, _.base_type_spec_new_)
+    base_type_spec = isnothing(base_type_spec_new) ? base_type_spec : base_type_spec_new
     new_args = base_type_spec isa Symbol ? [] : base_type_spec.args[2:end]
     for (old, new) in zip(old_args, new_args)
         base_agent = MacroTools.postwalk(ex -> ex == old ? new : ex, base_agent)
     end
     @capture(base_agent.args[3], base_fields__)
-    return base_fields
+    base_args = old_args[length(new_args)+1:end]
+    return base_fields, base_args
 end

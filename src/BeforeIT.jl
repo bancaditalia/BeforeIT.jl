@@ -39,6 +39,9 @@ include("model_init/init_rest_of_the_world.jl")
 include("model_init/init_aggregates.jl")
 include("model_init/init.jl")
 
+# data handling
+include("utils/data.jl")
+
 # functions
 include("agent_actions/estimations.jl")
 include("agent_actions/central_bank.jl")
@@ -51,9 +54,6 @@ include("agent_actions/bank.jl")
 # full epoch
 include("one_step.jl")
 include("one_simulation.jl")
-
-# data handling
-include("utils/data.jl")
 
 # markets
 include("markets/search_and_matching_credit.jl")
@@ -73,6 +73,7 @@ include("utils/dmtest.jl")
 include("utils/mztest.jl")
 include("utils/varx.jl")
 include("utils/sampler.jl")
+include("utils/misc.jl")
 
 # calibration
 include("utils/calibration.jl")
