@@ -37,7 +37,7 @@ makedocs(
         "Home" => "index.md",
         "Basics" => "examples/basic_example.md",
         "Shocked simulations" => "examples/scenario_analysis_via_shock.md",
-        "Essential model extension" => "examples/basic_inheritance.md",
+        "Extending the model" => "examples/basic_inheritance.md",
         "Multithreading within the model" => "examples/multithreading_speedup.md",
         "Calibration" => "examples/prediction_pipeline.md",
         # "Prediction Comparison" => "examples/create_tables.md",
