@@ -1,6 +1,6 @@
-# # Essential extension of BeforeIT using macros and multiple dispatch
+## Extending BeforeIT using macros and multiple dispatch
 
-# # # Extension by Specialization
+## Extension by Specialization
 
 import BeforeIT as Bit
 using Plots
@@ -53,7 +53,7 @@ using Plots, StatsPlots
 ps = Bit.plot_data_vectors([model_vec_standard, model_vec_new], quantities = [:euribor, :gdp_deflator])
 plot(ps..., layout = (1, 2), size = (600, 300))
 
-# # # Extension by Specialization & Invocation
+## Extension by Invocation
 
 # First, we create as before a new model type
 Bit.@object struct NewModel2(Bit.Model) <: Bit.AbstractModel end
