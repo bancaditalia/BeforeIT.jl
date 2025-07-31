@@ -9,7 +9,7 @@ using Plots
 # type to use instead of the default model, we can do so by using
 Bit.@object struct NewModel(Bit.Model) <: Bit.AbstractModel end
 
-# In BeforeIT, new objects can be created to add new behaviours. For instance, 
+# In BeforeIT, new objects can be created to add new behaviours. For instance,
 # we can define a new central bank object with one extra attribute:
 Bit.@object mutable struct NewCentralBank(Bit.CentralBank) <: Bit.AbstractCentralBank
     fixed_rate::Float64
@@ -24,14 +24,14 @@ p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 
 # Now, we can reinitialize the model to include the new type, to do so, we will need
 # to reinitialize all agent types first
-firms          = Bit.Firms(p, ic)
+firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
-bank           = Bit.Bank(p, ic)
-government     = Bit.Government(p, ic)
-rotw           = Bit.RestOfTheWorld(p, ic)
-agg            = Bit.Aggregates(p, ic)
-properties     = Bit.Properties(p, ic)
-data           = Bit.Data()
+bank = Bit.Bank(p, ic)
+government = Bit.Government(p, ic)
+rotw = Bit.RestOfTheWorld(p, ic)
+agg = Bit.Aggregates(p, ic)
+properties = Bit.Properties(p, ic)
+data = Bit.Data()
 
 # We initialise the default central bank
 cb = Bit.CentralBank(p, ic)
@@ -70,19 +70,19 @@ end
 # variables
 function Bit.update_data!(m::NewModel2)
     @invoke Bit.update_data!(m::Bit.AbstractModel)
-    push!(m.data.N_employed, sum(m.firms.N_i))
+    return push!(m.data.N_employed, sum(m.firms.N_i))
 end
 
 # We then initialize the model as usual
-firms          = Bit.Firms(p, ic)
+firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
-cb             = Bit.CentralBank(p, ic)
-bank           = Bit.Bank(p, ic)
-government     = Bit.Government(p, ic)
-rotw           = Bit.RestOfTheWorld(p, ic)
-agg            = Bit.Aggregates(p, ic)
-properties     = Bit.Properties(p, ic)
-mdata          = MoreData()
+cb = Bit.CentralBank(p, ic)
+bank = Bit.Bank(p, ic)
+government = Bit.Government(p, ic)
+rotw = Bit.RestOfTheWorld(p, ic)
+agg = Bit.Aggregates(p, ic)
+properties = Bit.Properties(p, ic)
+mdata = MoreData()
 
 new_model = NewModel2((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, mdata))
 
@@ -90,4 +90,4 @@ new_model = NewModel2((w_act, w_inact, firms, bank, cb, government, rotw, agg, p
 Bit.run!(new_model, T);
 
 # Finally we plot the new data
-plot(new_model.data.N_employed, label="Employed Workers")
+plot(new_model.data.N_employed, label = "Employed Workers")

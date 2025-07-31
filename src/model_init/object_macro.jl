@@ -71,8 +71,8 @@ function _object(struct_repr)
     new_type_name, new_type_args, base_type_spec, abstract_type, new_fields = decompose_struct_base(struct_repr)
     base_fields, base_args = compute_base_fields(base_type_spec)
     new_args = union(new_type_args, base_args)
-    new_name_params = new_args != [] ? :($new_type_name{$(new_args...)} <: $abstract_type) : 
-                                       (:($new_type_name <: $abstract_type))
+    new_name_params = new_args != [] ? :($new_type_name{$(new_args...)} <: $abstract_type) :
+        (:($new_type_name <: $abstract_type))
     expr_new_type = Expr(
         :struct, struct_repr.args[1], new_name_params,
         :(
@@ -144,6 +144,6 @@ function compute_base_fields(base_type_spec)
         base_agent = MacroTools.postwalk(ex -> ex == old ? new : ex, base_agent)
     end
     @capture(base_agent.args[3], base_fields__)
-    base_args = old_args[length(new_args)+1:end]
+    base_args = old_args[(length(new_args) + 1):end]
     return base_fields, base_args
 end

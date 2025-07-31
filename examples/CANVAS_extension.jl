@@ -153,11 +153,11 @@ rotw = RestOfTheWorldCANVAS(
 
 # standard initialisations: workers, bank, aggregats, government, properties and data
 w_act, w_inact = Bit.Workers(p, ic)
-bank           = Bit.Bank(p, ic)
-agg            = Bit.Aggregates(p, ic)
-gov            = Bit.Government(p, ic)
-prop           = Bit.Properties(p, ic)
-data           = Bit.Data()
+bank = Bit.Bank(p, ic)
+agg = Bit.Aggregates(p, ic)
+gov = Bit.Government(p, ic)
+prop = Bit.Properties(p, ic)
+data = Bit.Data()
 
 # define a standard model
 model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop, data)
