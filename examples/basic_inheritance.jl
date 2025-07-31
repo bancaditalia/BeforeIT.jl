@@ -21,7 +21,7 @@ function Bit.central_bank_rate(cb::NewCentralBank, model::Bit.AbstractModel)
 end
 
 # Now, we can initialize the model to include the new type, to do so, we will need
-# to initialize all agent types first
+# to initialize all model components first
 p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
@@ -81,7 +81,6 @@ rotw = Bit.RestOfTheWorld(p, ic)
 agg = Bit.Aggregates(p, ic)
 properties = Bit.Properties(p, ic)
 mdata = MoreData()
-
 new_model = NewModel2((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, mdata))
 
 # and run the simulation
