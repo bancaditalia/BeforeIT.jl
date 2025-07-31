@@ -20,21 +20,18 @@ function Bit.central_bank_rate(cb::NewCentralBank, model::Bit.AbstractModel)
     return cb.fixed_rate
 end
 
+# Now, we can initialize the model to include the new type, to do so, we will need
+# to initialize all agent types first
 p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
-
-# Now, we can reinitialize the model to include the new type, to do so, we will need
-# to reinitialize all agent types first
 firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
+cb = Bit.CentralBank(p, ic)
 bank = Bit.Bank(p, ic)
 government = Bit.Government(p, ic)
 rotw = Bit.RestOfTheWorld(p, ic)
 agg = Bit.Aggregates(p, ic)
 properties = Bit.Properties(p, ic)
 data = Bit.Data()
-
-# We initialise the default central bank
-cb = Bit.CentralBank(p, ic)
 
 # And then initialize a new central bank with the same fields as the original one,
 # and the fixed interest rate
@@ -43,7 +40,7 @@ new_cb = NewCentralBank(Bit.fields(cb)..., 0.02)
 standard_model = Bit.Model((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, data))
 new_model = NewModel((w_act, w_inact, firms, bank, new_cb, government, rotw, agg, properties, data))
 
-# Then, we simulate both models
+# After that, we simulate both models
 T = 20
 model_vec_standard = Bit.ensemblerun(standard_model, T, 4);
 model_vec_new = Bit.ensemblerun(new_model, T, 4);
@@ -87,8 +84,8 @@ mdata = MoreData()
 
 new_model = NewModel2((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, mdata))
 
-# and we run the simulation
+# and run the simulation
 Bit.run!(new_model, T);
 
-# Finally we plot the new data
+# Finally we can plot the new data
 plot(new_model.data.N_employed, label = "Employed Workers")
