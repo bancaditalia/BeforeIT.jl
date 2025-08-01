@@ -91,43 +91,29 @@ function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model:
 end
 
 function Bit.central_bank_rate(cb::AbstractCentralBankCANVAS, model::Bit.AbstractModel)
-    # unpack arguments
-    gamma_EA = model.rotw.gamma_EA
-    pi_EA = model.rotw.pi_EA
-    T_prime = model.prop.T_prime
-    t = model.agg.t
+    gamma_EA, pi_EA, T_prime, t = model.rotw.gamma_EA, model.rotw.pi_EA, model.prop.T_prime, model.agg.t
 
     a1 = cb.r_bar_series[1:(T_prime + t - 1)]
     a2 = model.rotw.Y_EA_series[1:(T_prime + t - 1)]
     a3 = model.rotw.pi_EA_series[1:(T_prime + t - 1)]
 
     # update central bank parameters
-    rho, r_star, xi_pi, xi_gamma, pi_star = Bit.estimate_taylor_rule(a1, a2, a3)
-    model.cb.rho = rho
-    model.cb.r_star = r_star
-    model.cb.xi_pi = xi_pi
-    model.cb.xi_gamma = xi_gamma
-    model.cb.pi_star = pi_star
-
+    cb.rho, cb.r_star, cb.xi_pi, cb.xi_gamma, cb.pi_star = Bit.estimate_taylor_rule(a1, a2, a3)
     r_bar = Bit.taylor_rule(cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
-
     cb.r_bar_series[T_prime + t] = r_bar
     return r_bar
 end
 
 function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.AbstractModel)
-    # unpack model variables
-    epsilon_Y_EA = model.agg.epsilon_Y_EA
-    T_prime = model.prop.T_prime
-    t = model.agg.t
+    epsilon_Y_EA, T_prime, t = model.agg.epsilon_Y_EA, model.prop.T_prime, model.agg.t
 
     Y_EA = exp(rotw.alpha_Y_EA * log(rotw.Y_EA) + rotw.beta_Y_EA + epsilon_Y_EA) # GDP EA
-    gamma_EA = Y_EA / rotw.Y_EA - 1                                              # growht EA
+    gamma_EA = Y_EA / rotw.Y_EA - 1 # growht EA
     epsilon_pi_EA = randn() * rotw.sigma_pi_EA
-    pi_EA = exp(rotw.alpha_pi_EA * log(1 + rotw.pi_EA) + rotw.beta_pi_EA + epsilon_pi_EA) - 1   # inflation EA
+    pi_EA = exp(rotw.alpha_pi_EA * log(1 + rotw.pi_EA) + rotw.beta_pi_EA + epsilon_pi_EA) - 1 # inflation EA
 
-    rotw.pi_EA_series[T_prime + t] = pi_EA
     rotw.Y_EA_series[T_prime + t] = Y_EA
+    rotw.pi_EA_series[T_prime + t] = pi_EA
 
     return Y_EA, gamma_EA, pi_EA
 end

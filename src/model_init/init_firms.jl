@@ -122,3 +122,5 @@ function Firms(parameters, initial_conditions)
         DL_d_i, K_e_i, L_e_i, Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h
     )
 end
+
+eachfirm(model::AbstractModel) = eachindex(model.firms.P_i)

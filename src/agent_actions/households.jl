@@ -1,15 +1,17 @@
 # update wages for workers
 function update_workers_wages!(w_act, w_i)
-    T = eltype(w_act.O_h)
     for (i, h) in enumerate(w_act.O_h)
-        if h != zero(T)
+        if h != zero(typeInt)
             w_act.w_h[i] = w_i[h]
         end
     end
     return
 end
 
-function _income_w_act(w_h, O_h, tau_SIW, tau_INC, theta_UB, sb_other, P_bar_HH; pi_e = 0.0)
+function households_income_act(w_act::AbstractWorkers, model; pi_e = 0.0)
+    w_h, O_h, tau_SIW, tau_INC = w_act.w_h, w_act.O_h, model.prop.tau_SIW, model.prop.tau_INC
+    theta_UB, sb_other, P_bar_HH = model.prop.theta_UB, model.gov.sb_other, model.agg.P_bar_HH
+
     Y_h = zeros(typeFloat, length(w_h))
     for h in eachindex(w_h)
         if O_h[h] != 0
@@ -19,18 +21,6 @@ function _income_w_act(w_h, O_h, tau_SIW, tau_INC, theta_UB, sb_other, P_bar_HH;
         end
     end
     return Y_h
-end
-
-function households_income_act(w_act::AbstractWorkers, model)
-    return _income_w_act(
-        w_act.w_h,
-        w_act.O_h,
-        model.prop.tau_SIW,
-        model.prop.tau_INC,
-        model.prop.theta_UB,
-        model.gov.sb_other,
-        model.agg.P_bar_HH,
-    )
 end
 
 function _income_w_inact(H_inact, sb_inact, sb_other, P_bar_HH; pi_e = 0.0)
@@ -80,31 +70,16 @@ function households_income(bank::AbstractBank, model)
     )
 end
 
-function _budget_w_act(w_h, O_h, psi, psi_H, tau_VAT, tau_CF, sb_other, P_bar_HH, pi_e, tau_SIW, tau_INC, theta_UB)
+function households_budget_act(w_act, model)
 
-    Y_e_h = _income_w_act(w_h, O_h, tau_SIW, tau_INC, theta_UB, sb_other, P_bar_HH; pi_e = pi_e)
+    psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
+
+    Y_e_h = households_income_act(w_act, model; pi_e = model.agg.pi_e)
 
     C_d_h = psi * Y_e_h / (1 + tau_VAT)
     I_d_h = psi_H * Y_e_h / (1 + tau_CF)
 
     return C_d_h, I_d_h
-end
-
-function households_budget_act(w_act::AbstractWorkers, model)
-    return _budget_w_act(
-        w_act.w_h,
-        w_act.O_h,
-        model.prop.psi,
-        model.prop.psi_H,
-        model.prop.tau_VAT,
-        model.prop.tau_CF,
-        model.gov.sb_other,
-        model.agg.P_bar_HH,
-        model.agg.pi_e,
-        model.prop.tau_SIW,
-        model.prop.tau_INC,
-        model.prop.theta_UB,
-    )
 end
 
 function _budget_w_inact(H_inact, psi, psi_H, tau_VAT, tau_CF, sb_inact, sb_other, P_bar_HH, pi_e)
