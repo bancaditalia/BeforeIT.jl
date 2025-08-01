@@ -333,13 +333,13 @@ This is a Model type. It is used to store all the agents of the economy.
 - `rotw`: RestOfTheWorld
 - `agg`: Aggregates
 """
-mutable struct Model{
-        W1 <: AbstractWorkers, W2 <: AbstractWorkers,
-        F <: AbstractFirms, B <: AbstractBank,
-        C <: AbstractCentralBank, G <: AbstractGovernment,
-        R <: AbstractRestOfTheWorld, A <: AbstractAggregates,
+Bit.@object mutable struct Model{
+        W1 <: Bit.AbstractWorkers, W2 <: Bit.AbstractWorkers,
+        F <: Bit.AbstractFirms, B <: Bit.AbstractBank,
+        C <: Bit.AbstractCentralBank, G <: Bit.AbstractGovernment,
+        R <: Bit.AbstractRestOfTheWorld, A <: Bit.AbstractAggregates,
         P, D,
-    } <: AbstractModel
+    }(Object) <: Bit.AbstractModel
     w_act::W1
     w_inact::W2
     firms::F
@@ -350,58 +350,54 @@ mutable struct Model{
     agg::A
     prop::P
     data::D
-    function Model(
-            w_act::W1, w_inact::W2, firms::F, bank::B, cb::C, gov::G, rotw::R,
-            agg::A, prop::P, data::D
-        ) where {
-            W1 <: AbstractWorkers, W2 <: AbstractWorkers, F <: AbstractFirms, B <: AbstractBank,
-            C <: AbstractCentralBank, G <: AbstractGovernment, R <: AbstractRestOfTheWorld, A <: Aggregates,
-            P, D,
-        }
-        model = new{W1, W2, F, B, C, G, R, A, P, D}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
+end
 
-        # add workers to firms
-        V_i, w_bar_i = firms.V_i, firms.w_bar_i
-        O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h
-        sb_other, tau_SIW, tau_INC, theta_UB = prop.sb_other, prop.tau_SIW, prop.tau_INC, prop.theta_UB
-        h = 1
-        for i in 1:prop.I
-            while V_i[i] > 0
-                O_h[h] = i
-                w_h[h] = w_bar_i[i]
-                V_i[i] -= 1
-                h += 1
-            end
+function (::Type{T})(agents) where {T <: AbstractModel}
+
+    w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data = agents
+    model = T(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
+
+    # add workers to firms
+    V_i, w_bar_i = firms.V_i, firms.w_bar_i
+    O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h
+    sb_other, tau_SIW, tau_INC, theta_UB = prop.sb_other, prop.tau_SIW, prop.tau_INC, prop.theta_UB
+    h = 1
+    for i in 1:prop.I
+        while V_i[i] > 0
+            O_h[h] = i
+            w_h[h] = w_bar_i[i]
+            V_i[i] -= 1
+            h += 1
         end
-
-        P_bar_HH = 1.0
-        H_W = prop.H_act - prop.I - 1
-        for h in 1:H_W
-            if O_h[h] != 0
-                Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
-            else
-                Y_h[h] = (theta_UB * w_h[h] + sb_other) * P_bar_HH
-            end
-        end
-
-        w_act.D_h .= prop.D_H * Y_h #/ sum(Y_h)
-        w_act.K_h .= prop.K_H * Y_h #/ sum(Y_h)
-
-        # bank initialization which depends on firms
-        bank.Pi_k = prop.mu * sum(firms.L_i) + prop.r_bar * prop.E_k
-        bank.D_k = sum(firms.D_i) + prop.E_k - sum(firms.L_i)
-        bank.Y_h = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, bank.Pi_k) + sb_other * P_bar_HH
-        bank.D_h = prop.D_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
-        bank.K_h = prop.K_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
-
-        # update model variables with global quantities (total income, total deposits) obtained from all the agents
-        update_variables_with_totals!(model)
-
-        # initialize data collection
-        update_data!(model)
-
-        return model
     end
+
+    P_bar_HH = 1.0
+    H_W = prop.H_act - prop.I - 1
+    for h in 1:H_W
+        if O_h[h] != 0
+            Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
+        else
+            Y_h[h] = (theta_UB * w_h[h] + sb_other) * P_bar_HH
+        end
+    end
+
+    w_act.D_h .= prop.D_H * Y_h #/ sum(Y_h)
+    w_act.K_h .= prop.K_H * Y_h #/ sum(Y_h)
+
+    # bank initialization which depends on firms
+    bank.Pi_k = prop.mu * sum(firms.L_i) + prop.r_bar * prop.E_k
+    bank.D_k = sum(firms.D_i) + prop.E_k - sum(firms.L_i)
+    bank.Y_h = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, bank.Pi_k) + sb_other * P_bar_HH
+    bank.D_h = prop.D_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
+    bank.K_h = prop.K_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
+
+    # update model variables with global quantities (total income, total deposits) obtained from all the agents
+    update_variables_with_totals!(model)
+
+    # initialize data collection
+    update_data!(model)
+
+    return model
 end
 
 # helper functions

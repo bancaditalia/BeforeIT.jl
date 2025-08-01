@@ -63,7 +63,6 @@ model_vec_shocked = Bit.ensemblerun(model, T, N_reps; shock = consumption_shock)
 data_vector_baseline = Bit.DataVector(model_vec_baseline);
 data_vector_shocked = Bit.DataVector(model_vec_shocked);
 
-
 # Compute mean and standard error of GDP for the baseline and shocked simulations
 mean_gdp_baseline = mean(data_vector_baseline.real_gdp, dims = 2)
 mean_gdp_shocked = mean(data_vector_shocked.real_gdp, dims = 2)

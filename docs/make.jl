@@ -26,8 +26,6 @@ Literate.markdown(joinpath(indir, "basic_example.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "scenario_analysis_via_shock.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "prediction_pipeline.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "multithreading_speedup.jl"), outdir; credit = false)
-Literate.markdown(joinpath(indir, "scenario_analysis_via_overload.jl"), outdir; credit = false)
-Literate.markdown(joinpath(indir, "change_expectations.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "basic_inheritance.jl"), outdir; credit = false)
 # Literate.markdown(joinpath(indir, "analysis/tabs/create_tables.jl"), outdir; credit = false)
 
@@ -37,11 +35,9 @@ makedocs(
     format = Documenter.HTML(prettyurls = false, size_threshold = 409600),
     pages = [
         "Home" => "index.md",
-        "Essentials" => "examples/basic_example.md",
+        "Basics" => "examples/basic_example.md",
         "Shocked simulations" => "examples/scenario_analysis_via_shock.md",
-        "Essential model extension" => "examples/basic_inheritance.md",
-        "Shocked simulations (advanced)" => "examples/scenario_analysis_via_overload.md",
-        "Experimentations (advanced)" => "examples/change_expectations.md",
+        "Extending the model" => "examples/basic_inheritance.md",
         "Multithreading within the model" => "examples/multithreading_speedup.md",
         "Calibration" => "examples/prediction_pipeline.md",
         # "Prediction Comparison" => "examples/create_tables.md",

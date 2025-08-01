@@ -27,6 +27,8 @@ Y_EA_series = vec(vcat(ic["Y_EA_series"], zeros(Float64, T)))
 pi_EA_series = vec(vcat(ic["pi_EA_series"], zeros(Float64, T)))
 r_bar_series = vec(vcat(ic["r_bar_series"], zeros(Float64, T)))
 
+Bit.@object mutable struct ModelCANVAS(Bit.Model) <: Bit.AbstractModel end
+
 # define a new central bank for the CANVAS model
 abstract type AbstractCentralBankCANVAS <: Bit.AbstractCentralBank end
 Bit.@object mutable struct CentralBankCANVAS(Bit.CentralBank) <: AbstractCentralBankCANVAS
@@ -134,22 +136,16 @@ end
 
 # new firms initialisation
 firms_st = Bit.Firms(p, ic)
-firms = FirmsCANVAS((getfield(firms_st, x) for x in fieldnames(Bit.Firms))...)
+firms = FirmsCANVAS(Bit.fields(firms_st)...)
 firms.Q_s_i .= firms.Q_d_i # overwrite to avoid division by zero for new firm price and quantity setting mechanism
 
 # new central bank initialisation
-central_bank_st = Bit.CentralBank(p, ic)
-central_bank = CentralBankCANVAS(
-    (getfield(central_bank_st, x) for x in fieldnames(Bit.CentralBank))...,
-    r_bar_series
-) # add new variables to the aggregates
+cb_st = Bit.CentralBank(p, ic)
+cb = CentralBankCANVAS(Bit.fields(cb_st)..., r_bar_series) # add new variables to the aggregates
 
 # new rotw initialisation
 rotw_st = Bit.RestOfTheWorld(p, ic)
-rotw = RestOfTheWorldCANVAS(
-    (getfield(rotw_st, x) for x in fieldnames(Bit.RestOfTheWorld))...,
-    Y_EA_series, pi_EA_series
-) # add new variables to the aggregates
+rotw = RestOfTheWorldCANVAS(Bit.fields(rotw_st)..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
 # standard initialisations: workers, bank, aggregats, government, properties and data
 w_act, w_inact = Bit.Workers(p, ic)
@@ -160,10 +156,10 @@ prop = Bit.Properties(p, ic)
 data = Bit.Data()
 
 # define a standard model
-model_std = Bit.Model(w_act, w_inact, firms_st, bank, central_bank_st, gov, rotw_st, agg, prop, data)
+model_std = Bit.Model(w_act, w_inact, firms_st, bank, cb_st, gov, rotw_st, agg, prop, data)
 
 # define a CANVAS model
-model_canvas = Bit.Model(w_act, w_inact, firms, bank, central_bank, gov, rotw, agg, prop, data)
+model_canvas = ModelCANVAS(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
 
 # run the model(s)
 model_vector_std = Bit.ensemblerun(model_std, T, 8)
