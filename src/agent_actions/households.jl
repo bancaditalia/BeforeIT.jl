@@ -8,9 +8,11 @@ function update_workers_wages!(w_act, w_i)
     return
 end
 
-function households_income_act(w_act::AbstractWorkers, model; pi_e = 0.0)
+function households_income_act(w_act::AbstractWorkers, model; expected = false)
     w_h, O_h, tau_SIW, tau_INC = w_act.w_h, w_act.O_h, model.prop.tau_SIW, model.prop.tau_INC
     theta_UB, sb_other, P_bar_HH = model.prop.theta_UB, model.gov.sb_other, model.agg.P_bar_HH
+
+    pi_e = expected ? model.agg.pi_e : zero(typeFloat)
 
     Y_h = zeros(typeFloat, length(w_h))
     for h in eachindex(w_h)
@@ -23,9 +25,11 @@ function households_income_act(w_act::AbstractWorkers, model; pi_e = 0.0)
     return Y_h
 end
 
-function households_income_inact(w_inact::AbstractWorkers, model; pi_e = 0.0)
+function households_income_inact(w_inact::AbstractWorkers, model; expected = false)
     H_inact, sb_inact = length(w_inact), model.gov.sb_inact
     sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
+
+    pi_e = expected ? model.agg.pi_e : zero(typeFloat)
 
     Y_h = zeros(typeFloat, H_inact)
     for h in 1:H_inact
@@ -34,9 +38,12 @@ function households_income_inact(w_inact::AbstractWorkers, model; pi_e = 0.0)
     return Y_h
 end
 
-function households_income(firms::AbstractFirms, model; pi_e = 0.0)
-    Pi_i, tau_INC, tau_FIRM = firms.Pi_i, model.prop.tau_INC, model.prop.tau_FIRM
-    theta_DIV, sb_other, P_bar_HH = model.prop.theta_DIV, model.gov.sb_other, model.agg.P_bar_HH
+function households_income(firms::AbstractFirms, model; expected = false)
+    tau_INC, tau_FIRM, theta_DIV = model.prop.tau_INC, model.prop.tau_FIRM, model.prop.theta_DIV
+    sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
+
+    Pi_i = expected ? firms.Pi_e_i : firms.Pi_i
+    pi_e = expected ? model.agg.pi_e : zero(typeFloat)
 
     Y_h = zeros(typeFloat, length(Pi_i))
     for i in eachindex(Pi_i)
@@ -45,9 +52,12 @@ function households_income(firms::AbstractFirms, model; pi_e = 0.0)
     return Y_h
 end
 
-function households_income(bank::AbstractBank, model; pi_e = 0.0)
-    Pi_k, tau_INC, tau_FIRM = bank.Pi_k, model.prop.tau_INC, model.prop.tau_FIRM
-    theta_DIV, sb_other, P_bar_HH = model.prop.theta_DIV, model.gov.sb_other, model.agg.P_bar_HH
+function households_income(bank::AbstractBank, model; expected = false)
+    tau_INC, tau_FIRM, theta_DIV = model.prop.tau_INC, model.prop.tau_FIRM, model.prop.theta_DIV
+    sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
+
+    Pi_i = expected ? firms.Pi_e_k : firms.Pi_k
+    pi_e = expected ? model.agg.pi_e : zero(typeFloat)
 
     Y_h = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k) + sb_other * P_bar_HH * (1 + pi_e)
     return Y_h
@@ -57,7 +67,7 @@ function households_budget_act(w_act, model)
 
     psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
 
-    Y_e_h = households_income_act(w_act, model; pi_e = model.agg.pi_e)
+    Y_e_h = households_income_act(w_act, model; expected = true)
 
     C_d_h = psi * Y_e_h / (1 + tau_VAT)
     I_d_h = psi_H * Y_e_h / (1 + tau_CF)
@@ -68,7 +78,7 @@ end
 function households_budget_inact(w_inact::AbstractWorkers, model)
     psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
 
-    Y_e_h = households_income_inact(w_inact, model; pi_e = model.agg.pi_e)
+    Y_e_h = households_income_inact(w_inact, model; expected = true)
 
     C_d_h = psi * Y_e_h / (1 + tau_VAT)
     I_d_h = psi_H * Y_e_h / (1 + tau_CF)
@@ -79,7 +89,7 @@ end
 function households_budget(firms::AbstractFirms, model)
     psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
 
-    Y_e_h = households_income(firms, model; pi_e = model.agg.pi_e)
+    Y_e_h = households_income(firms, model; expected = true)
 
     C_d_h = psi * Y_e_h / (1 + tau_VAT)
     I_d_h = psi_H * Y_e_h / (1 + tau_CF)
@@ -90,7 +100,7 @@ end
 function households_budget(bank::AbstractBank, model)
     psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
 
-    Y_e_h = households_income(bank, model; pi_e = model.agg.pi_e)
+    Y_e_h = households_income(bank, model; expected = true)
     C_d_h = psi * Y_e_h / (1 + tau_VAT)
     I_d_h = psi_H * Y_e_h / (1 + tau_CF)
 
