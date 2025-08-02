@@ -19,9 +19,7 @@ The function returns:
 """
 function search_and_matching_labour(firms::AbstractFirms, model::AbstractModel)
 
-    N_d_i = firms.N_d_i
-    N_i = firms.N_i
-    O_h = model.w_act.O_h
+    N_d_i, N_i, O_h = firms.N_d_i, firms.N_i, model.w_act.O_h
 
     V_i = N_d_i .- N_i
 

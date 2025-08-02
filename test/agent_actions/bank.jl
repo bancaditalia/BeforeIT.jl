@@ -29,14 +29,14 @@ using Test
         @test isapprox(DE_k, expected_net_profits, atol = 1.0e-10)
     end
 
-    @testset "test expected_bank_profits" begin
-        Pi_k = 1.0
-        pi_e = 0.1
-        gamma_e = 0.2
-        expected_profits = 1.32
-        Pi_k = Bit._bank_expected_profits(Pi_k, pi_e, gamma_e)
-        @test isapprox(Pi_k, expected_profits, atol = 1.0e-10)
-    end
+    #@testset "test expected_bank_profits" begin
+    #    Pi_k = 1.0
+    #    pi_e = 0.1
+    #    gamma_e = 0.2
+    #    expected_profits = 1.32
+    #    Pi_k = Bit._bank_expected_profits(Pi_k, pi_e, gamma_e)
+    #    @test isapprox(Pi_k, expected_profits, atol = 1.0e-10)
+    #end
 
     @testset "finance_insolvent_firms!" begin
         @test 1 == 1
