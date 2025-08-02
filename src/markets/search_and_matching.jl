@@ -282,7 +282,9 @@ function perform_firms_market!(
     @~ I_i_g[:, g] .= b
 
     @~ P_bar_i_g[:, g] .= pos.(DM_nominal_ig .* a ./ c)
-    return @~ P_CF_i_g[:, g] .= pos.(DM_nominal_ig .* b ./ c)
+    @~ P_CF_i_g[:, g] .= pos.(DM_nominal_ig .* b ./ c)
+
+    return
 end
 
 """

@@ -48,7 +48,6 @@ Calculate the expectations and decisions of firms.
 That is: compute firm quantity, price, investment and intermediate-goods, 
 employment decisions, expected profits, and desired/expected loans and capital.
 
-
 # Arguments
 - `firms`: Firms object
 - `model`: Model object

@@ -23,7 +23,10 @@ function households_income_act(w_act::AbstractWorkers, model; pi_e = 0.0)
     return Y_h
 end
 
-function _income_w_inact(H_inact, sb_inact, sb_other, P_bar_HH; pi_e = 0.0)
+function households_income_inact(w_inact::AbstractWorkers, model; pi_e = 0.0)
+    H_inact, sb_inact = length(w_inact), model.gov.sb_inact
+    sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
+
     Y_h = zeros(typeFloat, H_inact)
     for h in 1:H_inact
         Y_h[h] = (sb_inact + sb_other) * P_bar_HH * (1 + pi_e)
@@ -31,11 +34,10 @@ function _income_w_inact(H_inact, sb_inact, sb_other, P_bar_HH; pi_e = 0.0)
     return Y_h
 end
 
-function households_income_inact(w_inact::AbstractWorkers, model)
-    return _income_w_inact(length(w_inact), model.gov.sb_inact, model.gov.sb_other, model.agg.P_bar_HH)
-end
+function households_income(firms::AbstractFirms, model; pi_e = 0.0)
+    Pi_i, tau_INC, tau_FIRM = firms.Pi_i, model.prop.tau_INC, model.prop.tau_FIRM
+    theta_DIV, sb_other, P_bar_HH = model.prop.theta_DIV, model.gov.sb_other, model.agg.P_bar_HH
 
-function _income_fowner(Pi_i, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; pi_e = 0.0)
     Y_h = zeros(typeFloat, length(Pi_i))
     for i in eachindex(Pi_i)
         Y_h[i] = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_i[i]) + sb_other * P_bar_HH * (1 + pi_e)
@@ -43,31 +45,12 @@ function _income_fowner(Pi_i, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; 
     return Y_h
 end
 
-function households_income(firms::AbstractFirms, model)
-    return _income_fowner(
-        firms.Pi_i,
-        model.prop.tau_INC,
-        model.prop.tau_FIRM,
-        model.prop.theta_DIV,
-        model.gov.sb_other,
-        model.agg.P_bar_HH,
-    )
-end
+function households_income(bank::AbstractBank, model; pi_e = 0.0)
+    Pi_k, tau_INC, tau_FIRM = bank.Pi_k, model.prop.tau_INC, model.prop.tau_FIRM
+    theta_DIV, sb_other, P_bar_HH = model.prop.theta_DIV, model.gov.sb_other, model.agg.P_bar_HH
 
-function _income_bowner(Pi_k, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; pi_e = 0.0)
     Y_h = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k) + sb_other * P_bar_HH * (1 + pi_e)
     return Y_h
-end
-
-function households_income(bank::AbstractBank, model)
-    return _income_bowner(
-        bank.Pi_k,
-        model.prop.tau_INC,
-        model.prop.tau_FIRM,
-        model.prop.theta_DIV,
-        model.gov.sb_other,
-        model.agg.P_bar_HH,
-    )
 end
 
 function households_budget_act(w_act, model)
@@ -82,60 +65,22 @@ function households_budget_act(w_act, model)
     return C_d_h, I_d_h
 end
 
-function _budget_w_inact(H_inact, psi, psi_H, tau_VAT, tau_CF, sb_inact, sb_other, P_bar_HH, pi_e)
-
-    Y_e_h = _income_w_inact(H_inact, sb_inact, sb_other, P_bar_HH; pi_e = pi_e)
-
-    C_d_h = psi * Y_e_h / (1 + tau_VAT)
-    I_d_h = psi_H * Y_e_h / (1 + tau_CF)
-
-    return C_d_h, I_d_h
-
-end
-
 function households_budget_inact(w_inact::AbstractWorkers, model)
-    return _budget_w_inact(
-        length(w_inact),
-        model.prop.psi,
-        model.prop.psi_H,
-        model.prop.tau_VAT,
-        model.prop.tau_CF,
-        model.gov.sb_inact,
-        model.gov.sb_other,
-        model.agg.P_bar_HH,
-        model.agg.pi_e,
-    )
-end
+    psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
 
-function _budget_fowner(psi, psi_H, tau_VAT, tau_CF, tau_INC, tau_FIRM, theta_DIV, Pi_e_i, sb_other, P_bar_HH, pi_e)
-
-    Y_e_h = _income_fowner(Pi_e_i, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; pi_e = pi_e)
+    Y_e_h = households_income_inact(w_inact, model; pi_e = model.agg.pi_e)
 
     C_d_h = psi * Y_e_h / (1 + tau_VAT)
     I_d_h = psi_H * Y_e_h / (1 + tau_CF)
 
     return C_d_h, I_d_h
-
 end
 
 function households_budget(firms::AbstractFirms, model)
-    return _budget_fowner(
-        model.prop.psi,
-        model.prop.psi_H,
-        model.prop.tau_VAT,
-        model.prop.tau_CF,
-        model.prop.tau_INC,
-        model.prop.tau_FIRM,
-        model.prop.theta_DIV,
-        firms.Pi_e_i,
-        model.gov.sb_other,
-        model.agg.P_bar_HH,
-        model.agg.pi_e,
-    )
-end
+    psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
 
-function _budget_bowner(psi, psi_H, tau_VAT, tau_CF, tau_INC, tau_FIRM, theta_DIV, Pi_e_k, sb_other, P_bar_HH, pi_e)
-    Y_e_h = _income_bowner(Pi_e_k, tau_INC, tau_FIRM, theta_DIV, sb_other, P_bar_HH; pi_e = pi_e)
+    Y_e_h = households_income(firms, model; pi_e = model.agg.pi_e)
+
     C_d_h = psi * Y_e_h / (1 + tau_VAT)
     I_d_h = psi_H * Y_e_h / (1 + tau_CF)
 
@@ -143,19 +88,13 @@ function _budget_bowner(psi, psi_H, tau_VAT, tau_CF, tau_INC, tau_FIRM, theta_DI
 end
 
 function households_budget(bank::AbstractBank, model)
-    return _budget_bowner(
-        model.prop.psi,
-        model.prop.psi_H,
-        model.prop.tau_VAT,
-        model.prop.tau_CF,
-        model.prop.tau_INC,
-        model.prop.tau_FIRM,
-        model.prop.theta_DIV,
-        bank.Pi_e_k,
-        model.gov.sb_other,
-        model.agg.P_bar_HH,
-        model.agg.pi_e,
-    )
+    psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
+
+    Y_e_h = households_income(bank, model; pi_e = model.agg.pi_e)
+    C_d_h = psi * Y_e_h / (1 + tau_VAT)
+    I_d_h = psi_H * Y_e_h / (1 + tau_CF)
+
+    return C_d_h, I_d_h
 end
 
 function households_deposits(households, model)
