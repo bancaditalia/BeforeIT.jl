@@ -56,7 +56,7 @@ function households_income(bank::AbstractBank, model; expected = false)
     tau_INC, tau_FIRM, theta_DIV = model.prop.tau_INC, model.prop.tau_FIRM, model.prop.theta_DIV
     sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
 
-    Pi_i = expected ? bank.Pi_e_k : bank.Pi_k
+    Pi_k = expected ? bank.Pi_e_k : bank.Pi_k
     pi_e = expected ? model.agg.pi_e : zero(typeFloat)
 
     Y_h = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k) + sb_other * P_bar_HH * (1 + pi_e)
