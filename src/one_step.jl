@@ -28,16 +28,16 @@ function CommonSolve.step!(model::AbstractModel, T; parallel = false, shock = No
 end
 function CommonSolve.step!(model::AbstractModel; parallel = false, shock = NoShock())
 
-    gov = model.gov # government
-    cb = model.cb # central bank
-    rotw = model.rotw # rest of the world
-    firms = model.firms # firms
-    bank = model.bank # bank
-    w_act = model.w_act # active workers
+    gov = model.gov     # government
+    cb = model.cb      # central bank
+    rotw = model.rotw    # rest of the world
+    firms = model.firms   # firms
+    bank = model.bank    # bank
+    w_act = model.w_act   # active workers
     w_inact = model.w_inact # inactive workers
-    agg = model.agg # aggregates
-    prop = model.prop # model properties
-    data = model.data # model data
+    agg = model.agg     # aggregates
+    prop = model.prop    # model properties
+    data = model.data    # model data
 
     Bit.finance_insolvent_firms!(firms, bank, model)
 
@@ -62,7 +62,8 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock = NoSho
 
     ####### FIRM EXPECTATIONS AND DECISIONS #######
 
-    # compute firm quantity, price, investment and intermediate-goods, employment decisions, expected profits, and desired/expected loans and capital
+    # compute firm quantity, price, investment and intermediate-goods, employment decisions,
+    # expected profits, and desired/expected loans and capital
     Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i =
         Bit.firms_expectations_and_decisions(firms, model)
 
@@ -136,7 +137,7 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock = NoSho
 
     # update inflation and update global price index
     push!(agg.pi_, 0.0)
-    agg.pi_[prop.T_prime + agg.t], agg.P_bar = Bit.inflation_priceindex(firms.P_i, firms.Y_i, agg.P_bar)
+    agg.pi_[prop.T_prime + agg.t], agg.P_bar = Bit.inflation_priceindex(firms, model)
 
     # update sector-specific price index
     agg.P_bar_g .= Bit.sector_specific_priceindex(firms, rotw, prop.G)

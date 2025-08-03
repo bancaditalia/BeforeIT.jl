@@ -13,7 +13,6 @@ This function updates the model in-place and does not return any value.
 """
 function search_and_matching!(model::AbstractModel, parallel = false)
 
-    # unpack models' variables
     w_act, w_inact, firms, gov = model.w_act, model.w_inact, model.firms, model.gov
     bank, rotw, agg, prop = model.bank, model.rotw, model.agg, model.prop
 
@@ -21,14 +20,12 @@ function search_and_matching!(model::AbstractModel, parallel = false)
     a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g,
         P_CF_i_g = initialize_variables_firms_market(firms, rotw, prop)
 
-    # Initialize variables
+    # Initialize variables for retail market
     I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
         Q_d_i_g, Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g,
         P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
         firms, rotw, prop, agg, w_act, w_inact, gov, bank
     )
-
-    G = size(prop.b_HH_g, 1) # number of goods
 
     # Loop over all goods (internal and foreign)
     function perform_market!(g)
@@ -50,6 +47,7 @@ function search_and_matching!(model::AbstractModel, parallel = false)
         )
     end
 
+    G = size(prop.b_HH_g, 1) # number of goods
     @maybe_threads parallel for g in 1:G
         perform_market!(g)
     end
@@ -284,7 +282,9 @@ function perform_firms_market!(
     @~ I_i_g[:, g] .= b
 
     @~ P_bar_i_g[:, g] .= pos.(DM_nominal_ig .* a ./ c)
-    return @~ P_CF_i_g[:, g] .= pos.(DM_nominal_ig .* b ./ c)
+    @~ P_CF_i_g[:, g] .= pos.(DM_nominal_ig .* b ./ c)
+
+    return
 end
 
 """

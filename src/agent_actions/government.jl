@@ -12,14 +12,11 @@ Computes government expenditure on consumption and transfers to households.
 - `C_d_j`: local government consumptions
 """
 function gov_expenditure(gov, model)
-    # unpack non-government arguments
-    c_G_g = model.prop.c_G_g
-    P_bar_g = model.agg.P_bar_g
-    pi_e = model.agg.pi_e
+    c_G_g, P_bar_g, pi_e = model.prop.c_G_g, model.agg.P_bar_g, model.agg.pi_e
 
     epsilon_G = randn() * gov.sigma_G
     C_G = exp(gov.alpha_G * log(gov.C_G) + gov.beta_G + epsilon_G)
-    J = size(gov.C_d_j, 1)
+    J = length(gov.C_d_j)
     C_d_j = C_G ./ J .* ones(J) .* sum(c_G_g .* P_bar_g) .* (1 + pi_e)
     return C_G, C_d_j
 end
@@ -41,12 +38,9 @@ imports.
 - `Y_G`: government revenues
 """
 function gov_revenues(model::AbstractModel)
-    # unpack objects
     w_act, w_inact, firms, bank, rotw = model.w_act, model.w_inact, model.firms, model.bank, model.rotw
-    prop = model.prop
-    P_bar_HH = model.agg.P_bar_HH
 
-    # unpack parameters
+    prop, P_bar_HH = model.prop, model.agg.P_bar_HH
     tau_SIF, tau_SIW, tau_INC, tau_CF, tau_VAT = prop.tau_SIF, prop.tau_SIW, prop.tau_INC, prop.tau_CF, prop.tau_VAT
     tau_FIRM, tau_EXPORT, theta_DIV = prop.tau_FIRM, prop.tau_EXPORT, prop.theta_DIV
 
@@ -93,15 +87,8 @@ Computes government new government debt.
 - `L_G`: new government debt
 """
 function gov_loans(gov, model)
-    # unpack non-government arguments
-    r_G = model.cb.r_G
-    P_bar_HH = model.agg.P_bar_HH
-    H = model.prop.H
-    H_inact = model.prop.H_inact
-    theta_UB = model.prop.theta_UB
-
-    w_h = model.w_act.w_h
-    O_h = model.w_act.O_h
+    r_G, P_bar_HH, H, H_inact = model.cb.r_G, model.agg.P_bar_HH, model.prop.H, model.prop.H_inact
+    theta_UB, w_h, O_h = model.prop.theta_UB, model.w_act.w_h, model.w_act.O_h
 
     tot_wages_unemp = sum(w_h[O_h .== 0])
     social_benefits =
