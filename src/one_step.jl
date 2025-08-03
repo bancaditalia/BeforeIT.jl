@@ -137,7 +137,7 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock = NoSho
 
     # update inflation and update global price index
     push!(agg.pi_, 0.0)
-    agg.pi_[prop.T_prime + agg.t], agg.P_bar = Bit.inflation_priceindex(firms.P_i, firms.Y_i, agg.P_bar)
+    agg.pi_[prop.T_prime + agg.t], agg.P_bar = Bit.inflation_priceindex(firms, model)
 
     # update sector-specific price index
     agg.P_bar_g .= Bit.sector_specific_priceindex(firms, rotw, prop.G)

@@ -85,14 +85,13 @@ end
 
 # compute inflation and global price index
 """
-    inflation_priceindex(P_i, Y_i, P_bar)
+    inflation_priceindex(firms, model)
 
 Calculate the inflation rate and the global price index.
 
 # Arguments
-- `P_i`: Vector of prices
-- `Y_i`: Vector of quantities
-- `P_bar`: Global price index
+- `firms`
+- `model`
 
 # Returns
 - `inflation`: Inflation rate
@@ -107,8 +106,17 @@ inflation = \\log(\\frac{\\sum_{i=1}^N P_i \\cdot Y_i}{\\sum_{i=1}^N Y_i \\cdot 
 ```math
 price_index = \\frac{\\sum_{i=1}^N P_i \\cdot Y_i}{\\sum_{i=1}^N Y_i}
 ```
+
+where
+
+- `P_i`: Vector of prices
+- `Y_i`: Vector of quantities
+- `P_bar`: Global price index
+
 """
-function inflation_priceindex(P_i, Y_i, P_bar)
+function inflation_priceindex(firms, model)
+    P_i, Y_i, P_bar = firms.P_i, firms.Y_i, model.agg.P_bar
+
     price_index = sum(P_i .* Y_i) / sum(Y_i)
     inflation = log(price_index / P_bar)
     return inflation, price_index
