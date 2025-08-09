@@ -84,8 +84,8 @@ end
 """
 function collect_data!(m::AbstractModel)
     allocate_new_data!(m)
-    T = length(m.data.collection_time)
-    T == 1 && return update_data_init!(m)
+    t = length(m.data.collection_time)
+    t == 1 && return update_data_init!(m)
     return update_data_step!(m)
 end
 
