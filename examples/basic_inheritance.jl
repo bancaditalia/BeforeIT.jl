@@ -41,9 +41,9 @@ std_model = Bit.Model((w_act, w_inact, firms, bank, cb, government, rotw, agg, p
 new_model = NewModel((w_act, w_inact, firms, bank, new_cb, government, rotw, agg, properties, data))
 
 # After that, we simulate both models
-t = 20
-model_vec_standard = Bit.ensemblerun!((deepcopy(std_model) for _ in 1:4), t);
-model_vec_new = Bit.ensemblerun!((deepcopy(new_model) for _ in 1:4), t);
+T = 20
+model_vec_standard = Bit.ensemblerun!((deepcopy(std_model) for _ in 1:4), T);
+model_vec_new = Bit.ensemblerun!((deepcopy(new_model) for _ in 1:4), T);
 
 # And plot the results
 using Plots, StatsPlots
