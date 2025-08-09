@@ -11,7 +11,7 @@ model = Bit.Model(parameters, initial_conditions)
 
 T = 20
 n_sims = 3
-model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t)
+model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T)
 data_vector = Bit.DataVector(model_vector)
 
 @test length(data_vector) == n_sims
