@@ -17,7 +17,7 @@ model = Bit.Model(parameters, initial_conditions);
 # Simulate the baseline model for T quarters, N_reps times, and collect the data
 T = 16
 n_sims = 64
-model_vec_baseline = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t);
+model_vec_baseline = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T);
 
 # Now, apply a shock to the model and simulate it again.
 # A shock is simply a function that takes the model and changes some of
@@ -57,7 +57,7 @@ productivity_shock = ProductivityShock(1.02)
 consumption_shock = ConsumptionShock(1.02, 4)
 
 # Simulate the model with the shock
-model_vec_shocked = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t; shock = consumption_shock);
+model_vec_shocked = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T; shock = consumption_shock);
 
 # extract the data vectors from the model vectors
 data_vector_baseline = Bit.DataVector(model_vec_baseline);
@@ -77,7 +77,7 @@ sem_gdp_ratio = gdp_ratio .* ((sem_gdp_baseline ./ mean_gdp_baseline) .^ 2 .+ (s
 
 # Finally, we can plot the impulse response curve
 plot(
-    1:(t + 1),
+    1:(T + 1),
     gdp_ratio,
     ribbon = sem_gdp_ratio,
     fillalpha = 0.2,
