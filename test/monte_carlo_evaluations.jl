@@ -19,4 +19,4 @@ data_vector = Bit.DataVector(model_vector)
 @test typeof(data_vector[1]) == Bit.Data
 @test typeof(data_vector[1].gdp_deflator_growth_ea) == Vector{Float64}
 @test typeof(data_vector[1].gdp_deflator_growth_ea[1]) == Float64
-@test length(data_vector[1].gdp_deflator_growth_ea) == t
+@test length(data_vector[1].gdp_deflator_growth_ea) == T
