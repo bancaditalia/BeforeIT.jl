@@ -16,7 +16,7 @@ import BeforeIT as Bit
 using Plots, Dates
 
 # get parameters and initial conditiosn
-t = 12
+T = 12
 cal = Bit.ITALY_CALIBRATION
 calibration_date = DateTime(2010, 03, 31)
 
@@ -148,8 +148,8 @@ model_std = Bit.Model(w_act, w_inact, firms_st, bank, cb_st, gov, rotw_st, agg, 
 model_canvas = ModelCANVAS(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
 
 # run the model(s)
-model_vector_std = Bit.ensemblerun((deepcopy(model_std) for _ in 1:8), t)
-model_vector_canvas = Bit.ensemblerun((deepcopy(model_canvas) for _ in 1:8), t)
+model_vector_std = Bit.ensemblerun((deepcopy(model_std) for _ in 1:8), T)
+model_vector_canvas = Bit.ensemblerun((deepcopy(model_canvas) for _ in 1:8), T)
 
 # plot the results
 using Plots, StatsPlots
