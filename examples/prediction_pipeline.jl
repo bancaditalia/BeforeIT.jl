@@ -28,7 +28,7 @@ parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, cali
 T = 20
 n_sims = 3
 model = Bit.Model(parameters, initial_conditions)
-model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t);
+model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T);
 
 # We obtain predictions from the model simulations
 real_data = cal.data
