@@ -395,7 +395,7 @@ function (::Type{T})(agents) where {T <: AbstractModel}
     update_variables_with_totals!(model)
 
     # initialize data collection
-    update_data!(model)
+    collect_data!(model)
 
     return model
 end

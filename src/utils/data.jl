@@ -57,7 +57,7 @@ Base.iterate(dv::DataVector) = Base.iterate(getfield(dv, :vector))
 Base.iterate(dv::DataVector, state) = Base.iterate(getfield(dv, :vector), state)
 
 """
-    update_data!(m)
+    collect_data!(m)
 
 Update the data in the model `m` with the current state of the model. Returns
 the updated model `m`.
@@ -69,7 +69,7 @@ extend all the pipeline for data tracking, which involves to
 1. Create a new data struct (e.g. `ExtendedData`) inheriting from `Bit.Data` with `Bit.@object`
 2. Implement a new function `ExtendedData()` which just allocates empty containers for the
    data tracking
-3. Extend `update_data!` by extending its components (`allocate_new_data!`, `update_data_init!`
+3. Extend `collect_data!` by extending its components (`allocate_new_data!`, `update_data_init!`
    and `update_data_step!`)
 
 Note that you can use @invoke in point 3. to use the standard functions so that you don't need
@@ -82,7 +82,7 @@ function Bit.update_data_step!(m::NewModel)
 end
 ```
 """
-function update_data!(m::AbstractModel)
+function collect_data!(m::AbstractModel)
     allocate_new_data!(m)
     t = length(m.data.collection_time)
     t == 1 && return update_data_init!(m)

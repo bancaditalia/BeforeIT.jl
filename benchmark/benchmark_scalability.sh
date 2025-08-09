@@ -28,8 +28,8 @@ for i in $(seq 1 6); do
     end
 
     function ensemble_run_model(parameters, initial_conditions, T)
-        model = Bit.Model(parameters, initial_conditions)
-        Bit.ensemblerun(model, T, 24; parallel = true)
+        models = (Bit.Model(parameters, initial_conditions) for _ in 1:24)
+        Bit.ensemblerun!(models, T; parallel = true)
     end
 
     parameters = Bit.AUSTRIA2010Q1.parameters

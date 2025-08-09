@@ -25,10 +25,10 @@ calibration_date = DateTime(2014, 03, 31)
 parameters, initial_conditions = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = 0.0001)
 
 # We run the model for a number of quarters
-T = 20
+t = 20
 n_sims = 3
 model = Bit.Model(parameters, initial_conditions)
-model_vector = Bit.ensemblerun(model, T, n_sims);
+model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t);
 
 # We obtain predictions from the model simulations
 real_data = cal.data

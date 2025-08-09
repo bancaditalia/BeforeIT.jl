@@ -9,9 +9,9 @@ initial_conditions = load(joinpath(dir, "../data/austria/initial_conditions/2010
 
 model = Bit.Model(parameters, initial_conditions)
 
-T = 20
+t = 20
 n_sims = 3
-model_vector = Bit.ensemblerun(model, T, n_sims)
+model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t)
 data_vector = Bit.DataVector(model_vector)
 
 @test length(data_vector) == n_sims
@@ -19,4 +19,4 @@ data_vector = Bit.DataVector(model_vector)
 @test typeof(data_vector[1]) == Bit.Data
 @test typeof(data_vector[1].gdp_deflator_growth_ea) == Vector{Float64}
 @test typeof(data_vector[1].gdp_deflator_growth_ea[1]) == Float64
-@test length(data_vector[1].gdp_deflator_growth_ea) == T
+@test length(data_vector[1].gdp_deflator_growth_ea) == t

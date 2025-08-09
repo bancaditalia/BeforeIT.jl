@@ -39,7 +39,7 @@ function extract_yq(files)
     return Set([match(r"^(\d{4})Q(\d)\.jld2$", f).match for f in files if occursin(r"Q", f)])
 end
 
-function save_all_simulations(folder_name; T = 12, n_sims = 4)
+function save_all_simulations(folder_name; t = 12, n_sims = 4)
 
     param_dir = folder_name * "/parameters/"
     init_dir = folder_name * "/initial_conditions/"
@@ -64,7 +64,7 @@ function save_all_simulations(folder_name; T = 12, n_sims = 4)
         initial_conditions = load(init_file)
 
         model = Bit.Model(parameters, initial_conditions)
-        model_vector = Bit.ensemblerun(model, T, n_sims)
+        model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t)
         data_vector = DataVector(model_vector)
         sim_file = joinpath(sim_dir, string(year, "Q", quarter, ".jld2"))
 
