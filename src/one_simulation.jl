@@ -1,12 +1,12 @@
 """
-    run!(model, t; shock = NoShock(), parallel = false)
+    run!(model, T; shock = NoShock(), parallel = false)
 
 Run a single simulation based on the provided `model`. 
-The simulation runs for a number of steps `t`.
+The simulation runs for a number of steps `T`.
 
 # Arguments
 - `model::AbstractModel`: The model configuration used for the simulation.
-- `t`: the number of steps to perform.
+- `T`: the number of steps to perform.
 
 # Returns
 - `model::AbstractModel`: The model updated during the simulation.
@@ -23,7 +23,7 @@ Bit.run!(model, 2)
 ```
 """
 function run!(model::AbstractModel, t=1; parallel = false, shock = NoShock())
-    for _ in 1:t
+    for _ in 1:T
         Bit.step!(model; parallel = parallel, shock = shock)
         Bit.collect_data!(model)
     end
@@ -31,7 +31,7 @@ function run!(model::AbstractModel, t=1; parallel = false, shock = NoShock())
 end
 
 """
-    ensemblerun!(models, t; shock = NoShock(), parallel = true)
+    ensemblerun!(models, T=1; shock = NoShock(), parallel = true)
 
 A function that runs the models simulations for `t` steps on each of them.
 
@@ -39,7 +39,7 @@ A function that runs the models simulations for `t` steps on each of them.
 - `models`: The models to simulate. The models can either be in a `Vector` or
   `Generator`.
 
-- `t`: the number of steps to perform.
+- `T`: the number of steps to perform.
 
 # Returns
 - `models`: The updated models.
@@ -52,23 +52,23 @@ models = (Bit.Model(parameters, initial_conditions) for _ in 1:10)
 Bit.ensemblerun!(models, 2)
 ```
 """
-function ensemblerun!(models::Vector, t=1; parallel = true, shock = NoShock())
+function ensemblerun!(models::Vector, T=1; parallel = true, shock = NoShock())
     @maybe_threads parallel for i in 1:length(models)
-        run!(models[i], t; shock, parallel)
+        run!(models[i], T; shock, parallel)
     end
     return models
 end
-function ensemblerun!(models::Base.Generator, t=1; parallel = true, shock = NoShock())
+function ensemblerun!(models::Base.Generator, T=1; parallel = true, shock = NoShock())
     if models.iter == AbstractRange
         f, iter = models.f, models.iter
         models = Vector{Base.@default_eltype(models)}(undef, length(models))
         @maybe_threads parallel for i in 1:length(models)
             model = f(iter[i])
-            run!(model, t; shock, parallel)
+            run!(model, T; shock, parallel)
             models[i] = model
         end
         return models
     else
-        return ensemblerun!(collect(models), t; parallel, shock)
+        return ensemblerun!(collect(models), T; parallel, shock)
     end    
 end
