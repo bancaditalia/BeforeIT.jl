@@ -192,7 +192,7 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
 
     # Parameters
     T_prime = T_calibration_exo - T_estimation_exo + 1
-    t = 12
+    T = 12
     T_max = T - max(0, T_calibration_exo + T - T_calibration_exo_max)
     H_act = sum(employees) + unemployed + sum(firms) + 1
     H_inact = inactive

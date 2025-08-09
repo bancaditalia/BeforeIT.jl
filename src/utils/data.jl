@@ -84,8 +84,8 @@ end
 """
 function collect_data!(m::AbstractModel)
     allocate_new_data!(m)
-    t = length(m.data.collection_time)
-    t == 1 && return update_data_init!(m)
+    T = length(m.data.collection_time)
+    T == 1 && return update_data_init!(m)
     return update_data_step!(m)
 end
 
@@ -149,7 +149,7 @@ function update_data_init!(m::AbstractModel)
 end
 
 function update_data_step!(m::AbstractModel)
-    d, p, t = m.data, m.prop, length(m.data.collection_time)
+    d, p, T = m.data, m.prop, length(m.data.collection_time)
     tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
     tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
 

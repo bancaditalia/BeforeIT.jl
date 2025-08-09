@@ -14,7 +14,7 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions;
 model = Bit.Model(parameters, initial_conditions);
 
 # Simulate the model for T quarters
-t = 20
+T = 20
 model_vec_baseline = Bit.ensemblerun!((deepcopy(model) for _ in 1:4), t);
 
 # Now, apply a shock to the model and simulate it again

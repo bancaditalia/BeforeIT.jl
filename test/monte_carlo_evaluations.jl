@@ -9,7 +9,7 @@ initial_conditions = load(joinpath(dir, "../data/austria/initial_conditions/2010
 
 model = Bit.Model(parameters, initial_conditions)
 
-t = 20
+T = 20
 n_sims = 3
 model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t)
 data_vector = Bit.DataVector(model_vector)

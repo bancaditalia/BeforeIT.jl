@@ -30,7 +30,7 @@ The expected inflation rate `pi_e` is calculated as follows:
 ```
 """
 function growth_inflation_expectations(model)
-    Y, pi_, T_prime, t = model.agg.Y, model.agg.pi_, model.prop.T_prime, model.agg.t
+    Y, pi_, T_prime, T = model.agg.Y, model.agg.pi_, model.prop.T_prime, model.agg.t
 
     lY_e = estimate_next_value(log.(Y[1:(T_prime + t - 1)]))
     Y_e = exp(lY_e) # expected GDP
