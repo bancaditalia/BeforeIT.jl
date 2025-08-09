@@ -66,8 +66,8 @@ data_vector_shocked = Bit.DataVector(model_vec_shocked);
 # Compute mean and standard error of GDP for the baseline and shocked simulations
 mean_gdp_baseline = mean(data_vector_baseline.real_gdp, dims = 2)
 mean_gdp_shocked = mean(data_vector_shocked.real_gdp, dims = 2)
-sem_gdp_baseline = std(data_vector_baseline.real_gdp, dims = 2) / sqrt(N_reps)
-sem_gdp_shocked = std(data_vector_shocked.real_gdp, dims = 2) / sqrt(N_reps)
+sem_gdp_baseline = std(data_vector_baseline.real_gdp, dims = 2) / sqrt(n_sims)
+sem_gdp_shocked = std(data_vector_shocked.real_gdp, dims = 2) / sqrt(n_sims)
 
 # Compute the ratio of shocked to baseline GDP
 gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline
