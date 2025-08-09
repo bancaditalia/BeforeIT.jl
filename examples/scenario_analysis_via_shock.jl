@@ -15,7 +15,7 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions;
 model = Bit.Model(parameters, initial_conditions);
 
 # Simulate the baseline model for T quarters, N_reps times, and collect the data
-t = 16
+T = 16
 n_sims = 64
 model_vec_baseline = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t);
 
