@@ -15,7 +15,7 @@ model = Bit.Model(parameters, initial_conditions);
 
 # Simulate the model for T quarters
 T = 20
-model_vec_baseline = Bit.ensemblerun!((deepcopy(model) for _ in 1:4), t);
+model_vec_baseline = Bit.ensemblerun!((deepcopy(model) for _ in 1:4), T);
 
 # Now, apply a shock to the model and simulate it again
 # Here, we do this by overloading the central_bank_rate function with the wanted behaviour
@@ -30,12 +30,12 @@ function Bit.central_bank_rate(cb::Bit.CentralBank, model::Bit.Model)
     end
 end
 
-model_vec_shocked = Bit.ensemblerun!((deepcopy(model) for _ in 1:4), t);
+model_vec_shocked = Bit.ensemblerun!((deepcopy(model) for _ in 1:4), T);
 
 # Finally, we can plot baseline and shocked simulations
-te = t + 1
+Te = T + 1
 StatsPlots.errorline(
-    1:te,
+    1:Te,
     Bit.DataVector(model_vec_baseline).real_gdp,
     errortype = :sem,
     label = "baseline",
@@ -44,7 +44,7 @@ StatsPlots.errorline(
     ylabel = "GDP",
 )
 StatsPlots.errorline!(
-    1:te,
+    1:Te,
     Bit.DataVector(model_vec_shocked).real_gdp,
     errortype = :sem,
     label = "shock",
