@@ -93,7 +93,7 @@ function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model:
 end
 
 function Bit.central_bank_rate(cb::AbstractCentralBankCANVAS, model::Bit.AbstractModel)
-    gamma_EA, pi_EA, T_prime, T = model.rotw.gamma_EA, model.rotw.pi_EA, model.prop.T_prime, model.agg.t
+    gamma_EA, pi_EA, T_prime, t = model.rotw.gamma_EA, model.rotw.pi_EA, model.prop.T_prime, model.agg.t
 
     a1 = cb.r_bar_series[1:(T_prime + t - 1)]
     a2 = model.rotw.Y_EA_series[1:(T_prime + t - 1)]
@@ -107,7 +107,7 @@ function Bit.central_bank_rate(cb::AbstractCentralBankCANVAS, model::Bit.Abstrac
 end
 
 function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.AbstractModel)
-    epsilon_Y_EA, T_prime, T = model.agg.epsilon_Y_EA, model.prop.T_prime, model.agg.t
+    epsilon_Y_EA, T_prime, t = model.agg.epsilon_Y_EA, model.prop.T_prime, model.agg.t
 
     Y_EA = exp(rotw.alpha_Y_EA * log(rotw.Y_EA) + rotw.beta_Y_EA + epsilon_Y_EA) # GDP EA
     gamma_EA = Y_EA / rotw.Y_EA - 1 # growht EA
