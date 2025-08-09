@@ -16,7 +16,7 @@ Testing an entire step of the model
 """
 
 ####### GENERAL ESTIMATIONS #######
-T = 1
+t = 1
 prop = model.prop
 
 # expectation on economic growth
