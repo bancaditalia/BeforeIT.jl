@@ -22,7 +22,7 @@ model = Bit.Model(parameters, initial_conditions)
 Bit.run!(model, 2)
 ```
 """
-function run!(model::AbstractModel, t=1; parallel = false, shock = NoShock())
+function run!(model::AbstractModel, T=1; parallel = false, shock = NoShock())
     for _ in 1:T
         Bit.step!(model; parallel = parallel, shock = shock)
         Bit.collect_data!(model)
@@ -33,7 +33,7 @@ end
 """
     ensemblerun!(models, T=1; shock = NoShock(), parallel = true)
 
-A function that runs the models simulations for `t` steps on each of them.
+A function that runs the models simulations for `T` steps on each of them.
 
 # Arguments
 - `models`: The models to simulate. The models can either be in a `Vector` or
