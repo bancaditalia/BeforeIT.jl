@@ -33,9 +33,9 @@ end
 model_vec_shocked = Bit.ensemblerun!((deepcopy(model) for _ in 1:4), t);
 
 # Finally, we can plot baseline and shocked simulations
-Te = t + 1
+te = t + 1
 StatsPlots.errorline(
-    1:Te,
+    1:te,
     Bit.DataVector(model_vec_baseline).real_gdp,
     errortype = :sem,
     label = "baseline",
@@ -44,7 +44,7 @@ StatsPlots.errorline(
     ylabel = "GDP",
 )
 StatsPlots.errorline!(
-    1:Te,
+    1:te,
     Bit.DataVector(model_vec_shocked).real_gdp,
     errortype = :sem,
     label = "shock",

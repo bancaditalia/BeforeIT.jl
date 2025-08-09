@@ -131,7 +131,7 @@ for calibration_date=start_calibration_date:calquarters:end_calibration_date
     
     % Parameters
     T_prime=T_calibration_exo-T_estimation_exo+1;
-   12;
+    T=12;
     T_max=T-max(0,T_calibration_exo+T-T_calibration_exo_max);
     G=length(intermediate_consumption);
     S=G;

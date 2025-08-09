@@ -83,7 +83,7 @@ mdata = MoreData()
 new_model = NewModel2((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, mdata))
 
 # and run the simulation
-Bit.run!(new_model, T);
+Bit.run!(new_model, t);
 
 # Finally we can plot the new data
 plot(new_model.data.N_employed, label = "Employed Workers")

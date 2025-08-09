@@ -2,7 +2,7 @@
 
 function [nominal_gdp,real_gdp,nominal_gva,real_gva,nominal_household_consumption,real_household_consumption,nominal_government_consumption,real_government_consumption,nominal_capitalformation,real_capitalformation,nominal_fixed_capitalformation,real_fixed_capitalformation,nominal_fixed_capitalformation_dwellings,real_fixed_capitalformation_dwellings,nominal_exports,real_exports,nominal_imports,real_imports,operating_surplus,compensation_employees,wages,taxes_production,nominal_sector_gva,real_sector_gva,euribor,gdp_deflator_growth_ea,real_gdp_ea]=simulateabm(year,quarter,seed,predictors)
     rng(seed);
-   1;%12*2;
+    T=1;%12*2;
     G=62;
     
     filepath = fileparts(which('simulateabm'))
@@ -59,7 +59,7 @@ function [nominal_gdp,real_gdp,nominal_gva,real_gva,nominal_household_consumptio
     c_E_g=parameters.c_E_g;
     c_I_g=parameters.c_I_g;
     a_sg=parameters.a_sg;
-    %parameters.T;
+    % T=parameters.T;
     T_prime=parameters.T_prime;
     T_max=parameters.T_max;
     alpha_pi_EA=parameters.alpha_pi_EA;

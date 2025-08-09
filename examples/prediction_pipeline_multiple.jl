@@ -25,7 +25,7 @@ Bit.save_all_params_and_initial_conditions(
 # and initial conditions, it initialises the prediction, runs the prediction `n_sims` times, and finally
 # saves the `data_vector` into a `.jld2` file with an appropriate name.
 # The whole process is repeatead for all quarters from `2010Q1` to `2019Q4`
-Bit.save_all_simulations(folder_name; T = 16, n_sims = 2)
+Bit.save_all_simulations(folder_name; t = 16, n_sims = 2)
 
 # Finally, align all simulations with the real data to transform them testable predictions
 real_data = Bit.ITALY_CALIBRATION.data

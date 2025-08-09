@@ -15,7 +15,7 @@ initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions;
 model = Bit.Model(parameters, initial_conditions);
 
 # Simulate the baseline model for T quarters, N_reps times, and collect the data
-T = 16
+t = 16
 n_sims = 64
 model_vec_baseline = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), t);
 
@@ -77,7 +77,7 @@ sem_gdp_ratio = gdp_ratio .* ((sem_gdp_baseline ./ mean_gdp_baseline) .^ 2 .+ (s
 
 # Finally, we can plot the impulse response curve
 plot(
-    1:(T + 1),
+    1:(t + 1),
     gdp_ratio,
     ribbon = sem_gdp_ratio,
     fillalpha = 0.2,

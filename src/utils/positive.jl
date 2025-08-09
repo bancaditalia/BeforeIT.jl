@@ -18,7 +18,7 @@ julia> pos(vector)
 ```
 """
 function pos(vector::AbstractArray)
-    T = typeof(vector[1])
+    t = typeof(vector[1])
     r = copy(vector)
     for i in eachindex(r)
         if isnan(r[i]) || r[i] < zero(T)
@@ -66,7 +66,7 @@ julia> neg(vector)
 """
 function neg(vector::AbstractArray)
     # @show neg
-    T = typeof(vector[1])
+    t = typeof(vector[1])
     r = copy(vector)
     for i in eachindex(r)
         if isnan(r[i]) || r[i] > zero(T)

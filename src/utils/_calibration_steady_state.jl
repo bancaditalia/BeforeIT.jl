@@ -176,7 +176,7 @@ function get_params_and_initial_conditions_steady_state(
 
     # Parameters
     T_prime = T_calibration_exo - T_estimation_exo + 1
-    T = 12
+    t = 12
     T_max = T - max(0, T_calibration_exo + T - T_calibration_exo_max)
     G = size(intermediate_consumption)[1]
     S = G

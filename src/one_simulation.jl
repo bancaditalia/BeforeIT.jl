@@ -22,8 +22,8 @@ model = Bit.Model(parameters, initial_conditions)
 Bit.run!(model, 2)
 ```
 """
-function run!(model::AbstractModel,1; parallel = false, shock = NoShock())
-    for _ in 1:T
+function run!(model::AbstractModel, t=1; parallel = false, shock = NoShock())
+    for _ in 1:t
         Bit.step!(model; parallel = parallel, shock = shock)
         Bit.collect_data!(model)
     end
