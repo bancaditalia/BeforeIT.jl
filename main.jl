@@ -11,7 +11,7 @@ T = 20
 for t in 1:T
     println("Step: ", t)
     Bit.step!(model; parallel = true)
-    Bit.update_data!(model)
+    Bit.collect_data!(model)
 end
 
 data = model.data

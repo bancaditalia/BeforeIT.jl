@@ -273,7 +273,7 @@ model.agg.Y[prop.T_prime + t] = sum(model.firms.Y_i)
 
 Bit.finance_insolvent_firms!(model.firms, model.bank, model.agg.P_bar_CF, prop.zeta_b)
 
-Bit.update_data!(model)
+Bit.collect_data!(model)
 
 data = model.data
 

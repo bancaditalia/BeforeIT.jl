@@ -6,7 +6,7 @@
     model = Bit.Model(parameters, initial_conditions)
 
     Bit.step!(model; parallel = false)
-    Bit.update_data!(model)
+    Bit.collect_data!(model)
 
     # import results from matlab run
     output_t1 = matread(joinpath(dir, "../matlab_code/output_t1.mat"))
@@ -34,7 +34,7 @@
     T = 5
     for t in 1:T
         Bit.step!(model; parallel = false)
-        Bit.update_data!(model)
+        Bit.collect_data!(model)
     end
 
     output_t5 = matread(joinpath(dir, "../matlab_code/output_t5.mat"))

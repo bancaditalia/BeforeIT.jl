@@ -16,8 +16,8 @@ model = Bit.Model(parameters, initial_conditions);
 
 # Simulate the baseline model for T quarters, N_reps times, and collect the data
 T = 16
-N_reps = 64
-model_vec_baseline = Bit.ensemblerun(model, T, N_reps);
+n_sims = 64
+model_vec_baseline = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T);
 
 # Now, apply a shock to the model and simulate it again.
 # A shock is simply a function that takes the model and changes some of
@@ -57,7 +57,7 @@ productivity_shock = ProductivityShock(1.02)
 consumption_shock = ConsumptionShock(1.02, 4)
 
 # Simulate the model with the shock
-model_vec_shocked = Bit.ensemblerun(model, T, N_reps; shock = consumption_shock);
+model_vec_shocked = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T; shock = consumption_shock);
 
 # extract the data vectors from the model vectors
 data_vector_baseline = Bit.DataVector(model_vec_baseline);
@@ -66,8 +66,8 @@ data_vector_shocked = Bit.DataVector(model_vec_shocked);
 # Compute mean and standard error of GDP for the baseline and shocked simulations
 mean_gdp_baseline = mean(data_vector_baseline.real_gdp, dims = 2)
 mean_gdp_shocked = mean(data_vector_shocked.real_gdp, dims = 2)
-sem_gdp_baseline = std(data_vector_baseline.real_gdp, dims = 2) / sqrt(N_reps)
-sem_gdp_shocked = std(data_vector_shocked.real_gdp, dims = 2) / sqrt(N_reps)
+sem_gdp_baseline = std(data_vector_baseline.real_gdp, dims = 2) / sqrt(n_sims)
+sem_gdp_shocked = std(data_vector_shocked.real_gdp, dims = 2) / sqrt(n_sims)
 
 # Compute the ratio of shocked to baseline GDP
 gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline

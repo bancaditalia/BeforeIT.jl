@@ -37,13 +37,13 @@ data = Bit.Data()
 # and the fixed interest rate
 new_cb = NewCentralBank(Bit.fields(cb)..., 0.02)
 
-standard_model = Bit.Model((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, data))
+std_model = Bit.Model((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, data))
 new_model = NewModel((w_act, w_inact, firms, bank, new_cb, government, rotw, agg, properties, data))
 
 # After that, we simulate both models
 T = 20
-model_vec_standard = Bit.ensemblerun(standard_model, T, 4);
-model_vec_new = Bit.ensemblerun(new_model, T, 4);
+model_vec_standard = Bit.ensemblerun!((deepcopy(std_model) for _ in 1:4), T);
+model_vec_new = Bit.ensemblerun!((deepcopy(new_model) for _ in 1:4), T);
 
 # And plot the results
 using Plots, StatsPlots
@@ -61,11 +61,11 @@ Bit.@object mutable struct MoreData(Bit.Data) <: Bit.AbstractData
     N_employed::Vector{Int} = Int[]
 end
 
-# We then need to specialize the function `Bit.update_data!`, and, at the same time,
+# We then need to specialize the function `Bit.collect_data!`, and, at the same time,
 # invoke the default tracking because we don't want to lose the information on the other
 # variables
-function Bit.update_data!(m::NewModel2)
-    @invoke Bit.update_data!(m::Bit.AbstractModel)
+function Bit.collect_data!(m::NewModel2)
+    @invoke Bit.collect_data!(m::Bit.AbstractModel)
     push!(m.data.N_employed, sum(m.firms.N_i))
     return m
 end

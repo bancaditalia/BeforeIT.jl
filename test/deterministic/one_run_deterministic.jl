@@ -7,7 +7,7 @@
         model = Bit.Model(parameters, initial_conditions)
         for t in 1:(T - 1)
             Bit.step!(model; parallel = m)
-            Bit.update_data!(model)
+            Bit.collect_data!(model)
         end
         return model
     end

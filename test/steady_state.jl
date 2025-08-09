@@ -8,7 +8,7 @@ model = Bit.Model(parameters, initial_conditions)
 T = 5
 for t in 1:T
     Bit.step!(model; parallel = false)
-    Bit.update_data!(model)
+    Bit.collect_data!(model)
 end
 
 # check that all variables in the "data" struct are constant up to numerical precision
