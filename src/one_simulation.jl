@@ -22,7 +22,7 @@ model = Bit.Model(parameters, initial_conditions)
 Bit.run!(model, 2)
 ```
 """
-function run!(model::AbstractModel, T=1; parallel = false, shock = NoShock())
+function run!(model::AbstractModel, T = 1; parallel = false, shock = NoShock())
     for _ in 1:T
         Bit.step!(model; parallel = parallel, shock = shock)
         Bit.collect_data!(model)
@@ -52,13 +52,13 @@ models = (Bit.Model(parameters, initial_conditions) for _ in 1:10)
 Bit.ensemblerun!(models, 2)
 ```
 """
-function ensemblerun!(models::Vector, T=1; parallel = true, shock = NoShock())
+function ensemblerun!(models::Vector, T = 1; parallel = true, shock = NoShock())
     @maybe_threads parallel for i in 1:length(models)
         run!(models[i], T; shock, parallel)
     end
     return models
 end
-function ensemblerun!(models::Base.Generator, T=1; parallel = true, shock = NoShock())
+function ensemblerun!(models::Base.Generator, T = 1; parallel = true, shock = NoShock())
     if models.iter == AbstractRange
         f, iter = models.f, models.iter
         models = Vector{Base.@default_eltype(models)}(undef, length(models))
@@ -70,5 +70,5 @@ function ensemblerun!(models::Base.Generator, T=1; parallel = true, shock = NoSh
         return models
     else
         return ensemblerun!(collect(models), T; parallel, shock)
-    end    
+    end
 end
