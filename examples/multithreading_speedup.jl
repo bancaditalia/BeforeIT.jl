@@ -23,7 +23,7 @@ Threads.nthreads()
 
 # Then we need to first compile the code not to count compilation time,
 # we can do that just by executing the function one time
-t = 50
+T = 50
 Bit.run!(model, T; parallel = false);
 
 # Let's now compare the performance of single-threading and multi-threading
