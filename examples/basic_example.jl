@@ -20,8 +20,8 @@ fieldnames(typeof(model))
 fieldnames(typeof(model.bank))
 
 # We can run now the model for a number of epochs
-t = 16
-for _ in 1:t
+T = 16
+for _ in 1:T
     Bit.step!(model; parallel = true)
     Bit.collect_data!(model)
 end
@@ -37,7 +37,7 @@ plot(ps..., layout = (3, 3))
 
 # To run multiple monte-carlo repetitions in parallel we can use
 model = (Bit.Model(parameters, initial_conditions) for _ in 1:4)
-model_vec = Bit.ensemblerun!(models, t)
+model_vec = Bit.ensemblerun!(models, T)
 
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command
