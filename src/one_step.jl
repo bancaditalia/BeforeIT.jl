@@ -3,7 +3,7 @@ using CommonSolve: step!
 export step!
 
 """
-    step!(model, t=1; parallel = false, shock = Bit.NoShock())
+    step!(model, T=1; parallel = false, shock = Bit.NoShock())
 
 This function simulates the economic model for `T` steps, updating various components of the model based 
 the interactions between different economic agents. It accepts a `model` object, which encapsulates the
