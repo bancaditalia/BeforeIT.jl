@@ -1,1 +1,6 @@
 *.m linguist-detectable=false
+*.jl text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
