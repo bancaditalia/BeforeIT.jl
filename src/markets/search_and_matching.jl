@@ -27,8 +27,11 @@ function search_and_matching!(model::AbstractModel, parallel = false)
         firms, rotw, prop, agg, w_act, w_inact, gov, bank
     )
 
+    # Create a shared lock for multithreading
+    RETAIL_LOCK = ReentrantLock()
+
     # Loop over all goods (internal and foreign)
-    function perform_market!(g)
+    function perform_market!(g, RETAIL_LOCK)
         # retrieve all indices with good g
         F_g = findall(x -> x == g, G_f)
         S_fg = copy(S_f)
@@ -43,13 +46,13 @@ function search_and_matching!(model::AbstractModel, parallel = false)
             g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
             b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
             C_h, I_h, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
-            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f
+            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f, RETAIL_LOCK
         )
     end
 
     G = size(prop.b_HH_g, 1) # number of goods
     @maybe_threads parallel for g in 1:G
-        perform_market!(g)
+        perform_market!(g, RETAIL_LOCK)
     end
 
     return update_aggregate_variables!(
@@ -293,7 +296,7 @@ Perform the retail market exchange process
 function perform_retail_market!(
         g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g,
         c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g,
-        P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
+        P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f, RETAIL_LOCK
     )
     ###############################
     ######## RETAIL MARKET ########
@@ -382,7 +385,7 @@ function perform_retail_market!(
     P_j_g[g] = sum(@view(C_real_hg[(H + L + 1):(H + L + J)]))
     P_l_g[g] = sum(@view(C_real_hg[(H + 1):(H + L)]))
 
-    @lock ReentrantLock() begin
+    @lock RETAIL_LOCK begin
         @~ C_h .+= b
         @~ I_h .+= d
     end
