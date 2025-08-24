@@ -39,6 +39,10 @@ plot(ps..., layout = (3, 3))
 models = (Bit.Model(parameters, initial_conditions) for _ in 1:4)
 models = Bit.ensemblerun!(models, T)
 
+# or, equivalently  
+model = Bit.Model(parameters, initial_conditions);
+models = Bit.ensemblerun(model, T, 4)
+
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command
 Threads.nthreads()
