@@ -39,7 +39,7 @@ plot(ps..., layout = (3, 3))
 models = (Bit.Model(parameters, initial_conditions) for _ in 1:4)
 models = Bit.ensemblerun!(models, T)
 
-# or, equivalently  
+# or, equivalently
 model = Bit.Model(parameters, initial_conditions);
 models = Bit.ensemblerun(model, T, 4)
 
