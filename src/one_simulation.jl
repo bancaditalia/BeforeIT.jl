@@ -72,3 +72,38 @@ function ensemblerun!(models::Base.Generator, T = 1; parallel = true, shock = No
         return ensemblerun!(collect(models), T; parallel, shock)
     end
 end
+
+"""
+    ensemblerun(model, T, n_sims; shock = NoShock(), parallel = true)
+
+A function that creates `n_sims` copies of a model and runs simulations for `T` steps on each of them.
+
+# Arguments
+- `model::AbstractModel`: The base model to be copied.
+- `T`: The number of steps to perform on each model.
+- `n_sims`: The number of model copies to create and simulate.
+
+# Keyword Arguments
+- `shock`: The shock to apply during simulation (default: `NoShock()`).
+- `parallel`: Whether to run simulations in parallel (default: `true`).
+
+# Returns
+- `models`: A vector containing the `n_sims` updated models after simulation.
+
+# Example
+```julia
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+model = Bit.Model(parameters, initial_conditions)
+models = Bit.ensemblerun(model, 2, 10)  # Create 10 copies and run for 2 steps
+```
+"""
+function ensemblerun(model::AbstractModel, T::Int, n_sims::Int; parallel = true, shock = NoShock())
+    models = Vector{typeof(model)}(undef, n_sims)
+    @maybe_threads parallel for i in 1:n_sims
+        model_copy = deepcopy(model)
+        run!(model_copy, T; shock, parallel)
+        models[i] = model_copy
+    end
+    return models
+end
