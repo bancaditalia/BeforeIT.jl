@@ -26,7 +26,7 @@ for _ in 1:T
     Bit.collect_data!(model)
 end
 
-# Note that we can equivalently run the model for a number of epochs in the single command
+# Note that we can equivalently run the model for a number of steps in the single command
 # `Bit.run!(model)`, but writing the loop explicitely is more instructive.
 # We can then plot any time series stored in the data tracker, for example
 plot(model.data.real_gdp, title = "gdp", titlefont = 10)
@@ -35,13 +35,12 @@ plot(model.data.real_gdp, title = "gdp", titlefont = 10)
 ps = Bit.plot_data(model, quantities = [:real_gdp, :real_household_consumption, :real_government_consumption, :real_capitalformation, :real_exports, :real_imports, :wages, :euribor, :gdp_deflator])
 plot(ps..., layout = (3, 3))
 
-# To run multiple monte-carlo repetitions in parallel we can use
-models = (Bit.Model(parameters, initial_conditions) for _ in 1:4)
+# To run multiple Monte-Carlo repetitions in parallel we can use
+models = (Bit.Model(parameters, initial_conditions) for _ in 1:2)
 models = Bit.ensemblerun!(models, T)
 
-# or, equivalently
-model = Bit.Model(parameters, initial_conditions);
-models = Bit.ensemblerun(model, T, 4)
+# Note that we can equivalently run n_sims models for T steps in the single command
+# `Bit.ensemblerun(model, T, n_sims)`.
 
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command
