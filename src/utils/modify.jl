@@ -3,7 +3,7 @@ function _delete!(structvec, id)
     i = structvec.id_to_index[id]
     for fieldn in fieldnames(typeof(structvec))[3:end]
         vecfield = getfield(structvec, fieldn)
-        vecfield[i], vecfield[end] = vecfield[end], vecfield[i]
+        @inbounds vecfield[i], vecfield[end] = vecfield[end], vecfield[i]
         pop!(vecfield)
     end
     delete!(structvec.id_to_index, id)
@@ -18,10 +18,10 @@ function _push!(structvec, t)
         tfield = getfield(t, fieldn)
         push!(vecfield, tfield)
     end
-    structvec.lastid[] += 1
+    nextlastid = (structvec.lastid[] += 1)
     len = length(getfield(structvec, first(keys(t))))
-    structvec.id_to_index[structvec.lastid[]] = len
-    push!(structvec.index_to_id, structvec.lastid[])
+    structvec.id_to_index[nextlastid] = len
+    push!(structvec.index_to_id, nextlastid)
     return structvec
 end
 
@@ -34,11 +34,13 @@ end
 Base.getindex(structvec::AbstractWorkers, id::Integer) = Worker(id, structvec)
 function Base.getproperty(w::Worker, name::Symbol)
     id, structvec = getfield(w, :id), getfield(w, :structvec)
-    return getfield(structvec, name)[structvec.id_to_index[id]]
+    i = structvec.id_to_index[id]
+    return (@inbounds getfield(structvec, name)[i])
 end
 function Base.setproperty!(w::Worker, name::Symbol, x)
     id, structvec = getfield(w, :id), getfield(w, :structvec)
-    return setindex!(getfield(structvec, name), x, structvec.id_to_index[id])
+    i = structvec.id_to_index[id]
+    return (@inbounds getfield(structvec, name)[i] = x)
 end
 
 struct Firm{S}
