@@ -7,6 +7,7 @@ function _delete!(structvec, id)
         pop!(vecfield)
     end
     delete!(structvec.id_to_index, id)
+    i <= length(structvec.index_to_id) && (structvec.id_to_index[structvec.index_to_id[i]] = i)
     return structvec
 end
 
