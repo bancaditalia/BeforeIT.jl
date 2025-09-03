@@ -10,6 +10,7 @@ using Runic
     include("utils/randpl.jl")
     include("utils/nfvar3_and_estimate.jl")
     include("utils/estimations.jl")
+    include("utils/modify.jl")
 
     # search_and_matching
     include("markets/search_and_matching.jl")
