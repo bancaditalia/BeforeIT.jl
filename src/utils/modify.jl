@@ -8,7 +8,9 @@ function _delete!(structvec, id)
 		pop!(vecfield)
 	end
 	delete!(structvec.id_to_index, id)
-	id != structvec.lastid[] && (structvec.id_to_index[structvec.lastid[]] = i)
+	index_to_id = structvec.index_to_id
+	index_to_id[i], index_to_id[end] = index_to_id[end], index_to_id[i]
+	pop!(index_to_id)
 	return structvec
 end
 
@@ -23,8 +25,11 @@ function _push!(structvec, t)
 	structvec.lastid[] += 1
 	len = length(getfield(structvec, first(keys(t))))
 	structvec.id_to_index[structvec.lastid[]] = len
+	push!(structvec.index_to_id, structvec.lastid[])
 	return structvec
 end
+
+allids(structvec::Union{AbstractFirms, AbstractWorkers}) = structvec.index_to_id
 
 struct Worker{S}
 	id::Int

@@ -29,6 +29,7 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 Bit.@object struct Workers(Object) <: AbstractWorkers
     lastid::Base.RefValue{Int}
     id_to_index::Dict{Int, Int}
+    index_to_id::Vector{Int}
     Y_h::Vector{Bit.typeFloat}
     D_h::Vector{Bit.typeFloat}
     K_h::Vector{Bit.typeFloat}
@@ -96,6 +97,7 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 Bit.@object struct Firms(Object) <: AbstractFirms
     lastid::Base.RefValue{Int}
     id_to_index::Dict{Int, Int}
+    index_to_id::Vector{Int}
     G_i::Vector{Bit.typeInt}
     alpha_bar_i::Vector{Bit.typeFloat}
     beta_i::Vector{Bit.typeFloat}
