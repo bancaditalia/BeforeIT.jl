@@ -8,15 +8,12 @@ function _delete!(structvec, id)
 		pop!(vecfield)
 	end
 	delete!(structvec.id_to_index, id)
-	index_to_id = structvec.index_to_id
-	index_to_id[i], index_to_id[end] = index_to_id[end], index_to_id[i]
-	pop!(index_to_id)
 	return structvec
 end
 
 Base.push!(structvec::Union{AbstractFirms, AbstractWorkers}, t::NamedTuple) = _push!(structvec, t)
 function _push!(structvec, t)
-	fieldnames(typeof(structvec))[3:end] == keys(t) || error("The tuple fields do not match the container fields")
+	fieldnames(typeof(structvec))[4:end] == keys(t) || error("The tuple fields do not match the container fields")
 	for fieldn in keys(t)
 		vecfield = getfield(structvec, fieldn)
 		tfield = getfield(t, fieldn)
