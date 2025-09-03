@@ -1,7 +1,7 @@
 Base.delete!(structvec::Union{AbstractFirms, AbstractWorkers}, id::Integer) = _delete!(structvec, id)
-function _delete!(structvec, id)
+function _delete!(structvec::T, id) where {T}
     i = structvec.id_to_index[id]
-    allfields = Base.tail(Base.tail(fieldnames(typeof(structvec))))
+    allfields = Base.tail(Base.tail(fieldnames(T)))
     for fieldn in allfields
         vecfield = getfield(structvec, fieldn)
         @inbounds vecfield[i], vecfield[end] = vecfield[end], vecfield[i]
