@@ -1,13 +1,12 @@
-
 # Helper functions
 
-function growth_rate(x; dims=1)
-    rate = diff(log.(x), dims=dims)
+function growth_rate(x; dims = 1)
+    rate = diff(log.(x), dims = dims)
     return exp.(rate) .- 1
 end
 
 function compound_quarterly(base, growth)
-    return base .* cumprod(1 .+ growth, dims=1)
+    return base .* cumprod(1 .+ growth, dims = 1)
 end
 
 function prepare_quarterly_annual_level(data, sims, varname, quarter_num, year_num, number_seeds, q)
@@ -91,21 +90,23 @@ function get_predictions_from_sims(sims, real_data, start_date)
 
     # initialise a dictionary with all predictions
     predictions_dict = Dict{String, Any}()
-    
+
     # unique quarter identifier
     quarter_num = Bit.date2num(start_date)
 
     # unique year identifier (always computed the last day of the year)
     year_num = Bit.date2num(DateTime(year(start_date) + 1, 1, 1) - Day(1))
-    
+
     number_seeds = size(sims.real_gdp, 2)
     horizon = size(sims.real_gdp, 1) - 1
 
     q = quarterofyear(start_date)
 
-    variables = ["gdp", "gva", "household_consumption",
-                 "government_consumption", "capitalformation",
-                 "fixed_capitalformation", "exports", "imports"]
+    variables = [
+        "gdp", "gva", "household_consumption",
+        "government_consumption", "capitalformation",
+        "fixed_capitalformation", "exports", "imports",
+    ]
 
     for name in variables
         for version in ["real", "nominal"]
@@ -155,10 +156,14 @@ function get_predictions_from_sims(sims, real_data, start_date)
     end
 
     # Prepare quarters_num and years_num
-    predictions_dict["quarters_num"] = [Bit.date2num(DateTime(year(start_date), month(start_date), 1) + Month(m + 1) - Day(1))
-                                  for m in 0:3:(3 * horizon)]
-    predictions_dict["years_num"] = [Bit.date2num(DateTime(year(start_date) + 1, 1, 1) + Month(month - 1) - Day(1))
-                               for month in 1:12:(horizon / 4 * 12 + floor(q / 4))]
+    predictions_dict["quarters_num"] = [
+        Bit.date2num(DateTime(year(start_date), month(start_date), 1) + Month(m + 1) - Day(1))
+            for m in 0:3:(3 * horizon)
+    ]
+    predictions_dict["years_num"] = [
+        Bit.date2num(DateTime(year(start_date) + 1, 1, 1) + Month(month - 1) - Day(1))
+            for month in 1:12:(horizon / 4 * 12 + floor(q / 4))
+    ]
 
     # Additional variables
     # Note: nominal and real nace10_gva_quarterly and annually are missing here

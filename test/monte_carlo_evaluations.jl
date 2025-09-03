@@ -1,19 +1,18 @@
-
 import BeforeIT as Bit
 
-using MAT, FileIO, Test
+using JLD2, Test
 
 dir = @__DIR__
 
-parameters = matread(joinpath(dir, "../data/austria/parameters/2010Q1.mat"))
-initial_conditions = matread(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
+parameters = load(joinpath(dir, "../data/austria/parameters/2010Q1.jld2"))
+initial_conditions = load(joinpath(dir, "../data/austria/initial_conditions/2010Q1.jld2"))
+
+model = Bit.Model(parameters, initial_conditions)
 
 T = 20
-model = Bit.init_model(parameters, initial_conditions, T)
-data = Bit.init_data(model)
-
 n_sims = 3
-data_vector = Bit.ensemblerun(model, n_sims)
+model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T)
+data_vector = Bit.DataVector(model_vector)
 
 @test length(data_vector) == n_sims
 @test typeof(data_vector) == Vector{Bit.Data}

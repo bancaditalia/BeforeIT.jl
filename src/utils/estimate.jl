@@ -5,10 +5,8 @@ function estimate_next_value(data, type = nothing)
     return alpha * data[end] + beta + epsilon
 end
 
-
-
-function estimate(ydata::Union{Matrix{Float64}, Vector{Float64}})
-    if typeof(ydata) == Vector{Float64}
+function estimate(ydata::Union{Matrix, Vector})
+    if typeof(ydata) <: Vector
         ydata = ydata[:, :]
     end
     var = rfvar3(ydata, 1, ones(size(ydata, 1), 1))
@@ -18,9 +16,8 @@ function estimate(ydata::Union{Matrix{Float64}, Vector{Float64}})
     return alpha, beta, epsilon
 end
 
-
-function estimate_for_calibration_script(ydata::Union{Matrix{Float64}, Vector{Float64}})
-    if typeof(ydata) == Vector{Float64}
+function estimate_for_calibration_script(ydata::Union{Matrix, Vector})
+    if typeof(ydata) <: Vector
         ydata = ydata[:, :]
     end
     var = rfvar3(ydata, 1, ones(size(ydata, 1), 1))
@@ -31,10 +28,9 @@ function estimate_for_calibration_script(ydata::Union{Matrix{Float64}, Vector{Fl
     return alpha, beta, sigma, epsilon
 end
 
-
 # function estimate_with_predictors(ydata::Union{Matrix{Float64}, Vector{Float64}}, exo::Matrix)
 
-#     if typeof(ydata) == Vector{Float64} 
+#     if typeof(ydata) == Vector{Float64}
 #         ydata = ydata[:, :]
 #     end
 
@@ -48,15 +44,13 @@ end
 #     return alpha, beta, gamma_1, gamma_2, gamma_3, epsilon
 # end
 
-
-
 function estimate_taylor_rule(
-    r_bar::Union{Matrix{Float64}, Vector{Float64}},
-    pi_EA::Vector{Float64},
-    gamma_EA::Vector{Float64},
-)
+        r_bar::Union{Matrix, Vector},
+        pi_EA::Vector,
+        gamma_EA::Vector,
+    )
     ydata = r_bar
-    if typeof(ydata) == Vector{Float64}
+    if typeof(ydata) <: Vector
         ydata = ydata[:, :]
     end
 

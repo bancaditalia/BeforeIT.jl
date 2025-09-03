@@ -1,7 +1,8 @@
 
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://bancaditalia.github.io/BeforeIT.jl/stable/)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://bancaditalia.github.io/BeforeIT.jl/dev/)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
-
+[![code style: runic](https://img.shields.io/badge/code_style-%E1%9A%B1%E1%9A%A2%E1%9A%BE%E1%9B%81%E1%9A%B2-black)](https://github.com/fredrikekre/Runic.jl)
 
 <div align='center'>
 <picture>
@@ -68,8 +69,8 @@ parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 20
-model = Bit.init_model(parameters, initial_conditions, T)
-data = Bit.run!(model)
+model = Bit.Model(parameters, initial_conditions)
+Bit.run!(model, T)
 ```
 
 This will simulate the model with the original Austrian parametrisation for 20 quarters and save the results in the `data` object.
@@ -84,7 +85,7 @@ and then try running
 ```julia
 using Plots
 
-plot(data.real_gdp)
+plot(model.data.real_gdp)
 ```
 
 In you want to run the script without opening a REPL, you can copy and paste the above lines into a file,
@@ -120,6 +121,10 @@ julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();'
 julia --proj test/runtests.jl
 ```
 
+### Format the Package
+```bash
+julia --proj format.jl
+```
 
 ## Current Authors
 

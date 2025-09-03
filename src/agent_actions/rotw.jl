@@ -1,6 +1,5 @@
-
 """
-    rotw_import_export(rotw, model, pi_e, epsilon_E, epsilon_I)
+    rotw_import_export(rotw, model)
 
 Calculate the demand for exports and supply of imports of the rest of the world.
 
@@ -14,19 +13,14 @@ Calculate the demand for exports and supply of imports of the rest of the world.
 - `C_d_l`: TDemand for exports of specific product.
 - `Y_m`: Supply of imports per sector.
 - `P_m`: Price of imports per sector.
-
 """
 function rotw_import_export(rotw, model)
-
-    # unpack arguments
-    c_E_g = model.prop.products.c_E_g
-    c_I_g = model.prop.products.c_I_g
-    P_bar_g = model.agg.P_bar_g
-    pi_e = model.agg.pi_e
+    # unpack
+    c_E_g, c_I_g, P_bar_g, pi_e = model.prop.c_E_g, model.prop.c_I_g, model.agg.P_bar_g, model.agg.pi_e
     epsilon_E, epsilon_I = model.agg.epsilon_E, model.agg.epsilon_I
 
-    L = size(rotw.C_d_l, 1)
     # compute demand for export
+    L = length(rotw.C_d_l)
     C_E = exp.(rotw.alpha_E * log(rotw.C_E) + rotw.beta_E + epsilon_E)
     C_d_l = C_E ./ L .* ones(L) .* sum(c_E_g .* P_bar_g) .* (1 + pi_e)
 
@@ -36,17 +30,16 @@ function rotw_import_export(rotw, model)
     P_m = P_bar_g * (1 + pi_e)
 
     return C_E, Y_I, C_d_l, Y_m, P_m
-
 end
 
 """
-    rotw_deposits(rotw, tau_EXPORT)
+    rotw_deposits(rotw, model)
 
 Calculate the deposits of the rest of the world.
 
 # Arguments
 - `rotw`: The rest of the world object.
-- `tau_EXPORT`: The export tax.
+- `model`: The model object.
 
 # Returns
 - `D_RoW`: The deposits of the rest of the world.

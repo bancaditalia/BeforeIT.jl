@@ -1,20 +1,18 @@
-
 import BeforeIT as Bit
 
 parameters = Bit.STEADY_STATE2010Q1.parameters
 initial_conditions = Bit.STEADY_STATE2010Q1.initial_conditions
 
-T = 5
-model = Bit.init_model(parameters, initial_conditions, T)
-data = Bit.init_data(model)
+model = Bit.Model(parameters, initial_conditions)
 
+T = 5
 for t in 1:T
-    println(t)
-    Bit.step!(model; multi_threading = false)
-    Bit.update_data!(data, model)
+    Bit.step!(model; parallel = false)
+    Bit.collect_data!(model)
 end
 
 # check that all variables in the "data" struct are constant up to numerical precision
+data = model.data
 for field in fieldnames(typeof(data))
     fielddata = getfield(data, field)
 
@@ -22,9 +20,9 @@ for field in fieldnames(typeof(data))
 
     if field ∉ sector_variables
         zero = sum(abs.(fielddata .- mean(fielddata)))
-        @assert isapprox(zero, 0.0, atol = 1e-7)
+        @assert isapprox(zero, 0.0, atol = 1.0e-7)
     else
         zero = sum(abs.(fielddata .- mean(fielddata, dims = 1)))
-        @assert isapprox(zero, 0.0, atol = 1e-6)
+        @assert isapprox(zero, 0.0, atol = 1.0e-6)
     end
 end

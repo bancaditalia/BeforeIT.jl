@@ -1,6 +1,5 @@
-
 """
-    search_and_matching!(model, multi_threading::Bool = false)
+    search_and_matching!(model, parallel::Bool = false)
 
 This function performs a search and matching algorithm for firms and for retail markets. It takes in a model object 
 and an optional boolean argument for multi-threading. The function loops over all goods and performs the firms market 
@@ -8,31 +7,31 @@ and retail market operations for each good. Finally, it updates the aggregate va
 
 Args:
 - model: The model object
-- multi_threading: A boolean indicating whether to use multi-threading for the algorithm. Default is false.
+- parallel: A boolean indicating whether to use multi-threading for the algorithm. Default is false.
 
 This function updates the model in-place and does not return any value.
 """
-function search_and_matching!(model::AbstractModel, multi_threading = false)
+function search_and_matching!(model::AbstractModel, parallel = false)
 
-    # unpack models' variables
     w_act, w_inact, firms, gov = model.w_act, model.w_inact, model.firms, model.gov
     bank, rotw, agg, prop = model.bank, model.rotw, model.agg, model.prop
 
     # Initialize variables for firms market
     a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g,
-    P_CF_i_g = initialize_variables_firms_market(firms, rotw, prop)
+        P_CF_i_g = initialize_variables_firms_market(firms, rotw, prop)
 
-    # Initialize variables
+    # Initialize variables for retail market
     I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
-    Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, 
-    P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
-        firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading
+        Q_d_i_g, Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g,
+        P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
+        firms, rotw, prop, agg, w_act, w_inact, gov, bank
     )
 
-    G = size(prop.products.b_HH_g, 1) # number of goods
+    # Create a shared lock for multithreading
+    RETAIL_LOCK = ReentrantLock()
 
     # Loop over all goods (internal and foreign)
-    function perform_market!(i, g)
+    function perform_market!(g, RETAIL_LOCK)
         # retrieve all indices with good g
         F_g = findall(x -> x == g, G_f)
         S_fg = copy(S_f)
@@ -43,38 +42,31 @@ function search_and_matching!(model::AbstractModel, multi_threading = false)
             P_bar_i_g, P_CF_i_g, F_g, S_fg, S_fg_, G_f
         )
 
-        perform_retail_market!(
-            i, g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
+        return perform_retail_market!(
+            g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
             b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
-            C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
-            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f
+            C_h, I_h, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
+            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f, RETAIL_LOCK
         )
     end
 
-    if multi_threading
-        Threads.@threads for (i, gs) in enumerate(chunks(shuffle(1:G); n=Threads.nthreads()))
-            for g in gs
-                perform_market!(i, g)
-            end
-        end
-    else
-        for g in 1:G
-            perform_market!(1, g)
-        end
+    G = size(prop.b_HH_g, 1) # number of goods
+    @maybe_threads parallel for g in 1:G
+        perform_market!(g, RETAIL_LOCK)
     end
 
-    update_aggregate_variables!(
+    return update_aggregate_variables!(
         agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
-        P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g,
+        P_bar_i_g, DM_i_g, C_h, I_h, Q_d_i_g, Q_d_m_g, C_j_g,
         C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
     )
 end
 
 function update_aggregate_variables!(
-    agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
-    P_bar_i_g, DM_i_g, C_h_t, I_h_t, Q_d_i_g, Q_d_m_g, C_j_g, C_l_g,
-    P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
-)
+        agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
+        P_bar_i_g, DM_i_g, C_h, I_h, Q_d_i_g, Q_d_m_g, C_j_g, C_l_g,
+        P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
+    )
 
     I = length(firms)
     H_W = length(w_act)
@@ -88,9 +80,6 @@ function update_aggregate_variables!(
 
     Q_d_i = vec(sum(Q_d_i_g, dims = 2))
     Q_d_m = vec(sum(Q_d_m_g, dims = 2))
-
-    C_h = sum(C_h_t, dims = 2)
-    I_h = sum(I_h_t, dims = 2)
 
     gov.C_j = sum(C_j_g)
     rotw.C_l = sum(C_l_g)
@@ -135,17 +124,17 @@ function update_aggregate_variables!(
     w_act.K_h .+= w_act.I_h
     w_inact.K_h .+= w_inact.I_h
     firms.K_h .+= firms.I_h
-    bank.K_h += bank.I_h
+    return bank.K_h += bank.I_h
 end
 
-function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank, multi_threading)
+function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank)
     # ... Initialize all the variables ...
 
     # change some variables according to arguments of matlab function
-    b_HH_g = agg.P_bar_g .* prop.products.b_HH_g / sum(agg.P_bar_g .* prop.products.b_HH_g)    #prop.products.b_HH_g
-    b_CFH_g = agg.P_bar_g .* prop.products.b_CFH_g / sum(agg.P_bar_g .* prop.products.b_CFH_g) #prop.products.b_CFH_g
-    c_G_g = agg.P_bar_g .* prop.products.c_G_g / sum(agg.P_bar_g .* prop.products.c_G_g)       #prop.products.c_G_g
-    c_E_g = agg.P_bar_g .* prop.products.c_E_g / sum(agg.P_bar_g .* prop.products.c_E_g)       #prop.products.c_E_g
+    b_HH_g = agg.P_bar_g .* prop.b_HH_g / sum(agg.P_bar_g .* prop.b_HH_g)    #prop.b_HH_g
+    b_CFH_g = agg.P_bar_g .* prop.b_CFH_g / sum(agg.P_bar_g .* prop.b_CFH_g) #prop.b_CFH_g
+    c_G_g = agg.P_bar_g .* prop.c_G_g / sum(agg.P_bar_g .* prop.c_G_g)       #prop.c_G_g
+    c_E_g = agg.P_bar_g .* prop.c_E_g / sum(agg.P_bar_g .* prop.c_E_g)       #prop.c_E_g
 
     G = size(agg.P_bar_g, 1)
 
@@ -162,23 +151,23 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     I_d_h = [w_act.I_d_h; w_inact.I_d_h; firms.I_d_h; bank.I_d_h]
 
     # initialise some vectors of variables to zeros
-    Q_d_i_g = zeros(size(firms.Y_i)..., G)
-    Q_d_m_g = zeros(size(rotw.Y_m)..., G)
+    Q_d_i_g = zeros(typeFloat, size(firms.Y_i)..., G)
+    Q_d_m_g = zeros(typeFloat, size(rotw.Y_m)..., G)
 
-    C_h_t = zeros(H, multi_threading ? Threads.nthreads() : 1)
-    I_h_t = zeros(H, multi_threading ? Threads.nthreads() : 1)
+    C_h = zeros(typeFloat, H)
+    I_h = zeros(typeFloat, H)
 
-    C_j_g = zeros(1, G)
-    C_l_g = zeros(1, G)
+    C_j_g = zeros(typeFloat, 1, G)
+    C_l_g = zeros(typeFloat, 1, G)
 
-    P_bar_h_g = zeros(1, G)
-    P_bar_CF_h_g = zeros(1, G)
+    P_bar_h_g = zeros(typeFloat, 1, G)
+    P_bar_CF_h_g = zeros(typeFloat, 1, G)
 
-    P_j_g = zeros(1, G)
-    P_l_g = zeros(1, G)
+    P_j_g = zeros(typeFloat, 1, G)
+    P_l_g = zeros(typeFloat, 1, G)
 
     return I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g,
-        Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
+        Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g,
         P_l_g
 end
 
@@ -186,23 +175,23 @@ function initialize_variables_firms_market(firms, rotw, prop)
     # ... Initialize all the variables ...
 
     # copy product variables for convenience
-    a_sg = prop.products.a_sg
-    b_CF_g = prop.products.b_CF_g
+    a_sg = prop.a_sg
+    b_CF_g = prop.b_CF_g
 
-    G = length(prop.products.b_HH_g) # number of goods
+    G = length(prop.b_HH_g) # number of goods
     I = length(firms)                # number of firms
 
     # join internal and foreign firms arrays
-    P_f = [firms.P_i; rotw.P_m]                     # price array (firms + foreign firms)) 
+    P_f = [firms.P_i; rotw.P_m]                     # price array (firms + foreign firms))
     S_f = [firms.Y_i + firms.S_i; rotw.Y_m]         # size array (firms + foreign firms)
     S_i_ = firms.K_i .* firms.kappa_i .- firms.Y_i  # (from matlab inputs)
     S_f_ = [S_i_; ones(size(rotw.Y_m)) .* Inf]      # Join S_i_ with an array of Infs of size(Y_m)
     G_f = [firms.G_i; collect(1:G)]                 # enlarge vector of final goods with foreign firms
 
-    I_i_g = zeros(I, G)         # output
-    P_CF_i_g = zeros(I, G)
-    DM_i_g = zeros(I, G)
-    P_bar_i_g = zeros(I, G)
+    I_i_g = zeros(typeFloat, I, G)         # output
+    P_CF_i_g = zeros(typeFloat, I, G)
+    DM_i_g = zeros(typeFloat, I, G)
+    P_bar_i_g = zeros(typeFloat, I, G)
 
     return a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g
 end
@@ -211,21 +200,21 @@ end
 Perform the firms market exchange process
 """
 function perform_firms_market!(
-    g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g,
-    F_g, S_fg, S_fg_, G_f,
-)
+        g, firms, a_sg, b_CF_g, P_f, S_f, S_f_, I_i_g, DM_i_g, P_bar_i_g, P_CF_i_g,
+        F_g, S_fg, S_fg_, G_f,
+    )
     ##############################
     ######## FIRMS MARKET ########
     ##############################
-    
+
     DM_d_ig = @view(a_sg[g, firms.G_i]) .* firms.DM_d_i + b_CF_g[g] .* firms.I_d_i
-    DM_nominal_ig = zeros(size(DM_d_ig))
+    DM_nominal_ig = zeros(typeFloat, size(DM_d_ig))
 
     # firms that have demand for good "g" participate as buyers
     I_g = findall(x -> x > 0.0, DM_d_ig)
 
     # keep firms that have positive stock of good "g"
-    filter!(i -> S_fg[i] > 0.0, F_g)
+    ufilter!(i -> S_fg[i] > 0.0, F_g)
 
     # continue exchanges until either demand or supply terminates
 
@@ -235,7 +224,7 @@ function perform_firms_market!(
     while !isempty(I_g) && !iszero(F_g_active)
 
         # select buyers at random
-        shuffle!(I_g)
+        fshuffle!(I_g)
         for i in I_g
             # select a random firm according to the probabilities
             e = rand(F_g_active)
@@ -254,20 +243,20 @@ function perform_firms_market!(
                 iszero(F_g_active) && break
             end
         end
-        filter!(i -> DM_d_ig[i] > 0.0, I_g)
+        ufilter!(i -> DM_d_ig[i] > 0.0, I_g)
     end
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
         F_g_ = findall(x -> x == g, G_f)
-        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
+        ufilter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
         while !isempty(I_g) && !iszero(F_g_active)
 
-            shuffle!(I_g)
+            fshuffle!(I_g)
             for i in I_g
                 e = rand(F_g_active)
                 f = F_g_[e]
@@ -284,7 +273,7 @@ function perform_firms_market!(
                     iszero(F_g_active) && break
                 end
             end
-            filter!(i -> DM_d_ig_[i] > 0.0, I_g)
+            ufilter!(i -> DM_d_ig_[i] > 0.0, I_g)
         end
     end
 
@@ -297,16 +286,18 @@ function perform_firms_market!(
 
     @~ P_bar_i_g[:, g] .= pos.(DM_nominal_ig .* a ./ c)
     @~ P_CF_i_g[:, g] .= pos.(DM_nominal_ig .* b ./ c)
+
+    return
 end
 
 """
 Perform the retail market exchange process
 """
 function perform_retail_market!(
-    i, g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g,
-    c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h_t, I_h_t, C_j_g, C_l_g, P_bar_h_g,
-    P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
-)
+        g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g,
+        c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g,
+        P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f, RETAIL_LOCK
+    )
     ###############################
     ######## RETAIL MARKET ########
     ###############################
@@ -316,17 +307,17 @@ function perform_retail_market!(
         c_E_g[g] .* rotw.C_d_l
         c_G_g[g] .* gov.C_d_j
     ]
-    C_real_hg = zeros(size(C_d_hg))
+    C_real_hg = zeros(typeFloat, size(C_d_hg))
     H_g = findall(x -> x > 0.0, C_d_hg)
 
-    filter!(i -> S_fg[i] > 0.0, F_g)
+    ufilter!(i -> S_fg[i] > 0.0, F_g)
 
     # weights according to size and price
     F_g_active = create_weighted_sampler(P_f, S_f, F_g)
 
     while !isempty(H_g) && !iszero(F_g_active)
 
-        shuffle!(H_g)
+        fshuffle!(H_g)
         for h in H_g
             e = rand(F_g_active)
             f = F_g[e]
@@ -343,20 +334,20 @@ function perform_retail_market!(
                 iszero(F_g_active) && break
             end
         end
-        filter!(h -> C_d_hg[h] > 0.0, H_g)
+        ufilter!(h -> C_d_hg[h] > 0.0, H_g)
     end
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
         F_g_ = findall(x -> x == g, G_f)
-        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
+        ufilter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
 
         while !isempty(H_g) && !iszero(F_g_active)
 
-            shuffle!(H_g)
+            fshuffle!(H_g)
             for h in H_g
                 e = rand(F_g_active)
                 f = F_g_[e]
@@ -373,7 +364,7 @@ function perform_retail_market!(
                     iszero(F_g_active) && break
                 end
             end
-            filter!(h -> C_d_hg_[h] > 0.0, H_g)
+            ufilter!(h -> C_d_hg_[h] > 0.0, H_g)
         end
     end
 
@@ -385,9 +376,6 @@ function perform_retail_market!(
     @~ Q_d_i_g[:, g] .= @view(S_f[1:I]) .- @view(S_fg[1:I])
     @~ Q_d_m_g[:, g] .= @view(S_f[(I + 1):end]) .- @view(S_fg[(I + 1):end])
 
-    @~ C_h_t[:, i] .+= b
-    @~ I_h_t[:, i] .+= d
-
     C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
     C_l_g[g] = sum(@~ c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
 
@@ -396,6 +384,13 @@ function perform_retail_market!(
 
     P_j_g[g] = sum(@view(C_real_hg[(H + L + 1):(H + L + J)]))
     P_l_g[g] = sum(@view(C_real_hg[(H + 1):(H + L)]))
+
+    @lock RETAIL_LOCK begin
+        @~ C_h .+= b
+        @~ I_h .+= d
+    end
+
+    return
 end
 
 function compute_price_size_weights(P_f, S_f, F_g)
@@ -413,8 +408,7 @@ function compute_price_size_weights(P_f, S_f, F_g)
 end
 
 function create_weighted_sampler(P_f, S_f, F_g)
-    isempty(F_g) && return FixedSizeWeightVector(1)
+    isempty(F_g) && return WeightVectors.FixedSizeWeightVector(0)
     w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
-    sampler = FixedSizeWeightVector(w_cum_f_)
-    return sampler
+    return WeightVectors.FixedSizeWeightVector(w_cum_f_)
 end

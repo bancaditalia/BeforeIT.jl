@@ -1,4 +1,3 @@
-
 import BeforeIT as Bit
 
 using Revise, MAT, Test
@@ -8,16 +7,12 @@ dir = @__DIR__
 parameters = matread(joinpath(dir, "../data/steady_state/parameters/2010Q1.mat"))
 initial_conditions = matread(joinpath(dir, "../data/steady_state/initial_conditions/2010Q1.mat"))
 
-T = 1
-model = Bit.init_model(parameters, initial_conditions, T;)
-data = Bit.init_data(model)
-
+model = Bit.Model(parameters, initial_conditions)
 
 println(Bit.get_accounting_identity_banks(model))
 
-
 """
-Testing an entire epoch of the model
+Testing an entire step of the model
 """
 
 ####### GENERAL ESTIMATIONS #######
@@ -53,13 +48,12 @@ Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i = Bit.firms_e
     model.agg.P_bar_HH,
     model.agg.P_bar_CF,
     model.agg.P_bar_g,
-    prop.products.a_sg,
+    prop.a_sg,
     gamma_e,
     pi_e,
 )
 
 model.firms.P_i .= new_P_i
-
 
 ####### CREDIT MARKET, LABOUR MARKET AND PRODUCTION #######
 
@@ -77,11 +71,8 @@ model.firms.N_i .= temp_N_i
 model.firms.w_i .= Bit.wages_firms(model.firms, Q_s_i)
 model.firms.Y_i .= Bit.production(model.firms, Q_s_i)
 
-
 # update wages for workers
 Bit.update_workers_wages!(model.w_act, model.firms.w_i)
-
-
 
 ####### CONSUMPTION AND INVESTMENT BUDGET #######
 
@@ -148,23 +139,21 @@ Bit.cons_inv_budget_bowner!(
     pi_e,
 )
 
-
 ####### GOVERNMENT SPENDING BUDGET, IMPORT-EXPORT BUDGET #######
 
 # compute government expenditure
-Bit.government_expenditure!(model.gov, prop.products.c_G_g, model.agg.P_bar_g, pi_e)
+Bit.government_expenditure!(model.gov, prop.c_G_g, model.agg.P_bar_g, pi_e)
 
-# compute demand for export and supply of imports 
+# compute demand for export and supply of imports
 Bit.import_export!(
     model.rotw,
     model.agg.P_bar_g,
-    prop.products.c_E_g,
-    prop.products.c_I_g,
+    prop.c_E_g,
+    prop.c_I_g,
     pi_e,
     epsilon_E,
     epsilon_I,
 )
-
 
 ####### GENERAL SEARCH AND MATCHING FOR ALL GOODS #######
 
@@ -179,7 +168,7 @@ Bit.search_and_matching!(
     prop,
     DM_d_i,
     I_d_i;
-    multi_threading = false,
+    parallel = false,
 )
 
 ####### FINAL GENERAL ACCOUNTING #######
@@ -192,8 +181,8 @@ model.agg.pi_[prop.T_prime + t], model.agg.P_bar =
 model.agg.P_bar_g .= Bit.sector_specific_priceindex(model.firms, model.rotw, prop.G)
 
 # update CF index and HH (CPI) index
-model.agg.P_bar_CF = sum(prop.products.b_CF_g .* model.agg.P_bar_g)
-model.agg.P_bar_HH = sum(prop.products.b_HH_g .* model.agg.P_bar_g)
+model.agg.P_bar_CF = sum(prop.b_CF_g .* model.agg.P_bar_g)
+model.agg.P_bar_HH = sum(prop.b_HH_g .* model.agg.P_bar_g)
 
 # update firms stocks
 Bit.update_firms_stocks!(model.firms)
@@ -271,8 +260,7 @@ model.firms.D_i .+= DD_i
 
 model.firms.L_i .= (1 - prop.theta) * model.firms.L_i + DL_i
 
-model.firms.E_i .= Bit.equity_firms(model.firms, prop.products.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF)
-
+model.firms.E_i .= Bit.equity_firms(model.firms, prop.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF)
 
 # update net credit/debit position of rest of the world
 model.rotw.D_RoW -= Bit.new_deposits_rotw(model.rotw, prop.tau_EXPORT)
@@ -285,7 +273,9 @@ model.agg.Y[prop.T_prime + t] = sum(model.firms.Y_i)
 
 Bit.finance_insolvent_firms!(model.firms, model.bank, model.agg.P_bar_CF, prop.zeta_b)
 
-Bit.update_data!(data, model, prop, 1)
+Bit.collect_data!(model)
+
+data = model.data
 
 println("Identities")
 println(Bit.get_accounting_identities(data))
@@ -298,7 +288,7 @@ println(zero)
 # compare nominal_gdp to total expenditure
 zero = sum(
     data.nominal_gdp - data.nominal_household_consumption - data.nominal_government_consumption -
-    data.nominal_capitalformation - data.nominal_exports + data.nominal_imports,
+        data.nominal_capitalformation - data.nominal_exports + data.nominal_imports,
 )
 println(zero)
 # @assert isapprox(zero, 0.0, atol = 1e-7)

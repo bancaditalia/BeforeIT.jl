@@ -1,7 +1,6 @@
-
 import BeforeIT as Bit
 
-using MAT, FileIO, Dates
+using MAT, Dates
 
 dir = @__DIR__
 
@@ -19,14 +18,16 @@ max_calibration_date = DateTime(2016, 12, 31)
 estimation_date = DateTime(1996, 12, 31)
 
 # Calibrate on a specific quarter
-calibration_date = DateTime(2010, 03, 31)#-Dates.Month(3)
+calibration_date = DateTime(2010, 03, 31) #-Dates.Month(3)
 parameters, initial_conditions = Bit.get_params_and_initial_conditions(
-    (calibration = calibration_data,
-    figaro = figaro,
-    data = data,
-    ea = ea,
-    max_calibration_date = max_calibration_date,
-    estimation_date = estimation_date), calibration_date;
+    (
+        calibration = calibration_data,
+        figaro = figaro,
+        data = data,
+        ea = ea,
+        max_calibration_date = max_calibration_date,
+        estimation_date = estimation_date,
+    ), calibration_date;
     scale = 0.001,
 )
 

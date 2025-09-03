@@ -1,25 +1,19 @@
-
 function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
-    # unpack non-firm variables
-    P_bar_HH = model.agg.P_bar_HH
-    P_bar_CF = model.agg.P_bar_CF
-    P_bar_g = model.agg.P_bar_g
-    tau_SIF = model.prop.tau_SIF
-    a_sg = model.prop.products.a_sg
+    P_bar_HH, P_bar_CF, P_bar_g = model.agg.P_bar_HH, model.agg.P_bar_CF, model.agg.P_bar_g
+    tau_SIF, a_sg = model.prop.tau_SIF, model.prop.a_sg
 
     # compute the cost-push inflation
-    term = dropdims(sum(a_sg[:, firms.G_i] .* P_bar_g, dims=1), dims=1)
-    
-    labour_costs = (1+tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
+    term = vec(sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1))
+
+    labour_costs = (1 + tau_SIF) .* firms.w_bar_i ./ firms.alpha_bar_i .* (P_bar_HH ./ firms.P_i .- 1)
     material_costs = 1 ./ firms.beta_i .* (term ./ firms.P_i .- 1)
     capital_costs = firms.delta_i ./ firms.kappa_i .* (P_bar_CF ./ firms.P_i .- 1)
     cost_push_inflation = labour_costs .+ material_costs .+ capital_costs
     return cost_push_inflation
 end
 
-
 function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
-    
+
     # target investments in capital
     I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
 
@@ -32,17 +26,12 @@ function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
 end
 
 function expected_deposits_capital_loans(firms::AbstractFirms, model::AbstractModel, Pi_e_i)
-    # unpack non-firm variables
-    tau_FIRM = model.prop.tau_FIRM
-    theta = model.prop.theta
-    theta_DIV = model.prop.theta_DIV
-    P_bar_CF = model.agg.P_bar_CF
-    pi_e = model.agg.pi_e
+    tau_FIRM, theta, theta_DIV = model.prop.tau_FIRM, model.prop.theta, model.prop.theta_DIV
+    P_bar_CF, pi_e = model.agg.P_bar_CF, model.agg.pi_e
 
     # expected deposits
-    DD_e_i =
-        Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .- (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i) # expected future cash flow
-    
+    DD_e_i = Pi_e_i .- theta .* firms.L_i .- tau_FIRM .* max.(0, Pi_e_i) .- (theta_DIV .* (1 .- tau_FIRM)) .* max.(0, Pi_e_i)
+
     # expected capital
     K_e_i = P_bar_CF .* (1 + pi_e) .* firms.K_i
 
@@ -59,7 +48,6 @@ Calculate the expectations and decisions of firms.
 That is: compute firm quantity, price, investment and intermediate-goods, 
 employment decisions, expected profits, and desired/expected loans and capital.
 
-
 # Arguments
 - `firms`: Firms object
 - `model`: Model object
@@ -74,18 +62,15 @@ employment decisions, expected profits, and desired/expected loans and capital.
 - `K_e_i`: Vector of expected capital
 - `L_e_i`: Vector of expected loans
 - `P_i`: Vector of  prices
-
 """
 function firms_expectations_and_decisions(firms, model)
-    # unpack variables not related to firms
-    gamma_e = model.agg.gamma_e
-    pi_e = model.agg.pi_e
+    gamma_e, pi_e = model.agg.gamma_e, model.agg.pi_e
 
     # target quantity
     Q_s_i = firms.Q_d_i * (1 + gamma_e)
 
     # cost put inflation
-    pi_c_i = cost_push_inflation(firms, model) 
+    pi_c_i = cost_push_inflation(firms, model)
 
     # price setting
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e)
@@ -93,12 +78,12 @@ function firms_expectations_and_decisions(firms, model)
     # target investments in capital, intermediate goods to purchase and employment
     I_d_i, DM_d_i, N_d_i = desired_capital_material_employment(firms, Q_s_i)
 
-    # expected profits 
-    Pi_e_i = firms.Pi_i .* (1 + pi_e) * (1 + gamma_e)
+    # expected profits
+    Pi_e_i = firms.Pi_i .* (1 + pi_e) .* (1 + gamma_e)
 
     # expected deposits, capital and loans
     DD_e_i, K_e_i, L_e_i = expected_deposits_capital_loans(firms, model, Pi_e_i)
-    
+
     # target loans
     DL_d_i = max.(0, -DD_e_i - firms.D_i)
 
@@ -115,7 +100,6 @@ Calculate the wages set by firms.
 
 # Returns
 - `w_i`: Vector of wages
-
 """
 function firms_wages(firms::AbstractFirms)
 
@@ -124,10 +108,10 @@ function firms_wages(firms::AbstractFirms)
     w_i =
         firms.w_bar_i .*
         min.(
-            1.5,
-            min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
+        1.5,
+        min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
             (firms.N_i .* firms.alpha_bar_i),
-        )
+    )
     return w_i
 end
 
@@ -145,18 +129,14 @@ Calculate the production of firms.
 The production `Y_i` is computed using a Leontief technology.
 """
 function firms_production(firms::AbstractFirms)
-    Q_s_i = firms.Q_s_i
+    Q_s_i, alpha_bar_i, kappa_i, beta_i = firms.Q_s_i, firms.alpha_bar_i, firms.kappa_i, firms.beta_i
+    K_i, N_i, M_i = firms.K_i, firms.N_i, firms.M_i
+
     # compute productivity of labour
-    alpha_i =
-        firms.alpha_bar_i .*
-        min.(
-            1.5,
-            min.(Q_s_i, min.(firms.K_i .* firms.kappa_i, firms.M_i .* firms.beta_i)) ./
-            (firms.N_i .* firms.alpha_bar_i),
-        )
+    alpha_i = alpha_bar_i .* min.(1.5, min.(Q_s_i, min.(K_i .* kappa_i, M_i .* beta_i)) ./ (N_i .* alpha_bar_i))
 
     # compute production function of firms (Leontief technology)
-    Y_i = leontief_production(Q_s_i, firms.N_i, alpha_i, firms.K_i, firms.kappa_i, firms.M_i, firms.beta_i)
+    Y_i = leontief_production(Q_s_i, N_i, alpha_i, K_i, kappa_i, M_i, beta_i)
 
     return Y_i
 
@@ -221,11 +201,7 @@ where:
 """
 function firms_profits(firms::AbstractFirms, model::AbstractModel)
 
-    # unpack variables not related to firms
-    P_bar_HH = model.agg.P_bar_HH
-    tau_SIF = model.prop.tau_SIF
-    r = model.bank.r
-    r_bar = model.cb.r_bar
+    P_bar_HH, tau_SIF, r, r_bar = model.agg.P_bar_HH, model.prop.tau_SIF, model.bank.r, model.cb.r_bar
 
     in_sales = firms.P_i .* firms.Q_i .+ firms.P_i .* firms.DS_i
     in_deposits = r_bar .* pos(firms.D_i)
@@ -277,16 +253,8 @@ where:
 """
 function firms_deposits(firms, model)
 
-    # unpack arguments not related to firms
-    tau_FIRM = model.prop.tau_FIRM
-    tau_SIF = model.prop.tau_SIF
-    theta_DIV = model.prop.theta_DIV
-    theta = model.prop.theta
-
-    r = model.bank.r
-    r_bar = model.cb.r_bar
-    P_bar_HH = model.agg.P_bar_HH
-
+    tau_FIRM, tau_SIF, theta_DIV = model.prop.tau_FIRM, model.prop.tau_SIF, model.prop.theta_DIV
+    theta, r, r_bar, P_bar_HH = model.prop.theta, model.bank.r, model.cb.r_bar, model.agg.P_bar_HH
 
     sales = firms.P_i .* firms.Q_i
     labour_cost = -(1 + tau_SIF) * firms.w_i .* firms.N_i * P_bar_HH
@@ -296,9 +264,9 @@ function firms_deposits(firms, model)
     corporate_tax = -tau_FIRM .* pos.(firms.Pi_i)
     dividend_payments = -theta_DIV .* (1 - tau_FIRM) .* pos.(firms.Pi_i)
     interest_payments = -r .* (firms.L_i .+ pos.(-firms.D_i))
-    interest_received = +r_bar .* pos.(firms.D_i)
+    interest_received = r_bar .* pos.(firms.D_i)
     investment_cost = -firms.P_CF_i .* firms.I_i
-    new_credit = +firms.DL_i
+    new_credit = firms.DL_i
     debt_installment = -theta .* firms.L_i
 
     DD_i =
@@ -351,10 +319,7 @@ where:
 """
 function firms_equity(firms, model)
 
-    # unpack variables not related to firms
-    a_sg = model.prop.products.a_sg
-    P_bar_g = model.agg.P_bar_g
-    P_bar_CF = model.agg.P_bar_CF
+    a_sg, P_bar_g, P_bar_CF = model.prop.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF
 
     E_i =
         firms.D_i + firms.M_i .* sum(a_sg[:, firms.G_i] .* P_bar_g, dims = 1)' .+ firms.P_i .* firms.S_i +
@@ -422,7 +387,7 @@ function firms_stocks(firms)
     # update firms intermediate goods and materials
     M_i = firms.M_i - firms.Y_i ./ firms.beta_i + firms.DM_i
 
-    # compute stock of consumer goods (DS_i = production - sales) 
+    # compute stock of consumer goods (DS_i = production - sales)
     DS_i = firms.Y_i - firms.Q_i
     S_i = firms.S_i + DS_i
 

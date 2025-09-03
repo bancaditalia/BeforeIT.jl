@@ -1,14 +1,13 @@
-
 import BeforeIT as Bit
 
-using MAT, Random
+using Random
 
 @testset "estimation functions" begin
     dir = @__DIR__
 
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    model = Bit.init_model(parameters, initial_conditions, 1)
+    model = Bit.Model(parameters, initial_conditions)
 
     Y, T_prime = model.agg.Y, model.prop.T_prime
 
@@ -35,9 +34,9 @@ using MAT, Random
 
     rho, r_star, xi_pi, xi_gamma, pi_star = Bit.estimate_taylor_rule(r_bar, pi_EA, gamma_EA)
 
-    @test isapprox(rho, rho_e, rtol = 1e-5)
-    @test isapprox(r_star, r_star_e, rtol = 1e-5)
-    @test isapprox(xi_pi, xi_pi_e, rtol = 1e-5)
-    @test isapprox(xi_gamma, xi_gamma_e, rtol = 1e-5)
-    @test isapprox(pi_star, pi_star_e, rtol = 1e-5)
+    @test isapprox(rho, rho_e, rtol = 1.0e-5)
+    @test isapprox(r_star, r_star_e, rtol = 1.0e-5)
+    @test isapprox(xi_pi, xi_pi_e, rtol = 1.0e-5)
+    @test isapprox(xi_gamma, xi_gamma_e, rtol = 1.0e-5)
+    @test isapprox(pi_star, pi_star_e, rtol = 1.0e-5)
 end

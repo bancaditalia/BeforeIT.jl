@@ -1,72 +1,109 @@
-
 """
-    run!(model; shock = NoShock())
+    run!(model, T; shock = NoShock(), parallel = false)
 
 Run a single simulation based on the provided `model`. 
-The simulation runs for a number of epochs specified by `model.prop.T`.
+The simulation runs for a number of steps `T`.
 
 # Arguments
 - `model::AbstractModel`: The model configuration used for the simulation.
+- `T`: the number of steps to perform.
 
 # Returns
-- `data::Data`: The data collected during the simulation.
+- `model::AbstractModel`: The model updated during the simulation.
 
 # Details
-The function initializes the data using `Bit.init_data(model)`, then iteratively updates the model and data
-for each epoch using `Bit.step!(model)` and `Bit.update_data!(data, model)` respectively.
+The function iteratively updates the model and data for each step using `Bit.step!(model)`.
 
 # Example
 ```julia
-model = Bit.init_model(parameters, initial_conditions, T)
-data = run!(model)
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+model = Bit.Model(parameters, initial_conditions)
+Bit.run!(model, 2)
+```
 """
-function run!(model::AbstractModel; multi_threading = false, shock = NoShock())
-
-    data = Bit.init_data(model)
-
-    T = model.prop.T
-
+function run!(model::AbstractModel, T = 1; parallel = false, shock = NoShock())
     for _ in 1:T
-        Bit.step!(model; multi_threading = multi_threading, shock = shock)
-        Bit.update_data!(data, model)
+        Bit.step!(model; parallel = parallel, shock = shock)
+        Bit.collect_data!(model)
     end
-
-    return data
+    return model
 end
 
 """
-    ensemblerun(model, n_sims; shock = NoShock(), multi_threading = true)
+    ensemblerun!(models, T=1; shock = NoShock(), parallel = true)
 
-A function that runs `n_sims` simulations in parallel with multiple threading and returns a vector of 
-data objects of dimension `n_sims`.
+A function that runs the models simulations for `T` steps on each of them.
 
 # Arguments
-- `model`: The model configuration used to simulate.
-- `n_sims`: The number of simulations to run in parallel.
+- `models`: The models to simulate. The models can either be in a `Vector` or
+  `Generator`.
+
+- `T`: the number of steps to perform.
 
 # Returns
-- `data_vector`: A vector containing the data objects collected during each simulation.
+- `models`: The updated models.
+
+# Example
+```julia
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+models = (Bit.Model(parameters, initial_conditions) for _ in 1:10)
+Bit.ensemblerun!(models, 2)
+```
 """
-function ensemblerun(model::AbstractModel, n_sims; multi_threading = true, shock = NoShock())
-
-    data_vector = Vector{Bit.Data}(undef, n_sims)
-
-    if multi_threading
-        Threads.@threads for i in 1:n_sims
-            model_i = deepcopy(model)
-            data = run!(model_i; shock = shock)
-            data_vector[i] = data
-        end
-    else
-        for i in 1:n_sims
-            model_i = deepcopy(model)
-            data = run!(model_i; shock = shock)
-            data_vector[i] = data
-        end
+function ensemblerun!(models::Vector, T = 1; parallel = true, shock = NoShock())
+    @maybe_threads parallel for i in 1:length(models)
+        run!(models[i], T; shock, parallel)
     end
+    return models
+end
+function ensemblerun!(models::Base.Generator, T = 1; parallel = true, shock = NoShock())
+    if models.iter == AbstractRange
+        f, iter = models.f, models.iter
+        models = Vector{Base.@default_eltype(models)}(undef, length(models))
+        @maybe_threads parallel for i in 1:length(models)
+            model = f(iter[i])
+            run!(model, T; shock, parallel)
+            models[i] = model
+        end
+        return models
+    else
+        return ensemblerun!(collect(models), T; parallel, shock)
+    end
+end
 
-    # transform the vector of data objects into a DataVector
-    data_vector = Bit.DataVector(data_vector)
+"""
+    ensemblerun(model, T, n_sims; shock = NoShock(), parallel = true)
 
-    return data_vector
+A function that creates `n_sims` copies of a model and runs simulations for `T` steps on each of them.
+
+# Arguments
+- `model::AbstractModel`: The base model to be copied.
+- `T`: The number of steps to perform on each model.
+- `n_sims`: The number of model copies to create and simulate.
+
+# Keyword Arguments
+- `shock`: The shock to apply during simulation (default: `NoShock()`).
+- `parallel`: Whether to run simulations in parallel (default: `true`).
+
+# Returns
+- `models`: A vector containing the `n_sims` updated models after simulation.
+
+# Example
+```julia
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+model = Bit.Model(parameters, initial_conditions)
+models = Bit.ensemblerun(model, 2, 10)  # Create 10 copies and run for 2 steps
+```
+"""
+function ensemblerun(model::AbstractModel, T::Int, n_sims::Int; parallel = true, shock = NoShock())
+    models = Vector{typeof(model)}(undef, n_sims)
+    @maybe_threads parallel for i in 1:n_sims
+        model_copy = deepcopy(model)
+        run!(model_copy, T; shock, parallel)
+        models[i] = model_copy
+    end
+    return models
 end

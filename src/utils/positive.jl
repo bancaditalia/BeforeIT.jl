@@ -1,4 +1,3 @@
-export pos, neg, round
 """
     pos(vector) -> vector
 
@@ -98,7 +97,3 @@ end
 function matlab_round(x)
     return Base.round(x, RoundNearestTiesUp)
 end
-
-# function round.(x)
-#     return Base.round.(x + SMALL_FLOAT)
-# end    

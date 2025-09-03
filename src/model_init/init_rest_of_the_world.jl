@@ -1,23 +1,18 @@
-
 """
-    init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+    RestOfTheWorld(parameters, initial_conditions)
 
 Initialize the rest of the world (rotw) agent.
 
 # Arguments
 - `parameters`: The parameters.
 - `initial_conditions`: The initial conditions.
-- `typeInt`: The integer type to be used (default: `Int64`).
-- `typeFloat`: The floating-point type to be used (default: `Float64`).
 
 # Returns
 - rotw::RestOfTheWorld: The initialized rest of the world agent.
-- rotw_args::Tuple: The arguments used to initialize the rest of the world agent.
-
 """
-function init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
-    L = typeInt(parameters["L"])
-    G = typeInt(parameters["G"])
+function RestOfTheWorld(parameters, initial_conditions)
+    L = Int(parameters["L"])
+    G = Int(parameters["G"])
     alpha_E = parameters["alpha_E"]
     beta_E = parameters["beta_E"]
     sigma_E = parameters["sigma_E"]
@@ -31,7 +26,7 @@ function init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = 
     alpha_Y_EA = parameters["alpha_Y_EA"]
     beta_Y_EA = parameters["beta_Y_EA"]
     sigma_Y_EA = parameters["sigma_Y_EA"]
-    T_prime = typeInt(parameters["T_prime"])
+    T_prime = Int(parameters["T_prime"])
 
     Y_EA = initial_conditions["Y_EA"]
     gamma_EA = typeFloat(0.0)
@@ -40,43 +35,17 @@ function init_rotw(parameters, initial_conditions; typeInt = Int64, typeFloat = 
     Y_I = Vector{typeFloat}(vec(initial_conditions["Y_I"]))
     C_E = Vector{typeFloat}(vec(initial_conditions["C_E"]))
 
-    C_d_l = Vector{typeFloat}(zeros(L))
+    C_d_l = zeros(typeFloat, L)
     C_l = zero(typeFloat)
     P_l = zero(typeFloat)
-    Y_m = Vector{typeFloat}(zeros(G))
-    Q_m = Vector{typeFloat}(zeros(G))
-    Q_d_m = Vector{typeFloat}(zeros(G))
-    P_m = Vector{typeFloat}(zeros(G))
+    Y_m = zeros(typeFloat, G)
+    Q_m = zeros(typeFloat, G)
+    Q_d_m = zeros(typeFloat, G)
+    P_m = zeros(typeFloat, G)
 
-    rotw_args = (
-        alpha_E,
-        beta_E,
-        sigma_E,
-        alpha_I,
-        beta_I,
-        sigma_I,
-        Y_EA,
-        gamma_EA,
-        pi_EA,
-        alpha_pi_EA,
-        beta_pi_EA,
-        sigma_pi_EA,
-        alpha_Y_EA,
-        beta_Y_EA,
-        sigma_Y_EA,
-        D_RoW,
-        Y_I[T_prime],
-        C_E[T_prime],
-        C_d_l,
-        C_l,
-        Y_m,
-        Q_m,
-        Q_d_m,
-        P_m,
-        P_l,
+    return RestOfTheWorld(
+        alpha_E, beta_E, sigma_E, alpha_I, beta_I, sigma_I, Y_EA, gamma_EA,
+        pi_EA, alpha_pi_EA, beta_pi_EA, sigma_pi_EA, alpha_Y_EA, beta_Y_EA, sigma_Y_EA, D_RoW,
+        Y_I[T_prime], C_E[T_prime], C_d_l, C_l, Y_m, Q_m, Q_d_m, P_m, P_l
     )
-
-    rotw = RestOfTheWorld(rotw_args...)
-
-    return rotw, rotw_args
 end

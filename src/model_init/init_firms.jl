@@ -1,32 +1,27 @@
-
 """
-    init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+    Firms(parameters, initial_conditions)
 
 Initialize firms with given parameters and initial conditions.
 
 # Arguments
 - `parameters`: The parameters for initializing the firms.
 - `initial_conditions`: The initial conditions for the firms.
-- `typeInt`: (optional) The integer type to be used. Default is `Int64`.
-- `typeFloat`: (optional) The floating-point type to be used. Default is `Float64`.
 
 # Returns
 - firms::Firms: The initialized firms.
-- firms_args::Tuple: The arguments used to initialize the firms.
-
 """
-function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat = Float64)
+function Firms(parameters, initial_conditions)
 
     # unpacking useful parameters
     I_s = Vector{typeInt}(vec(parameters["I_s"]))
-    I = typeInt(sum(parameters["I_s"])) # number of firms
-    G = typeInt(parameters["G"])
+    I = Int(sum(parameters["I_s"])) # number of firms
+    G = Int(parameters["G"])
     tau_SIF = parameters["tau_SIF"]
     mu = parameters["mu"]
     theta_DIV = parameters["theta_DIV"]
     tau_INC = parameters["tau_INC"]
     tau_FIRM = parameters["tau_FIRM"]
-    
+
     sb_other = initial_conditions["sb_other"]
     r_bar = initial_conditions["r_bar"]
     D_I = initial_conditions["D_I"]
@@ -50,8 +45,8 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
 
     G_i = zeros(typeInt, I)
     for g in 1:G
-        i = typeInt(sum(parameters["I_s"][1:(g - 1)]))
-        j = typeInt(parameters["I_s"][g])
+        i = Int(sum(parameters["I_s"][1:(g - 1)]))
+        j = Int(parameters["I_s"][g])
         G_i[(i + 1):(i + j)] .= typeInt(g)
     end
 
@@ -65,7 +60,6 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
         tau_Y_i[i] = parameters["tau_Y_s"][g]
         tau_K_i[i] = parameters["tau_K_s"][g]
     end
-
 
     N_i = zeros(typeInt, I)
     for g in 1:G
@@ -94,7 +88,6 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
     end
 
     # firms
-    ids = Vector{typeInt}(1:I)
     w_i = zeros(typeFloat, I) # initial wages, dummy variable for now, really initialised at runtime
     I_i = zeros(typeFloat, I) # initial investments, dummy variable for now, set at runtime
     Q_i = zeros(typeFloat, I) # goods sold, dummy variable for now, set at runtime
@@ -102,12 +95,12 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
     C_d_h = zeros(typeFloat, I)
     I_d_h = zeros(typeFloat, I)
 
-    C_h = zeros(typeFloat, length(ids))
-    I_h = zeros(typeFloat, length(ids))
-    P_bar_i = zeros(typeFloat, length(ids))
-    P_CF_i = zeros(typeFloat, length(ids))
-    DS_i = zeros(typeFloat, length(ids))
-    DM_i = zeros(typeFloat, length(ids))
+    C_h = zeros(typeFloat, I)
+    I_h = zeros(typeFloat, I)
+    P_bar_i = zeros(typeFloat, I)
+    P_CF_i = zeros(typeFloat, I)
+    DS_i = zeros(typeFloat, I)
+    DM_i = zeros(typeFloat, I)
 
     K_h = K_H * Y_h # TODO: K_h[(H_W + H_inact + 1):(H_W + H_inact + I)]
     D_h = D_H * Y_h # TODO: D_h[(H_W + H_inact + 1):(H_W + H_inact + I)]
@@ -123,10 +116,11 @@ function init_firms(parameters, initial_conditions; typeInt = Int64, typeFloat =
     N_d_i = zeros(typeInt, I)
     Pi_e_i = zeros(typeFloat, I)
 
-    firms_args = (G_i, alpha_bar_i, beta_i, kappa_i, w_i, w_bar_i, delta_i, tau_Y_i, tau_K_i, N_i, Y_i, Q_i, Q_d_i, 
-                      P_i, S_i, K_i, M_i, L_i, pi_bar_i, D_i, Pi_i, V_i, I_i, E_i, P_bar_i, P_CF_i, DS_i, DM_i, DL_i, 
-                      DL_d_i, K_e_i, L_e_i, Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h)
-
-    firms = Firms(firms_args...)
-    return firms, firms_args
+    return Firms(
+        G_i, alpha_bar_i, beta_i, kappa_i, w_i, w_bar_i, delta_i, tau_Y_i, tau_K_i, N_i, Y_i, Q_i, Q_d_i,
+        P_i, S_i, K_i, M_i, L_i, pi_bar_i, D_i, Pi_i, V_i, I_i, E_i, P_bar_i, P_CF_i, DS_i, DM_i, DL_i,
+        DL_d_i, K_e_i, L_e_i, Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h
+    )
 end
+
+eachfirm(model::AbstractModel) = eachindex(model.firms.P_i)

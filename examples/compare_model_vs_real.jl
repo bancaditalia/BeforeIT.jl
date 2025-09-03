@@ -1,13 +1,11 @@
 import BeforeIT as Bit
 
-using MAT, FileIO, Plots, StatsPlots, Dates
+using Plots, StatsPlots, Dates
 
 # load data from 1996
-
 real_data = Bit.ITALY_CALIBRATION.data
 
 # load predictions from 2010Q1
-
 model = load("data/italy/abm_predictions/2015Q1.jld2")["model_dict"]
 
 # Plot real gdp
@@ -49,6 +47,5 @@ p5 = Bit.plot_model_vs_real(model, real_data, "real_exports_quarterly")
 p6 = Bit.plot_model_vs_real(model, real_data, "real_imports_quarterly")
 
 plot(p1, p2, p3, p4, p5, p6, layout = (3, 2), legend = false)
-
 
 # translate the above from Matlab to Julia

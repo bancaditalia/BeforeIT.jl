@@ -1,8 +1,6 @@
-
 import BeforeIT as Bit
 
 using Test, Random
-
 
 function Random.randn(n1::Int, n2::Int)
     return ones(n1, n2)

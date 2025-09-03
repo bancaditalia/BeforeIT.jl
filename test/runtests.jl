@@ -1,11 +1,9 @@
-
 import BeforeIT as Bit
 
 using Test
+using Runic
 
 @testset "BeforeIT.jl Tests" begin
-    
-    include("package_sanity_tests.jl")
 
     #utils
     include("utils/positive.jl")
@@ -30,6 +28,19 @@ using Test
     # shock tests
     include("shocks/shocks.jl")
 
+    @testset "Quality (Aqua.jl)" begin
+        include("package_sanity_tests.jl")
+    end
+
     # WARNING: this should be the last include
     include("deterministic/runtests_deterministic.jl")
+
+    @testset "Format (Runic.jl)" begin
+        isformat = Bit.format_package(check = true)
+        @test isformat == true
+        if isformat == false
+            @warn "Formatting failed: use `import BeforeIT as Bit; using Runic; Bit.format_package()` to run the formatter"
+        end
+    end
+
 end

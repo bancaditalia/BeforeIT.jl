@@ -1,11 +1,10 @@
 @testset "initialize deterministic" begin
 
     dir = @__DIR__
-    T = 3
 
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    model = Bit.init_model(parameters, initial_conditions, 1)
+    model = Bit.Model(parameters, initial_conditions)
 
     properties = model.prop
 
@@ -19,28 +18,28 @@
     for fieldname in fieldnames(typeof(model.firms))
 
         if fieldname in [
-            :w_i,
-            :Q_i,
-            :I_i,
-            :E_i,
-            :P_bar_i,
-            :P_CF_i,
-            :DS_i,
-            :DM_i,
-            :DL_i,
-            :DL_d_i,
-            :K_e_i,
-            :L_e_i,
-            :Q_s_i,
-            :I_d_i,
-            :DM_d_i,
-            :N_d_i,
-            :Pi_e_i,
-            :C_d_h,
-            :I_d_h,
-            :C_h,
-            :I_h,
-        ]
+                :w_i,
+                :Q_i,
+                :I_i,
+                :E_i,
+                :P_bar_i,
+                :P_CF_i,
+                :DS_i,
+                :DM_i,
+                :DL_i,
+                :DL_d_i,
+                :K_e_i,
+                :L_e_i,
+                :Q_s_i,
+                :I_d_i,
+                :DM_d_i,
+                :N_d_i,
+                :Pi_e_i,
+                :C_d_h,
+                :I_d_h,
+                :C_h,
+                :I_h,
+            ]
             continue
         end
         julia_var = getfield(model.firms, fieldname)
@@ -88,7 +87,5 @@
             matlab_var = init_vars[string(fn)]
             @test isapprox(julia_var, matlab_var')
         end
-
     end
-
 end

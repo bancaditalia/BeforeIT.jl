@@ -1,69 +1,43 @@
-
-abstract type AbstractData end
-
-"""
-    @data(AV = Vector{Float64}, AM = Matrix{Float64})
-
-A macro that defines default types for data structures used in the code. 
-
-# Arguments
-- `AV::Type`: The default type for vectors. Defaults to `Vector{Float64}`.
-- `AM::Type`: The default type for matrices. Defaults to `Matrix{Float64}`.
-
-# Usage
-This macro can be used to standardize the types of vectors and matrices across the codebase, ensuring consistency and reducing the need for repetitive type declarations.
-"""
-macro data(AV = Vector{Float64}, AM = Matrix{Float64})
-    return esc(quote
-        nominal_gdp::$AV
-        real_gdp::$AV
-        nominal_gva::$AV
-        real_gva::$AV
-        nominal_household_consumption::$AV
-        real_household_consumption::$AV
-        nominal_government_consumption::$AV
-        real_government_consumption::$AV
-        nominal_capitalformation::$AV
-        real_capitalformation::$AV
-        nominal_fixed_capitalformation::$AV
-        real_fixed_capitalformation::$AV
-        nominal_fixed_capitalformation_dwellings::$AV
-        real_fixed_capitalformation_dwellings::$AV
-        nominal_exports::$AV
-        real_exports::$AV
-        nominal_imports::$AV
-        real_imports::$AV
-        operating_surplus::$AV
-        compensation_employees::$AV
-        wages::$AV
-        taxes_production::$AV
-        gdp_deflator_growth_ea::$AV
-        real_gdp_ea::$AV
-        euribor::$AV
-        nominal_sector_gva::$AM
-        real_sector_gva::$AM
-    end)
-end
+abstract type AbstractData <: AbstractObject end
 
 # Define the Data struct
-struct Data{T, AV <: AbstractVector{T}, AM <: AbstractMatrix{T}} <: AbstractData
-    @data AV AM
+Bit.@object struct Data(Object) <: AbstractData
+    collection_time::Vector{Bit.typeInt} = Bit.typeInt[]
+    nominal_gdp::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gdp::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_gva::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gva::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_household_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_household_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_government_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_government_consumption::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_fixed_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_fixed_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.Bit.typeFloat[]
+    nominal_exports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_exports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_imports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_imports::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    operating_surplus::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    compensation_employees::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    wages::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    taxes_production::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    gdp_deflator_growth_ea::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    real_gdp_ea::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    euribor::Vector{Bit.typeFloat} = Bit.typeFloat[]
+    nominal_sector_gva::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
+    real_sector_gva::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
 end
 
 # Define the DataVector struct
-struct DataVector{D<:AbstractData}
+struct DataVector{D <: AbstractData}
     vector::Vector{D}
 end
-
-# define the function "iterate" for the DataVector struct
-function Base.iterate(dv::DataVector, state = 1)
-    if state > length(dv.vector)
-        return nothing
-    else
-        return dv.vector[state], state + 1
-    end
-end
-
+DataVector(model::AbstractModel) = DataVector([model.data])
+DataVector(model_vec::Vector{<:AbstractModel}) = DataVector([model.data for model in model_vec])
 
 # Define the getproperty function for the DataVector struct
 # This function allows for the extraction of fields from the Data struct
@@ -77,26 +51,55 @@ function Base.getproperty(dv::DataVector, name::Symbol)
         return getfield(dv, name)
     end
 end
-
-# define a "length" function for the DataVector struct
-function Base.length(dv::DataVector)
-    return length(dv.vector)
-end
-
+Base.getindex(dv::DataVector, i::Int) = Base.getindex(getfield(dv, :vector), i)
+Base.length(dv::DataVector) = Base.length(getfield(dv, :vector))
+Base.iterate(dv::DataVector) = Base.iterate(getfield(dv, :vector))
+Base.iterate(dv::DataVector, state) = Base.iterate(getfield(dv, :vector), state)
 
 """
-Initialise the data arrays
+    collect_data!(m)
+
+Update the data in the model `m` with the current state of the model. Returns
+the updated model `m`.
+
+If one wants to track more data of the model of what is provided by default, one needs to
+extend all the pipeline for data tracking, which involves to
+
+1. Create a new model struct inheriting from `Bit.Model` with `Bit.@object`
+1. Create a new data struct (e.g. `ExtendedData`) inheriting from `Bit.Data` with `Bit.@object`
+2. Implement a new function `ExtendedData()` which just allocates empty containers for the
+   data tracking
+3. Extend `collect_data!` by extending its components (`allocate_new_data!`, `update_data_init!`
+   and `update_data_step!`)
+
+Note that you can use @invoke in point 3. to use the standard functions so that you don't need
+to copy-paste the default functions, for example:
+
+```julia
+function Bit.update_data_step!(m::NewModel)
+    @invoke Bit.update_data_step!(m::AbstractModel)
+    # your new data tracking operations...
+end
+```
 """
-function init_data(m)
-    p = m.prop
-    T = p.T
-    d = Data([zeros(T + 1) for _ in 1:25]..., zeros(T + 1, p.G), zeros(T + 1, p.G))
-    _update_data_init!(d, m)
-    return d
+function collect_data!(m::AbstractModel)
+    allocate_new_data!(m)
+    t = length(m.data.collection_time)
+    t == 1 && return update_data_init!(m)
+    return update_data_step!(m)
 end
 
-function _update_data_init!(d, m)
-    p = m.prop
+function allocate_new_data!(m::AbstractModel)
+    d = m.data
+    for f in fieldnames(typeof(d))[1:26]
+        push!(getfield(d, f), 0.0)
+    end
+    push!(d.nominal_sector_gva, zeros(m.prop.G))
+    return push!(d.real_sector_gva, zeros(m.prop.G))
+end
+
+function update_data_init!(m::AbstractModel)
+    d, p = m.data, m.prop
 
     tot_Y_h = sum(m.w_act.Y_h) + sum(m.w_inact.Y_h) + sum(m.firms.Y_h) + m.bank.Y_h
     d.nominal_gdp[1] =
@@ -124,57 +127,29 @@ function _update_data_init!(d, m)
     d.real_imports[1] = d.nominal_imports[1]
     d.operating_surplus[1] = sum(
         m.firms.Y_i .* (1 .- ((1 + p.tau_SIF) .* m.firms.w_bar_i ./ m.firms.alpha_bar_i + 1 ./ m.firms.beta_i)) .-
-        m.firms.tau_K_i .* m.firms.Y_i .- m.firms.tau_Y_i .* m.firms.Y_i,
+            m.firms.tau_K_i .* m.firms.Y_i .- m.firms.tau_Y_i .* m.firms.Y_i,
     )
     d.compensation_employees[1] = (1 + p.tau_SIF) * sum(m.firms.w_bar_i .* m.firms.N_i)
     d.wages[1] = sum(m.firms.w_bar_i .* m.firms.N_i)
     d.taxes_production[1] = sum(m.firms.tau_K_i .* m.firms.Y_i)
 
     for g in 1:(p.G)
-        d.nominal_sector_gva[1, g] = sum(
+        d.nominal_sector_gva[1][g] = sum(
             m.firms.Y_i[m.firms.G_i .== g] .*
-            ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .- 1 ./ m.firms.beta_i[m.firms.G_i .== g]),
+                ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .- 1 ./ m.firms.beta_i[m.firms.G_i .== g]),
         )
     end
 
-    d.real_sector_gva[1, :] = d.nominal_sector_gva[1, :]
+    d.real_sector_gva[1][:] = d.nominal_sector_gva[1][:]
     d.euribor[1] = m.cb.r_bar
     d.gdp_deflator_growth_ea[1] = m.rotw.pi_EA
     d.real_gdp_ea[1] = m.rotw.Y_EA
-
-    return d
+    d.collection_time[1] = 1
+    return m
 end
 
-"""
-    update_data!(d, m)
-
-Update the data `d` with the model `m`.
-
-# Arguments
-- `d`: The data structure to be updated.
-- `m`: The model used to update the data.
-
-# Returns
-- Nothing. The function updates the data structure `d` in place.
-
-# Example
-
-```julia
-data = Bit.init_data(model)
-step!(model)
-Bit.update_data!(data, model)
-```
-"""
-function update_data!(d, m)
-    p = m.prop
-    t = m.agg.t
-
-    # rise an error if t is not smaller than or equal to T
-    if t > p.T + 1
-        throw(ArgumentError("t is greater than T+1, the maximum size of the data arrays."))
-    end
-
-
+function update_data_step!(m::AbstractModel)
+    d, p, t = m.data, m.prop, length(m.data.collection_time)
     tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
     tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
 
@@ -221,30 +196,28 @@ function update_data!(d, m)
     d.real_imports[t] = sum(m.rotw.Q_m)
     d.operating_surplus[t] = sum(
         m.firms.P_i .* m.firms.Q_i + m.firms.P_i .* m.firms.DS_i -
-        (1 + p.tau_SIF) .* m.firms.w_i .* m.firms.N_i .* m.agg.P_bar_HH -
-        1 ./ m.firms.beta_i .* m.firms.P_bar_i .* m.firms.Y_i - m.firms.tau_Y_i .* m.firms.P_i .* m.firms.Y_i -
-        m.firms.tau_K_i .* m.firms.P_i .* m.firms.Y_i,
+            (1 + p.tau_SIF) .* m.firms.w_i .* m.firms.N_i .* m.agg.P_bar_HH -
+            1 ./ m.firms.beta_i .* m.firms.P_bar_i .* m.firms.Y_i - m.firms.tau_Y_i .* m.firms.P_i .* m.firms.Y_i -
+            m.firms.tau_K_i .* m.firms.P_i .* m.firms.Y_i,
     )
     d.compensation_employees[t] = (1 + p.tau_SIF) * sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
     d.wages[t] = sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
     d.taxes_production[t] = sum(m.firms.tau_K_i .* m.firms.Y_i .* m.firms.P_i)
 
     for g in 1:(p.G)
-        d.nominal_sector_gva[t, g] =
-            sum(
-                (1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) .* m.firms.P_i[m.firms.G_i .== g] .*
-                m.firms.Y_i[m.firms.G_i .== g],
-            ) - sum(
-                1.0 ./ m.firms.beta_i[m.firms.G_i .== g] .* m.firms.P_bar_i[m.firms.G_i .== g] .*
-                m.firms.Y_i[m.firms.G_i .== g],
-            )
-        d.real_sector_gva[t, g] = sum(
-            m.firms.Y_i[m.firms.G_i .== g] .*
-            ((1 .- m.firms.tau_Y_i[m.firms.G_i .== g]) - 1.0 ./ m.firms.beta_i[m.firms.G_i .== g]),
+        g_i = m.firms.G_i .== g
+        d.nominal_sector_gva[t][g] =
+            sum((1 .- @view(m.firms.tau_Y_i[g_i])) .* @view(m.firms.P_i[g_i]) .* m.firms.Y_i[g_i]) -
+            sum(1.0 ./ @view(m.firms.beta_i[g_i]) .* @view(m.firms.P_bar_i[g_i]) .* @view(m.firms.Y_i[g_i]))
+        d.real_sector_gva[t][g] = sum(
+            @view(m.firms.Y_i[g_i]) .*
+                ((1 .- @view(m.firms.tau_Y_i[g_i])) - 1.0 ./ @view(m.firms.beta_i[g_i])),
         )
     end
 
     d.euribor[t] = m.cb.r_bar
     d.gdp_deflator_growth_ea[t] = m.rotw.pi_EA
     d.real_gdp_ea[t] = m.rotw.Y_EA
+    d.collection_time[t] = m.agg.t
+    return m
 end

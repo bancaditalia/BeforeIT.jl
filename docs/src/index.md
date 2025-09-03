@@ -35,8 +35,8 @@ parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
 T = 20
-model = Bit.initialise_model(parameters, initial_conditions, T)
-data = Bit.run!(model)
+model = Bit.Model(parameters, initial_conditions)
+data = Bit.run!(model, T)
 ```
 
 To plot the results of the simulation, you can use the `Plots` package
