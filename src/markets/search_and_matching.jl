@@ -408,7 +408,7 @@ function compute_price_size_weights(P_f, S_f, F_g)
 end
 
 function create_weighted_sampler(P_f, S_f, F_g)
-    isempty(F_g) && return WeightVectors.FixedSizeWeightVector(0)
+    isempty(F_g) && return FixedSizeWeightVector(0)
     w_cum_f_ = compute_price_size_weights(P_f, S_f, F_g)
-    return WeightVectors.FixedSizeWeightVector(w_cum_f_)
+    return FixedSizeWeightVector(w_cum_f_)
 end
