@@ -21,7 +21,7 @@ function _push!(structvec, t)
         push!(vecfield, tfield)
     end
     nextlastid = (structvec.lastid[] += 1)
-    len = length(getfield(structvec, first(allfields)))
+    len = length(getfield(structvec, first(keys(t))))
     structvec.id_to_index[nextlastid] = len
     push!(structvec.index_to_id, nextlastid)
     return structvec
