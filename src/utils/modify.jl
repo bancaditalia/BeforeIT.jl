@@ -15,8 +15,7 @@ end
 Base.push!(structvec::Union{AbstractFirms, AbstractWorkers}, t::NamedTuple) = _push!(structvec, t)
 function _push!(structvec, t)
     length(t) != nfields(structvec) - 3 && error("The tuple fields do not match the container fields")
-    allfields = Base.tail(Base.tail(Base.tail(fieldnames(typeof(t)))))
-    for fieldn in allfields
+    for fieldn in keys(t)
         vecfield = getfield(structvec, fieldn)
         tfield = getfield(t, fieldn)
         push!(vecfield, tfield)
