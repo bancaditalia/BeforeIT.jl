@@ -1,12 +1,23 @@
+
+using Unrolled
+
+@generated function struct2tuple(x::T) where T
+    n = fieldcount(T)
+    exprs = [:(getfield(x, $(i))) for i in 1:n]
+    return Expr(:tuple, exprs...)
+end
+
+function remove!(a, i)
+    @inbounds a[i], a[end] = a[end], a[i]
+    pop!(a)
+    return
+end
+
 Base.delete!(structvec::Union{AbstractFirms, AbstractWorkers}, id::Integer) = _delete!(structvec, id)
 function _delete!(structvec::T, id) where {T}
     i = structvec.id_to_index[id]
-    allfields = Base.tail(Base.tail(fieldnames(T)))
-    for fieldn in allfields
-        vecfield = getfield(structvec, fieldn)
-        @inbounds vecfield[i], vecfield[end] = vecfield[end], vecfield[i]
-        pop!(vecfield)
-    end
+    removei! = a -> remove!(a, i)
+    unrolled_map(removei!, struct2tuple(structvec)[3:end])
     delete!(structvec.id_to_index, id)
     i <= length(structvec.index_to_id) && (@inbounds structvec.id_to_index[structvec.index_to_id[i]] = i)
     return structvec
@@ -15,11 +26,7 @@ end
 Base.push!(structvec::Union{AbstractFirms, AbstractWorkers}, t::NamedTuple) = _push!(structvec, t)
 function _push!(structvec, t)
     length(t) != nfields(structvec) - 3 && error("The tuple fields do not match the container fields")
-    for fieldn in keys(t)
-        vecfield = getfield(structvec, fieldn)
-        tfield = getfield(t, fieldn)
-        push!(vecfield, tfield)
-    end
+    unrolled_map(push!, struct2tuple(structvec)[4:end], t)
     nextlastid = (structvec.lastid[] += 1)
     len = length(getfield(structvec, first(keys(t))))
     structvec.id_to_index[nextlastid] = len
