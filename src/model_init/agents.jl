@@ -27,9 +27,9 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `I_h`: Realised investment
 """
 Bit.@object struct Workers(Object) <: AbstractWorkers
-    lastid::Base.RefValue{Int}
-    id_to_index::Dict{Int, Int}
-    ID::Vector{Int}
+    lastid::Base.RefValue{UInt}
+    id_to_index::Dict{UInt, Int}
+    ID::Vector{UInt}
     Y_h::Vector{Bit.typeFloat}
     D_h::Vector{Bit.typeFloat}
     K_h::Vector{Bit.typeFloat}
@@ -95,9 +95,9 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `D_h`: Deposits of the owner of the firms
 """
 Bit.@object struct Firms(Object) <: AbstractFirms
-    lastid::Base.RefValue{Int}
-    id_to_index::Dict{Int, Int}
-    ID::Vector{Int}
+    lastid::Base.RefValue{UInt}
+    id_to_index::Dict{UInt, Int}
+    ID::Vector{UInt}
     G_i::Vector{Bit.typeInt}
     alpha_bar_i::Vector{Bit.typeFloat}
     beta_i::Vector{Bit.typeFloat}
