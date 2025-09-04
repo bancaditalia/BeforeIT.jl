@@ -13,7 +13,7 @@ function remove!(a, i)
 end
 
 Base.delete!(structvec::Union{AbstractFirms, AbstractWorkers}, id::Integer) = _delete!(structvec, id)
-function _delete!(structvec::T, id) where {T}
+function _delete!(structvec, id)
     i = structvec.id_to_index[id]
     removei! = a -> remove!(a, i)
     unrolled_map(removei!, struct2tuple(structvec)[3:end])
@@ -23,8 +23,8 @@ function _delete!(structvec::T, id) where {T}
 end
 
 Base.push!(structvec::Union{AbstractFirms, AbstractWorkers}, t::NamedTuple) = _push!(structvec, t)
-function _push!(structvec, t)
-    length(t) != nfields(structvec) - 3 && error("The tuple fields do not match the container fields")
+function _push!(structvec::T, t) where {T}
+    fieldnames(T)[4:end] != keys(t) && error("The tuple fields do not match the container fields")
     unrolled_map(push!, struct2tuple(structvec)[4:end], t)
     nextlastid = (structvec.lastid[] += 1)
     len = length(getfield(structvec, first(keys(t))))
