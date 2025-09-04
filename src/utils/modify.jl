@@ -33,43 +33,26 @@ end
 
 allids(structvec::Union{AbstractFirms, AbstractWorkers}) = structvec.index_to_id
 
-abstract type AbstractWorker <: AbstractObject end
-struct Worker{S} <: AbstractWorker
+struct Agent{S}
     id::Int
     structvec::S
 end
-Base.getindex(structvec::AbstractWorkers, id::Integer) = Worker(id, structvec)
-function Base.getproperty(w::Worker, name::Symbol)
-    id, structvec = getfield(w, :id), getfield(w, :structvec)
+Base.getindex(structvec::Union{AbstractFirms, AbstractWorkers}, id::Integer) = Agent(id, structvec)
+function Base.getproperty(a::Agent, name::Symbol)
+    id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = structvec.id_to_index[id]
     return (@inbounds getfield(structvec, name)[i])
 end
-function Base.setproperty!(w::Worker, name::Symbol, x)
-    id, structvec = getfield(w, :id), getfield(w, :structvec)
+function Base.setproperty!(a::Agent, name::Symbol, x)
+    id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = structvec.id_to_index[id]
     return (@inbounds getfield(structvec, name)[i] = x)
 end
 
-abstract type AbstractFirm <: AbstractObject end
-struct Firm{S} <: AbstractFirm
-    id::Int
-    structvec::S
-end
-Base.getindex(structvec::AbstractFirms, id::Integer) = Firm(id, structvec)
-function Base.getproperty(f::Firm, name::Symbol)
-    id, structvec = getfield(f, :id), getfield(f, :structvec)
-    return getfield(structvec, name)[structvec.id_to_index[id]]
-end
-function Base.setproperty!(f::Firm, name::Symbol, x)
-    id, structvec = getfield(f, :id), getfield(f, :structvec)
-    return setindex!(getfield(structvec, name), x, structvec.id_to_index[id])
-end
-
-function Base.show(io::IO, x::Union{Firm, Worker})
+function Base.show(io::IO, x::Agent{S}) where {S}
     id, structvec = getfield(x, :id), getfield(x, :structvec)
     i = structvec.id_to_index[id]
-    T = typeof(x)
     fields = NamedTuple(y => getfield(structvec, y)[i] for y in fieldnames(typeof(structvec))[3:end])
     fields = merge((id = id,), fields)
-    return println("$(nameof(T))$fields")
+    return println("Agent{$(nameof(S))}$fields")
 end
