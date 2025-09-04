@@ -7,6 +7,12 @@ const AgentsTypes = Union{AbstractFirms, AbstractWorkers}
     exprs = [:(getfield(x, $(i))) for i in 1:n]
     return Expr(:tuple, exprs...)
 end
+@generated function struct2namedtuple(x::T) where {T}
+    names = fieldnames(T)
+    vals = [:(getfield(x, $(i))) for i in 1:length(names)]
+    nt_type = Expr(:curly, :NamedTuple, Expr(:tuple, QuoteNode.(names)...))
+    return Expr(:call, nt_type, Expr(:tuple, vals...))
+end
 
 function remove!(a, i)
     @inbounds a[i], a[end] = a[end], a[i]
@@ -49,6 +55,10 @@ function Base.setproperty!(a::Agent, name::Symbol, x)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = structvec.id_to_index[id]
     return (@inbounds getfield(structvec, name)[i] = x)
+end
+function getfields(a::Agent)
+    nt = struct2namedtuple(getfield(a, :structvec)[4:end]
+    return Base.tail(Base.tail(Base.tail(nt)))
 end
 id(a::Agent) = getfield(a, :id)
 
