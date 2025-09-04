@@ -21,7 +21,7 @@ function Base.delete!(structvec::Union{AbstractFirms, AbstractWorkers}, id::Inte
     return structvec
 end
 
-function Base.push!(structvec::T, t) where {T <: Union{AbstractFirms, AbstractWorkers}}
+function Base.push!(structvec::T, t::NamedTuple) where {T <: Union{AbstractFirms, AbstractWorkers}}
     fieldnames(T)[4:end] != keys(t) && error("The tuple fields do not match the container fields")
     unrolled_map(push!, struct2tuple(structvec)[4:end], t)
     nextlastid = (structvec.lastid[] += 1)
