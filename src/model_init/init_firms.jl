@@ -116,9 +116,9 @@ function Firms(parameters, initial_conditions)
     N_d_i = zeros(typeInt, I)
     Pi_e_i = zeros(typeFloat, I)
 
-    id_to_index = Dict{Int, Int}(id => id for id in 1:I)
-    index_to_id = collect(1:I)
-    lastid = Ref(I)
+    id_to_index = Dict{Int, Int}(UInt(id) => id for id in 1:I)
+    index_to_id = collect(1:UInt(I))
+    lastid = Ref(UInt(I))
     return Firms(
         lastid, id_to_index, index_to_id,
         G_i, alpha_bar_i, beta_i, kappa_i, w_i, w_bar_i, delta_i, tau_Y_i, tau_K_i, N_i, Y_i, Q_i, Q_d_i,
