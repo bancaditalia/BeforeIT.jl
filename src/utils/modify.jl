@@ -1,6 +1,6 @@
 using Unrolled
 
-const AgentTypes = Union{AbstractFirms, AbstractWorkers}
+const AgentsTypes = Union{AbstractFirms, AbstractWorkers}
 
 @generated function struct2tuple(x::T) where {T}
     n = fieldcount(T)
