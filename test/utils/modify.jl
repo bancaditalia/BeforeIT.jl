@@ -2,7 +2,7 @@
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     model = Bit.Model(parameters, initial_conditions)
-    id = 1
+    id = UInt(1)
     agent = model.w_act[id]
     agent.Y_h = agent.Y_h + 1
     delete!(model.w_act, 1)
