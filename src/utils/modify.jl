@@ -33,7 +33,7 @@ end
 allids(structvec::Union{AbstractFirms, AbstractWorkers}) = structvec.ID
 
 struct Agent{S}
-    id::Int
+    id::UInt
     structvec::S
 end
 Base.getindex(structvec::Union{AbstractFirms, AbstractWorkers}, id::Integer) = Agent(id, structvec)
