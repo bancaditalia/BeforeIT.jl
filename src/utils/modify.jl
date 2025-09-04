@@ -17,7 +17,7 @@ function Base.delete!(structvec::Union{AbstractFirms, AbstractWorkers}, id::Inte
     removei! = a -> remove!(a, i)
     unrolled_map(removei!, struct2tuple(structvec)[3:end])
     delete!(structvec.id_to_index, id)
-    i <= length(structvec.index_to_id) && (@inbounds structvec.id_to_index[structvec.index_to_id[i]] = i)
+    i <= length(structvec.ID) && (structvec.id_to_index[(@inbounds structvec.ID[i])] = i)
     return structvec
 end
 
@@ -25,13 +25,12 @@ function Base.push!(structvec::T, t) where {T <: Union{AbstractFirms, AbstractWo
     fieldnames(T)[4:end] != keys(t) && error("The tuple fields do not match the container fields")
     unrolled_map(push!, struct2tuple(structvec)[4:end], t)
     nextlastid = (structvec.lastid[] += 1)
-    len = length(getfield(structvec, first(keys(t))))
-    structvec.id_to_index[nextlastid] = len
-    push!(structvec.index_to_id, nextlastid)
+    push!(structvec.ID, nextlastid)
+    structvec.id_to_index[nextlastid] = length(structvec.ID)
     return structvec
 end
 
-allids(structvec::Union{AbstractFirms, AbstractWorkers}) = structvec.index_to_id
+allids(structvec::Union{AbstractFirms, AbstractWorkers}) = structvec.ID
 
 struct Agent{S}
     id::Int
@@ -48,6 +47,7 @@ function Base.setproperty!(a::Agent, name::Symbol, x)
     i = structvec.id_to_index[id]
     return (@inbounds getfield(structvec, name)[i] = x)
 end
+id(a::Agent) = getfield(a, :id)
 
 function Base.show(io::IO, x::Agent{S}) where {S}
     id, structvec = getfield(x, :id), getfield(x, :structvec)
