@@ -1,7 +1,6 @@
-
 using Unrolled
 
-@generated function struct2tuple(x::T) where T
+@generated function struct2tuple(x::T) where {T}
     n = fieldcount(T)
     exprs = [:(getfield(x, $(i))) for i in 1:n]
     return Expr(:tuple, exprs...)
