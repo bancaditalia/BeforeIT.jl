@@ -36,7 +36,8 @@ struct Agent{S}
     id::UInt
     structvec::S
 end
-Base.getindex(structvec::Union{AbstractFirms, AbstractWorkers}, id::Integer) = Agent(id, structvec)
+Base.getindex(structvec::Union{AbstractFirms, AbstractWorkers}, id::Integer) = Agent(UInt(id), structvec)
+Base.getindex(structvec::Union{AbstractFirms, AbstractWorkers}, id::Unsigned) = Agent(id, structvec)
 function Base.getproperty(a::Agent, name::Symbol)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = structvec.id_to_index[id]
