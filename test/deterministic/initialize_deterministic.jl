@@ -18,7 +18,7 @@
     for fieldname in fieldnames(typeof(model.firms))
 
         if fieldname in [
-                :lastid, :id_to_index, :index_to_id,
+                :lastid, :id_to_index, :ID,
                 :w_i, :Q_i, :I_i, :E_i, :P_bar_i,
                 :P_CF_i, :DS_i, :DM_i, :DL_i, :DL_d_i,
                 :K_e_i, :L_e_i, :Q_s_i, :I_d_i, :DM_d_i,
