@@ -62,9 +62,9 @@ function Workers(parameters, initial_conditions)
     C_h = zeros(typeFloat, H_inact)
     I_h = zeros(typeFloat, H_inact)
 
-    id_to_index = Dict{Int, Int}(id => id for id in 1:H_inact)
-    index_to_id = collect(1:H_inact)
-    lastid = Ref(H_inact)
+    id_to_index = Dict{Int, Int}(UInt(id) => id for id in 1:H_inact)
+    index_to_id = collect(1:UInt(H_inact))
+    lastid = Ref(UInt(H_inact))
     workers_inact = Workers(lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
 
     return workers_act, workers_inact
