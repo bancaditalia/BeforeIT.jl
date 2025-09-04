@@ -14,7 +14,7 @@ function remove!(a, i)
     return
 end
 
-function Base.delete!(structvec::AgentsTypes, id::Integer)
+function Base.delete!(structvec::AgentsTypes, id::Unsigned)
     i = structvec.id_to_index[id]
     removei! = a -> remove!(a, i)
     unrolled_map(removei!, struct2tuple(structvec)[3:end])
