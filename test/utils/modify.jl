@@ -5,7 +5,7 @@
     id = UInt(1)
     agent = model.w_act[id]
     agent.Y_h = agent.Y_h + 1
-    delete!(model.w_act, 1)
+    delete!(model.w_act, id)
     @test !(id in Bit.allids(model.w_act))
     push!(
         model.w_act,
