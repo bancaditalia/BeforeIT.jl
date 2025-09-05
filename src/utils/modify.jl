@@ -65,7 +65,7 @@ function getfields(a::Agent)
 end
 id(a::Agent) = getfield(a, :id)
 
-function Base.show(io::IO, ::MIME"text/plain", x::Agent{S}) where {S}
+function Base.show(io::IO, ::MIME"mime", x::Agent{S}) where {S}
     id, structvec = getfield(x, :id), getfield(x, :structvec)
     i = structvec.id_to_index[id]
     fields = NamedTuple(y => getfield(structvec, y)[i] for y in fieldnames(S)[3:end])
