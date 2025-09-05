@@ -50,7 +50,7 @@ function Base.setproperty!(a::Agent, name::Symbol, x)
     i = structvec.id_to_index[id]
     return (@inbounds getfield(structvec, name)[i] = x)
 end
-function fields(a::Agent)
+function getfields(a::Agent)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = structvec.id_to_index[id]
     t = struct2tuple(structvec)[4:end]
