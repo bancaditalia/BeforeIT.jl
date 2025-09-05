@@ -1,24 +1,25 @@
 @testset "Retrieve/Add/Remove Agents" begin
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+    actw = Bit.activeworkers(model)
     model = Bit.Model(parameters, initial_conditions)
     id = UInt(1)
-    agent = model.w_act[id]
+    agent = actw[id]
     agent.Y_h = agent.Y_h + 1
     agentf = Bit.getfields(agent)
-    delete!(model.w_act, id)
-    @test !(id in Bit.allids(model.w_act))
+    delete!(actw, id)
+    @test !(id in Bit.allids(actw))
     push!(
-        model.w_act, (
+        actw, (
             Y_h = 1.0, D_h = 1.0, K_h = 1.0, w_h = 1.0, O_h = 1.0,
             C_d_h = 1.0, I_d_h = 1.0, C_h = 1.0, I_h = 2.0,
         )
     )
-    id = Bit.lastid(model.w_act)
-    agent = model.w_act[id]
+    id = Bit.lastid(actw)
+    agent = actw[id]
     @test agent.Y_h == 1.0
     @test agent.I_h == 2.0
-    push!(model.w_act, agentf)
+    push!(actw, agentf)
     id = Bit.lastid(model.w_act)
-    @test Bit.getfields(model.w_act[id]) == agentf
+    @test Bit.getfields(actw[id]) == agentf
 end
