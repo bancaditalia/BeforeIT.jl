@@ -5,7 +5,7 @@
     id = UInt(1)
     agent = model.w_act[id]
     agent.Y_h = agent.Y_h + 1
-    agentf = Bit.fields(agent)
+    agentf = Bit.getfields(agent)
     delete!(model.w_act, id)
     @test !(id in Bit.allids(model.w_act))
     push!(
@@ -20,5 +20,5 @@
     @test agent.I_h == 2.0
     push!(model.w_act, agentf)
     id = Bit.lastid(model.w_act)
-    @test Bit.fields(model.w_act[id]) == agentf
+    @test Bit.getfields(model.w_act[id]) == agentf
 end
