@@ -24,9 +24,9 @@ id = UInt(1)
 agent = model.w_act[id]
 
 # !!! note
-# One invariant of IDs one could rely on is that at initialization
-# IDs are mapped one-to-one to indices of the arrays. Though, if any
-# deletion happens this won't be true anymore.
+#     One invariant of IDs one could rely on is that at initialization
+#     IDs are mapped one-to-one to indices of the arrays. Though, if any
+#     deletion happens this won't be true anymore.
 
 # Then we can access or modify attributes of the agent simply with
 
@@ -43,9 +43,9 @@ agent.Y_h = 1.0
 agentfields = Bit.getfields(agent)
 
 # !!! note
-# Importantly, fields can be accessed as long as the agent is still inside the
-# model, and not after that. So, if you need those fields for something else
-# after removing an agent, retrieve the fields before removing it.
+#     Importantly, fields can be accessed as long as the agent is still inside the
+#     model, and not after that. So, if you need those fields for something else
+#     after removing an agent, retrieve the fields before removing it.
 
 delete!(model.w_act, id)
 push!(model.w_act, agentfields);
