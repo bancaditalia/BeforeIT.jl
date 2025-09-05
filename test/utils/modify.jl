@@ -1,8 +1,8 @@
 @testset "Retrieve/Add/Remove Agents" begin
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-    actw = Bit.activeworkers(model)
     model = Bit.Model(parameters, initial_conditions)
+    actw = Bit.activeworkers(model)
     id = UInt(1)
     agent = actw[id]
     agent.Y_h = agent.Y_h + 1
