@@ -27,6 +27,7 @@ Literate.markdown(joinpath(indir, "scenario_analysis_via_shock.jl"), outdir; cre
 Literate.markdown(joinpath(indir, "prediction_pipeline.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "multithreading_speedup.jl"), outdir; credit = false)
 Literate.markdown(joinpath(indir, "basic_inheritance.jl"), outdir; credit = false)
+Literate.markdown(joinpath(indir, "single_agents.jl"), outdir; credit = false)
 # Literate.markdown(joinpath(indir, "analysis/tabs/create_tables.jl"), outdir; credit = false)
 
 @info "Building Documentation"
@@ -38,6 +39,7 @@ makedocs(
         "Basics" => "examples/basic_example.md",
         "Shocked simulations" => "examples/scenario_analysis_via_shock.md",
         "Extending the model" => "examples/basic_inheritance.md",
+        "Working with Single Agents" => "examples/single_agents.md"
         "Multithreading within the model" => "examples/multithreading_speedup.md",
         "Calibration" => "examples/prediction_pipeline.md",
         # "Prediction Comparison" => "examples/create_tables.md",
