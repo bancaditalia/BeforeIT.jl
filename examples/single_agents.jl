@@ -20,13 +20,13 @@ model = Bit.Model(parameters, initial_conditions);
 # to be compatible with this approach contains IDs which correspond
 # to single instances. IDs are `UInt` and are set internally.
 
-id = UInt(1)
-agent = model.w_act[id]
-
 # !!! note
 #     One invariant of IDs one could rely on is that at initialization
 #     IDs are mapped one-to-one to indices of the arrays. Though, if any
 #     deletion happens this won't be true anymore.
+
+id = UInt(1)
+agent = model.w_act[id]
 
 # Then we can access or modify attributes of the agent simply with
 
@@ -54,7 +54,7 @@ push!(model.w_act, agentfields);
 
 id = Bit.lastid(model.w_act)
 
-# Let's finally verify that the last agent has `Y_h` equal to `1.0` has it should be
+# Let's finally verify that the last agent has `Y_h` equal to `1.0` as it should be
 
 agent = model.w_act[id]
 agent.Y_h
