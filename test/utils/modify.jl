@@ -10,8 +10,9 @@
     @test !(id in Bit.allids(model.w_act))
     push!(model.w_act, (Y_h = 1.0, D_h = 1.0, K_h = 1.0, w_h = 1.0, O_h = 1.0,
                         C_d_h = 1.0, I_d_h = 1.0, C_h = 1.0, I_h = 2.0))
-    @test model.w_act[length(model.w_act.Y_h) + 1].Y_h == 1.0
-    @test model.w_act[length(model.w_act.Y_h) + 1].I_h == 2.0
+    id = Bit.lastid(model.w_act)
+    @test model.w_act[id].Y_h == 1.0
+    @test model.w_act[id].I_h == 2.0
     push!(model.w_act, agentf)
     id = Bit.lastid(model.w_act)
     @test Bit.getfields(model.w_act[id]) == agentf
