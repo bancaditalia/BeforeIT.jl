@@ -8,13 +8,8 @@
     agentf = Bit.getfields(agent)
     delete!(model.w_act, id)
     @test !(id in Bit.allids(model.w_act))
-    push!(
-        model.w_act,
-        (
-            Y_h = 1.0, D_h = 1.0, K_h = 1.0, w_h = 1.0, O_h = 1.0,
-            C_d_h = 1.0, I_d_h = 1.0, C_h = 1.0, I_h = 2.0,
-        )
-    )
+    push!(model.w_act, (Y_h = 1.0, D_h = 1.0, K_h = 1.0, w_h = 1.0, O_h = 1.0,
+                        C_d_h = 1.0, I_d_h = 1.0, C_h = 1.0, I_h = 2.0))
     @test model.w_act[length(model.w_act.Y_h) + 1].Y_h == 1.0
     @test model.w_act[length(model.w_act.Y_h) + 1].I_h == 2.0
     push!(model.w_act, agentf)
