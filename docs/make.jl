@@ -39,7 +39,7 @@ makedocs(
         "Basics" => "examples/basic_example.md",
         "Shocked simulations" => "examples/scenario_analysis_via_shock.md",
         "Extending the model" => "examples/basic_inheritance.md",
-        "Working with Single Agents" => "examples/single_agents.md"
+        "Working with Single Agents" => "examples/single_agents.md",
         "Multithreading within the model" => "examples/multithreading_speedup.md",
         "Calibration" => "examples/prediction_pipeline.md",
         # "Prediction Comparison" => "examples/create_tables.md",
