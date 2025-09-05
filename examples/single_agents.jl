@@ -49,8 +49,7 @@ agentfields = Bit.getfields(agent)
 #   after removing an agent, retrieve the fields before removing it.
 
 delete!(model.w_act, id)
-
-push!(model.w_act, agentfields)
+push!(model.w_act, agentfields);
 
 # We can also retrieve the id of the last agent added to the container with
 
