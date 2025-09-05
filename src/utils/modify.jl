@@ -68,5 +68,5 @@ function Base.show(io::IO, ::MIME"text/plain", x::Agent{S}) where {S}
     id, structvec = getfield(x, :id), getfield(x, :structvec)
     i = structvec.id_to_index[id]
     fields = NamedTuple(y => getfield(structvec, y)[i] for y in fieldnames(S)[3:end])
-    return print("Agent{$(nameof(S))}$fields")
+    return print(io, "Agent{$(nameof(S))}$fields")
 end
