@@ -10,6 +10,8 @@
 # structs. Let's see how this unfolds with a concrete example. As usual,
 # we create a model instance with
 
+import BeforeIT as Bit
+
 parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 model = Bit.Model(parameters, initial_conditions);
