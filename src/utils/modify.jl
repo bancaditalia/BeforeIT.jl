@@ -2,6 +2,10 @@ using Unrolled
 
 const AgentsTypes = Union{AbstractFirms, AbstractWorkers}
 
+firms(model) = getfield(model, :firms)
+activeworkers(model) = getfield(model, :w_act)
+inactiveworkers(model) = getfield(model, :w_inact)
+
 @generated function struct2tuple(x::T) where {T}
     n = fieldcount(T)
     exprs = [:(getfield(x, $(i))) for i in 1:n]
