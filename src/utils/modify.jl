@@ -24,7 +24,8 @@ function remove!(a, i)
     return
 end
 function Base.delete!(structvec::AgentsTypes, id::Unsigned)
-    if structvec.del[]
+    if !(structvec.del[])
+        structvec.del[] = true
         for pid in structvec.ID
             structvec.id_to_index[pid] = pid % Int
         end
