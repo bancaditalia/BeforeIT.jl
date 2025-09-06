@@ -24,6 +24,11 @@ function remove!(a, i)
     return
 end
 function Base.delete!(structvec::AgentsTypes, id::Unsigned)
+    if isempty(structvec.id_to_index)
+        for (i, pid) in enumerate(structvec.ID)
+            structvec.id_to_index[pid] = i
+        end
+    end 
     i = structvec.id_to_index[id]
     removei! = a -> remove!(a, i)
     unrolled_map(removei!, struct2tuple(structvec, Val(3)))
@@ -36,7 +41,8 @@ function Base.push!(structvec::AgentsTypes, t::NamedTuple)
     unrolled_map(push!, struct2tuple(structvec, Val(4)), t)
     nextlastid = (structvec.lastid[] += 1)
     push!(structvec.ID, nextlastid)
-    structvec.id_to_index[nextlastid] = length(structvec.ID)
+    id_to_index = structvec.id_to_index
+    !isempty(id_to_index) && (id_to_index[nextlastid] = length(structvec.ID))
     return structvec
 end
 allids(structvec::AgentsTypes) = getfield(structvec, :ID)
@@ -49,12 +55,12 @@ end
 Base.getindex(structvec::AgentsTypes, id::Unsigned) = Agent(id, structvec)
 function Base.getproperty(a::Agent, name::Symbol)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
-    i = structvec.id_to_index[id]
+    i = get(structvec.id_to_index, id, id%Int)
     return (@inbounds getfield(structvec, name)[i])
 end
 function Base.setproperty!(a::Agent, name::Symbol, x)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
-    i = structvec.id_to_index[id]
+    i = get(structvec.id_to_index, id, id%Int)
     return (@inbounds getfield(structvec, name)[i] = x)
 end
 function getfields(a::Agent)
