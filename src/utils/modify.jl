@@ -26,9 +26,9 @@ end
 function Base.delete!(structvec::AgentsTypes, id::Unsigned)
     if structvec.del[]
         for pid in structvec.ID
-            structvec.id_to_index[pid] = pid%Int
+            structvec.id_to_index[pid] = pid % Int
         end
-    end 
+    end
     i = structvec.id_to_index[id]
     removei! = a -> remove!(a, i)
     unrolled_map(removei!, struct2tuple(structvec, Val(4)))
@@ -55,17 +55,17 @@ end
 Base.getindex(structvec::AgentsTypes, id::Unsigned) = Agent(id, structvec)
 function Base.getproperty(a::Agent, name::Symbol)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
-    i = get(structvec.id_to_index, id, id%Int)
+    i = get(structvec.id_to_index, id, id % Int)
     return (@inbounds getfield(structvec, name)[i])
 end
 function Base.setproperty!(a::Agent, name::Symbol, x)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
-    i = get(structvec.id_to_index, id, id%Int)
+    i = get(structvec.id_to_index, id, id % Int)
     return (@inbounds getfield(structvec, name)[i] = x)
 end
 function getfields(a::Agent)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
-    i = structvec.id_to_index[id]
+    i = get(structvec.id_to_index, id, id % Int)
     t = struct2tuple(structvec, Val(5))
     getindexi = ar -> @inbounds ar[i]
     vals = unrolled_map(getindexi, t)
@@ -76,7 +76,7 @@ id(a::Agent) = getfield(a, :id)
 
 function Base.show(io::IO, ::MIME"text/plain", x::Agent{S}) where {S}
     id, structvec = getfield(x, :id), getfield(x, :structvec)
-    i = structvec.id_to_index[id]
+    i = get(structvec.id_to_index, id, id % Int)
     fields = NamedTuple(y => getfield(structvec, y)[i] for y in fieldnames(S)[4:end])
     return print(io, "Agent{$(nameof(S))}$fields")
 end
