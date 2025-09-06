@@ -27,6 +27,7 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `I_h`: Realised investment
 """
 Bit.@object mutable struct Workers(Object) <: AbstractWorkers
+    const del::Base.RefValue{Bool}
     const lastid::Base.RefValue{UInt}
     const id_to_index::Dict{UInt, Int}
     const ID::Vector{UInt}
@@ -95,6 +96,7 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `D_h`: Deposits of the owner of the firms
 """
 Bit.@object mutable struct Firms(Object) <: AbstractFirms
+    const del::Base.RefValue{Bool}
     const lastid::Base.RefValue{UInt}
     const id_to_index::Dict{UInt, Int}
     const ID::Vector{UInt}
