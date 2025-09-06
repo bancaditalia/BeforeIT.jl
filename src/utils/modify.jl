@@ -6,9 +6,14 @@ firms(model) = getfield(model, :firms)
 activeworkers(model) = getfield(model, :w_act)
 inactiveworkers(model) = getfield(model, :w_inact)
 
-@generated function struct2tuple(x::T) where {T}
+@generated function struct2tuple(x::T, k::Val{X}) where {T,X}
     n = fieldcount(T)
-    exprs = [:(getfield(x, $(i))) for i in 1:n]
+    exprs = [:(getfield(x, $(i))) for i in X:n]
+    return Expr(:tuple, exprs...)
+end
+@generated function subfieldnames(x::T, k::Val{X}) where {T,X}
+    names = fieldnames(T)
+    exprs = [:($(names)[$(i)]) for i in X:length(names)]
     return Expr(:tuple, exprs...)
 end
 
@@ -21,7 +26,7 @@ end
 function Base.delete!(structvec::AgentsTypes, id::Unsigned)
     i = structvec.id_to_index[id]
     removei! = a -> remove!(a, i)
-    unrolled_map(removei!, struct2tuple(structvec)[3:end])
+    unrolled_map(removei!, struct2tuple(structvec, Val(3)))
     delete!(structvec.id_to_index, id)
     i <= length(structvec.ID) && (structvec.id_to_index[(@inbounds structvec.ID[i])] = i)
     return structvec
@@ -29,7 +34,7 @@ end
 
 function Base.push!(structvec::T, t::NamedTuple) where {T <: AgentsTypes}
     fieldnames(T)[4:end] != keys(t) && error("The tuple fields do not match the container fields")
-    unrolled_map(push!, struct2tuple(structvec)[4:end], t)
+    unrolled_map(push!, struct2tuple(structvec, Val(4)), t)
     nextlastid = (structvec.lastid[] += 1)
     push!(structvec.ID, nextlastid)
     structvec.id_to_index[nextlastid] = length(structvec.ID)
@@ -57,13 +62,14 @@ end
 function getfields(a::Agent)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = structvec.id_to_index[id]
-    t = struct2tuple(structvec)[4:end]
+    t = struct2tuple(structvec, Val(4))
     getindexi = ar -> @inbounds ar[i]
     vals = unrolled_map(getindexi, t)
-    names = fieldnames(typeof(structvec))[4:end]
+    names = subfieldnames(structvec, Val(4))
     return NamedTuple{names}(vals)
 end
 id(a::Agent) = getfield(a, :id)
+
 function Base.show(io::IO, ::MIME"text/plain", x::Agent{S}) where {S}
     id, structvec = getfield(x, :id), getfield(x, :structvec)
     i = structvec.id_to_index[id]
