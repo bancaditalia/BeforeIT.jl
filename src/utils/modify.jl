@@ -11,6 +11,7 @@ inactiveworkers(model) = getfield(model, :w_inact)
     exprs = [:(getfield(x, $(i))) for i in X:n]
     return Expr(:tuple, exprs...)
 end
+
 @generated function subfieldnames(x::T, k::Val{X}) where {T,X}
     names = fieldnames(T)
     exprs = [:($(names)[$(i)]) for i in X:length(names)]
@@ -22,7 +23,6 @@ function remove!(a, i)
     pop!(a)
     return
 end
-
 function Base.delete!(structvec::AgentsTypes, id::Unsigned)
     i = structvec.id_to_index[id]
     removei! = a -> remove!(a, i)
@@ -31,7 +31,6 @@ function Base.delete!(structvec::AgentsTypes, id::Unsigned)
     i <= length(structvec.ID) && (structvec.id_to_index[(@inbounds structvec.ID[i])] = i)
     return structvec
 end
-
 function Base.push!(structvec::T, t::NamedTuple) where {T <: AgentsTypes}
     fieldnames(T)[4:end] != keys(t) && error("The tuple fields do not match the container fields")
     unrolled_map(push!, struct2tuple(structvec, Val(4)), t)
@@ -40,7 +39,6 @@ function Base.push!(structvec::T, t::NamedTuple) where {T <: AgentsTypes}
     structvec.id_to_index[nextlastid] = length(structvec.ID)
     return structvec
 end
-
 allids(structvec::AgentsTypes) = getfield(structvec, :ID)
 lastid(structvec::AgentsTypes) = getfield(structvec, :lastid)[]
 
