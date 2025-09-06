@@ -57,18 +57,18 @@ Base.getindex(structvec::AgentsTypes, id::Unsigned) = Agent(id, structvec)
 function Base.getproperty(a::Agent, name::Symbol)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = get(structvec.id_to_index, id, id % Int)
-    return (@inbounds getfield(structvec, name)[i])
+    return (getfield(structvec, name)[i])
 end
 function Base.setproperty!(a::Agent, name::Symbol, x)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = get(structvec.id_to_index, id, id % Int)
-    return (@inbounds getfield(structvec, name)[i] = x)
+    return (getfield(structvec, name)[i] = x)
 end
 function getfields(a::Agent)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = get(structvec.id_to_index, id, id % Int)
     t = struct2tuple(structvec, Val(5))
-    getindexi = ar -> @inbounds ar[i]
+    getindexi = ar -> ar[i]
     vals = unrolled_map(getindexi, t)
     names = subfieldnames(structvec, Val(5))
     return NamedTuple{names}(vals)
