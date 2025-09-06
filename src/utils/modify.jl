@@ -31,14 +31,14 @@ function Base.delete!(structvec::AgentsTypes, id::Unsigned)
     end 
     i = structvec.id_to_index[id]
     removei! = a -> remove!(a, i)
-    unrolled_map(removei!, struct2tuple(structvec, Val(3)))
+    unrolled_map(removei!, struct2tuple(structvec, Val(4)))
     delete!(structvec.id_to_index, id)
     i <= length(structvec.ID) && (structvec.id_to_index[(@inbounds structvec.ID[i])] = i)
     return structvec
 end
 function Base.push!(structvec::AgentsTypes, t::NamedTuple)
-    subfieldnames(structvec, Val(4)) != keys(t) && error("The tuple fields do not match the container fields")
-    unrolled_map(push!, struct2tuple(structvec, Val(4)), t)
+    subfieldnames(structvec, Val(5)) != keys(t) && error("The tuple fields do not match the container fields")
+    unrolled_map(push!, struct2tuple(structvec, Val(5)), t)
     nextlastid = (structvec.lastid[] += 1)
     push!(structvec.ID, nextlastid)
     id_to_index = structvec.id_to_index
@@ -66,10 +66,10 @@ end
 function getfields(a::Agent)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = structvec.id_to_index[id]
-    t = struct2tuple(structvec, Val(4))
+    t = struct2tuple(structvec, Val(5))
     getindexi = ar -> @inbounds ar[i]
     vals = unrolled_map(getindexi, t)
-    names = subfieldnames(structvec, Val(4))
+    names = subfieldnames(structvec, Val(5))
     return NamedTuple{names}(vals)
 end
 id(a::Agent) = getfield(a, :id)
@@ -77,6 +77,6 @@ id(a::Agent) = getfield(a, :id)
 function Base.show(io::IO, ::MIME"text/plain", x::Agent{S}) where {S}
     id, structvec = getfield(x, :id), getfield(x, :structvec)
     i = structvec.id_to_index[id]
-    fields = NamedTuple(y => getfield(structvec, y)[i] for y in fieldnames(S)[3:end])
+    fields = NamedTuple(y => getfield(structvec, y)[i] for y in fieldnames(S)[4:end])
     return print(io, "Agent{$(nameof(S))}$fields")
 end
