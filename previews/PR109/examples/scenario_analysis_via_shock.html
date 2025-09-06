@@ -27,56 +27,56 @@ mean_gdp_shocked = mean(data_vector_shocked.real_gdp, dims = 2)
 sem_gdp_baseline = std(data_vector_baseline.real_gdp, dims = 2) / sqrt(n_sims)
 sem_gdp_shocked = std(data_vector_shocked.real_gdp, dims = 2) / sqrt(n_sims)</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
    0.0
-  52.374892283994264
-  75.62790889020033
-  96.97093738083939
- 107.77447883121779
- 114.94670062088156
- 122.6011390896084
- 134.713153612355
- 134.8027957244344
- 163.43274109099778
- 165.82968533771503
- 181.39749216559733
- 187.19926767289263
- 199.63209727837244
- 202.24859373906676
- 205.68869591931443
- 211.97480155417367</code></pre><p>Compute the ratio of shocked to baseline GDP</p><pre><code class="language-julia hljs">gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
+  64.40152772611367
+  79.4569318020654
+  89.50549746676391
+ 103.78853106838784
+ 111.73153308637431
+ 119.39461151114226
+ 139.83862697475897
+ 155.25399778385346
+ 179.81349834355885
+ 181.76888676665357
+ 181.9443554920128
+ 191.9040707177144
+ 211.42634906153535
+ 228.86176774097115
+ 230.33637185531632
+ 247.65521909368536</code></pre><p>Compute the ratio of shocked to baseline GDP</p><pre><code class="language-julia hljs">gdp_ratio = mean_gdp_shocked ./ mean_gdp_baseline</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
  1.0
- 1.001341170058224
- 1.0051421265962561
- 1.0046037228167792
- 1.0055551636337683
- 1.0007197134910597
- 1.0007156781826003
- 1.0009978647189708
- 0.9990833654149301
- 0.9991412293495531
- 0.9986774905202576
- 0.9999007249485848
- 0.999799139282979
- 0.9989253481397871
- 1.0007821336116767
- 0.998525206888221
- 0.9976655584747729</code></pre><p>the standard error on a ratio of two variables is computed with the error propagation formula</p><pre><code class="language-julia hljs">sem_gdp_ratio = gdp_ratio .* ((sem_gdp_baseline ./ mean_gdp_baseline) .^ 2 .+ (sem_gdp_shocked ./ mean_gdp_shocked) .^ 2) .^ 0.5</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
+ 1.0007157325359448
+ 1.0054952843587746
+ 1.0074336627928477
+ 1.006015774505808
+ 1.003965158150362
+ 1.0032920319446421
+ 1.0022399125762265
+ 1.002573569002173
+ 1.004185198439167
+ 1.0036974654833337
+ 1.0034273127922306
+ 1.0040436619311603
+ 1.0044302024755007
+ 1.0041878302489124
+ 1.004361278851468
+ 1.0060918376581</code></pre><p>the standard error on a ratio of two variables is computed with the error propagation formula</p><pre><code class="language-julia hljs">sem_gdp_ratio = gdp_ratio .* ((sem_gdp_baseline ./ mean_gdp_baseline) .^ 2 .+ (sem_gdp_shocked ./ mean_gdp_shocked) .^ 2) .^ 0.5</code></pre><pre class="documenter-example-output"><code class="nohighlight hljs ansi">17×1 Matrix{Float64}:
  0.0
- 0.0011970724502172988
- 0.0015392110645243457
- 0.0018957667277264623
- 0.0021758534305931533
- 0.0023591723758804675
- 0.0025127722923432814
- 0.002814415710208377
- 0.0029376196146165684
- 0.0033116389434187992
- 0.0034054821254529944
- 0.0035881107507878523
- 0.003663242057536334
- 0.0038211991676861843
- 0.003945245342638323
- 0.00411073536728381
- 0.0042889523370346246</code></pre><p>Finally, we can plot the impulse response curve</p><pre><code class="language-julia hljs">plot(
+ 0.0012474913082793752
+ 0.001541558027207775
+ 0.00189667249357476
+ 0.0021554859476955535
+ 0.0022429485948416337
+ 0.002378185214782217
+ 0.0026569277697852138
+ 0.002874766229289786
+ 0.003301331440825104
+ 0.0033656064445141873
+ 0.0034848992432408017
+ 0.0037421624666790225
+ 0.004016631655455231
+ 0.004419449416165861
+ 0.004417513800620706
+ 0.004417477754606363</code></pre><p>Finally, we can plot the impulse response curve</p><pre><code class="language-julia hljs">plot(
     1:(T + 1),
     gdp_ratio,
     ribbon = sem_gdp_ratio,
@@ -84,4 +84,4 @@ sem_gdp_shocked = std(data_vector_shocked.real_gdp, dims = 2) / sqrt(n_sims)</co
     label = &quot;&quot;,
     xlabel = &quot;quarters&quot;,
     ylabel = &quot;GDP change&quot;,
-)</code></pre><img src="scenario_analysis_via_shock-d78432da.svg" alt="Example block output"/><p>We can save the figure using: savefig(&quot;gdp_shock.png&quot;)</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="basic_example.html">« Basics</a><a class="docs-footer-nextpage" href="basic_inheritance.html">Extending the model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 6 September 2025 00:51">Saturday 6 September 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+)</code></pre><img src="scenario_analysis_via_shock-59479564.svg" alt="Example block output"/><p>We can save the figure using: savefig(&quot;gdp_shock.png&quot;)</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="basic_example.html">« Basics</a><a class="docs-footer-nextpage" href="basic_inheritance.html">Extending the model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.14.1 on <span class="colophon-date" title="Saturday 6 September 2025 01:00">Saturday 6 September 2025</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
