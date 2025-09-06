@@ -32,7 +32,7 @@ function Base.delete!(structvec::AgentsTypes, id::Unsigned)
     return structvec
 end
 function Base.push!(structvec::T, t::NamedTuple) where {T <: AgentsTypes}
-    fieldnames(T)[4:end] != keys(t) && error("The tuple fields do not match the container fields")
+    subfieldnames(structvec, Val(4)) != keys(t) && error("The tuple fields do not match the container fields")
     unrolled_map(push!, struct2tuple(structvec, Val(4)), t)
     nextlastid = (structvec.lastid[] += 1)
     push!(structvec.ID, nextlastid)
