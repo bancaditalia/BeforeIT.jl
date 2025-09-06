@@ -6,13 +6,13 @@ firms(model) = getfield(model, :firms)
 activeworkers(model) = getfield(model, :w_act)
 inactiveworkers(model) = getfield(model, :w_inact)
 
-@generated function struct2tuple(x::T, k::Val{X}) where {T,X}
+@generated function struct2tuple(x::T, k::Val{X}) where {T, X}
     n = fieldcount(T)
     exprs = [:(getfield(x, $(i))) for i in X:n]
     return Expr(:tuple, exprs...)
 end
 
-@generated function subfieldnames(x::T, k::Val{X}) where {T,X}
+@generated function subfieldnames(x::T, k::Val{X}) where {T, X}
     names = fieldnames(T)
     exprs = [:($(names)[$(i)]) for i in X:length(names)]
     return Expr(:tuple, exprs...)
