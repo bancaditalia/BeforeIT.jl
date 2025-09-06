@@ -24,9 +24,9 @@ function remove!(a, i)
     return
 end
 function Base.delete!(structvec::AgentsTypes, id::Unsigned)
-    if isempty(structvec.id_to_index)
-        for (i, pid) in enumerate(structvec.ID)
-            structvec.id_to_index[pid] = i
+    if structvec.del[]
+        for pid in structvec.ID
+            structvec.id_to_index[pid] = pid%Int
         end
     end 
     i = structvec.id_to_index[id]
@@ -42,7 +42,7 @@ function Base.push!(structvec::AgentsTypes, t::NamedTuple)
     nextlastid = (structvec.lastid[] += 1)
     push!(structvec.ID, nextlastid)
     id_to_index = structvec.id_to_index
-    !isempty(id_to_index) && (id_to_index[nextlastid] = length(structvec.ID))
+    structvec.del[] && (id_to_index[nextlastid] = length(structvec.ID))
     return structvec
 end
 allids(structvec::AgentsTypes) = getfield(structvec, :ID)
