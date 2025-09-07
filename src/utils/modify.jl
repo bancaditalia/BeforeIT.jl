@@ -54,21 +54,21 @@ struct Agent{S}
     structvec::S
 end
 function Base.getindex(structvec::AgentsTypes, id::Unsigned)
-    comps, id_to_index = getfield(sdict, :components), getfield(sdict, :id_to_index)
-    del = getfield(sdict, :del)[]
+    id_to_index = getfield(structvec, :id_to_index)
+    del = getfield(structvec, :del)[]
     del && !(id in structvec.id_to_index) && error("No agent with the specified id")
     !del && checkbounds(structvec.ID, id%Int)
     return Agent(id, structvec)
 end
 function Base.getproperty(a::Agent, name::Symbol)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
-    del = getfield(sdict, :del)[]
+    del = getfield(structvec, :del)[]
     i = del ? id_to_index[id] : id % Int
     return (getfield(structvec, name)[i])
 end
 function Base.setproperty!(a::Agent, name::Symbol, x)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
-    del = getfield(sdict, :del)[]
+    del = getfield(structvec, :del)[]
     i = del ? id_to_index[id] : id % Int
     return (getfield(structvec, name)[i] = x)
 end
