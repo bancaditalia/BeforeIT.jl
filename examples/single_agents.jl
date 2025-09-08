@@ -25,7 +25,7 @@ model = Bit.Model(parameters, initial_conditions);
 #     IDs are mapped one-to-one to indices of the arrays. Though, if any
 #     deletion happens this won't be true anymore.
 
-id = UInt(1)
+id = 1
 agent = model.w_act[id]
 
 # Then we can access or modify attributes of the agent simply with
