@@ -50,7 +50,7 @@ allids(structvec::AgentsTypes) = getfield(structvec, :ID)
 lastid(structvec::AgentsTypes) = getfield(structvec, :lastid)[]
 
 struct Agent{S}
-    id::UInt
+    id::Int
     structvec::S
 end
 Base.getindex(structvec::AgentsTypes, id::Unsigned) = Agent(id, structvec)
