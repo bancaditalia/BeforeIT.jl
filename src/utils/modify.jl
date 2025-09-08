@@ -23,7 +23,7 @@ function remove!(a, i)
     pop!(a)
     return
 end
-function Base.delete!(structvec::AgentsTypes, id::Unsigned)
+function Base.delete!(structvec::AgentsTypes, id::Int)
     if !(structvec.del[])
         structvec.del[] = true
         for pid in structvec.ID
@@ -53,7 +53,7 @@ struct Agent{S}
     id::Int
     structvec::S
 end
-Base.getindex(structvec::AgentsTypes, id::Unsigned) = Agent(id, structvec)
+Base.getindex(structvec::AgentsTypes, id::Int) = Agent(id, structvec)
 function Base.getproperty(a::Agent, name::Symbol)
     id, structvec = getfield(a, :id), getfield(a, :structvec)
     i = get(structvec.id_to_index, id, id % Int)
