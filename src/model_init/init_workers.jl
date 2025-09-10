@@ -43,8 +43,8 @@ function Workers(parameters, initial_conditions)
 
     # active workers (both employed and unemployed)
     id_to_index = Dict{Int, Int}()
-    index_to_id = collect(1:UInt(H_W))
-    lastid = Ref(UInt(H_W))
+    index_to_id = collect(1:Int(H_W))
+    lastid = Ref(Int(H_W))
     del = Ref(false)
     workers_act = Workers(del, lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)
 
@@ -64,8 +64,8 @@ function Workers(parameters, initial_conditions)
     I_h = zeros(typeFloat, H_inact)
 
     id_to_index = Dict{Int, Int}()
-    index_to_id = collect(1:UInt(H_inact))
-    lastid = Ref(UInt(H_inact))
+    index_to_id = collect(1:Int(H_inact))
+    lastid = Ref(Int(H_inact))
     del = Ref(false)
     workers_inact = Workers(del, lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
 
