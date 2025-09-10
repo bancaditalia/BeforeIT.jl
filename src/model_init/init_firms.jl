@@ -117,8 +117,8 @@ function Firms(parameters, initial_conditions)
     Pi_e_i = zeros(typeFloat, I)
 
     id_to_index = Dict{Int, Int}()
-    index_to_id = collect(1:UInt(I))
-    lastid = Ref(UInt(I))
+    index_to_id = collect(1:Int(I))
+    lastid = Ref(Int(I))
     del = Ref(false)
     return Firms(
         del, lastid, id_to_index, index_to_id,
