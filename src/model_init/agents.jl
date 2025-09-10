@@ -26,16 +26,20 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `C_h`: Realised consumption
 - `I_h`: Realised investment
 """
-Bit.@object struct Workers(Object) <: AbstractWorkers
-    Y_h::Vector{Bit.typeFloat}
-    D_h::Vector{Bit.typeFloat}
-    K_h::Vector{Bit.typeFloat}
-    w_h::Vector{Bit.typeFloat}
-    O_h::Vector{Bit.typeInt}
-    C_d_h::Vector{Bit.typeFloat}
-    I_d_h::Vector{Bit.typeFloat}
-    C_h::Vector{Bit.typeFloat}
-    I_h::Vector{Bit.typeFloat}
+Bit.@object mutable struct Workers(Object) <: AbstractWorkers
+    const del::Base.RefValue{Bool}
+    const lastid::Base.RefValue{Int}
+    const id_to_index::Dict{Int, Int}
+    const ID::Vector{Int}
+    const Y_h::Vector{Bit.typeFloat}
+    const D_h::Vector{Bit.typeFloat}
+    const K_h::Vector{Bit.typeFloat}
+    const w_h::Vector{Bit.typeFloat}
+    const O_h::Vector{Bit.typeInt}
+    const C_d_h::Vector{Bit.typeFloat}
+    const I_d_h::Vector{Bit.typeFloat}
+    const C_h::Vector{Bit.typeFloat}
+    const I_h::Vector{Bit.typeFloat}
 end
 
 """
@@ -91,52 +95,56 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-Bit.@object struct Firms(Object) <: AbstractFirms
-    G_i::Vector{Bit.typeInt}
-    alpha_bar_i::Vector{Bit.typeFloat}
-    beta_i::Vector{Bit.typeFloat}
-    kappa_i::Vector{Bit.typeFloat}
-    w_i::Vector{Bit.typeFloat}
-    w_bar_i::Vector{Bit.typeFloat}
-    delta_i::Vector{Bit.typeFloat}
-    tau_Y_i::Vector{Bit.typeFloat}
-    tau_K_i::Vector{Bit.typeFloat}
-    N_i::Vector{Bit.typeInt}
-    Y_i::Vector{Bit.typeFloat}
-    Q_i::Vector{Bit.typeFloat}
-    Q_d_i::Vector{Bit.typeFloat}
-    P_i::Vector{Bit.typeFloat}
-    S_i::Vector{Bit.typeFloat}
-    K_i::Vector{Bit.typeFloat}
-    M_i::Vector{Bit.typeFloat}
-    L_i::Vector{Bit.typeFloat}
-    pi_bar_i::Vector{Bit.typeFloat}
-    D_i::Vector{Bit.typeFloat}
-    Pi_i::Vector{Bit.typeFloat}
-    V_i::Vector{Bit.typeInt}
-    I_i::Vector{Bit.typeFloat}
-    E_i::Vector{Bit.typeFloat}
-    P_bar_i::Vector{Bit.typeFloat}
-    P_CF_i::Vector{Bit.typeFloat}
-    DS_i::Vector{Bit.typeFloat}
-    DM_i::Vector{Bit.typeFloat}
-    DL_i::Vector{Bit.typeFloat}
-    DL_d_i::Vector{Bit.typeFloat}
-    K_e_i::Vector{Bit.typeFloat}
-    L_e_i::Vector{Bit.typeFloat}
-    Q_s_i::Vector{Bit.typeFloat}
-    I_d_i::Vector{Bit.typeFloat}
-    DM_d_i::Vector{Bit.typeFloat}
-    N_d_i::Vector{Bit.typeInt}
-    Pi_e_i::Vector{Bit.typeFloat}
+Bit.@object mutable struct Firms(Object) <: AbstractFirms
+    const del::Base.RefValue{Bool}
+    const lastid::Base.RefValue{Int}
+    const id_to_index::Dict{Int, Int}
+    const ID::Vector{Int}
+    const G_i::Vector{Bit.typeInt}
+    const alpha_bar_i::Vector{Bit.typeFloat}
+    const beta_i::Vector{Bit.typeFloat}
+    const kappa_i::Vector{Bit.typeFloat}
+    const w_i::Vector{Bit.typeFloat}
+    const w_bar_i::Vector{Bit.typeFloat}
+    const delta_i::Vector{Bit.typeFloat}
+    const tau_Y_i::Vector{Bit.typeFloat}
+    const tau_K_i::Vector{Bit.typeFloat}
+    const N_i::Vector{Bit.typeInt}
+    const Y_i::Vector{Bit.typeFloat}
+    const Q_i::Vector{Bit.typeFloat}
+    const Q_d_i::Vector{Bit.typeFloat}
+    const P_i::Vector{Bit.typeFloat}
+    const S_i::Vector{Bit.typeFloat}
+    const K_i::Vector{Bit.typeFloat}
+    const M_i::Vector{Bit.typeFloat}
+    const L_i::Vector{Bit.typeFloat}
+    const pi_bar_i::Vector{Bit.typeFloat}
+    const D_i::Vector{Bit.typeFloat}
+    const Pi_i::Vector{Bit.typeFloat}
+    const V_i::Vector{Bit.typeInt}
+    const I_i::Vector{Bit.typeFloat}
+    const E_i::Vector{Bit.typeFloat}
+    const P_bar_i::Vector{Bit.typeFloat}
+    const P_CF_i::Vector{Bit.typeFloat}
+    const DS_i::Vector{Bit.typeFloat}
+    const DM_i::Vector{Bit.typeFloat}
+    const DL_i::Vector{Bit.typeFloat}
+    const DL_d_i::Vector{Bit.typeFloat}
+    const K_e_i::Vector{Bit.typeFloat}
+    const L_e_i::Vector{Bit.typeFloat}
+    const Q_s_i::Vector{Bit.typeFloat}
+    const I_d_i::Vector{Bit.typeFloat}
+    const DM_d_i::Vector{Bit.typeFloat}
+    const N_d_i::Vector{Bit.typeInt}
+    const Pi_e_i::Vector{Bit.typeFloat}
     ### Household fields (firms' owners)
-    Y_h::Vector{Bit.typeFloat}
-    C_d_h::Vector{Bit.typeFloat}
-    I_d_h::Vector{Bit.typeFloat}
-    C_h::Vector{Bit.typeFloat}
-    I_h::Vector{Bit.typeFloat}
-    K_h::Vector{Bit.typeFloat}
-    D_h::Vector{Bit.typeFloat}
+    const Y_h::Vector{Bit.typeFloat}
+    const C_d_h::Vector{Bit.typeFloat}
+    const I_d_h::Vector{Bit.typeFloat}
+    const C_h::Vector{Bit.typeFloat}
+    const I_h::Vector{Bit.typeFloat}
+    const K_h::Vector{Bit.typeFloat}
+    const D_h::Vector{Bit.typeFloat}
 end
 
 """
