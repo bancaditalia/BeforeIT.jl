@@ -3,7 +3,7 @@
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     model = Bit.Model(parameters, initial_conditions)
     actw = Bit.activeworkers(model)
-    id = UInt(1)
+    id = 1
     agent = actw[id]
     agent.Y_h = agent.Y_h + 1
     agentf = Bit.getfields(agent)
