@@ -28,9 +28,9 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 """
 Bit.@object mutable struct Workers(Object) <: AbstractWorkers
     const del::Base.RefValue{Bool}
-    const lastid::Base.RefValue{UInt}
-    const id_to_index::Dict{UInt, Int}
-    const ID::Vector{UInt}
+    const lastid::Base.RefValue{Int}
+    const id_to_index::Dict{Int, Int}
+    const ID::Vector{Int}
     const Y_h::Vector{Bit.typeFloat}
     const D_h::Vector{Bit.typeFloat}
     const K_h::Vector{Bit.typeFloat}
@@ -97,9 +97,9 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 """
 Bit.@object mutable struct Firms(Object) <: AbstractFirms
     const del::Base.RefValue{Bool}
-    const lastid::Base.RefValue{UInt}
-    const id_to_index::Dict{UInt, Int}
-    const ID::Vector{UInt}
+    const lastid::Base.RefValue{Int}
+    const id_to_index::Dict{Int, Int}
+    const ID::Vector{Int}
     const G_i::Vector{Bit.typeInt}
     const alpha_bar_i::Vector{Bit.typeFloat}
     const beta_i::Vector{Bit.typeFloat}
