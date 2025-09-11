@@ -16,6 +16,7 @@ Preferences = "21216c6a-2e73-6563-6e65-726566657250"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Unrolled = "9602ed7d-8fef-5bc8-8597-8f21381861e8"
+WeightVectors = "02edb123-fbf3-4025-abe6-bed5b7376cdf"
 
 [weakdeps]
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
@@ -42,4 +43,5 @@ Runic = "1"
 StatsBase = "0.34"
 StatsPlots = "0.15"
 Unrolled = "0.1"
+WeightVectors = "0.1"
 julia = "1.9"
