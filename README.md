@@ -132,13 +132,13 @@ julia --proj format.jl
 
 <table>
   <tr>
-    <td align="center">
-      <a href="https://github.com/aldoglielmo">
-        <img src="https://avatars.githubusercontent.com/aldoglielmo" width="100px;" alt="Aldo Glielmo"/><br />
-        <sub><b>Aldo Glielmo</b></sub>
+  <td align="center">
+      <a href="https://github.com/Tortar">
+        <img src="https://avatars.githubusercontent.com/Tortar" width="100px;" alt="Adriano Meligrana"/><br />
+        <sub><b>Adriano Meligrana</b></sub>
       </a><br />
-      <p>Banca d'Italia </p>
-      <p>Email: <a href="mailto:aldo.glielmo@bancaditalia.it:">aldo.glielmo@bancaditalia.it</a></p>
+      <p>University of Turin</p>
+      <p>Email: <a href="mailto:adrianomeligrana@proton.me:">adrianomeligrana@proton.me</a></p>
     </td>
     <td align="center">
       <a href="https://devetak.github.io/">
@@ -147,13 +147,13 @@ julia --proj format.jl
       </a><br />
       <p>Paris 1: Pantheon - Sorbonne</p>
     </td>
-  <td align="center">
-      <a href="https://github.com/Tortar">
-        <img src="https://avatars.githubusercontent.com/Tortar" width="100px;" alt="Adriano Meligrana"/><br />
-        <sub><b>Adriano Meligrana</b></sub>
+    <td align="center">
+      <a href="https://github.com/aldoglielmo">
+        <img src="https://avatars.githubusercontent.com/aldoglielmo" width="100px;" alt="Aldo Glielmo"/><br />
+        <sub><b>Aldo Glielmo</b></sub>
       </a><br />
-      <p>University of Turin</p>
-      <p>Email: <a href="mailto:adrianomeligrana@proton.me:">adrianomeligrana@proton.me</a></p>
+      <p>Banca d'Italia </p>
+      <p>Email: <a href="mailto:aldo.glielmo@bancaditalia.it:">aldo.glielmo@bancaditalia.it</a></p>
     </td>
   </tr>
 </table>
