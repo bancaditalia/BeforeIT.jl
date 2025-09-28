@@ -78,7 +78,7 @@ Bit.@object struct NewModel(Bit.Model) <: Bit.AbstractModel end
 # for the workers with
 
 Bit.@object mutable struct NewWorkers(Bit.Workers) <: Bit.AbstractWorkers
-	sum_money_to_be_paid::Vector{Float64}
+    sum_money_to_be_paid::Vector{Float64}
 end
 
 # Let’s introduce a new `ConsumerLoanContract` struct into the model. A worker could
@@ -87,16 +87,16 @@ end
 # To do so, we first define it with
 
 struct ConsumerLoanContract
-	principal::Float64
-	money_to_be_paid::Float64
-	period::Int32
-	debtor::Bit.Agent{NewWorkers}
+    principal::Float64
+    money_to_be_paid::Float64
+    period::Int32
+    debtor::Bit.Agent{NewWorkers}
 end
 
 # and store a vector of contracts into the properties of the model
 
 Bit.@object mutable struct NewProperties(Bit.Properties) <: Bit.AbstractProperties
-	contracts::Vector{ConsumerLoanContract}
+    contracts::Vector{ConsumerLoanContract}
 end
 
 # We want that to happen before the search & matching process, to do so we could either specialize the
@@ -104,37 +104,39 @@ end
 # matter of brevity, we will follow this second approach:
 
 function Bit.search_and_matching_credit(firms::Bit.Firms, model::NewModel)
-	sign_and_repay_contracts!(model.w_act, model)
-	@invoke Bit.search_and_matching_credit(firms::Bit.AbstractFirms, model::Bit.AbstractModel)
+    println("ok")
+    sign_and_repay_contracts!(model.w_act, model)
+    return @invoke Bit.search_and_matching_credit(firms::Bit.AbstractFirms, model::Bit.AbstractModel)
 end
 
 function sign_and_repay_contracts!(workers, model)
-	for id in Bit.allids(workers)
-		agent = workers[id]
-		if rand() < 0.3 && agent.sum_money_to_be_paid <= agent.Y_h
-			principal = 0.2 * agent.Y_h
-			money_to_be_paid = 1.1 * principal
-			period = model.agg.t + 5
-			new_contract = ConsumerLoanContract(principal, money_to_be_paid, period, agent)
-			push!(model.prop.contracts, new_contract)
-			agent.sum_money_to_be_paid += money_to_be_paid
-		end
-	end
-	repaid_contracts_indices = Int[]
-	for (i, contract) in enumerate(model.prop.contracts)
-		if contract.period == model.agg.t
-			debtor = contract.debtor
-			if debtor.Y_h <= contract.money_to_be_paid
-				debtor.Y_h -= contract.money_to_be_paid
-				push!(repaid_contracts_indices, i)
-			end
-		end
-	end
-	for i in repaid_contracts_indices
-		contracts = model.prop.contracts
-		contracts[i], contracts[end] = contracts[end], contracts[i]
-		pop!(contracts)
-	end
+    for id in Bit.allids(workers)
+        agent = workers[id]
+        if rand() < 0.3 && agent.sum_money_to_be_paid <= agent.Y_h
+            principal = 0.2 * agent.Y_h
+            money_to_be_paid = 1.1 * principal
+            period = model.agg.t + 5
+            new_contract = ConsumerLoanContract(principal, money_to_be_paid, period, agent)
+            push!(model.prop.contracts, new_contract)
+            agent.sum_money_to_be_paid += money_to_be_paid
+        end
+    end
+    repaid_contracts_indices = Int[]
+    for (i, contract) in enumerate(model.prop.contracts)
+        if contract.period == model.agg.t
+            debtor = contract.debtor
+            if debtor.Y_h <= contract.money_to_be_paid
+                debtor.Y_h -= contract.money_to_be_paid
+                push!(repaid_contracts_indices, i)
+            end
+        end
+    end
+    for i in repaid_contracts_indices
+        contracts = model.prop.contracts
+        contracts[i], contracts[end] = contracts[end], contracts[i]
+        pop!(contracts)
+    end
+    return
 end
 
 # Now, we just create the new model
@@ -153,10 +155,8 @@ data = Bit.Data()
 w_act_new = NewWorkers(Bit.fields(w_act)..., zeros(length(w_act.Y_h)))
 prop_new = NewProperties(Bit.fields(prop)..., ConsumerLoanContract[])
 
-model = NewModel(w_act_new, w_inact, firms, bank, cb, gov, rotw, agg, prop_new, data);
+model = NewModel(w_act_new, w_inact, firms, bank, cb, gov, rotw, agg, prop_new, data)
 
 # and evolve it
 
-Bit.step!(model);
-
-# That's it!
+Bit.step!(model)
