@@ -104,7 +104,6 @@ end
 # matter of brevity, we will follow this second approach:
 
 function Bit.search_and_matching_credit(firms::Bit.Firms, model::NewModel)
-    println("ok")
     sign_and_repay_contracts!(model.w_act, model)
     return @invoke Bit.search_and_matching_credit(firms::Bit.AbstractFirms, model::Bit.AbstractModel)
 end
