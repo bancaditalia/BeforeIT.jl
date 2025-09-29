@@ -68,7 +68,8 @@ agent.Y_h
 
 Bit.@object struct NewModel(Bit.Model) <: Bit.AbstractModel end
 
-# At issuance, the worker’s deposit would increase by principal, and in time step `period` the
+# Let's say that we want to add the posssibilty for workers to sign financial contracts to borrow
+# money. At issuance, the worker’s deposit would increase by principal, and in time step `period` the
 # `money_to_be_paid` should be paid by the debtor. In each time step a worker signs a new `ConsumerLoanContract`
 # with a probability of 30% for a principal which is 20% of its `Y_h`, which should be repaid by a 10% margin
 # 5 time steps later. A worker can have multiple `ConsumerLoanContracts`. A worker can only sign a new
