@@ -75,7 +75,7 @@ Bit.@object struct NewModel(Bit.Model) <: Bit.AbstractModel end
 # 5 time steps later. A worker can have multiple `ConsumerLoanContracts`. A worker can only sign a new
 # `ConsumerLoanContract` if the sum of `money_to_be_paid` is less than its `Y_h`.
 
-# To perform this last operation efficiently, we also store the sum of `money_to_be_paid` as a new field
+# To perform this last operation efficiently, we first store the sum of `money_to_be_paid` as a new field
 # for the workers with
 
 Bit.@object mutable struct NewWorkers(Bit.Workers) <: Bit.AbstractWorkers
