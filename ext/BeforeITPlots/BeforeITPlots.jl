@@ -48,7 +48,7 @@ function Bit.plot_data_vector(model; titlefont = 9, quantities = default_quantit
 end
 
 # plot multiple data vectors, one line for each vector
-function Bit.plot_data_vectors(model_vector; titlefont = 9, quantities = Bit.default_quantities)
+function Bit.plot_data_vectors(model_vector; titlefont = 9, quantities = default_quantities)
 
     data_vectors = Bit.DataVector.(model_vector)
     Te = length(data_vectors[1].vector[1].wages)
