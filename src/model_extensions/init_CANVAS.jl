@@ -137,7 +137,7 @@ function ModelCANVAS(parameters::Dict{String, Any}, initial_conditions::Dict{Str
 
     # new central bank initialisation
     cb_st = Bit.CentralBank(p, ic)
-    cb = CentralBankCANVAS(Bit.fields(cb_st)..., r_bar_series) # add new variables to the aggregates
+    central_bank = CentralBankCANVAS(Bit.fields(cb_st)..., r_bar_series) # add new variables to the aggregates
 
     # new rotw initialisation
     rotw_st = Bit.RestOfTheWorld(p, ic)
@@ -151,5 +151,5 @@ function ModelCANVAS(parameters::Dict{String, Any}, initial_conditions::Dict{Str
     properties = Bit.Properties(p, ic)
     data = Bit.Data()
 
-    return ModelCANVAS(workers_act, workers_inact, firms, bank, cb, government, rotw, agg, properties, data)
+    return ModelCANVAS(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
 end
