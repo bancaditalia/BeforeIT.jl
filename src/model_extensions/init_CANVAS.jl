@@ -106,7 +106,6 @@ function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.
 end
 
 
-
 """
     ModelCANVAS(parameters, initial_conditions)
 
