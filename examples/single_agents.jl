@@ -114,6 +114,7 @@ function sign_and_repay_contracts!(workers, model)
         agent = workers[id]
         if rand() < 0.3 && agent.sum_money_to_be_paid <= agent.Y_h
             principal = 0.2 * agent.Y_h
+            agent.Y_h += principal
             money_to_be_paid = 1.1 * principal
             period = model.agg.t + 5
             new_contract = ConsumerLoanContract(principal, money_to_be_paid, period, agent)
@@ -127,6 +128,7 @@ function sign_and_repay_contracts!(workers, model)
             debtor = contract.debtor
             if debtor.Y_h <= contract.money_to_be_paid
                 debtor.Y_h -= contract.money_to_be_paid
+                debtor.sum_money_to_be_paid -= contract.money_to_be_paid
                 push!(repaid_contracts_indices, i)
             end
         end
