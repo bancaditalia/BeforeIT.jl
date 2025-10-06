@@ -8,7 +8,6 @@
 # In practice, this allows to operate on agents as if they were single
 # structs. Let's see how this unfolds with a concrete example. As usual,
 # we create a model instance with
-
 import BeforeIT as Bit
 
 parameters = Bit.AUSTRIA2010Q1.parameters
@@ -24,38 +23,31 @@ model = Bit.Model(parameters, initial_conditions);
 #     One invariant of IDs one could rely on is that at initialization
 #     IDs are mapped one-to-one to indices of the arrays. Though, if any
 #     deletion happens this won't be true anymore.
-
 id = 1
 agent = model.w_act[id]
 
 # Then we can access or modify attributes of the agent simply with
-
 agent.Y_h
 
 # and
-
 agent.Y_h = 1.0
 
 # Now, we will show how to add or remove agent instances from the model.
 # Since agents are added by passing a `NamedTuple` of the fields we will use
 # the fields of the agent we retrieved for ease of exposition
-
 agentfields = Bit.getfields(agent)
 
 # !!! note
 #     Importantly, fields can be accessed as long as the agent is still inside the
 #     model, and not after that. So, if you need those fields for something else
 #     after removing an agent, retrieve the fields before removing it.
-
 delete!(model.w_act, id)
 push!(model.w_act, agentfields);
 
 # We can also retrieve the id of the last agent added to the container with
-
 id = Bit.lastid(model.w_act)
 
 # Let's finally verify that the last agent has `Y_h` equal to `1.0` as it should be
-
 agent = model.w_act[id]
 agent.Y_h
 
@@ -65,7 +57,6 @@ agent.Y_h
 
 # When extending the BeforeIT models it is required to first create a new model
 # type to use instead of the default model, we can do so by using
-
 Bit.@object struct NewModel(Bit.Model) <: Bit.AbstractModel end
 
 # Let's say that we want to add the posssibilty for workers to sign financial contracts to borrow
@@ -77,7 +68,6 @@ Bit.@object struct NewModel(Bit.Model) <: Bit.AbstractModel end
 
 # To perform this last operation efficiently, we first store the sum of `money_to_be_paid` as a new field
 # for the workers with
-
 Bit.@object mutable struct NewWorkers(Bit.Workers) <: Bit.AbstractWorkers
     sum_money_to_be_paid::Vector{Float64}
 end
@@ -86,7 +76,6 @@ end
 # sign a `ConsumerLoanContract` and get a credit which would be repaid.
 
 # To do so, we first define it with
-
 struct ConsumerLoanContract
     principal::Float64
     money_to_be_paid::Float64
@@ -95,7 +84,6 @@ struct ConsumerLoanContract
 end
 
 # and store a vector of contracts into the properties of the model
-
 Bit.@object mutable struct NewProperties(Bit.Properties) <: Bit.AbstractProperties
     contracts::Vector{ConsumerLoanContract}
 end
@@ -103,7 +91,6 @@ end
 # We want that to happen before the search & matching process, to do so we could either specialize the
 # `step!` function or the function we want to call immediately after this new process. For the
 # matter of brevity, we will follow this second approach:
-
 function Bit.search_and_matching_credit(firms::Bit.Firms, model::NewModel)
     sign_and_repay_contracts!(model.w_act, model)
     return @invoke Bit.search_and_matching_credit(firms::Bit.AbstractFirms, model::Bit.AbstractModel)
@@ -142,7 +129,6 @@ function sign_and_repay_contracts!(workers, model)
 end
 
 # Now, we just create the new model
-
 p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
@@ -160,5 +146,4 @@ prop_new = NewProperties(Bit.fields(prop)..., ConsumerLoanContract[])
 model = NewModel(w_act_new, w_inact, firms, bank, cb, gov, rotw, agg, prop_new, data)
 
 # and evolve it
-
 Bit.step!(model)
