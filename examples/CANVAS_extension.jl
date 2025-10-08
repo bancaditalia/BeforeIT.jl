@@ -148,13 +148,14 @@ model_std = Bit.Model(w_act, w_inact, firms_st, bank, cb_st, gov, rotw_st, agg, 
 model_canvas = ModelCANVAS(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
 
 # The CANVAS model extension is also included in the BeforeIT package.
-# You can instantiate a CANVAS model directly from parameters and initial conditions in a single line of code as:
-model_canvas = Bit.ModelCANVAS(p, ic)
+# You can instantiate a CANVAS model directly from parameters and initial conditions in a single line of code as
+model_canvas_2 = Bit.ModelCANVAS(p, ic)
 
 # run the model(s)
 model_vector_std = Bit.ensemblerun(model_std, T, 8)
 model_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
+model_vector_canvas_2 = Bit.ensemblerun(model_canvas_2, T, 8)
 
 # plot the results
-ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas])
+ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas, model_vector_canvas_2])
 plot(ps..., layout = (3, 3))
