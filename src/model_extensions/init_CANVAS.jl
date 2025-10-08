@@ -1,5 +1,5 @@
 """
---------- CANVAS model by overwriting ---------
+--------- CANVAS model extension ---------
 
 There are 4 major changes from the Poledna et al. (2023) to the CANVAS model (Hommes et al., 2025)
 
@@ -11,21 +11,6 @@ There are 4 major changes from the Poledna et al. (2023) to the CANVAS model (Ho
 This script implements changes 3 and 4 by overwriting the methods that govern that behaviour. 
 To introduce changes 1 and 2 we need dissagregated data at the household and firm level.
 """
-
-import BeforeIT as Bit
-using Plots, Dates, StatsPlots
-
-# get parameters and initial conditions
-T = 12
-cal = Bit.ITALY_CALIBRATION
-calibration_date = DateTime(2010, 03, 31)
-
-p, ic = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = 0.001)
-
-# initialize with historical data only - series will grow dynamically during simulation
-Y_EA_series = vec(ic["Y_EA_series"])
-pi_EA_series = vec(ic["pi_EA_series"])
-r_bar_series = vec(ic["r_bar_series"])
 
 Bit.@object mutable struct ModelCANVAS(Bit.Model) <: Bit.AbstractModel end
 
@@ -102,7 +87,6 @@ function Bit.central_bank_rate(cb::AbstractCentralBankCANVAS, model::Bit.Abstrac
     # update central bank parameters
     cb.rho, cb.r_star, cb.xi_pi, cb.xi_gamma, cb.pi_star = Bit.estimate_taylor_rule(a1, a2, a3)
     r_bar = Bit.taylor_rule(cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
-    # push new values to time series
     push!(cb.r_bar_series, r_bar)
     return r_bar
 end
@@ -114,48 +98,57 @@ function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.
     gamma_EA = Y_EA / rotw.Y_EA - 1 # growth EA
     epsilon_pi_EA = randn() * rotw.sigma_pi_EA
     pi_EA = exp(rotw.alpha_pi_EA * log(1 + rotw.pi_EA) + rotw.beta_pi_EA + epsilon_pi_EA) - 1 # inflation EA
-    # push new values to time series
+
     push!(rotw.Y_EA_series, Y_EA)
     push!(rotw.pi_EA_series, pi_EA)
+
     return Y_EA, gamma_EA, pi_EA
 end
 
-# new firms initialisation
-firms_st = Bit.Firms(p, ic)
-firms = FirmsCANVAS(Bit.fields(firms_st)...)
-firms.Q_s_i .= firms.Q_d_i # overwrite to avoid division by zero for new firm price and quantity setting mechanism
 
-# new central bank initialisation
-cb_st = Bit.CentralBank(p, ic)
-cb = CentralBankCANVAS(Bit.fields(cb_st)..., r_bar_series) # add new variables to the aggregates
+"""
+    ModelCANVAS(parameters, initial_conditions)
 
-# new rotw initialisation
-rotw_st = Bit.RestOfTheWorld(p, ic)
-rotw = RestOfTheWorldCANVAS(Bit.fields(rotw_st)..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
+Initializes a CANVAS model with given parameters and initial conditions.
 
-# standard initialisations: workers, bank, aggregats, government, properties and data
-w_act, w_inact = Bit.Workers(p, ic)
-bank = Bit.Bank(p, ic)
-agg = Bit.Aggregates(p, ic)
-gov = Bit.Government(p, ic)
-prop = Bit.Properties(p, ic)
-data = Bit.Data()
+The model can run for an arbitrary number of time steps without pre-specifying T.
+Time series for r_bar, Y_EA, and pi_EA grow dynamically during simulation.
 
-# define a standard model
-model_std = Bit.Model(w_act, w_inact, firms_st, bank, cb_st, gov, rotw_st, agg, prop, data)
+Parameters:
+- `parameters`: A dictionary containing the model parameters.
+- `initial_conditions`: A dictionary containing the initial conditions.
 
-# define a CANVAS model
-model_canvas = ModelCANVAS(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
+Returns:
+- `model::AbstractModel`: The initialized CANVAS model.
+"""
+function ModelCANVAS(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any})
+    p, ic = parameters, initial_conditions
 
-# The CANVAS model extension is also included in the BeforeIT package.
-# You can instantiate a CANVAS model directly from parameters and initial conditions in a single line of code as
-model_canvas_2 = Bit.ModelCANVAS(p, ic)
+    # Initialize with historical data only - will grow dynamically during simulation
+    Y_EA_series = vec(ic["Y_EA_series"])
+    pi_EA_series = vec(ic["pi_EA_series"])
+    r_bar_series = vec(ic["r_bar_series"])
 
-# run the model(s)
-model_vector_std = Bit.ensemblerun(model_std, T, 8)
-model_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
-model_vector_canvas_2 = Bit.ensemblerun(model_canvas_2, T, 8)
+    # new firms initialisation
+    firms_st = Bit.Firms(p, ic)
+    firms = FirmsCANVAS(Bit.fields(firms_st)...)
+    firms.Q_s_i .= firms.Q_d_i # overwrite to avoid division by zero for new firm price and quantity setting mechanism
 
-# plot the results
-ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas, model_vector_canvas_2])
-plot(ps..., layout = (3, 3))
+    # new central bank initialisation
+    cb_st = Bit.CentralBank(p, ic)
+    central_bank = CentralBankCANVAS(Bit.fields(cb_st)..., r_bar_series) # add new variables to the aggregates
+
+    # new rotw initialisation
+    rotw_st = Bit.RestOfTheWorld(p, ic)
+    rotw = RestOfTheWorldCANVAS(Bit.fields(rotw_st)..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
+
+    # standard initialisations: workers, bank, aggregats, government, properties and data
+    workers_act, workers_inact = Bit.Workers(p, ic)
+    bank = Bit.Bank(p, ic)
+    agg = Bit.Aggregates(p, ic)
+    government = Bit.Government(p, ic)
+    properties = Bit.Properties(p, ic)
+    data = Bit.Data()
+
+    return ModelCANVAS(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
+end

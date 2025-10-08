@@ -91,6 +91,9 @@ include("utils/save_all_predictions.jl")
 # shocks
 include("shocks/shocks.jl")
 
+# model extensions
+include("model_extensions/init_CANVAS.jl")
+
 # external functions definitions
 include("utils/extensions.jl")
 
