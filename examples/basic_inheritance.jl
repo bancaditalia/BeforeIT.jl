@@ -16,9 +16,7 @@ Bit.@object mutable struct NewCentralBank(Bit.CentralBank) <: Bit.AbstractCentra
 end
 
 # and then change the default central bank behaviour for the new type
-function Bit.central_bank_rate(cb::NewCentralBank, model::Bit.AbstractModel)
-    return cb.fixed_rate
-end
+Bit.central_bank_rate(model::NewModel) = cb.fixed_rate
 
 # Now, we can initialize the model to include the new type, to do so, we will need
 # to initialize all model components first

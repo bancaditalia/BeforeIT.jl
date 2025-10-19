@@ -57,7 +57,7 @@ productivity_shock = ProductivityShock(1.02)
 consumption_shock = ConsumptionShock(1.02, 4)
 
 # Simulate the model with the shock
-model_vec_shocked = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T; shock = consumption_shock);
+model_vec_shocked = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T; shock! = consumption_shock);
 
 # extract the data vectors from the model vectors
 data_vector_baseline = Bit.DataVector(model_vec_baseline);

@@ -22,20 +22,20 @@ using Test, MAT, StatsBase, Random
         agg = model.agg         # aggregates
         prop = model.prop       # model properties
 
-        Bit.finance_insolvent_firms!(firms, bank, model)
+        Bit.finance_insolvent_firms!(model)
 
         agg.Y_e, agg.gamma_e, agg.pi_e = Bit.growth_inflation_expectations(model)
 
         agg.epsilon_Y_EA, agg.epsilon_E, agg.epsilon_I = Bit.epsilon(prop.C)
 
-        rotw.Y_EA, rotw.gamma_EA, rotw.pi_EA = Bit.growth_inflation_EA(rotw, model)
+        rotw.Y_EA, rotw.gamma_EA, rotw.pi_EA = Bit.growth_inflation_EA(model)
 
-        cb.r_bar = Bit.central_bank_rate(cb, model)
+        cb.r_bar = Bit.central_bank_rate(model)
 
-        bank.r = Bit.bank_rate(bank, model)
+        bank.r = Bit.bank_rate(model)
 
         Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i =
-            Bit.firms_expectations_and_decisions(firms, model)
+            Bit.firms_expectations_and_decisions(model)
 
         firms.Q_s_i .= Q_s_i
         firms.I_d_i .= I_d_i
@@ -47,44 +47,42 @@ using Test, MAT, StatsBase, Random
         firms.K_e_i .= K_e_i
         firms.L_e_i .= L_e_i
 
-        firms.DL_i .= Bit.search_and_matching_credit(firms, model)
+        Bit.search_and_matching_credit!(model)
 
-        N_i, Oh = Bit.search_and_matching_labour(firms, model)
-        firms.N_i .= N_i
-        w_act.O_h .= Oh
+        Bit.search_and_matching_labour!(model)
 
-        firms.w_i .= Bit.firms_wages(firms)
-        firms.Y_i .= Bit.firms_production(firms)
+        firms.w_i .= Bit.firms_wages(model)
+        firms.Y_i .= Bit.firms_production(model)
 
-        Bit.update_workers_wages!(w_act, firms.w_i)
+        Bit.update_workers_wages!(model)
 
-        gov.sb_other, gov.sb_inact = Bit.gov_social_benefits(gov, model)
+        gov.sb_other, gov.sb_inact = Bit.gov_social_benefits(model)
 
-        bank.Pi_e_k = Bit.bank_expected_profits(bank, model)
+        bank.Pi_e_k = Bit.bank_expected_profits(model)
 
-        C_d_h, I_d_h = Bit.households_budget_act(w_act, model)
+        C_d_h, I_d_h = Bit.households_budget_act(model)
         w_act.C_d_h .= C_d_h
         w_act.I_d_h .= I_d_h
-        C_d_h, I_d_h = Bit.households_budget_inact(w_inact, model)
+        C_d_h, I_d_h = Bit.households_budget_inact(model)
         w_inact.C_d_h .= C_d_h
         w_inact.I_d_h .= I_d_h
-        C_d_h, I_d_h = Bit.households_budget(firms, model)
+        C_d_h, I_d_h = Bit.households_budget_firms(model)
         firms.C_d_h .= C_d_h
         firms.I_d_h .= I_d_h
-        bank.C_d_h, bank.I_d_h = Bit.households_budget(bank, model)
+        bank.C_d_h, bank.I_d_h = Bit.households_budget_bank(model)
 
-        C_G, C_d_j = Bit.gov_expenditure(gov, model)
+        C_G, C_d_j = Bit.gov_expenditure(model)
         gov.C_G = C_G
         gov.C_d_j .= C_d_j
 
-        C_E, Y_I, C_d_l, Y_m, P_m = Bit.rotw_import_export(rotw, model)
+        C_E, Y_I, C_d_l, Y_m, P_m = Bit.rotw_import_export(model)
         rotw.C_E = C_E
         rotw.Y_I = Y_I
         rotw.C_d_l .= C_d_l
         rotw.Y_m .= Y_m
         rotw.P_m .= P_m
 
-        Bit.search_and_matching!(model, m)
+        Bit.search_and_matching!(model; parallel=m)
         return bank, w_act, w_inact, firms, gov, rotw
     end
 

@@ -18,7 +18,7 @@ using Test
         model.bank.r = 0.05
 
         expected_profits = 0.3
-        Pi_k = Bit.bank_profits(model.bank, model)
+        Pi_k = Bit.bank_profits(model)
         @test isapprox(Pi_k, expected_profits, atol = 1.0e-10)
     end
 
@@ -27,7 +27,7 @@ using Test
         model.agg.pi_e = 0.1
         model.agg.gamma_e = 0.2
         expected_profits = 1.32
-        Pi_k = Bit.bank_expected_profits(model.bank, model)
+        Pi_k = Bit.bank_expected_profits(model)
         @test isapprox(Pi_k, expected_profits, atol = 1.0e-10)
     end
 
@@ -49,7 +49,7 @@ using Test
         bank.D_h = 6.0
         bank.E_k = 6.0
         expected_deposits = 30.0
-        D_h = Bit.bank_deposits(model.bank, model)
+        D_h = Bit.bank_deposits(model)
         @test isapprox(D_h, expected_deposits, atol = 1.0e-10)
     end
 

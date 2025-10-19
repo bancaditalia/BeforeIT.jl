@@ -22,7 +22,7 @@ using Test
         model.agg.P_bar = 2.0
         expected_inflation = log(14 / 12)
         expected_priceindex = 14 / 6
-        inflation, priceindex = Bit.inflation_priceindex(model.firms, model)
+        inflation, priceindex = Bit.inflation_priceindex(model)
         @test isapprox(inflation, expected_inflation, atol = 1.0e-10)
     end
 
@@ -34,7 +34,7 @@ using Test
         model.rotw.Q_m[1] = 1.0
         G = model.prop.G
         expected_priceindex = 16 / 7
-        priceindex = Bit.sector_specific_priceindex(model.firms, model.rotw, G)
+        priceindex = Bit.sector_specific_priceindex(model)
         @test isapprox(priceindex[1], expected_priceindex, atol = 1.0e-10)
     end
 

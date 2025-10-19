@@ -1,17 +1,13 @@
 """
-    search_and_matching!(model, parallel::Bool = false)
+    search_and_matching!(model; parallel::Bool = false)
 
 This function performs a search and matching algorithm for firms and for retail markets. It takes in a model object 
 and an optional boolean argument for multi-threading. The function loops over all goods and performs the firms market 
 and retail market operations for each good. Finally, it updates the aggregate variables based on the results of markets.
 
-Args:
-- model: The model object
-- parallel: A boolean indicating whether to use multi-threading for the algorithm. Default is false.
-
 This function updates the model in-place and does not return any value.
 """
-function search_and_matching!(model::AbstractModel, parallel = false)
+function search_and_matching!(model::AbstractModel; parallel = false)
 
     w_act, w_inact, firms, gov = model.w_act, model.w_inact, model.firms, model.gov
     bank, rotw, agg, prop = model.bank, model.rotw, model.agg, model.prop
