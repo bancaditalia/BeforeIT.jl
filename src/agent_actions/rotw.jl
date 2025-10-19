@@ -1,4 +1,3 @@
-
 """
     rotw_import_export(model)
 
@@ -37,7 +36,7 @@ function set_rotw_import_export!(model)
     rotw.Y_I = Y_I
     rotw.C_d_l .= C_d_l
     rotw.Y_m .= Y_m
-    rotw.P_m .= P_m
+    return rotw.P_m .= P_m
 end
 
 """
@@ -62,5 +61,5 @@ function rotw_deposits(model)
     return D_RoW
 end
 function set_rotw_deposits!(model)
-    model.rotw.D_RoW = rotw_deposits(model)
+    return model.rotw.D_RoW = rotw_deposits(model)
 end

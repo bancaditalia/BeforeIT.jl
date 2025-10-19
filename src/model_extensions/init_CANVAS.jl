@@ -76,7 +76,7 @@ function Bit.firms_expectations_and_decisions(model::Bit.ModelCANVAS)
     # target loans
     DL_d_i = max.(0, -DD_e_i - firms.D_i)
 
-    return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, new_P_i, DL_d_i, K_e_i, L_e_i
+    return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
 
 function Bit.central_bank_rate(model::Bit.ModelCANVAS)

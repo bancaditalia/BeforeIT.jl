@@ -82,7 +82,7 @@ using Test, MAT, StatsBase, Random
         rotw.Y_m .= Y_m
         rotw.P_m .= P_m
 
-        Bit.search_and_matching!(model; parallel=m)
+        Bit.search_and_matching!(model; parallel = m)
         return bank, w_act, w_inact, firms, gov, rotw
     end
 

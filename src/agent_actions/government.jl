@@ -22,7 +22,7 @@ end
 function set_gov_expenditure!(model)
     C_G, C_d_j = gov_expenditure(model)
     model.gov.C_G = C_G
-    model.gov.C_d_j .= C_d_j
+    return model.gov.C_d_j .= C_d_j
 end
 
 """ 
@@ -76,7 +76,7 @@ function gov_revenues(model::AbstractModel)
     return Y_G
 end
 function set_gov_revenues!(model::AbstractModel)
-    model.gov.Y_G = gov_revenues(model)
+    return model.gov.Y_G = gov_revenues(model)
 end
 
 """
@@ -101,10 +101,10 @@ function gov_loans(model)
     # update government debt
     L_G = gov.L_G + Pi_G
 
-    gov.L_G = L_G
+    return L_G
 end
 function set_gov_loans!(model)
-    model.gov.L_G = gov_loans(model)
+    return model.gov.L_G = gov_loans(model)
 end
 
 """
@@ -127,5 +127,5 @@ function gov_social_benefits(model::AbstractModel)
 end
 function set_gov_social_benefits!(model::AbstractModel)
     gov = model.gov
-    gov.sb_other, gov.sb_inact = gov_social_benefits(model)
+    return gov.sb_other, gov.sb_inact = gov_social_benefits(model)
 end

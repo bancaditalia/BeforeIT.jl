@@ -1,4 +1,3 @@
-
 """
     bank_profits(model)
 
@@ -37,7 +36,7 @@ function bank_profits(model)
     return Pi_k
 end
 function set_bank_profits!(model)
-    model.bank.Pi_k = bank_profits(model)
+    return model.bank.Pi_k = bank_profits(model)
 end
 
 """
@@ -68,7 +67,7 @@ function bank_equity(model)
     return E_k
 end
 function set_bank_equity!(model)
-    model.bank.E_k = bank_equity(model)
+    return model.bank.E_k = bank_equity(model)
 end
 
 """
@@ -89,7 +88,7 @@ function bank_rate(model::AbstractModel)
     return r
 end
 function set_bank_rate!(model::AbstractModel)
-    model.bank.r = bank_rate(model)
+    return model.bank.r = bank_rate(model)
 end
 
 """
@@ -118,7 +117,7 @@ function bank_expected_profits(model::AbstractModel)
     return bank.Pi_k * (1 + pi_e) * (1 + gamma_e)
 end
 function set_bank_expected_profits!(model::AbstractModel)
-    model.bank.Pi_e_k = bank_expected_profits(model)
+    return model.bank.Pi_e_k = bank_expected_profits(model)
 end
 
 """
@@ -164,8 +163,8 @@ function bank_deposits(model)
 
     tot_D_h = sum(waD_h) + sum(wiD_h) + sum(fD_h) + bD_h
     D_k = sum(fD_i) + tot_D_h + bE_k - sum(fL_i)
-    bank.D_k = D_k
+    return D_k
 end
 function set_bank_deposits!(model)
-    model.bank.D_k = bank_deposits(model)
+    return model.bank.D_k = bank_deposits(model)
 end

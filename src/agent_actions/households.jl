@@ -1,4 +1,3 @@
-
 # update wages for workers
 function update_workers_wages!(model::AbstractModel)
     w_act, firms = model.w_act, model.firms
@@ -30,7 +29,7 @@ function households_income_act(model; expected = false)
     return Y_h
 end
 function set_households_income_act!(model; expected = false)
-    model.w_act.Y_h .= households_income_act(model; expected)
+    return model.w_act.Y_h .= households_income_act(model; expected)
 end
 
 function households_income_inact(model::AbstractModel; expected = false)
@@ -48,7 +47,7 @@ function households_income_inact(model::AbstractModel; expected = false)
     return Y_h
 end
 function set_households_income_inact!(model; expected = false)
-    model.w_inact.Y_h .= households_income_inact(model; expected)
+    return model.w_inact.Y_h .= households_income_inact(model; expected)
 end
 
 function households_income_firms(model::AbstractModel; expected = false)
@@ -66,7 +65,7 @@ function households_income_firms(model::AbstractModel; expected = false)
     return Y_h
 end
 function set_households_income_firms!(model; expected = false)
-    model.firms.Y_h .= households_income_firms(model; expected)
+    return model.firms.Y_h .= households_income_firms(model; expected)
 end
 
 function households_income_bank(model; expected = false)
@@ -82,7 +81,7 @@ function households_income_bank(model; expected = false)
     return Y_h
 end
 function set_households_income_bank!(model; expected = false)
-    model.bank.Y_h = households_income_bank(model; expected)
+    return model.bank.Y_h = households_income_bank(model; expected)
 end
 
 function households_budget_act(model::AbstractModel)
@@ -101,7 +100,7 @@ function set_households_budget_act!(model::AbstractModel)
     w_act = model.w_act
     C_d_h, I_d_h = households_budget_act(model)
     w_act.C_d_h .= C_d_h
-    w_act.I_d_h .= I_d_h
+    return w_act.I_d_h .= I_d_h
 end
 
 function households_budget_inact(model::AbstractModel)
@@ -120,7 +119,7 @@ function set_households_budget_inact!(model::AbstractModel)
     w_inact = model.w_inact
     C_d_h, I_d_h = households_budget_inact(model)
     w_inact.C_d_h .= C_d_h
-    w_inact.I_d_h .= I_d_h
+    return w_inact.I_d_h .= I_d_h
 end
 
 function households_budget_firms(model::AbstractModel)
@@ -139,7 +138,7 @@ function set_households_budget_firms!(model::AbstractModel)
     firms = model.firms
     C_d_h, I_d_h = households_budget_firms(model)
     firms.C_d_h .= C_d_h
-    firms.I_d_h .= I_d_h
+    return firms.I_d_h .= I_d_h
 end
 
 function households_budget_bank(model)
@@ -157,24 +156,24 @@ function set_households_budget_bank!(model)
     bank = model.bank
     C_d_h, I_d_h = households_budget_bank(model)
     bank.C_d_h = C_d_h
-    bank.I_d_h = I_d_h
+    return bank.I_d_h = I_d_h
 end
 
 function set_households_deposits_act!(model)
     D_h = households_deposits(model.w_act, model)
-    model.w_act.D_h .= D_h
+    return model.w_act.D_h .= D_h
 end
 function set_households_deposits_inact!(model)
     D_h = households_deposits(model.w_inact, model)
-    model.w_inact.D_h .= D_h
+    return model.w_inact.D_h .= D_h
 end
 function set_households_deposits_firms!(model)
     D_h = households_deposits(model.firms, model)
-    model.firms.D_h .= D_h
+    return model.firms.D_h .= D_h
 end
 function set_households_deposits_bank!(model)
     D_h = households_deposits(model.bank, model)
-    model.bank.D_h = D_h
+    return model.bank.D_h = D_h
 end
 
 function households_deposits(households, model)

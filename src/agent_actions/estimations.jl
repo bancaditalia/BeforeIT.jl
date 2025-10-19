@@ -42,7 +42,7 @@ function growth_inflation_expectations(model::AbstractModel)
 end
 function set_growth_inflation_expectations!(model::AbstractModel)
     agg = model.agg
-    agg.Y_e, agg.gamma_e, agg.pi_e = growth_inflation_expectations(model)
+    return agg.Y_e, agg.gamma_e, agg.pi_e = growth_inflation_expectations(model)
 end
 
 """
@@ -91,7 +91,7 @@ function growth_inflation_EA(model::AbstractModel)
 end
 function set_growth_inflation_EA!(model::AbstractModel)
     rotw = model.rotw
-    rotw.Y_EA, rotw.gamma_EA, rotw.pi_EA = growth_inflation_EA(model)
+    return rotw.Y_EA, rotw.gamma_EA, rotw.pi_EA = growth_inflation_EA(model)
 end
 
 """
@@ -132,7 +132,7 @@ end
 function set_inflation_priceindex!(model)
     agg, prop = model.agg, model.prop
     push!(agg.pi_, 0.0)
-    agg.pi_[prop.T_prime + agg.t], agg.P_bar = inflation_priceindex(model)
+    return agg.pi_[prop.T_prime + agg.t], agg.P_bar = inflation_priceindex(model)
 end
 
 """
@@ -167,7 +167,7 @@ function sector_specific_priceindex(model::AbstractModel)
     return vec
 end
 function set_sector_specific_priceindex!(model::AbstractModel)
-    model.agg.P_bar_g .= sector_specific_priceindex(model)
+    return model.agg.P_bar_g .= sector_specific_priceindex(model)
 end
 
 function capital_formation_priceindex(model::AbstractModel)
@@ -175,7 +175,7 @@ function capital_formation_priceindex(model::AbstractModel)
     return sum(prop.b_CF_g .* agg.P_bar_g)
 end
 function set_capital_formation_priceindex!(model::AbstractModel)
-    model.agg.P_bar_CF = capital_formation_priceindex(model)
+    return model.agg.P_bar_CF = capital_formation_priceindex(model)
 end
 
 function households_priceindex(model::AbstractModel)
@@ -183,5 +183,5 @@ function households_priceindex(model::AbstractModel)
     return sum(prop.b_HH_g .* agg.P_bar_g)
 end
 function set_households_priceindex!(model)
-    model.agg.P_bar_HH = households_priceindex(model)
+    return model.agg.P_bar_HH = households_priceindex(model)
 end

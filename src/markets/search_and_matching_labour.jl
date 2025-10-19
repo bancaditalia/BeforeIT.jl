@@ -64,5 +64,5 @@ function search_and_matching_labour!(model::AbstractModel)
     end
 
     firms.N_i .= N_i
-    w_act.O_h .= O_h
+    return w_act.O_h .= O_h
 end

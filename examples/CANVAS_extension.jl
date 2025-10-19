@@ -108,7 +108,7 @@ function Bit.central_bank_rate(model::Bit.ModelCANVAS)
     # push new values to time series
     push!(cb.r_bar_series, r_bar)
     return r_bar
-en
+end
 
 function Bit.growth_inflation_EA(model::Bit.ModelCANVAS)
     rotw = model.rotw

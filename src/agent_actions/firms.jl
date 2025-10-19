@@ -85,13 +85,13 @@ function firms_expectations_and_decisions(model::AbstractModel)
     # target loans
     DL_d_i = max.(0, -DD_e_i - firms.D_i)
 
-    return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, new_P_i, DL_d_i, K_e_i, L_e_i
+    return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
 function set_firms_expectations_and_decisions!(model::AbstractModel)
     firms = model.firms
 
-    Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, 
-    new_P_i, DL_d_i, K_e_i, L_e_i = firms_expectations_and_decisions(model)
+    Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i,
+        DL_d_i, K_e_i, L_e_i, new_P_i = firms_expectations_and_decisions(model)
 
     firms.Q_s_i .= Q_s_i
     firms.I_d_i .= I_d_i
@@ -101,7 +101,7 @@ function set_firms_expectations_and_decisions!(model::AbstractModel)
     firms.P_i .= new_P_i
     firms.DL_d_i .= DL_d_i
     firms.K_e_i .= K_e_i
-    firms.L_e_i .= L_e_i
+    return firms.L_e_i .= L_e_i
 end
 
 """
@@ -127,7 +127,7 @@ function firms_wages(model::AbstractModel)
     return w_i
 end
 function set_firms_wages!(model::AbstractModel)
-    model.firms.w_i .= firms_wages(model)
+    return model.firms.w_i .= firms_wages(model)
 end
 
 """
@@ -151,10 +151,10 @@ function firms_production(model::AbstractModel)
     # compute production function of firms (Leontief technology)
     Y_i = leontief_production(Q_s_i, N_i, alpha_i, K_i, kappa_i, M_i, beta_i)
 
-    firms.Y_i .= Y_i
+    return Y_i
 end
 function set_firms_production!(model::AbstractModel)
-    model.firms.Y_i .= firms_production(model)
+    return model.firms.Y_i .= firms_production(model)
 end
 
 """
@@ -231,7 +231,7 @@ function firms_profits(model::AbstractModel)
     return Pi_i
 end
 function set_firms_profits!(model::AbstractModel)
-    model.firms.Pi_i .= firms_profits(model)
+    return model.firms.Pi_i .= firms_profits(model)
 end
 
 """
@@ -299,7 +299,7 @@ function firms_deposits(model)
     return D_i
 end
 function set_firms_deposits!(model)
-    model.firms.D_i .= firms_deposits(model)
+    return model.firms.D_i .= firms_deposits(model)
 end
 
 """
@@ -340,7 +340,7 @@ function firms_equity(model)
     return E_i
 end
 function set_firms_equity!(model)
-    model.firms.E_i .= firms_equity(model)
+    return model.firms.E_i .= firms_equity(model)
 end
 
 """
@@ -369,7 +369,7 @@ function firms_loans(model)
     return L_i
 end
 function set_firms_loans!(model)
-    model.firms.L_i .= firms_loans(model)
+    return model.firms.L_i .= firms_loans(model)
 end
 
 """
@@ -413,5 +413,5 @@ function set_firms_stocks!(model)
     firms.K_i .= K_i
     firms.M_i .= M_i
     firms.DS_i .= DS_i
-    firms.S_i .= S_i
+    return firms.S_i .= S_i
 end

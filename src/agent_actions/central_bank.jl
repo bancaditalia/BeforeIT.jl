@@ -20,7 +20,7 @@ function central_bank_rate(model::AbstractModel)
     return r_bar
 end
 function set_central_bank_rate!(model::AbstractModel)
-    model.cb.r_bar = central_bank_rate(model)
+    return model.cb.r_bar = central_bank_rate(model)
 end
 
 """
@@ -103,5 +103,5 @@ function central_bank_equity(model)
     return E_CB
 end
 function set_central_bank_equity!(model)
-    model.cb.E_CB = central_bank_equity(model)
+    return model.cb.E_CB = central_bank_equity(model)
 end
