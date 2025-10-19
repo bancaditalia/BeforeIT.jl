@@ -32,7 +32,9 @@ Bit.@object mutable struct RestOfTheWorldCANVAS(Bit.RestOfTheWorld) <: AbstractR
 end
 
 # define new functions for the CANVAS-specific agents
-function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model::Bit.AbstractModel)
+function Bit.firms_expectations_and_decisions(model::Bit.ModelCANVAS)
+    firms = model.firms
+
     # unpack non-firm variables
     P_bar_g = model.agg.P_bar_g
     gamma_e = model.agg.gamma_e
@@ -77,7 +79,8 @@ function Bit.firms_expectations_and_decisions(firms::AbstractFirmsCANVAS, model:
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
 
-function Bit.central_bank_rate(cb::AbstractCentralBankCANVAS, model::Bit.AbstractModel)
+function Bit.central_bank_rate(model::Bit.ModelCANVAS)
+    cb = model.cb
     gamma_EA, pi_EA, T_prime, t = model.rotw.gamma_EA, model.rotw.pi_EA, model.prop.T_prime, model.agg.t
 
     a1 = cb.r_bar_series[1:(T_prime + t - 1)]
@@ -91,7 +94,9 @@ function Bit.central_bank_rate(cb::AbstractCentralBankCANVAS, model::Bit.Abstrac
     return r_bar
 end
 
-function Bit.growth_inflation_EA(rotw::AbstractRestOfTheWorldCANVAS, model::Bit.AbstractModel)
+function Bit.growth_inflation_EA(model::Bit.ModelCANVAS)
+    rotw = model.rotw
+
     epsilon_Y_EA = model.agg.epsilon_Y_EA
 
     Y_EA = exp(rotw.alpha_Y_EA * log(rotw.Y_EA) + rotw.beta_Y_EA + epsilon_Y_EA) # GDP EA

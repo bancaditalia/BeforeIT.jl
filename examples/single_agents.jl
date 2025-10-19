@@ -91,9 +91,9 @@ end
 # We want that to happen before the search & matching process, to do so we could either specialize the
 # `step!` function or the function we want to call immediately after this new process. For the
 # matter of brevity, we will follow this second approach:
-function Bit.search_and_matching_credit(firms::Bit.Firms, model::NewModel)
+function Bit.search_and_matching_credit!(model::NewModel)
     sign_and_repay_contracts!(model.w_act, model)
-    return @invoke Bit.search_and_matching_credit(firms::Bit.AbstractFirms, model::Bit.AbstractModel)
+    return @invoke Bit.search_and_matching_credit!(model::Bit.AbstractModel)
 end
 
 function sign_and_repay_contracts!(workers, model)

@@ -42,15 +42,11 @@ function expected_deposits_capital_loans(firms::AbstractFirms, model::AbstractMo
 end
 
 """
-    firms_expectations_and_decisions(firms, model)
+    firms_expectations_and_decisions(model)
 
 Calculate the expectations and decisions of firms.
 That is: compute firm quantity, price, investment and intermediate-goods, 
 employment decisions, expected profits, and desired/expected loans and capital.
-
-# Arguments
-- `firms`: Firms object
-- `model`: Model object
 
 # Returns
 - `Q_s_i`: Vector of desired quantities
@@ -63,7 +59,9 @@ employment decisions, expected profits, and desired/expected loans and capital.
 - `L_e_i`: Vector of expected loans
 - `P_i`: Vector of  prices
 """
-function firms_expectations_and_decisions(firms, model)
+function firms_expectations_and_decisions(model::AbstractModel)
+    firms = model.firms
+
     gamma_e, pi_e = model.agg.gamma_e, model.agg.pi_e
 
     # target quantity
@@ -89,19 +87,33 @@ function firms_expectations_and_decisions(firms, model)
 
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
+function set_firms_expectations_and_decisions!(model::AbstractModel)
+    firms = model.firms
+
+    Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i,
+        DL_d_i, K_e_i, L_e_i, new_P_i = firms_expectations_and_decisions(model)
+
+    firms.Q_s_i .= Q_s_i
+    firms.I_d_i .= I_d_i
+    firms.DM_d_i .= DM_d_i
+    firms.N_d_i .= N_d_i
+    firms.Pi_e_i .= Pi_e_i
+    firms.P_i .= new_P_i
+    firms.DL_d_i .= DL_d_i
+    firms.K_e_i .= K_e_i
+    return firms.L_e_i .= L_e_i
+end
 
 """
-    firms_wages(firms)
+    firms_wages(model)
 
 Calculate the wages set by firms.
-
-# Arguments
-- `firms`: Firms object
 
 # Returns
 - `w_i`: Vector of wages
 """
-function firms_wages(firms::AbstractFirms)
+function firms_wages(model::AbstractModel)
+    firms = model.firms
 
     Q_s_i = firms.Q_s_i
 
@@ -114,21 +126,22 @@ function firms_wages(firms::AbstractFirms)
     )
     return w_i
 end
+function set_firms_wages!(model::AbstractModel)
+    return model.firms.w_i .= firms_wages(model)
+end
 
 """
-    firms_production(firms)
+    firms_production(model)
 
 Calculate the production of firms.
-
-# Arguments
-- `firms`: Firms object
 
 # Returns
 - `Y_i`: Vector of production
 
 The production `Y_i` is computed using a Leontief technology.
 """
-function firms_production(firms::AbstractFirms)
+function firms_production(model::AbstractModel)
+    firms = model.firms
     Q_s_i, alpha_bar_i, kappa_i, beta_i = firms.Q_s_i, firms.alpha_bar_i, firms.kappa_i, firms.beta_i
     K_i, N_i, M_i = firms.K_i, firms.N_i, firms.M_i
 
@@ -139,7 +152,9 @@ function firms_production(firms::AbstractFirms)
     Y_i = leontief_production(Q_s_i, N_i, alpha_i, K_i, kappa_i, M_i, beta_i)
 
     return Y_i
-
+end
+function set_firms_production!(model::AbstractModel)
+    return model.firms.Y_i .= firms_production(model)
 end
 
 """
@@ -172,13 +187,9 @@ end
 
 
 """
-    firms_profits(firms, model)
+    firms_profits(model)
 
 Calculate the profits of firms.
-
-# Arguments
-- `firms`: Firms object
-- `model`: Model object
 
 # Returns
 - `Pi_i`: Vector of profits
@@ -199,7 +210,8 @@ where:
 - `out_taxes_capital = tau_K_i * P_i * Y_i`
 - `out_loans = r * (L_i + pos(-D_i))`
 """
-function firms_profits(firms::AbstractFirms, model::AbstractModel)
+function firms_profits(model::AbstractModel)
+    firms = model.firms
 
     P_bar_HH, tau_SIF, r, r_bar = model.agg.P_bar_HH, model.prop.tau_SIF, model.bank.r, model.cb.r_bar
 
@@ -218,15 +230,14 @@ function firms_profits(firms::AbstractFirms, model::AbstractModel)
 
     return Pi_i
 end
+function set_firms_profits!(model::AbstractModel)
+    return model.firms.Pi_i .= firms_profits(model)
+end
 
 """
-    firms_deposits(firms, model)
+    firms_deposits(model)
 
 Calculate the new deposits of firms.
-
-# Arguments
-- `firms`: Firms object
-- `model`: Model object
 
 # Returns
 - `DD_i`: Vector of new deposits
@@ -251,7 +262,8 @@ where:
 - `new_credit = DL_i`
 - `debt_installment = -theta * L_i`
 """
-function firms_deposits(firms, model)
+function firms_deposits(model)
+    firms = model.firms
 
     tau_FIRM, tau_SIF, theta_DIV = model.prop.tau_FIRM, model.prop.tau_SIF, model.prop.theta_DIV
     theta, r, r_bar, P_bar_HH = model.prop.theta, model.bank.r, model.cb.r_bar, model.agg.P_bar_HH
@@ -286,15 +298,14 @@ function firms_deposits(firms, model)
     D_i = firms.D_i .+ DD_i
     return D_i
 end
+function set_firms_deposits!(model)
+    return model.firms.D_i .= firms_deposits(model)
+end
 
 """
-    firms_equity(firms, model)
+    firms_equity(model)
 
 Calculate the equity of firms.
-
-# Arguments
-- `firms`: Firms object
-- `model`: Model object
 
 # Returns
 - `E_i`: Vector of equity
@@ -317,7 +328,8 @@ where:
 - `K_i`: Capital stock
 - `L_i`: Loans
 """
-function firms_equity(firms, model)
+function firms_equity(model)
+    firms = model.firms
 
     a_sg, P_bar_g, P_bar_CF = model.prop.a_sg, model.agg.P_bar_g, model.agg.P_bar_CF
 
@@ -327,15 +339,14 @@ function firms_equity(firms, model)
 
     return E_i
 end
+function set_firms_equity!(model)
+    return model.firms.E_i .= firms_equity(model)
+end
 
 """
-    firms_loans(firms, model)
+    firms_loans(model)
 
 Calculate the new loans of firms.
-
-# Arguments
-- `firms`: Firms object
-- `model`: Model object
 
 # Returns
 - `L_i`: Vector of new loans
@@ -351,19 +362,20 @@ where:
 - `L_i`: Loans
 - `DL_i`: Acquired new loans
 """
-function firms_loans(firms, model)
+function firms_loans(model)
+    firms = model.firms
     theta = model.prop.theta
     L_i = (1 - theta) * firms.L_i + firms.DL_i
     return L_i
 end
+function set_firms_loans!(model)
+    return model.firms.L_i .= firms_loans(model)
+end
 
 """
-    firms_stocks(firms)
+    firms_stocks(model)
 
 Calculate the stocks of firms.
-
-# Arguments
-- `firms`: Firms object
 
 # Returns
 - `K_i`: Vector of capital stock
@@ -380,7 +392,9 @@ DS_i = Y_i - Q_i
 S_i = S_i + DS_i
 ```
 """
-function firms_stocks(firms)
+function firms_stocks(model)
+    firms = model.firms
+
     # depreciate firms capital stock
     K_i = firms.K_i - firms.delta_i ./ firms.kappa_i .* firms.Y_i + firms.I_i
 
@@ -392,4 +406,12 @@ function firms_stocks(firms)
     S_i = firms.S_i + DS_i
 
     return K_i, M_i, DS_i, S_i
+end
+function set_firms_stocks!(model)
+    firms = model.firms
+    K_i, M_i, DS_i, S_i = firms_stocks(model)
+    firms.K_i .= K_i
+    firms.M_i .= M_i
+    firms.DS_i .= DS_i
+    return firms.S_i .= S_i
 end

@@ -1,11 +1,7 @@
 """
-    bank_profits(bank, model)
+    bank_profits(model)
 
-Calculate the total profits of a bank.
-
-# Arguments
-- `bank`: The bank object.
-- `model`: The model object.
+Calculate the total profits of the bank.
 
 # Returns
 - `Pi_k`: The total profits of the bank.
@@ -27,7 +23,9 @@ where
 - `r_bar`: Base interest rate
 - `r`: Interest rate set by the bank
 """
-function bank_profits(bank, model)
+function bank_profits(model)
+    bank = model.bank
+
     L_i, D_i, r_bar = model.firms.L_i, model.firms.D_i, model.cb.r_bar
     D_h = [model.w_act.D_h; model.w_inact.D_h; model.firms.D_h; bank.D_h]
 
@@ -37,15 +35,14 @@ function bank_profits(bank, model)
     Pi_k = bank.r * r_terms + r_bar * r_bar_terms
     return Pi_k
 end
+function set_bank_profits!(model)
+    return model.bank.Pi_k = bank_profits(model)
+end
 
 """
-    bank_equity(bank, model)
+    bank_equity(model)
 
-Calculate the net profits of a bank.
-
-# Arguments
-- `bank`: The bank object.
-- `model`: The model object.
+Calculate the net profits of the bank.
 
 # Returns
 - `E_k`: The updated equity of the bank.
@@ -62,21 +59,21 @@ and the equity `E_k` is updated as:
 E_k = E_k + DE_k
 ```
 """
-function bank_equity(bank, model)
+function bank_equity(model)
+    bank = model.bank
     theta_DIV, tau_FIRM = model.prop.theta_DIV, model.prop.tau_FIRM
     DE_k = bank.Pi_k - theta_DIV * (1 - tau_FIRM) * max(0, bank.Pi_k) - tau_FIRM * max(0, bank.Pi_k)
     E_k = bank.E_k + DE_k
     return E_k
 end
+function set_bank_equity!(model)
+    return model.bank.E_k = bank_equity(model)
+end
 
 """
-    bank_rate(bank, model)
+    bank_rate(model)
 
 Update the interest rate set by the bank.
-
-# Arguments
-- `bank`: The bank whose interest rate is to be updated
-- `model`: Model object
 
 # Returns
 - `r`: The updated interest rate
@@ -85,20 +82,19 @@ Update the interest rate set by the bank.
 r = \\bar{r} + \\mu
 ```
 """
-function bank_rate(bank, model)
+function bank_rate(model::AbstractModel)
+    bank = model.bank
     r = model.cb.r_bar + model.prop.mu
     return r
 end
+function set_bank_rate!(model::AbstractModel)
+    return model.bank.r = bank_rate(model)
+end
 
 """
-    bank_expected_profits(Pi_k, pi_e, gamma_e)
+    bank_expected_profits(model)
 
 Calculate the expected profits of a bank.
-
-# Arguments
-- `Pi_k`: Past profits of the bank
-- `pi_e`: Expected inflation rate
-- `gamma_e`: Expected growth rate
 
 # Returns
 - `E_Pi_k`: Expected profits of the bank
@@ -108,28 +104,29 @@ The expected profits `E_Pi_k` are calculated as follows:
 ```math
 E_{\\Pi_k} = \\Pi_k \\cdot (1 + \\pi_e) \\cdot (1 + \\gamma_e)
 ```
+
+where
+
+- `Pi_k`: Past profits of the bank
+- `pi_e`: Expected inflation rate
+- `gamma_e`: Expected growth rate
 """
-function bank_expected_profits(bank, model)
+function bank_expected_profits(model::AbstractModel)
+    bank = model.bank
     pi_e, gamma_e = model.agg.pi_e, model.agg.gamma_e
     return bank.Pi_k * (1 + pi_e) * (1 + gamma_e)
 end
+function set_bank_expected_profits!(model::AbstractModel)
+    return model.bank.Pi_e_k = bank_expected_profits(model)
+end
 
 """
-    finance_insolvent_firms!(firms, bank, P_bar_CF, zeta_b,  insolvent)
+    finance_insolvent_firms!(model)
 
-Rifinance insolvent firms using bank equity.
-
-# Arguments
-- `firms`: The `Firms` object containing the firms of the model
-- `bank`: The `Bank` object containing the bank of the model
-- `P_bar_CF`: Capital price index
-- `zeta_b`: Parameter of loan-to-capital ratio for new firms after bankruptcy
-
-# Returns
-- This function does not return a value. It modifies the `banks` and `firms` collections in-place.
-
+Re-finance insolvent firms using bank equity.
 """
-function finance_insolvent_firms!(firms::AbstractFirms, bank::AbstractBank, model)
+function finance_insolvent_firms!(model::AbstractModel)
+    firms, bank = model.firms, model.bank
     P_bar_CF, zeta_b = model.agg.P_bar_CF, model.prop.zeta_b
 
     for i in eachfirm(model)
@@ -148,15 +145,9 @@ function finance_insolvent_firms!(firms::AbstractFirms, bank::AbstractBank, mode
 end
 
 """
-    deposits_bank(bank, w_act, w_inact, firms)
+    bank_deposits(model)
 
 Calculate the new deposits of a bank.
-
-# Arguments
-- `bank`: The `Bank` object containing the bank of the model
-- `w_act`: The `Workers` object containing the active workers of the model
-- `w_inact`: The `Workers` object containing the inactive workers of the model
-- `firms`: The `Firms` object containing the firms of the model
 
 # Returns
 - `D_k`: New deposits of the bank
@@ -164,7 +155,8 @@ Calculate the new deposits of a bank.
 The new deposits `D_k` are calculated as the sum of the deposits of the active workers, the inactive workers,
 the firms, and the bank owner itself, plus the bank's equity, minus the loans of the firms.
 """
-function bank_deposits(bank, model)
+function bank_deposits(model)
+    bank = model.bank
     w_act, w_inact, firms = model.w_act, model.w_inact, model.firms
     waD_h, wiD_h, fD_h, bD_h, fD_i = w_act.D_h, w_inact.D_h, firms.D_h, bank.D_h, firms.D_i
     bE_k, fL_i = bank.E_k, firms.L_i
@@ -172,4 +164,7 @@ function bank_deposits(bank, model)
     tot_D_h = sum(waD_h) + sum(wiD_h) + sum(fD_h) + bD_h
     D_k = sum(fD_i) + tot_D_h + bE_k - sum(fL_i)
     return D_k
+end
+function set_bank_deposits!(model)
+    return model.bank.D_k = bank_deposits(model)
 end

@@ -51,6 +51,7 @@ include("agent_actions/households.jl")
 include("agent_actions/government.jl")
 include("agent_actions/rotw.jl")
 include("agent_actions/bank.jl")
+include("agent_actions/aggregates.jl")
 
 # full epoch
 include("one_step.jl")

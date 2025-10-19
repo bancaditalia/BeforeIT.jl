@@ -10,13 +10,17 @@ Update the base interest rate set by the central bank according to the Taylor ru
 # Returns
 - `r_bar`: The updated base interest rate
 """
-function central_bank_rate(cb::AbstractCentralBank, model::AbstractModel)
+function central_bank_rate(model::AbstractModel)
+    cb = model.cb
     # unpack arguments
     gamma_EA = model.rotw.gamma_EA
     pi_EA = model.rotw.pi_EA
 
     r_bar = taylor_rule(cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
     return r_bar
+end
+function set_central_bank_rate!(model::AbstractModel)
+    return model.cb.r_bar = central_bank_rate(model)
 end
 
 """
@@ -77,13 +81,9 @@ function central_bank_profits(cb, model)
 end
 
 """
-    central_bank_equity(cb, model)
+    central_bank_equity(model)
 
 Calculate the equity of the central bank.
-
-# Arguments
-- `cb`: The central bank
-- `model`: The model object
 
 # Returns
 - `E_CB`: The equity of the central bank
@@ -96,8 +96,12 @@ E_{CB} = E_{CB} + \\Pi_{CB}
 
 where `\\Pi_{CB}` are the profits of the central bank.
 """
-function central_bank_equity(cb, model)
+function central_bank_equity(model)
+    cb = model.cb
     Pi_CB = central_bank_profits(cb, model)
     E_CB = cb.E_CB + Pi_CB
     return E_CB
+end
+function set_central_bank_equity!(model)
+    return model.cb.E_CB = central_bank_equity(model)
 end
