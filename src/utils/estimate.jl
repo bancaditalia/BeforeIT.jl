@@ -9,10 +9,10 @@ function estimate(ydata::Union{Matrix, Vector})
     if typeof(ydata) <: Vector
         ydata = ydata[:, :]
     end
-    var = rfvar3(ydata, 1, ones(size(ydata, 1), 1))
-    alpha = var.By[1]
-    beta = var.Bx[1]
-    epsilon = rand(Normal(0, sqrt(cov(var.u))[1, 1]))
+    var = 1.0#rfvar3(ydata, 1, ones(size(ydata, 1), 1))
+    alpha = 1.0#var.By[1]
+    beta = 1.0#var.Bx[1]
+    epsilon = 1.0#rand(Normal(0, sqrt(cov(var.u))[1, 1]))
     return alpha, beta, epsilon
 end
 
@@ -55,10 +55,10 @@ function estimate_taylor_rule(
     end
 
     exo = [pi_EA gamma_EA]
-    var = rfvar3(ydata, 1, exo[1:length(ydata), :])
-    alpha = var.By[1]
-    gamma_1 = var.Bx[1]
-    gamma_2 = var.Bx[2]
+    var = #rfvar3(ydata, 1, exo[1:length(ydata), :])
+    alpha = 1.#var.By[1]
+    gamma_1 = 1.#var.Bx[1]
+    gamma_2 = 1.#var.Bx[2]
 
     rho = alpha
     xi_pi = gamma_1 ./ (1 .- rho)

@@ -22,12 +22,12 @@ The function updates the model in-place and return the model itself.
 """
 function CommonSolve.step!(model::AbstractModel, T; parallel = false, shock! = NoShock())
     for _ in 1:T
-        step!(model; parallel, shock)
+        step!(model; parallel, shock!)
     end
     return model
 end
 function CommonSolve.step!(model::AbstractModel; parallel = false, shock! = NoShock())
-
+    
     Bit.finance_insolvent_firms!(model)
 
     ####### GENERAL ESTIMATIONS #######

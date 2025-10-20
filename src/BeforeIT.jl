@@ -75,6 +75,7 @@ include("utils/dmtest.jl")
 include("utils/mztest.jl")
 include("utils/varx.jl")
 include("utils/modify.jl")
+include("utils/differentiation.jl")
 include("utils/misc.jl")
 
 # calibration
