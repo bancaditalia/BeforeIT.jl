@@ -30,6 +30,7 @@ function rfvar3(ydata::Matrix, lags::Union{Int, Int64}, xdata::Matrix)
 
     X = [reshape(X, Tsmpl, nvar * lags) xdata[smpl, :]]
     y = ydata[smpl, :]
+
     vl, di, vr = svd(X, full = false)
     dfx = sum(di .> 100 * eps())
     snglty = size(X, 2) - dfx
