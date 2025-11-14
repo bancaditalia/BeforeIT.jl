@@ -41,7 +41,7 @@ function Bit.rotw_import_export(model::NewModel)
     C_E = rotw.C_Es[model.agg.t] # export value at time t, taken from the exogenous path.
     L = length(rotw.C_d_l)       # number of export sectors
     C_d_l = C_E ./ L .* ones(L) .* sum(c_E_g .* P_bar_g) .* (1 + pi_e) # disaggregated export demand across L sectors, scaled by consumption weights and price levels.
-    
+
     # Import Demand
     Y_I = rotw.Y_Is[model.agg.t] # import value at time t, from the exogenous path
     Y_m = c_I_g * Y_I            # total import demand, weighted by c_I_g.
@@ -69,9 +69,9 @@ initial_C_E = standard_rotw.C_E
 initial_Y_I = standard_rotw.Y_I
 # Extract exogenous paths from initial conditions
 T0 = Int(p["T_prime"])    # starting index
-C_Gs = ic["C_G"][T0:end]  
-C_Es = ic["C_E"][T0:end]  
-Y_Is = ic["Y_I"][T0:end] 
+C_Gs = ic["C_G"][T0:end]
+C_Es = ic["C_E"][T0:end]
+Y_Is = ic["Y_I"][T0:end]
 # check that the initial values match
 println("Initial C_G match: ", initial_C_G == C_Gs[1])
 println("Initial C_E match: ", initial_C_E == C_Es[1])
@@ -86,41 +86,48 @@ T = 12  # forecast horizon
 model_vec_new = Bit.ensemblerun(new_model, T, 8);
 
 # Plot all available variables
-ps = Bit.plot_data_vector(model_vec_new; quantities=[
-    :nominal_gdp, :real_gdp,
-    :nominal_gva, :real_gva,
-    :nominal_household_consumption, :real_household_consumption,
-    :nominal_government_consumption, :real_government_consumption,
-    :nominal_capitalformation, :real_capitalformation,
-    :nominal_fixed_capitalformation, :real_fixed_capitalformation,
-    :nominal_fixed_capitalformation_dwellings, :real_fixed_capitalformation_dwellings,
-    :nominal_exports, :real_exports,
-    :nominal_imports, :real_imports,
-    :operating_surplus, :compensation_employees,
-    :wages, :taxes_production,
-    :gdp_deflator_growth_ea, :real_gdp_ea,
-    :euribor], t_start=5)
-plot(ps..., layout=(5, 5), size=(1500, 1000))
+ps = Bit.plot_data_vector(
+    model_vec_new; quantities = [
+        :nominal_gdp, :real_gdp,
+        :nominal_gva, :real_gva,
+        :nominal_household_consumption, :real_household_consumption,
+        :nominal_government_consumption, :real_government_consumption,
+        :nominal_capitalformation, :real_capitalformation,
+        :nominal_fixed_capitalformation, :real_fixed_capitalformation,
+        :nominal_fixed_capitalformation_dwellings, :real_fixed_capitalformation_dwellings,
+        :nominal_exports, :real_exports,
+        :nominal_imports, :real_imports,
+        :operating_surplus, :compensation_employees,
+        :wages, :taxes_production,
+        :gdp_deflator_growth_ea, :real_gdp_ea,
+        :euribor,
+    ], t_start = 5
+)
+plot(ps..., layout = (5, 5), size = (1500, 1000))
 
 # Plot replication Fig 3 Poledna (sliced - start in 2011)
-ps = Bit.plot_data_vector(model_vec_new, quantities=[
+ps = Bit.plot_data_vector(
+    model_vec_new, quantities = [
         :real_gdp,
         :real_household_consumption,
         :real_fixed_capitalformation,
         :real_government_consumption,
         :real_exports,
         :real_imports,
-    ], t_start=5)
-plot(ps..., layout=(2, 3), size = (1000, 600))
+    ], t_start = 5
+)
+plot(ps..., layout = (2, 3), size = (1000, 600))
 
 
 # Plot the whole forecast from 2010Q2 for the 6 variables in Poledna fig 3:
-ps = Bit.plot_data_vector(model_vec_new, quantities = [
-    :real_gdp,
-    :real_household_consumption,
-    :real_fixed_capitalformation,
-    :real_government_consumption,
-    :real_exports,
-    :real_imports,
-])
+ps = Bit.plot_data_vector(
+    model_vec_new, quantities = [
+        :real_gdp,
+        :real_household_consumption,
+        :real_fixed_capitalformation,
+        :real_government_consumption,
+        :real_exports,
+        :real_imports,
+    ]
+)
 plot(ps..., layout = (2, 3))
