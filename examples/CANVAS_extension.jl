@@ -47,7 +47,7 @@ Bit.@object mutable struct RestOfTheWorldCANVAS(Bit.RestOfTheWorld) <: AbstractR
 end
 
 # define new functions for the CANVAS-specific agents
-function Bit.firms_expectations_and_decisions(model::Bit.ModelCANVAS)
+function Bit.firms_expectations_and_decisions(model::ModelCANVAS)
     firms = model.firms
 
     # unpack non-firm variables
@@ -94,7 +94,7 @@ function Bit.firms_expectations_and_decisions(model::Bit.ModelCANVAS)
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
 
-function Bit.central_bank_rate(model::Bit.ModelCANVAS)
+function Bit.central_bank_rate(model::ModelCANVAS)
     cb = model.cb
     gamma_EA, pi_EA, T_prime, t = model.rotw.gamma_EA, model.rotw.pi_EA, model.prop.T_prime, model.agg.t
 
@@ -110,7 +110,7 @@ function Bit.central_bank_rate(model::Bit.ModelCANVAS)
     return r_bar
 end
 
-function Bit.growth_inflation_EA(model::Bit.ModelCANVAS)
+function Bit.growth_inflation_EA(model::ModelCANVAS)
     rotw = model.rotw
     epsilon_Y_EA = model.agg.epsilon_Y_EA
 
