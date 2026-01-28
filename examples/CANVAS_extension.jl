@@ -145,7 +145,7 @@ prop = Bit.Properties(p, ic)
 data = Bit.Data()
 
 # define a standard model
-model_std_2 = Bit.Model(p, ic)
+model_std = Bit.Model(p, ic)
 
 # define a CANVAS model
 # importantly, initializing with a tuple "((w_act, w_inact, ...))" rathen than with "(w_act, w_inact, ...)"
@@ -158,7 +158,7 @@ model_canvas_2 = Bit.ModelCANVAS(p, ic)
 
 # run the model(s)
 T = 12
-n_sims = 3
+n_sims = 8
 model_vector_std = Bit.ensemblerun(model_std, T, n_sims)
 model_vector_canvas = Bit.ensemblerun(model_canvas, T, n_sims)
 model_vector_canvas_2 = Bit.ensemblerun(model_canvas_2, T, n_sims)
