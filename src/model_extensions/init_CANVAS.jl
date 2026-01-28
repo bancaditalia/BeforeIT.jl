@@ -155,5 +155,5 @@ function ModelCANVAS(parameters::Dict{String, Any}, initial_conditions::Dict{Str
     properties = Bit.Properties(p, ic)
     data = Bit.Data()
 
-    return ModelCANVAS(workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data)
+    return ModelCANVAS((workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data))
 end

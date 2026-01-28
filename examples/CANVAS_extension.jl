@@ -16,7 +16,6 @@ import BeforeIT as Bit
 using Plots, Dates, StatsPlots
 
 # get parameters and initial conditions
-T = 12
 cal = Bit.ITALY_CALIBRATION
 calibration_date = DateTime(2010, 03, 31)
 
@@ -55,7 +54,7 @@ function Bit.firms_expectations_and_decisions(model::ModelCANVAS)
     gamma_e = model.agg.gamma_e
     pi_e = model.agg.pi_e
 
-    # Individual firm quantity and price adjustments
+    # individual firm quantity and price adjustments
     I = length(firms.G_i)
     gamma_d_i = zeros(I)
     pi_d_i = zeros(I)
@@ -146,19 +145,23 @@ prop = Bit.Properties(p, ic)
 data = Bit.Data()
 
 # define a standard model
-model_std = Bit.Model(w_act, w_inact, firms_st, bank, cb_st, gov, rotw_st, agg, prop, data)
+model_std_2 = Bit.Model(p, ic)
 
 # define a CANVAS model
-model_canvas = ModelCANVAS(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
+# importantly, initializing with a tuple "((w_act, w_inact, ...))" rathen than with "(w_act, w_inact, ...)"
+# will perform extra needed initialization operations internally (for example, updating totals after all agents have been initialized)
+model_canvas = ModelCANVAS((w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data))
 
 # The CANVAS model extension is also included in the BeforeIT package.
 # You can instantiate a CANVAS model directly from parameters and initial conditions in a single line of code as
 model_canvas_2 = Bit.ModelCANVAS(p, ic)
 
 # run the model(s)
-model_vector_std = Bit.ensemblerun(model_std, T, 8)
-model_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
-model_vector_canvas_2 = Bit.ensemblerun(model_canvas_2, T, 8)
+T = 12
+n_sims = 3
+model_vector_std = Bit.ensemblerun(model_std, T, n_sims)
+model_vector_canvas = Bit.ensemblerun(model_canvas, T, n_sims)
+model_vector_canvas_2 = Bit.ensemblerun(model_canvas_2, T, n_sims)
 
 # plot the results
 ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas, model_vector_canvas_2])
