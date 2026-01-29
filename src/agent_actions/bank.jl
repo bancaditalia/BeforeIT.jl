@@ -31,7 +31,7 @@ function bank_profits(model)
 
     z = zero(typeFloat)
     r_terms = sum(L_i) + sum(max.(z, -D_i)) + sum(max.(z, -D_h))
-    r_bar_terms = sign(bank.D_k) * abs(bank.D_k) - sum(max.(z, D_i)) - sum(max.(z, D_h))
+    r_bar_terms = bank.D_k - sum(max.(z, D_i)) - sum(max.(z, D_h))
     Pi_k = bank.r * r_terms + r_bar * r_bar_terms
     return Pi_k
 end
