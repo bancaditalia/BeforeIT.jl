@@ -19,7 +19,7 @@ end
 end
 
 function remove!(a, i)
-    @inbounds a[i], a[end] = a[end], a[i]
+    a[i], a[end] = a[end], a[i]
     pop!(a)
     return
 end
