@@ -122,7 +122,7 @@ where
 function inflation_priceindex(model)
     firms, agg, prop = model.firms, model.agg, model.prop
 
-    P_i, Y_i, P_bar = firms.P_i, firms.Y_i, model.agg.P_bar
+    P_i, Y_i, P_bar = firms.P_i, firms.Q_i, model.agg.P_bar
 
     price_index = sum(P_i .* Y_i) / sum(Y_i)
     inflation = log(price_index / P_bar)
