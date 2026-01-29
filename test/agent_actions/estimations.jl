@@ -18,7 +18,7 @@ using Test
     @testset "test inflation_priceindex" begin
 
         resize!(model.firms.P_i, 3); model.firms.P_i .= [1.0, 2.0, 3.0]
-        resize!(model.firms.Y_i, 3); model.firms.Y_i .= [1.0, 2.0, 3.0]
+        resize!(model.firms.Y_i, 3); model.firms.Q_i .= [1.0, 2.0, 3.0]
         model.agg.P_bar = 2.0
         expected_inflation = log(14 / 12)
         expected_priceindex = 14 / 6
