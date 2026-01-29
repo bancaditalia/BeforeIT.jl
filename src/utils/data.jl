@@ -16,7 +16,7 @@ Bit.@object struct Data(Object) <: AbstractData
     nominal_fixed_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
     real_fixed_capitalformation::Vector{Bit.typeFloat} = Bit.typeFloat[]
     nominal_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.typeFloat[]
-    real_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.Bit.typeFloat[]
+    real_fixed_capitalformation_dwellings::Vector{Bit.typeFloat} = Bit.typeFloat[]
     nominal_exports::Vector{Bit.typeFloat} = Bit.typeFloat[]
     real_exports::Vector{Bit.typeFloat} = Bit.typeFloat[]
     nominal_imports::Vector{Bit.typeFloat} = Bit.typeFloat[]
