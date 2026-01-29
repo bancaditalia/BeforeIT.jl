@@ -196,12 +196,12 @@ function update_data_step!(m::AbstractModel)
     d.real_imports[t] = sum(m.rotw.Q_m)
     d.operating_surplus[t] = sum(
         m.firms.P_i .* m.firms.Q_i + m.firms.P_i .* m.firms.DS_i -
-            (1 + p.tau_SIF) .* m.firms.w_i .* m.firms.N_i .* m.agg.P_bar_HH -
+            (1 + p.tau_SIF) .* m.firms.w_i .* m.firms.N_i -
             1 ./ m.firms.beta_i .* m.firms.P_bar_i .* m.firms.Y_i - m.firms.tau_Y_i .* m.firms.P_i .* m.firms.Y_i -
             m.firms.tau_K_i .* m.firms.P_i .* m.firms.Y_i,
     )
-    d.compensation_employees[t] = (1 + p.tau_SIF) * sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
-    d.wages[t] = sum(m.firms.w_i .* m.firms.N_i) * m.agg.P_bar_HH
+    d.compensation_employees[t] = (1 + p.tau_SIF) * sum(m.firms.w_i .* m.firms.N_i)
+    d.wages[t] = sum(m.firms.w_i .* m.firms.N_i)
     d.taxes_production[t] = sum(m.firms.tau_K_i .* m.firms.Y_i .* m.firms.P_i)
 
     for g in 1:(p.G)
