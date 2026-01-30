@@ -3,10 +3,9 @@ using Plots, StatsPlots
 using MAT, JLD2, FileIO
 import BeforeIT as Bit
 
-<<<<<<< Updated upstream
 function generate_crosscorrelation_graphs(
-    country::String = "italy";
-)
+        country::String = "italy"
+    )
     """
     generate_crosscorrelation_graphs()
 
@@ -25,14 +24,14 @@ function generate_crosscorrelation_graphs(
     model_folder = "./data/" * country * "/long_run/abm_predictions/"
 
     # Define the output structure based on parameters
-    output_folder = "./analysis/figs/" * country 
+    output_folder = "./analysis/figs/" * country
 
     # Create output directory
     mkpath(output_folder)
 
-        # Load from file for other countries
+    # Load from file for other countries
     real_data = Bit.ITALY_CALIBRATION.data
-    
+
 
     quarters_num = []
     year_m = year_
@@ -136,7 +135,7 @@ function generate_crosscorrelation_graphs(
     end
 
     # Cycles plots
-    cyclesnames = ["real_gdp_quarterly", "real_capitalformation_quarterly", "real_household_consumption_quarterly","operating_surplus_quarterly"]
+    cyclesnames = ["real_gdp_quarterly", "real_capitalformation_quarterly", "real_household_consumption_quarterly", "operating_surplus_quarterly"]
 
     trends = Dict()
     cycles = Dict()
@@ -240,7 +239,7 @@ function generate_crosscorrelation_graphs(
         # Build model path with the new folder structure
         model_path = model_folder * "$(year_val)Q$(quarter_val).jld2"
 
-        # Skip if the file doesn't exist 
+        # Skip if the file doesn't exist
         if !isfile(model_path)
             @warn "Model file not found: $model_path, skipping"
             continue
@@ -477,7 +476,7 @@ function generate_crosscorrelation_graphs(
 end
 
 generate_crosscorrelation_graphs("italy")
-=======
+
 include("../../../src/utils/correlation_utils.jl")
 
 # =============================================================================
@@ -510,14 +509,14 @@ PLOT_VARIABLES = [
     "wages_quarterly",
     "real_household_consumption_quarterly",
     "gdp_deflator_quarterly",
-    "operating_surplus_quarterly"
+    "operating_surplus_quarterly",
 ]
 
 CYCLE_VARIABLES = [
     "real_gdp_quarterly",
     "real_capitalformation_quarterly",
     "real_household_consumption_quarterly",
-    "operating_surplus_quarterly"
+    "operating_surplus_quarterly",
 ]
 
 # =============================================================================
@@ -530,9 +529,9 @@ Returns: Dict with cached HP filter results
 """
 function create_hp_filter_cache(real_data, variable_names)
     @info "Creating HP filter cache for real data"
-    
+
     cache = Dict{String, Any}()
-    
+
     # Cache GDP data first (used as reference)
     for gdp_var in ["real_gdp_quarterly", "real_gdp"]
         if haskey(real_data, gdp_var)
@@ -540,7 +539,7 @@ function create_hp_filter_cache(real_data, variable_names)
             cache[gdp_var] = (trend, cycle)
         end
     end
-    
+
     # Cache other variables
     for name in variable_names
         if haskey(real_data, name)
@@ -557,7 +556,7 @@ function create_hp_filter_cache(real_data, variable_names)
             end
         end
     end
-    
+
     return cache
 end
 
@@ -569,11 +568,11 @@ function initialize_results(first_model, variable_names, gdp_size, n_quarters)
     cyclesvar = Dict{String, Any}()
     crosscorr = Dict{String, Any}()
     autocorr = Dict{String, Any}()
-    
+
     for name in variable_names
         if haskey(first_model, name)
             n_total = gdp_size[2] * n_quarters
-            
+
             if ndims(first_model[name]) == 2
                 cyclesvar[name] = zeros(n_total)
                 crosscorr[name] = zeros(2 * CORRELATION_LAGS + 1, n_total)
@@ -585,7 +584,7 @@ function initialize_results(first_model, variable_names, gdp_size, n_quarters)
             end
         end
     end
-    
+
     cycles_data = nothing
     return cyclesvar, crosscorr, autocorr, cycles_data
 end
@@ -608,7 +607,7 @@ function store_cycle_data!(cycles_data_ref::Ref{Union{Nothing, Dict{String, Any}
     end
 
     cycles_data = cycles_data_ref[]
-    if haskey(cycles_data["trends"], name)
+    return if haskey(cycles_data["trends"], name)
         cycles_data["trends"][name][:, n] = trend
         cycles_data["cycles"][name][:, n] = cycle
     end
@@ -637,6 +636,7 @@ function process_2d_variable!(cyclesvar, crosscorr, autocorr, cycles_data_ref::R
             store_cycle_data!(cycles_data_ref, name, var_trend, var_cycle, n, gdp_size)
         end
     end
+    return
 end
 
 """
@@ -647,17 +647,18 @@ function process_3d_variable!(cyclesvar, crosscorr, autocorr, model, name, file_
         # GDP reference cycle (computed once per simulation)
         _, gdp_cycle = hpfilter(model["real_gdp_quarterly"][:, n])
         idx = (file_idx - 1) * n_seeds + n
-        
+
         for sector in 1:MAX_SECTORS
             # Variable cycle
             _, var_cycle = hpfilter(model[name][:, n, sector])
-            
+
             # Store results
             cyclesvar[name][idx, sector] = std(model[name][:, n, sector])
             crosscorr[name][:, idx, sector] = crosscor(gdp_cycle, var_cycle, CORRELATION_LAGS)
             autocorr[name][:, idx, sector] = autocor(var_cycle, 0:AUTOCORR_LAGS)
         end
     end
+    return
 end
 
 """
@@ -667,8 +668,8 @@ function process_variable!(cyclesvar, crosscorr, autocorr, cycles_data_ref::Ref{
     if !haskey(model, name) || size(model[name], 1) != size(model["real_gdp_quarterly"], 1)
         return
     end
-    
-    if ndims(model[name]) == 2
+
+    return if ndims(model[name]) == 2
         process_2d_variable!(cyclesvar, crosscorr, autocorr, cycles_data_ref, model, name, file_idx, gdp_size, n_seeds)
     else
         process_3d_variable!(cyclesvar, crosscorr, autocorr, model, name, file_idx, gdp_size, n_seeds)
@@ -681,35 +682,35 @@ Returns: (cyclesvar, crosscorr, autocorr, cycles_data)
 """
 function process_all_simulation_data(model_folder, variable_names, gdp_size, n_seeds, n_quarters)
     @info "Processing simulation data with single pass"
-    
+
     # Get prediction files
     prediction_files = filter(f -> endswith(f, ".jld2"), readdir(model_folder))
     sort!(prediction_files)
-    
+
     if isempty(prediction_files)
         error("No prediction files found in $model_folder")
     end
-    
+
     # Initialize with first file
     first_model = load(joinpath(model_folder, prediction_files[1]))["predictions_dict"]
     cyclesvar, crosscorr, autocorr, cycles_data = initialize_results(first_model, variable_names, gdp_size, n_quarters)
-    
+
     # Use reference for cycles_data to allow modification
     cycles_data_ref = Ref{Union{Nothing, Dict{String, Any}}}(cycles_data)
-    
+
     # Process each file exactly once
     for (file_idx, prediction_file) in enumerate(prediction_files)
         @info "Processing file $file_idx/$(length(prediction_files)): $prediction_file"
-        
+
         model_path = joinpath(model_folder, prediction_file)
         model = load(model_path)["predictions_dict"]
-        
+
         # Process all variables for this file
         for name in variable_names
             process_variable!(cyclesvar, crosscorr, autocorr, cycles_data_ref, model, name, file_idx, gdp_size, n_seeds)
         end
     end
-    
+
     @info "Simulation data processing completed"
     return cyclesvar, crosscorr, autocorr, cycles_data_ref[]
 end
@@ -720,23 +721,23 @@ Returns: (mean_xcorr, std_xcorr, mean_autocorr, std_autocorr, mean_cyclesvar)
 """
 function calculate_statistics(crosscorr, autocorr, cyclesvar, variable_names)
     @info "Calculating statistics from correlation results"
-    
+
     mean_xcorr = Dict{String, Any}()
     std_xcorr = Dict{String, Any}()
     mean_autocorr = Dict{String, Any}()
     std_autocorr = Dict{String, Any}()
     mean_cyclesvar = Dict{String, Any}()
-    
+
     for name in variable_names
         if !haskey(crosscorr, name)
             continue
         end
-        
+
         if ndims(crosscorr[name]) == 2
-            mean_xcorr[name] = mean(crosscorr[name], dims=2)
-            std_xcorr[name] = std(crosscorr[name], dims=2)
-            mean_autocorr[name] = mean(autocorr[name], dims=2) 
-            std_autocorr[name] = std(autocorr[name], dims=2)
+            mean_xcorr[name] = mean(crosscorr[name], dims = 2)
+            std_xcorr[name] = std(crosscorr[name], dims = 2)
+            mean_autocorr[name] = mean(autocorr[name], dims = 2)
+            std_autocorr[name] = std(autocorr[name], dims = 2)
             mean_cyclesvar[name] = mean(cyclesvar[name])
         else
             # 3D case - aggregate over sectors
@@ -745,17 +746,17 @@ function calculate_statistics(crosscorr, autocorr, cyclesvar, variable_names)
             mean_autocorr[name] = zeros(DEFAULT_HORIZON + 1, MAX_SECTORS)
             std_autocorr[name] = zeros(DEFAULT_HORIZON + 1, MAX_SECTORS)
             mean_cyclesvar[name] = zeros(1, MAX_SECTORS)
-            
+
             for sector in 1:MAX_SECTORS
-                mean_xcorr[name][:, sector] = mean(crosscorr[name][:, :, sector], dims=2)
-                std_xcorr[name][:, sector] = std(crosscorr[name][:, :, sector], dims=2)
-                mean_autocorr[name][:, sector] = mean(autocorr[name][:, :, sector], dims=2)
-                std_autocorr[name][:, sector] = std(autocorr[name][:, :, sector], dims=2)
+                mean_xcorr[name][:, sector] = mean(crosscorr[name][:, :, sector], dims = 2)
+                std_xcorr[name][:, sector] = std(crosscorr[name][:, :, sector], dims = 2)
+                mean_autocorr[name][:, sector] = mean(autocorr[name][:, :, sector], dims = 2)
+                std_autocorr[name][:, sector] = std(autocorr[name][:, :, sector], dims = 2)
                 mean_cyclesvar[name][sector] = mean(cyclesvar[name][:, sector])
             end
         end
     end
-    
+
     return mean_xcorr, std_xcorr, mean_autocorr, std_autocorr, mean_cyclesvar
 end
 
@@ -776,15 +777,15 @@ Process single dimension real variable.
 """
 function process_real_1d_variable!(crosscorr_data, autocorr_data, stderr_data, real_data, name, gdp_cycle, cached_data)
     _, cycle = cached_data
-    
+
     # Align cycles by length
     min_length = min(length(cycle), length(gdp_cycle))
     max_length = max(length(cycle), length(gdp_cycle))
     gdp_cycle_adj = gdp_cycle[(1 + max_length - min_length):end]
-    
+
     crosscorr_data[name] = crosscor(gdp_cycle_adj, cycle, CORRELATION_LAGS)
     autocorr_data[name] = autocor(cycle, 0:AUTOCORR_LAGS)
-    stderr_data[name] = std(real_data[name])
+    return stderr_data[name] = std(real_data[name])
 end
 
 """
@@ -795,7 +796,7 @@ function process_real_3d_variable!(crosscorr_data, autocorr_data, stderr_data, r
     crosscorr_data[name] = zeros(2 * CORRELATION_LAGS + 1, n_sectors)
     autocorr_data[name] = zeros(AUTOCORR_LAGS + 1, n_sectors)
     stderr_data[name] = zeros(n_sectors)
-    
+
     for (sector, sector_data) in cached_data
         _, cycle = sector_data
         # Align cycles by length
@@ -807,6 +808,7 @@ function process_real_3d_variable!(crosscorr_data, autocorr_data, stderr_data, r
         autocorr_data[name][:, sector] = autocor(cycle, 0:AUTOCORR_LAGS)
         stderr_data[name][sector] = std(real_data[name][:, sector])
     end
+    return
 end
 
 """
@@ -815,41 +817,45 @@ Returns: (crosscorr_data, autocorr_data, stderr_data)
 """
 function process_real_data_correlations(real_data, hp_cache, variable_names)
     @info "Processing real data correlations"
-    
+
     crosscorr_data = Dict{String, Any}()
     autocorr_data = Dict{String, Any}()
     stderr_data = Dict{String, Any}()
-    
+
     for name in variable_names
         if !haskey(hp_cache, name)
             continue
         end
-        
+
         # Determine GDP reference
         gdp_ref = determine_gdp_reference(hp_cache)
         if gdp_ref === nothing
             @warn "No GDP reference found for correlations"
             continue
         end
-        
+
         if isa(hp_cache[gdp_ref], Tuple)
             _, gdp_cycle = hp_cache[gdp_ref]
         else
             # Multi-dimensional case - use first sector
             _, gdp_cycle = first(values(hp_cache[gdp_ref]))
         end
-        
+
         if isa(hp_cache[name], Tuple)
             # Single dimension case
-            process_real_1d_variable!(crosscorr_data, autocorr_data, stderr_data,
-                                     real_data, name, gdp_cycle, hp_cache[name])
+            process_real_1d_variable!(
+                crosscorr_data, autocorr_data, stderr_data,
+                real_data, name, gdp_cycle, hp_cache[name]
+            )
         else
-            # Multi-sector case  
-            process_real_3d_variable!(crosscorr_data, autocorr_data, stderr_data,
-                                     real_data, name, gdp_cycle, hp_cache[name])
+            # Multi-sector case
+            process_real_3d_variable!(
+                crosscorr_data, autocorr_data, stderr_data,
+                real_data, name, gdp_cycle, hp_cache[name]
+            )
         end
     end
-    
+
     return crosscorr_data, autocorr_data, stderr_data
 end
 
@@ -861,12 +867,12 @@ function create_crosscorr_plots(mean_xcorr, std_xcorr, real_crosscorr, output_fo
 
     lags = collect(-CORRELATION_LAGS:CORRELATION_LAGS)
     cross_plots = plot(
-        layout=(3, 2),
-        size=(1400, 1000),
-        plot_title="Cross-Correlations with Real GDP",
-        plot_titlefontsize=16,
-        margin=5Plots.mm,
-        dpi=300
+        layout = (3, 2),
+        size = (1400, 1000),
+        plot_title = "Cross-Correlations with Real GDP",
+        plot_titlefontsize = 16,
+        margin = 5Plots.mm,
+        dpi = 300
     )
 
     for (k, name) in enumerate(PLOT_VARIABLES)
@@ -878,41 +884,47 @@ function create_crosscorr_plots(mean_xcorr, std_xcorr, real_crosscorr, output_fo
         mean_vals = vec(mean_xcorr[name])
         std_vals = vec(std_xcorr[name])
 
-        plot!(cross_plots, subplot=k, lags, mean_vals,
-              yerror=std_vals,
-              fillalpha=0.3,
-              fillcolor=:steelblue,
-              label="ABM Model",
-              color=:steelblue,
-              linewidth=2.5,
-              linestyle=:solid)
+        plot!(
+            cross_plots, subplot = k, lags, mean_vals,
+            yerror = std_vals,
+            fillalpha = 0.3,
+            fillcolor = :steelblue,
+            label = "ABM Model",
+            color = :steelblue,
+            linewidth = 2.5,
+            linestyle = :solid
+        )
 
         # Real data with contrasting color (solid line)
-        plot!(cross_plots, subplot=k, lags, vec(real_crosscorr[name]),
-              linewidth=3, color=:crimson, linestyle=:solid, label="Real Data")
+        plot!(
+            cross_plots, subplot = k, lags, vec(real_crosscorr[name]),
+            linewidth = 3, color = :crimson, linestyle = :solid, label = "Real Data"
+        )
 
         # Modern formatting
         formatted_name = format_variable_name(name)
-        plot!(cross_plots, subplot=k,
-              title=formatted_name,
-              titlefontsize=12,
-              titlefontweight=:bold,
-              xlabel="Lags (Quarters)",
-              ylabel="Cross-Correlation",
-              labelfontsize=10,
-              tickfontsize=9,
-              legendfontsize=9,
-              grid=true,
-              gridwidth=1,
-              gridcolor=:lightgray,
-              gridalpha=0.5,
-              framestyle=:box,
-              background_color=:white,
-              legend=:topright)
+        plot!(
+            cross_plots, subplot = k,
+            title = formatted_name,
+            titlefontsize = 12,
+            titlefontweight = :bold,
+            xlabel = "Lags (Quarters)",
+            ylabel = "Cross-Correlation",
+            labelfontsize = 10,
+            tickfontsize = 9,
+            legendfontsize = 9,
+            grid = true,
+            gridwidth = 1,
+            gridcolor = :lightgray,
+            gridalpha = 0.5,
+            framestyle = :box,
+            background_color = :white,
+            legend = :topright
+        )
 
         # Add zero line for reference
-        hline!(cross_plots, [0], subplot=k, color=:black, linestyle=:dot, linewidth=1, alpha=0.7, label=false)
-        vline!(cross_plots, [0], subplot=k, color=:black, linestyle=:dot, linewidth=1, alpha=0.7, label=false)
+        hline!(cross_plots, [0], subplot = k, color = :black, linestyle = :dot, linewidth = 1, alpha = 0.7, label = false)
+        vline!(cross_plots, [0], subplot = k, color = :black, linestyle = :dot, linewidth = 1, alpha = 0.7, label = false)
     end
 
     output_path = joinpath(output_folder, "crosscorrelations_abm.png")
@@ -930,12 +942,12 @@ function create_autocorr_plots(mean_autocorr, std_autocorr, real_autocorr, outpu
 
     lags = collect(0:AUTOCORR_LAGS)
     auto_plots = plot(
-        layout=(3, 2),
-        size=(1400, 1000),
-        plot_title="Autocorrelations",
-        plot_titlefontsize=16,
-        margin=5Plots.mm,
-        dpi=300
+        layout = (3, 2),
+        size = (1400, 1000),
+        plot_title = "Autocorrelations",
+        plot_titlefontsize = 16,
+        margin = 5Plots.mm,
+        dpi = 300
     )
 
     for (k, name) in enumerate(PLOT_VARIABLES)
@@ -947,42 +959,48 @@ function create_autocorr_plots(mean_autocorr, std_autocorr, real_autocorr, outpu
         mean_vals = vec(mean_autocorr[name])
         std_vals = vec(std_autocorr[name])
 
-        plot!(auto_plots, subplot=k, lags, mean_vals,
-              yerror=std_vals,
-              fillalpha=0.3,
-              fillcolor=:steelblue,
-              label="ABM Model",
-              color=:steelblue,
-              linewidth=2.5,
-              linestyle=:solid)
+        plot!(
+            auto_plots, subplot = k, lags, mean_vals,
+            yerror = std_vals,
+            fillalpha = 0.3,
+            fillcolor = :steelblue,
+            label = "ABM Model",
+            color = :steelblue,
+            linewidth = 2.5,
+            linestyle = :solid
+        )
 
         # Real data (if available) - solid line
         if haskey(real_autocorr, name) && !iszero(real_autocorr[name])
-            plot!(auto_plots, subplot=k, lags, vec(real_autocorr[name]),
-                  linewidth=3, color=:crimson, linestyle=:solid, label="Real Data")
+            plot!(
+                auto_plots, subplot = k, lags, vec(real_autocorr[name]),
+                linewidth = 3, color = :crimson, linestyle = :solid, label = "Real Data"
+            )
         end
 
         # Modern formatting
         formatted_name = format_variable_name(name)
-        plot!(auto_plots, subplot=k,
-              title=formatted_name,
-              titlefontsize=12,
-              titlefontweight=:bold,
-              xlabel="Lags (Quarters)",
-              ylabel="Autocorrelation",
-              labelfontsize=10,
-              tickfontsize=9,
-              legendfontsize=9,
-              grid=true,
-              gridwidth=1,
-              gridcolor=:lightgray,
-              gridalpha=0.5,
-              framestyle=:box,
-              background_color=:white,
-              legend=:topright)
+        plot!(
+            auto_plots, subplot = k,
+            title = formatted_name,
+            titlefontsize = 12,
+            titlefontweight = :bold,
+            xlabel = "Lags (Quarters)",
+            ylabel = "Autocorrelation",
+            labelfontsize = 10,
+            tickfontsize = 9,
+            legendfontsize = 9,
+            grid = true,
+            gridwidth = 1,
+            gridcolor = :lightgray,
+            gridalpha = 0.5,
+            framestyle = :box,
+            background_color = :white,
+            legend = :topright
+        )
 
         # Add zero line for reference
-        hline!(auto_plots, [0], subplot=k, color=:black, linestyle=:dot, linewidth=1, alpha=0.7, label=false)
+        hline!(auto_plots, [0], subplot = k, color = :black, linestyle = :dot, linewidth = 1, alpha = 0.7, label = false)
     end
 
     output_path = joinpath(output_folder, "autocorrelations_abm.png")
@@ -1118,4 +1136,3 @@ if RUN_ANALYSIS
         rethrow(e)
     end
 end
->>>>>>> Stashed changes

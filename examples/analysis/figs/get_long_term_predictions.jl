@@ -1,4 +1,3 @@
-
 # # Full multiple-prediction pipeline with long term predictions
 
 import BeforeIT as Bit
