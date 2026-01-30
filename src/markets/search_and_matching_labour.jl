@@ -1,6 +1,5 @@
-
 """
-    search_and_matching_labour(firms::Firms, model)
+    search_and_matching_labour!(firms::Firms, model)
 
 This function implements a labor search and matching algorithm. It takes in a `Firms` object and a `Model` object as 
 input. The `Firms` object contains information about the number of desired employees (`N_d_i`) and the current number 
@@ -18,17 +17,16 @@ The function returns:
 - `N_i`: An updated array of the number of employed workers for each firm.
 - `O_h`: An updated array where each element represents the firm a worker is employed with (0 if unemployed).
 """
-function search_and_matching_labour(firms::AbstractFirms, model::AbstractModel)
+function search_and_matching_labour!(model::AbstractModel)
+    firms, w_act = model.firms, model.w_act
 
-    N_d_i = firms.N_d_i
-    N_i = firms.N_i
-    O_h = model.w_act.O_h
+    N_d_i, N_i, O_h = firms.N_d_i, firms.N_i, model.w_act.O_h
 
     V_i = N_d_i .- N_i
 
     # get employed workers in random order
     H_E = findall(O_h .> 0)
-    shuffle!(H_E)
+    fshuffle!(H_E)
 
     # fire workers if vacancies are negative
     for h in H_E
@@ -46,12 +44,12 @@ function search_and_matching_labour(firms::AbstractFirms, model::AbstractModel)
 
     # find unemployed workers and positive vacancies
     H_U = findall(O_h .== 0)
-    shuffle!(H_U)
+    fshuffle!(H_U)
     I_V = findall(V_i .> 0)
 
     # while there are no more vacancies or unemployed workers
     while !isempty(H_U) && !isempty(I_V)
-        shuffle!(I_V)
+        fshuffle!(I_V)
         for i in I_V
             # select random unemployed worker
             h = H_U[1]
@@ -62,8 +60,9 @@ function search_and_matching_labour(firms::AbstractFirms, model::AbstractModel)
             popfirst!(H_U)
             isempty(H_U) && break
         end
-        filter!(i -> V_i[i] > 0, I_V)
+        ufilter!(i -> V_i[i] > 0, I_V)
     end
 
-    return N_i, O_h
+    firms.N_i .= N_i
+    return w_act.O_h .= O_h
 end

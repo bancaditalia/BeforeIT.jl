@@ -1,7 +1,8 @@
 
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://bancaditalia.github.io/BeforeIT.jl/stable/)
 [![](https://img.shields.io/badge/docs-dev-blue.svg)](https://bancaditalia.github.io/BeforeIT.jl/dev/)
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
-
+[![code style: runic](https://img.shields.io/badge/code_style-%E1%9A%B1%E1%9A%A2%E1%9A%BE%E1%9B%81%E1%9A%B2-black)](https://github.com/fredrikekre/Runic.jl)
 
 <div align='center'>
 <picture>
@@ -17,7 +18,7 @@
 Welcome to BeforeIT.jl, a package for **B**ehavioural agent-based **e**conomic **fore**casting,
 from the **IT** research unit of the Bank of Italy.
 
-BeforeIT.jl is a Julia-based implementation of the agent-based model presented in 
+BeforeIT.jl is a Julia-based framework based on the agent-based model presented in 
 [_Economic forecasting with an agent-based model_](https://www.sciencedirect.com/science/article/pii/S0014292122001891),
 the first ABM matching the forecasting performance of traditional economic tools.
 
@@ -26,11 +27,12 @@ Thanks to its modular design, the package is also a great starting point for any
 capabilities or integrate it with other tools.
 
 Developed in Julia, a language known for its efficiency, BeforeIT.jl is both fast and user-friendly,
-making it accessible whether you’re an expert programmer or just starting out.
+making it accessible whether you're an expert programmer or just starting out.
 
 The package currently contains the original parametrisation for Austria, as well as a parametrisation for Italy.
-Recalibrating the model on other nations is possible of course, but currently not easily supported.
-So get in contact if you are interested!
+Recalibrating the model on other nations is possible of course. 
+For instance, the [CalibrateBeforeIT.jl](https://github.com/ViennaInstitute/CalibrateBeforeIT.jl) package can be used to initialise the model for all 27 EU member states.
+This is still work in progress, so get in touch if you are interested!
 
 ## Julia installation
 
@@ -120,19 +122,23 @@ julia -e 'using Pkg; Pkg.activate("."); Pkg.instantiate();'
 julia --proj test/runtests.jl
 ```
 
+### Format the Package
+```bash
+julia --proj format.jl
+```
 
 ## Current Authors
 
 
 <table>
   <tr>
-    <td align="center">
-      <a href="https://github.com/aldoglielmo">
-        <img src="https://avatars.githubusercontent.com/aldoglielmo" width="100px;" alt="Aldo Glielmo"/><br />
-        <sub><b>Aldo Glielmo</b></sub>
+  <td align="center">
+      <a href="https://github.com/Tortar">
+        <img src="https://avatars.githubusercontent.com/Tortar" width="100px;" alt="Adriano Meligrana"/><br />
+        <sub><b>Adriano Meligrana</b></sub>
       </a><br />
-      <p>Banca d'Italia </p>
-      <p>Email: <a href="mailto:aldo.glielmo@bancaditalia.it:">aldo.glielmo@bancaditalia.it</a></p>
+      <p>University of Turin</p>
+      <p>Email: <a href="mailto:adrianomeligrana@proton.me:">adrianomeligrana@proton.me</a></p>
     </td>
     <td align="center">
       <a href="https://devetak.github.io/">
@@ -141,13 +147,13 @@ julia --proj test/runtests.jl
       </a><br />
       <p>Paris 1: Pantheon - Sorbonne</p>
     </td>
-  <td align="center">
-      <a href="https://github.com/Tortar">
-        <img src="https://avatars.githubusercontent.com/Tortar" width="100px;" alt="Adriano Meligrana"/><br />
-        <sub><b>Adriano Meligrana</b></sub>
+    <td align="center">
+      <a href="https://github.com/aldoglielmo">
+        <img src="https://avatars.githubusercontent.com/aldoglielmo" width="100px;" alt="Aldo Glielmo"/><br />
+        <sub><b>Aldo Glielmo</b></sub>
       </a><br />
-      <p>University of Turin</p>
-      <p>Email: <a href="mailto:adrianomeligrana@proton.me:">adrianomeligrana@proton.me</a></p>
+      <p>Banca d'Italia </p>
+      <p>Email: <a href="mailto:aldo.glielmo@bancaditalia.it:">aldo.glielmo@bancaditalia.it</a></p>
     </td>
   </tr>
 </table>

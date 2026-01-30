@@ -1,4 +1,3 @@
-
 """
     pos(vector) -> vector
 

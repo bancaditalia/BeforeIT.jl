@@ -1,4 +1,3 @@
-
 include("object_macro.jl")
 
 abstract type AbstractWorkers <: AbstractObject end
@@ -27,16 +26,20 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `C_h`: Realised consumption
 - `I_h`: Realised investment
 """
-Bit.@object struct Workers(Object) <: AbstractWorkers
-    Y_h::Vector{Bit.typeFloat}
-    D_h::Vector{Bit.typeFloat}
-    K_h::Vector{Bit.typeFloat}
-    w_h::Vector{Bit.typeFloat}
-    O_h::Vector{Bit.typeInt}
-    C_d_h::Vector{Bit.typeFloat}
-    I_d_h::Vector{Bit.typeFloat}
-    C_h::Vector{Bit.typeFloat}
-    I_h::Vector{Bit.typeFloat}
+Bit.@object mutable struct Workers(Object) <: AbstractWorkers
+    const del::Base.RefValue{Bool}
+    const lastid::Base.RefValue{Int}
+    const id_to_index::Dict{Int, Int}
+    const ID::Vector{Int}
+    const Y_h::Vector{Bit.typeFloat}
+    const D_h::Vector{Bit.typeFloat}
+    const K_h::Vector{Bit.typeFloat}
+    const w_h::Vector{Bit.typeFloat}
+    const O_h::Vector{Bit.typeInt}
+    const C_d_h::Vector{Bit.typeFloat}
+    const I_d_h::Vector{Bit.typeFloat}
+    const C_h::Vector{Bit.typeFloat}
+    const I_h::Vector{Bit.typeFloat}
 end
 
 """
@@ -92,52 +95,56 @@ For all fields the entry at index `i` corresponds to the `i`th firm.
 - `K_h`: Capital stock
 - `D_h`: Deposits of the owner of the firms
 """
-Bit.@object struct Firms(Object) <: AbstractFirms
-    G_i::Vector{Bit.typeInt}
-    alpha_bar_i::Vector{Bit.typeFloat}
-    beta_i::Vector{Bit.typeFloat}
-    kappa_i::Vector{Bit.typeFloat}
-    w_i::Vector{Bit.typeFloat}
-    w_bar_i::Vector{Bit.typeFloat}
-    delta_i::Vector{Bit.typeFloat}
-    tau_Y_i::Vector{Bit.typeFloat}
-    tau_K_i::Vector{Bit.typeFloat}
-    N_i::Vector{Bit.typeInt}
-    Y_i::Vector{Bit.typeFloat}
-    Q_i::Vector{Bit.typeFloat}
-    Q_d_i::Vector{Bit.typeFloat}
-    P_i::Vector{Bit.typeFloat}
-    S_i::Vector{Bit.typeFloat}
-    K_i::Vector{Bit.typeFloat}
-    M_i::Vector{Bit.typeFloat}
-    L_i::Vector{Bit.typeFloat}
-    pi_bar_i::Vector{Bit.typeFloat}
-    D_i::Vector{Bit.typeFloat}
-    Pi_i::Vector{Bit.typeFloat}
-    V_i::Vector{Bit.typeInt}
-    I_i::Vector{Bit.typeFloat}
-    E_i::Vector{Bit.typeFloat}
-    P_bar_i::Vector{Bit.typeFloat}
-    P_CF_i::Vector{Bit.typeFloat}
-    DS_i::Vector{Bit.typeFloat}
-    DM_i::Vector{Bit.typeFloat}
-    DL_i::Vector{Bit.typeFloat}
-    DL_d_i::Vector{Bit.typeFloat}
-    K_e_i::Vector{Bit.typeFloat}
-    L_e_i::Vector{Bit.typeFloat}
-    Q_s_i::Vector{Bit.typeFloat}
-    I_d_i::Vector{Bit.typeFloat}
-    DM_d_i::Vector{Bit.typeFloat}
-    N_d_i::Vector{Bit.typeInt}
-    Pi_e_i::Vector{Bit.typeFloat}
+Bit.@object mutable struct Firms(Object) <: AbstractFirms
+    const del::Base.RefValue{Bool}
+    const lastid::Base.RefValue{Int}
+    const id_to_index::Dict{Int, Int}
+    const ID::Vector{Int}
+    const G_i::Vector{Bit.typeInt}
+    const alpha_bar_i::Vector{Bit.typeFloat}
+    const beta_i::Vector{Bit.typeFloat}
+    const kappa_i::Vector{Bit.typeFloat}
+    const w_i::Vector{Bit.typeFloat}
+    const w_bar_i::Vector{Bit.typeFloat}
+    const delta_i::Vector{Bit.typeFloat}
+    const tau_Y_i::Vector{Bit.typeFloat}
+    const tau_K_i::Vector{Bit.typeFloat}
+    const N_i::Vector{Bit.typeInt}
+    const Y_i::Vector{Bit.typeFloat}
+    const Q_i::Vector{Bit.typeFloat}
+    const Q_d_i::Vector{Bit.typeFloat}
+    const P_i::Vector{Bit.typeFloat}
+    const S_i::Vector{Bit.typeFloat}
+    const K_i::Vector{Bit.typeFloat}
+    const M_i::Vector{Bit.typeFloat}
+    const L_i::Vector{Bit.typeFloat}
+    const pi_bar_i::Vector{Bit.typeFloat}
+    const D_i::Vector{Bit.typeFloat}
+    const Pi_i::Vector{Bit.typeFloat}
+    const V_i::Vector{Bit.typeInt}
+    const I_i::Vector{Bit.typeFloat}
+    const E_i::Vector{Bit.typeFloat}
+    const P_bar_i::Vector{Bit.typeFloat}
+    const P_CF_i::Vector{Bit.typeFloat}
+    const DS_i::Vector{Bit.typeFloat}
+    const DM_i::Vector{Bit.typeFloat}
+    const DL_i::Vector{Bit.typeFloat}
+    const DL_d_i::Vector{Bit.typeFloat}
+    const K_e_i::Vector{Bit.typeFloat}
+    const L_e_i::Vector{Bit.typeFloat}
+    const Q_s_i::Vector{Bit.typeFloat}
+    const I_d_i::Vector{Bit.typeFloat}
+    const DM_d_i::Vector{Bit.typeFloat}
+    const N_d_i::Vector{Bit.typeInt}
+    const Pi_e_i::Vector{Bit.typeFloat}
     ### Household fields (firms' owners)
-    Y_h::Vector{Bit.typeFloat}
-    C_d_h::Vector{Bit.typeFloat}
-    I_d_h::Vector{Bit.typeFloat}
-    C_h::Vector{Bit.typeFloat}
-    I_h::Vector{Bit.typeFloat}
-    K_h::Vector{Bit.typeFloat}
-    D_h::Vector{Bit.typeFloat}
+    const Y_h::Vector{Bit.typeFloat}
+    const C_d_h::Vector{Bit.typeFloat}
+    const I_d_h::Vector{Bit.typeFloat}
+    const C_h::Vector{Bit.typeFloat}
+    const I_h::Vector{Bit.typeFloat}
+    const K_h::Vector{Bit.typeFloat}
+    const D_h::Vector{Bit.typeFloat}
 end
 
 """
@@ -334,11 +341,13 @@ This is a Model type. It is used to store all the agents of the economy.
 - `rotw`: RestOfTheWorld
 - `agg`: Aggregates
 """
-mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
-                     F<:AbstractFirms,B<:AbstractBank,
-                     C<:AbstractCentralBank,G<:AbstractGovernment,
-                     R<:AbstractRestOfTheWorld,A<:AbstractAggregates,
-                     P,D} <: AbstractModel
+Bit.@object mutable struct Model{
+        W1 <: Bit.AbstractWorkers, W2 <: Bit.AbstractWorkers,
+        F <: Bit.AbstractFirms, B <: Bit.AbstractBank,
+        C <: Bit.AbstractCentralBank, G <: Bit.AbstractGovernment,
+        R <: Bit.AbstractRestOfTheWorld, A <: Bit.AbstractAggregates,
+        P, D,
+    }(Object) <: Bit.AbstractModel
     w_act::W1
     w_inact::W2
     firms::F
@@ -349,56 +358,54 @@ mutable struct Model{W1<:AbstractWorkers,W2<:AbstractWorkers,
     agg::A
     prop::P
     data::D
-    function Model(w_act::W1, w_inact::W2, firms::F, bank::B, cb::C, gov::G, rotw::R, 
-        agg::A, prop::P, data::D) where {
-            W1<:AbstractWorkers, W2<:AbstractWorkers, F<:AbstractFirms, B<:AbstractBank,
-            C<:AbstractCentralBank, G<:AbstractGovernment, R<:AbstractRestOfTheWorld, A<:Aggregates,
-            P, D
-        }
-        model = new{W1,W2,F,B,C,G,R,A,P,D}(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
-        
-        # add workers to firms
-        V_i, w_bar_i = firms.V_i, firms.w_bar_i
-        O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h
-        sb_other, tau_SIW, tau_INC, theta_UB = prop.sb_other, prop.tau_SIW, prop.tau_INC, prop.theta_UB
-        h = 1
-        for i in 1:prop.I
-            while V_i[i] > 0
-                O_h[h] = i
-                w_h[h] = w_bar_i[i]
-                V_i[i] -= 1
-                h += 1
-            end
+end
+
+function (::Type{T})(agents) where {T <: AbstractModel}
+
+    w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data = agents
+    model = T(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
+
+    # add workers to firms
+    V_i, w_bar_i = firms.V_i, firms.w_bar_i
+    O_h, w_h, Y_h = w_act.O_h, w_act.w_h, w_act.Y_h
+    sb_other, tau_SIW, tau_INC, theta_UB = prop.sb_other, prop.tau_SIW, prop.tau_INC, prop.theta_UB
+    h = 1
+    for i in 1:prop.I
+        while V_i[i] > 0
+            O_h[h] = i
+            w_h[h] = w_bar_i[i]
+            V_i[i] -= 1
+            h += 1
         end
-
-        P_bar_HH = 1.0
-        H_W = prop.H_act - prop.I - 1
-        for h in 1:H_W
-            if O_h[h] != 0
-                Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
-            else
-                Y_h[h] = (theta_UB * w_h[h] + sb_other) * P_bar_HH
-            end
-        end
-
-        w_act.D_h .= prop.D_H * Y_h #/ sum(Y_h)
-        w_act.K_h .= prop.K_H * Y_h #/ sum(Y_h)
-
-        # bank initialization which depends on firms
-        bank.Pi_k = prop.mu * sum(firms.L_i) + prop.r_bar * prop.E_k
-        bank.D_k = sum(firms.D_i) + prop.E_k - sum(firms.L_i)
-        bank.Y_h = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, bank.Pi_k) + sb_other * P_bar_HH
-        bank.D_h = prop.D_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
-        bank.K_h = prop.K_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
-
-        # update model variables with global quantities (total income, total deposits) obtained from all the agents
-        update_variables_with_totals!(model)
-
-        # initialize data collection
-        update_data_init!(model)
-
-        return model
     end
+
+    P_bar_HH = 1.0
+    H_W = prop.H_act - prop.I - 1
+    for h in 1:H_W
+        if O_h[h] != 0
+            Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
+        else
+            Y_h[h] = (theta_UB * w_h[h] + sb_other) * P_bar_HH
+        end
+    end
+
+    w_act.D_h .= prop.D_H * Y_h #/ sum(Y_h)
+    w_act.K_h .= prop.K_H * Y_h #/ sum(Y_h)
+
+    # bank initialization which depends on firms
+    bank.Pi_k = prop.mu * sum(firms.L_i) + prop.r_bar * prop.E_k
+    bank.D_k = sum(firms.D_i) + prop.E_k - sum(firms.L_i)
+    bank.Y_h = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, bank.Pi_k) + sb_other * P_bar_HH
+    bank.D_h = prop.D_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
+    bank.K_h = prop.K_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
+
+    # update model variables with global quantities (total income, total deposits) obtained from all the agents
+    update_variables_with_totals!(model)
+
+    # initialize data collection
+    collect_data!(model)
+
+    return model
 end
 
 # helper functions

@@ -76,12 +76,12 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     # Calculate variables from accounting indentities
     output =
         sum(intermediate_consumption, dims = 1)' .+ taxes_products .+ taxes_production .+ compensation_employees .+
-        operating_surplus# .+ capital_consumption #TODO: check whether this is this needed or not
+        operating_surplus # .+ capital_consumption #TODO: check whether this is this needed or not
     output = output[:, 1]
 
     ## If fixed_assets and dwellings are given on industry-level
     if size(calibration_data["fixed_assets"])[1] == G &
-        size(calibration_data["dwellings"])[1] == G
+            size(calibration_data["dwellings"])[1] == G
         fixed_assets = calibration_data["fixed_assets"][:, T_calibration]
         dwellings = calibration_data["dwellings"][:, T_calibration]
         fixed_assets_other_than_dwellings =
@@ -111,12 +111,12 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         (1 - 1 / (1 + taxes_products_fixed_capitalformation / sum(fixed_capitalformation)))
     timescale =
         data["nominal_gdp_quarterly"][T_calibration_exo] / (
-            sum(
-                compensation_employees .+ operating_surplus .+ capital_consumption .+ taxes_production .+
+        sum(
+            compensation_employees .+ operating_surplus .+ capital_consumption .+ taxes_production .+
                 taxes_products,
-            ) .+ taxes_products_household .+ taxes_products_capitalformation_dwellings .+ taxes_products_government .+
+        ) .+ taxes_products_household .+ taxes_products_capitalformation_dwellings .+ taxes_products_government .+
             taxes_products_export
-        )
+    )
     capitalformation_dwellings =
         (gross_capitalformation_dwellings - taxes_products_capitalformation_dwellings) * fixed_capitalformation /
         sum(fixed_capitalformation)
@@ -124,37 +124,37 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     exports = Bit.pos(exports)
     imports = Bit.pos(
         sum(intermediate_consumption, dims = 2) +
-        household_consumption +
-        government_consumption +
-        fixed_capital_formation_other_than_dwellings * sum(capital_consumption) /
-        sum(fixed_capital_formation_other_than_dwellings) +
-        capitalformation_dwellings +
-        exports - output,
+            household_consumption +
+            government_consumption +
+            fixed_capital_formation_other_than_dwellings * sum(capital_consumption) /
+            sum(fixed_capital_formation_other_than_dwellings) +
+            capitalformation_dwellings +
+            exports - output,
     )
     reexports = Bit.neg(
         sum(intermediate_consumption, dims = 2) +
-        household_consumption +
-        government_consumption +
-        fixed_capital_formation_other_than_dwellings * sum(capital_consumption) /
-        sum(fixed_capital_formation_other_than_dwellings) +
-        capitalformation_dwellings +
-        exports - output,
+            household_consumption +
+            government_consumption +
+            fixed_capital_formation_other_than_dwellings * sum(capital_consumption) /
+            sum(fixed_capital_formation_other_than_dwellings) +
+            capitalformation_dwellings +
+            exports - output,
     )
     household_social_contributions = social_contributions - employers_social_contributions
     wages = compensation_employees * (1 - employers_social_contributions / sum(compensation_employees)) # Note: owerwrighting the wages variable here!
     household_income_tax = income_tax - corporate_tax
     other_net_transfers = Bit.pos(
         sum(taxes_products_household) +
-        sum(taxes_products_capitalformation_dwellings) +
-        sum(taxes_products_export) +
-        sum(taxes_products) +
-        sum(taxes_production) +
-        employers_social_contributions +
-        household_social_contributions +
-        household_income_tax +
-        corporate_tax +
-        capital_taxes - social_benefits - sum(government_consumption) - interest_government_debt -
-        government_deficit,
+            sum(taxes_products_capitalformation_dwellings) +
+            sum(taxes_products_export) +
+            sum(taxes_products) +
+            sum(taxes_production) +
+            employers_social_contributions +
+            household_social_contributions +
+            household_income_tax +
+            corporate_tax +
+            capital_taxes - social_benefits - sum(government_consumption) - interest_government_debt -
+            government_deficit,
     )
     disposable_income =
         sum(wages) + mixed_income + property_income + social_benefits + other_net_transfers -
@@ -208,16 +208,16 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         (sum(wages) + property_income + mixed_income - household_social_contributions)
     tau_FIRM =
         timescale * corporate_tax / (
-            sum(
-                Bit.pos(
-                    timescale * operating_surplus -
+        sum(
+            Bit.pos(
+                timescale * operating_surplus -
                     timescale * firm_interest * fixed_assets_other_than_dwellings /
                     sum(fixed_assets_other_than_dwellings) +
                     r_bar * firm_cash_quarterly * Bit.pos(operating_surplus) /
                     sum(Bit.pos(operating_surplus)),
-                ),
-            ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly)
-        )
+            ),
+        ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly)
+    )
     tau_VAT = taxes_products_household / sum(household_consumption)
     tau_SIF = employers_social_contributions / sum(wages)
     tau_SIW = household_social_contributions / sum(wages)
@@ -228,17 +228,17 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     psi_H = (sum(capitalformation_dwellings) + sum(taxes_products_capitalformation_dwellings)) / disposable_income
     theta_DIV =
         timescale * (mixed_income + property_income) / (
-            sum(
-                Bit.pos(
-                    timescale * operating_surplus -
+        sum(
+            Bit.pos(
+                timescale * operating_surplus -
                     timescale * firm_interest * fixed_assets_other_than_dwellings /
                     sum(fixed_assets_other_than_dwellings) +
                     r_bar * firm_cash_quarterly * Bit.pos(operating_surplus) /
                     sum(Bit.pos(operating_surplus)),
-                ),
-            ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly) -
+            ),
+        ) + timescale * firm_interest - r_bar * (firm_debt_quarterly - bank_equity_quarterly) -
             timescale * corporate_tax
-        )
+    )
     r_G = timescale * interest_government_debt / government_debt_quarterly
     theta_UB = 0.55 * (1 - tau_INC) * (1 - tau_SIW)
     theta = 0.05
@@ -373,25 +373,27 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     pi_EA = ea["gdp_deflator_quarterly"][T_calibration_exo] / ea["gdp_deflator_quarterly"][T_calibration_exo - 1] - 1
     C_G = [
         timescale *
-        sum(government_consumption) *
-        data["real_government_consumption_quarterly"][T_estimation_exo:min(
-            T_calibration_exo + T,
-            T_calibration_exo_max,
-        )] / data["real_government_consumption_quarterly"][T_calibration_exo]
+            sum(government_consumption) *
+            data["real_government_consumption_quarterly"][
+            T_estimation_exo:min(
+                T_calibration_exo + T,
+                T_calibration_exo_max,
+            ),
+        ] / data["real_government_consumption_quarterly"][T_calibration_exo]
         fill(NaN, max(0, T_calibration_exo + T - T_calibration_exo_max), 1)
     ]
     C_E = [
         timescale *
-        sum(exports - reexports) *
-        data["real_exports_quarterly"][T_estimation_exo:min(T_calibration_exo + T, T_calibration_exo_max)] /
-        data["real_exports_quarterly"][T_calibration_exo]
+            sum(exports - reexports) *
+            data["real_exports_quarterly"][T_estimation_exo:min(T_calibration_exo + T, T_calibration_exo_max)] /
+            data["real_exports_quarterly"][T_calibration_exo]
         fill(NaN, max(0, T_calibration_exo + T - T_calibration_exo_max), 1)
     ]
     Y_I = [
         timescale *
-        sum(imports) *
-        data["real_imports_quarterly"][T_estimation_exo:min(T_calibration_exo + T, T_calibration_exo_max)] /
-        data["real_imports_quarterly"][T_calibration_exo]
+            sum(imports) *
+            data["real_imports_quarterly"][T_estimation_exo:min(T_calibration_exo + T, T_calibration_exo_max)] /
+            data["real_imports_quarterly"][T_calibration_exo]
         fill(NaN, max(0, T_calibration_exo + T - T_calibration_exo_max), 1)
     ]
 

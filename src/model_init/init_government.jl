@@ -1,4 +1,3 @@
-
 """
     Government(parameters, initial_conditions)
 

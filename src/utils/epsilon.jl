@@ -1,7 +1,7 @@
 using LinearAlgebra, Random
 
-function epsilon(C::Matrix)
-    if isapprox(sum(C), 0, atol = 1e-8)
+function epsilon(C::AbstractMatrix)
+    if isapprox(sum(C), 0, atol = 1.0e-8)
         return 0.0, 0.0, 0.0
     end
     L, _ = cholesky(C)
@@ -11,4 +11,13 @@ function epsilon(C::Matrix)
     eps_E = dot(L[2, :], eps_)
     eps_I = dot(L[3, :], eps_)
     return eps_Y_EA, eps_E, eps_I
+end
+function epsilon(model::AbstractModel)
+    agg = model.agg
+    C = model.prop.C
+    return epsilon(C)
+end
+function set_epsilon!(model::AbstractModel)
+    agg = model.agg
+    return agg.epsilon_Y_EA, agg.epsilon_E, agg.epsilon_I = epsilon(model)
 end

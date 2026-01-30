@@ -1,5 +1,3 @@
-
-
 """
 Calculate the annual sum of values in the input array `ftsa` by grouping them into blocks of size `m=4`.
 

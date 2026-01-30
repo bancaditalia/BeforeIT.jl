@@ -1,4 +1,3 @@
-
 import BeforeIT as Bit
 
 using Random
@@ -35,9 +34,9 @@ using Random
 
     rho, r_star, xi_pi, xi_gamma, pi_star = Bit.estimate_taylor_rule(r_bar, pi_EA, gamma_EA)
 
-    @test isapprox(rho, rho_e, rtol = 1e-5)
-    @test isapprox(r_star, r_star_e, rtol = 1e-5)
-    @test isapprox(xi_pi, xi_pi_e, rtol = 1e-5)
-    @test isapprox(xi_gamma, xi_gamma_e, rtol = 1e-5)
-    @test isapprox(pi_star, pi_star_e, rtol = 1e-5)
+    @test isapprox(rho, rho_e, rtol = 1.0e-5)
+    @test isapprox(r_star, r_star_e, rtol = 1.0e-5)
+    @test isapprox(xi_pi, xi_pi_e, rtol = 1.0e-5)
+    @test isapprox(xi_gamma, xi_gamma_e, rtol = 1.0e-5)
+    @test isapprox(pi_star, pi_star_e, rtol = 1.0e-5)
 end

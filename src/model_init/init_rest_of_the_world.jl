@@ -1,4 +1,3 @@
-
 """
     RestOfTheWorld(parameters, initial_conditions)
 
@@ -44,7 +43,9 @@ function RestOfTheWorld(parameters, initial_conditions)
     Q_d_m = zeros(typeFloat, G)
     P_m = zeros(typeFloat, G)
 
-    return RestOfTheWorld(alpha_E, beta_E, sigma_E, alpha_I, beta_I, sigma_I, Y_EA, gamma_EA,
+    return RestOfTheWorld(
+        alpha_E, beta_E, sigma_E, alpha_I, beta_I, sigma_I, Y_EA, gamma_EA,
         pi_EA, alpha_pi_EA, beta_pi_EA, sigma_pi_EA, alpha_Y_EA, beta_Y_EA, sigma_Y_EA, D_RoW,
-        Y_I[T_prime], C_E[T_prime], C_d_l, C_l, Y_m, Q_m, Q_d_m, P_m, P_l)
+        Y_I[T_prime], C_E[T_prime], C_d_l, C_l, Y_m, Q_m, Q_d_m, P_m, P_l
+    )
 end

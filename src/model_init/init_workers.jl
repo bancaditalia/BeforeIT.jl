@@ -1,4 +1,3 @@
-
 """
     Workers(parameters, initial_conditions)
 
@@ -13,7 +12,7 @@ Initialize the workers for the given parameters, initial conditions.
 - The initialized inactive workers.
 """
 function Workers(parameters, initial_conditions)
- 
+
     H_act = Int(parameters["H_act"])
     H_inact = Int(parameters["H_inact"])
     I = Int(sum(parameters["I_s"]))
@@ -33,7 +32,7 @@ function Workers(parameters, initial_conditions)
     O_h = zeros(typeInt, H_W)
 
     w_h[O_h .== 0] .= w_UB / theta_UB
-    
+
     Y_h = zeros(typeFloat, H_W)
     D_h = zeros(typeFloat, H_W)
     K_h = zeros(typeFloat, H_W)
@@ -41,10 +40,14 @@ function Workers(parameters, initial_conditions)
     I_d_h = zeros(typeFloat, H_W)
     C_h = zeros(typeFloat, H_W)
     I_h = zeros(typeFloat, H_W)
-    
+
     # active workers (both employed and unemployed)
-    workers_act = Workers(Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)
-    
+    id_to_index = Dict{Int, Int}()
+    index_to_id = collect(1:Int(H_W))
+    lastid = Ref(Int(H_W))
+    del = Ref(false)
+    workers_act = Workers(del, lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)
+
     # inactive workers
     Y_h = zeros(typeFloat, H_inact)
     for h in 1:H_inact
@@ -60,7 +63,11 @@ function Workers(parameters, initial_conditions)
     C_h = zeros(typeFloat, H_inact)
     I_h = zeros(typeFloat, H_inact)
 
-    workers_inact = Workers(Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
+    id_to_index = Dict{Int, Int}()
+    index_to_id = collect(1:Int(H_inact))
+    lastid = Ref(Int(H_inact))
+    del = Ref(false)
+    workers_inact = Workers(del, lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
 
     return workers_act, workers_inact
 end

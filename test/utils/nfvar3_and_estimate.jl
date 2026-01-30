@@ -1,10 +1,9 @@
-
 import BeforeIT as Bit
 
 using Test, Random, MAT
 
 @testset "nfvar3" begin
-    xxi = [[0.2000, -0.5000] [-0.5000, 1.5000]]
+    xxi = [[0.2, -0.5] [-0.5, 1.5]]
     u = [0, 0, 0, 0]
 
     y = Matrix{Float64}([1.0; 2.0; 3.0; 4.0; 5.0][:, :])
@@ -13,13 +12,13 @@ using Test, Random, MAT
     @test isapprox(var_.Bx[1, 1], 1.0)
     @test isapprox(var_.By[1], 1.0)
     @test isapprox(var_.xxi, xxi)
-    @test isapprox(var_.u, u; atol = 1e-14)
+    @test isapprox(var_.u, u; atol = 1.0e-14)
 end
 
 @testset "estimate" begin
     dir = @__DIR__
 
-    init_conds = Bit.AUSTRIA2010Q1.initial_conditions#matopen(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
+    init_conds = Bit.AUSTRIA2010Q1.initial_conditions #matopen(joinpath(dir, "../data/austria/initial_conditions/2010Q1.mat"))
 
     Y = init_conds["Y"]
 
@@ -66,7 +65,7 @@ end
         0.001255600869955
         0.008378576951367
         -0.007301768521497
-        0.001063268119180
+        0.00106326811918
     ]
 
     alpha, beta, sigma, epsilon_ = Bit.estimate_for_calibration_script(dummy_series)

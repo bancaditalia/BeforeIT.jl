@@ -1,4 +1,3 @@
-
 @testset "initialize deterministic" begin
 
     dir = @__DIR__
@@ -19,28 +18,12 @@
     for fieldname in fieldnames(typeof(model.firms))
 
         if fieldname in [
-            :w_i,
-            :Q_i,
-            :I_i,
-            :E_i,
-            :P_bar_i,
-            :P_CF_i,
-            :DS_i,
-            :DM_i,
-            :DL_i,
-            :DL_d_i,
-            :K_e_i,
-            :L_e_i,
-            :Q_s_i,
-            :I_d_i,
-            :DM_d_i,
-            :N_d_i,
-            :Pi_e_i,
-            :C_d_h,
-            :I_d_h,
-            :C_h,
-            :I_h,
-        ]
+                :del, :lastid, :id_to_index, :ID,
+                :w_i, :Q_i, :I_i, :E_i, :P_bar_i,
+                :P_CF_i, :DS_i, :DM_i, :DL_i, :DL_d_i,
+                :K_e_i, :L_e_i, :Q_s_i, :I_d_i, :DM_d_i,
+                :N_d_i, :Pi_e_i, :C_d_h, :I_d_h, :C_h, :I_h,
+            ]
             continue
         end
         julia_var = getfield(model.firms, fieldname)
@@ -70,7 +53,7 @@
     init_vars = matread(joinpath(dir, "../matlab_code/init_vars_households.mat"))
     for fn in fieldnames(typeof(model.w_act))
 
-        if fn in [:C_d_h, :I_d_h, :C_h, :I_h]
+        if fn in [:del, :lastid, :id_to_index, :ID, :C_d_h, :I_d_h, :C_h, :I_h]
             continue
         end
 
