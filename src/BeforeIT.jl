@@ -64,6 +64,7 @@ include("markets/search_and_matching.jl")
 
 # utils
 include("utils/estimate.jl")
+include("utils/julia_svd.jl")
 include("utils/nfvar3.jl")
 include("utils/opt.jl")
 include("utils/randpl.jl")
