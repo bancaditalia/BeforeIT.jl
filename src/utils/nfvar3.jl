@@ -30,7 +30,12 @@ function rfvar3(ydata::Matrix, lags::Union{Int, Int64}, xdata::Matrix)
 
     X = [reshape(X, Tsmpl, nvar * lags) xdata[smpl, :]]
     y = ydata[smpl, :]
-    vl, di, vr = svd(X, full = false)
+    # A pure Julia implementation for AutoDiff, TODO: work out the full mxn version
+    if size(X)[2] == 2
+        vl, di, vr = svd_mx2(X)
+    else
+        vl, di, vr = svd(X)
+    end
     dfx = sum(di .> 100 * eps())
     snglty = size(X, 2) - dfx
     di = 1.0 ./ di[1:dfx]
