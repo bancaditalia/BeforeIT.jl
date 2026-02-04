@@ -18,17 +18,17 @@ This function avoids general iterative SVD algorithms by solving the 2x2 problem
 """
 function svd_mx2(A::AbstractMatrix)
     M, N = size(A)
-    
-    # 1. Rotation angle for V 
+
+    # 1. Rotation angle for V
     c1, c2 = view(A,:,1), view(A,:,2)
     α, β, γ = dot(c1,c1), dot(c2,c2), dot(c1,c2)
-    
+
     θ = 0.5 * atan(2γ, α-β)
     c, s = cos(θ), sin(θ)
     V = [c -s; s c]
-    
+
     W = A * V
-    
+
     if M == 1
         s1 = norm(view(W, :, 1))
         S = [s1]
@@ -37,11 +37,11 @@ function svd_mx2(A::AbstractMatrix)
     else
         s1, s2 = norm(view(W, :, 1)), norm(view(W, :, 2))
         S = [s1, s2]
-        
+
         # 3. Construct orthonormal U by normalizing W
         # S[1] > 0 is numerically safe; S[2] uses a relative threshold
         u1 = s1 > 1e-15 ? W[:, 1] ./ s1 : [1.0; zeros(Float64, M-1)]
-        u2 = if s2 > 1e-15  
+        u2 = if s2 > 1e-15
             W[:, 2] ./ s2
         else
             # Gram-Schmidt fallback for orthonormality
@@ -52,6 +52,6 @@ function svd_mx2(A::AbstractMatrix)
         end
         U = hcat(u1, u2)
     end
-    
+
     return SVD(U, S, V')
 end
