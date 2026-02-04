@@ -1,153 +1,57 @@
+"""
+    svd_mx2(A::AbstractMatrix{T}) where T -> SVD
 
-using LinearAlgebra
+Compute the SVD of an M x 2 matrix A analytically. Returns a `LinearAlgebra.SVD` object.
 
-function pure_svd(A::AbstractMatrix{T}; tol=1e-15, max_iter=100) where {T}
-    # 1. Promote to float to prevent integer overflow/type errors
-    T_float = float(T)
-    m, n = size(A)
-
-    # 2. Handle Tall Matrices (Recursive Transpose)
-    # If m < n, we compute svd(A') => A = V * S * U'
-    if m < n
-        s = pure_svd(copy(A'); tol=tol, max_iter=max_iter)
-        return SVD(collect(s.Vt'), s.S, collect(s.U'))
-    end
-
-    # 3. Initialization
-    # U starts as A. Jacobi rotations will orthogonalize its columns.
-    U = copy(convert(Matrix{T_float}, A)) 
-    V = Matrix{T_float}(I, n, n)
+### Logic Overview:
+This function avoids general iterative SVD algorithms by solving the 2x2 problem analytically.
+1. **Reduce to 2x2**: We find eigenvalues and eigenvectors of A'A (a symmetric 2x2 matrix).
+   - Eigenvalues of A'A are singular values squared (σ₁², σ₂²).
+   - Eigenvectors of A'A form the orientation of the input space (V).
+2. **Analytical Solution**:
+   - The rotation angle θ for V is found via `atan(2γ, α-β)`, which diagonalizes A'A.
+   - Singular values are then computed as the norms of the rotated columns (A*V).
+3. **Handle Rank Deficiency & Dimension**:
+   - For M=1, only one singular value exists. U is 1x1.
+   - For M≥2, two singular values are returned. U is Mx2.
+   - We ensure U remains orthonormal by "inventing" orthogonal directions using Gram-Schmidt when singular values are near zero.
+"""
+function svd_mx2(A::AbstractMatrix)
+    M, N = size(A)
     
-    # 4. Main One-Sided Jacobi Loop (Orthogonalization)
-    for iter in 1:max_iter
-        count = 0
-        for i in 1:(n-1)
-            for j in (i+1):n
-                # Check orthogonality of columns i and j
-                xi = view(U, :, i)
-                xj = view(U, :, j)
-                
-                aii = dot(xi, xi)
-                ajj = dot(xj, xj)
-                aij = dot(xi, xj)
-                
-                # If not orthogonal enough...
-                if abs(aij) > tol * sqrt(aii * ajj)
-                    count += 1
-                    
-                    # Compute rotation parameters
-                    tau = (ajj - aii) / (2 * aij)
-                    sgn = sign(tau)
-                    if sgn == 0; sgn = one(T_float); end
-                    t = sgn / (abs(tau) + sqrt(1 + tau^2))
-                    c = 1 / sqrt(1 + t^2)
-                    s_val = c * t
-                    
-                    # Apply rotation to U columns
-                    # (Manually unrolled loop for clarity/performance)
-                    @inbounds for k in 1:m
-                        uik = U[k, i]
-                        ujk = U[k, j]
-                        U[k, i] = c * uik - s_val * ujk
-                        U[k, j] = s_val * uik + c * ujk
-                    end
-                    
-                    # Apply rotation to V columns
-                    @inbounds for k in 1:n
-                        vik = V[k, i]
-                        vjk = V[k, j]
-                        V[k, i] = c * vik - s_val * vjk
-                        V[k, j] = s_val * vik + c * vjk
-                    end
-                end
-            end
-        end
-        if count == 0; break; end
-    end
+    # 1. Rotation angle for V 
+    c1, c2 = view(A,:,1), view(A,:,2)
+    α, β, γ = dot(c1,c1), dot(c2,c2), dot(c1,c2)
     
-    # 5. Extract Singular Values and Fix "Broken" U Columns
-    singular_vals = zeros(T_float, n)
+    θ = 0.5 * atan(2γ, α-β)
+    c, s = cos(θ), sin(θ)
+    V = [c -s; s c]
     
-    # 6. Sort by descending singular values - WAIT, computed above? No. 
-    # We do Step 5 first.
+    W = A * V
     
-    # Calculate scale of the matrix to distinguish noise from signal
-    # We use the maximum column norm as a reference.
-    max_col_norm = zero(T_float)
-    for j in 1:n
-        max_col_norm = max(max_col_norm, norm(view(U, :, j)))
-    end
-    
-    rank_tol = max(floatmin(T_float), max_col_norm * tol)
-    
-    for j in 1:n
-        # Current column norm is the singular value
-        col_norm = norm(view(U, :, j))
-        singular_vals[j] = col_norm
+    if M == 1
+        s1 = norm(view(W, :, 1))
+        S = [s1]
+        u1 = s1 > 0 ? W[:, 1] ./ s1 : [1.0]
+        U = reshape(u1, 1, 1)
+    else
+        s1, s2 = norm(view(W, :, 1)), norm(view(W, :, 2))
+        S = [s1, s2]
         
-        if col_norm > rank_tol
-            # Case A: Normal column. Just normalize it.
-            @. U[:, j] /= col_norm
+        # 3. Construct orthonormal U by normalizing W
+        # S[1] > 0 is numerically safe; S[2] uses a relative threshold
+        u1 = s1 > 1e-15 ? W[:, 1] ./ s1 : [1.0; zeros(Float64, M-1)]
+        u2 = if s2 > 1e-15  
+            W[:, 2] ./ s2
         else
-            # Case B: Rank Deficient (Zero column).
-            # We must find a new unit vector orthogonal to all other columns.
-            singular_vals[j] = 0.0
-            
-            # Try standard basis vectors e_1, e_2, ... until we find one 
-            # that isn't parallel to existing columns.
-            generated_vector = zeros(T_float, m)
-            found_direction = false
-            
-            for k in 1:m
-                fill!(generated_vector, 0.0)
-                generated_vector[k] = 1.0 # candidate: standard basis e_k
-                
-                # Gram-Schmidt: Project out all OTHER columns of U
-                for other_col in 1:n
-                    if other_col == j; continue; end
-                    
-                    # u_other is already normalized (or will be fixed later).
-                    # We project our candidate against it.
-                    u_other = view(U, :, other_col)
-                    
-                    # Only project if u_other has non-zero norm (is valid)
-                    denom = dot(u_other, u_other)
-                    if denom > floatmin(T_float)^2
-                        overlap = dot(generated_vector, u_other)
-                        @. generated_vector -= (overlap / denom) * u_other
-                    end
-                end
-                
-                # Check if candidate survived projection
-                rem_norm = norm(generated_vector)
-                if rem_norm > rank_tol
-                    @. U[:, j] = generated_vector / rem_norm
-                    found_direction = true
-                    break
-                end
-            end
-            
-            # If standard basis failed (highly unlikely unless m < n),
-            # fallback to random noise (last resort)
-            if !found_direction
-                rand!(generated_vector)
-                # Repeat projection logic
-                for other_col in 1:n
-                    if other_col == j; continue; end
-                    u_other = view(U, :, other_col)
-                    denom = dot(u_other, u_other)
-                    if denom > floatmin(T_float)^2
-                        overlap = dot(generated_vector, u_other)
-                        @. generated_vector -= (overlap / denom) * u_other
-                    end
-                end
-                @. U[:, j] = generated_vector / norm(generated_vector)
-            end
+            # Gram-Schmidt fallback for orthonormality
+            v = zeros(Float64, M)
+            v[argmin(abs.(u1))] = 1.0
+            v .-= dot(u1, v) .* u1
+            v ./= norm(v)
         end
+        U = hcat(u1, u2)
     end
     
-    # 6. Sort by descending singular values
-    p = sortperm(singular_vals, rev=true)
-    
-    return SVD(U[:, p], singular_vals[p], copy(V[:, p]'))
+    return SVD(U, S, V')
 end
