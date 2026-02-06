@@ -1,4 +1,3 @@
-
 function _flatten_struct!(v::Vector{Float64}, obj)
     for fname in fieldnames(typeof(obj))
         # Skip fields that are not part of the differentiable state
@@ -15,6 +14,7 @@ function _flatten_struct!(v::Vector{Float64}, obj)
             append!(v, Float64.(field))
         end
     end
+    return
 end
 
 function _unflatten_struct!(obj, arr::AbstractVector{Float64}, pos_ref::Ref{Int})
@@ -36,14 +36,14 @@ function _unflatten_struct!(obj, arr::AbstractVector{Float64}, pos_ref::Ref{Int}
             else
                 setfield!(obj, fname, FieldType(val))
             end
-            
+
             pos_ref[] += 1
 
         elseif FieldType <: AbstractVector{<:Number}
             # Extract vector slice
             len = length(field_val)
-            chunk = @view arr[pos_ref[]:(pos_ref[]+len-1)]
-            
+            chunk = @view arr[pos_ref[]:(pos_ref[] + len - 1)]
+
             ElType = eltype(field_val)
 
             if ElType <: Integer
@@ -51,10 +51,11 @@ function _unflatten_struct!(obj, arr::AbstractVector{Float64}, pos_ref::Ref{Int}
             else
                 field_val .= ElType.(chunk)      # Broadcast conversion for floats
             end
-            
+
             pos_ref[] += len
         end
     end
+    return
 end
 
 function model_to_array(model)

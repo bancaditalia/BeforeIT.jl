@@ -388,7 +388,7 @@ function perform_retail_market!(
 end
 
 function update_non_sector_vars!(C_h, I_h, b, d, RETAIL_LOCK, ::Val{true})
-    @lock RETAIL_LOCK begin
+    return @lock RETAIL_LOCK begin
         @~ C_h .+= b
         @~ I_h .+= d
     end
@@ -396,7 +396,7 @@ end
 
 function update_non_sector_vars!(C_h, I_h, b, d, RETAIL_LOCK, ::Val{false})
     @~ C_h .+= b
-    @~ I_h .+= d
+    return @~ I_h .+= d
 end
 
 function compute_price_size_weights(P_f, S_f, F_g)
