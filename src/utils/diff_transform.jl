@@ -70,6 +70,7 @@ function model_to_array(model)
     _flatten_struct!(v, model.gov)
     _flatten_struct!(v, model.rotw)
     _flatten_struct!(v, model.agg)
+    _flatten_struct!(v, model.prop)
 
     return v
 end
@@ -88,6 +89,7 @@ function array_to_model(arr::AbstractVector{Float64}, original_model)
     _unflatten_struct!(new_model.gov, arr, pos)
     _unflatten_struct!(new_model.rotw, arr, pos)
     _unflatten_struct!(new_model.agg, arr, pos)
+    _unflatten_struct!(new_model.prop, arr, pos)
 
     return new_model
 end
