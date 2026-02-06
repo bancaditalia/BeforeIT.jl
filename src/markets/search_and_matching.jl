@@ -42,7 +42,8 @@ function search_and_matching!(model::AbstractModel; parallel = false)
             g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h,
             b_HH_g, b_CFH_g, c_E_g, c_G_g, Q_d_i_g, Q_d_m_g,
             C_h, I_h, C_j_g, C_l_g, P_bar_h_g, P_bar_CF_h_g,
-            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f, RETAIL_LOCK
+            P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
+            RETAIL_LOCK, parallel
         )
     end
 
@@ -280,8 +281,8 @@ function perform_firms_market!(
     @~ DM_i_g[:, g] .= a
     @~ I_i_g[:, g] .= b
 
-    @~ P_bar_i_g[:, g] .= pos.(DM_nominal_ig .* a ./ c)
-    @~ P_CF_i_g[:, g] .= pos.(DM_nominal_ig .* b ./ c)
+    @~ P_bar_i_g[:, g] .= DM_nominal_ig .* a ./ zero_to_one.(c)
+    @~ P_CF_i_g[:, g] .= DM_nominal_ig .* b ./ zero_to_one.(c)
 
     return
 end
@@ -292,7 +293,8 @@ Perform the retail market exchange process
 function perform_retail_market!(
         g, agg, gov, rotw, I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g,
         c_E_g, c_G_g, Q_d_i_g, Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g,
-        P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f, RETAIL_LOCK
+        P_bar_CF_h_g, P_j_g, P_l_g, S_fg, S_fg_, F_g, P_f, S_f, G_f,
+        RETAIL_LOCK, parallel
     )
     ###############################
     ######## RETAIL MARKET ########
@@ -375,18 +377,26 @@ function perform_retail_market!(
     C_j_g[g] = sum(@~ c_G_g[g] .* gov.C_d_j) - sum(@view(C_d_hg[(H + L + 1):(H + L + J)]))
     C_l_g[g] = sum(@~ c_E_g[g] .* rotw.C_d_l) - sum(@view(C_d_hg[(H + 1):(H + L)]))
 
-    P_bar_h_g[g] = pos(sum(a) * sum(b) / sum(c))
-    P_bar_CF_h_g[g] = pos(sum(a) * sum(d) / sum(c))
+    P_bar_h_g[g] = sum(a) * sum(b) / zero_to_one(sum(c))
+    P_bar_CF_h_g[g] = sum(a) * sum(d) / zero_to_one(sum(c))
 
     P_j_g[g] = sum(@view(C_real_hg[(H + L + 1):(H + L + J)]))
     P_l_g[g] = sum(@view(C_real_hg[(H + 1):(H + L)]))
 
+    update_non_sector_vars!(C_h, I_h, b, d, RETAIL_LOCK, Val{parallel}())
+    return
+end
+
+function update_non_sector_vars!(C_h, I_h, b, d, RETAIL_LOCK, ::Val{true})
     @lock RETAIL_LOCK begin
         @~ C_h .+= b
         @~ I_h .+= d
     end
+end
 
-    return
+function update_non_sector_vars!(C_h, I_h, b, d, RETAIL_LOCK, ::Val{false})
+    @~ C_h .+= b
+    @~ I_h .+= d
 end
 
 function compute_price_size_weights(P_f, S_f, F_g)

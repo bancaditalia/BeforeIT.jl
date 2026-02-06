@@ -12,7 +12,13 @@ function estimate(ydata::Union{Matrix, Vector})
     var = rfvar3(ydata, 1, ones(size(ydata, 1), 1))
     alpha = var.By[1]
     beta = var.Bx[1]
-    epsilon = rand(Normal(0, sqrt(cov(var.u))[1, 1]))
+    cov_var_u = cov(var.u)
+    # special case for Autodiff, TODO: adapt the general case
+    if size(cov_var_u) == (1, 1)
+        epsilon = rand(Normal(0, sqrt(cov_var_u[1])))
+    else
+        epsilon = rand(Normal(0, sqrt(cov_var_u)[1, 1]))
+    end
     return alpha, beta, epsilon
 end
 

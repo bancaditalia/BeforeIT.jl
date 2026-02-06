@@ -97,3 +97,7 @@ end
 function matlab_round(x)
     return Base.round(x, RoundNearestTiesUp)
 end
+
+function zero_to_one(x::T) where {T <: Number}
+    return iszero(x) ? one(T) : x
+end
