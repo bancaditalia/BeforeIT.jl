@@ -1,6 +1,55 @@
 BeforeIT Release Notes
 ======================
 
+0.5.0 (Feb 2026)
+------------------
+
+* Fix precompilation error by removing unnecessary reexport of `Base.ro… by @petres in https://github.com/bancaditalia/BeforeIT.jl/pull/76
+* Modularize and document better the data tracking by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/81
+* Use a faster shuffle function by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/82
+* Use a faster filter function in matching by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/83
+* Use locking for in-model multithreading by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/84
+* Add new sampler for matching processes by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/85
+* Update timings for latest perf improvements by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/86
+* Spawn threads in ensemblerun by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/87
+* Use parallel keyword instead of multi_threading by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/88
+* Add a benchmark for scalability by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/90
+* Fix experimentation docs by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/91
+* Use Runic.jl to format PRs by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/94
+* Bump actions/cache from 3 to 4 by @dependabot[bot] in https://github.com/bancaditalia/BeforeIT.jl/pull/95
+* Create formatting file for local formatting by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/96
+* CompatHelper: bump compat for JLD2 to 0.5, (keep existing compat) by @github-actions[bot] in https://github.com/bancaditalia/BeforeIT.jl/pull/97
+* Use simple threading for parallelization by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/98
+* Fix 1.10 tests for real by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/99
+* Rename C_h_t, I_h_t to C_h, I_h by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/100
+* Remove overloading examples and add invocation example in docs by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/101
+* Improve clarity of stepping by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/102
+* Fix Runic tests on Windows by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/104
+* Fix multithreading in search_and_matching! by adding a shared lock by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/105
+* Bump actions/checkout from 4 to 5 by @dependabot[bot] in https://github.com/bancaditalia/BeforeIT.jl/pull/106
+* Add ensemblerun function for backward compatibility and update example usage by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/107
+* CompatHelper: bump compat for JLD2 to 0.6, (keep existing compat) by @github-actions[bot] in https://github.com/bancaditalia/BeforeIT.jl/pull/108
+* New "object-oriented" version of agents for flexibility by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/109
+* Move to WeightVectors.jl for search & matching by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/110
+* Demonstrate usage of object-oriented approach by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/114
+* add model extensions in the package by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/115
+* Refactor stepping code making all functions mutating by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/116
+* Conditional forecasts by @erminnella in https://github.com/bancaditalia/BeforeIT.jl/pull/119
+* Fix type annotations for CANVAS model functions by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/122
+* Bump actions/cache from 4 to 5 by @dependabot[bot] in https://github.com/bancaditalia/BeforeIT.jl/pull/123
+* Bump actions/checkout from 5 to 6 by @dependabot[bot] in https://github.com/bancaditalia/BeforeIT.jl/pull/120
+* Fix type declaration for real_fixed_capitalformation_dwellings by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/126
+* Fix calculation of r_bar_terms by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/128
+* Add pure SVD function for matrix decomposition by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/130
+* Automatic Differentiation through Mooncake (take 2) by @ameligrana in https://github.com/bancaditalia/BeforeIT.jl/pull/131
+
+## New Contributors
+* @dependabot[bot] made their first contribution in https://github.com/bancaditalia/BeforeIT.jl/pull/95
+* @github-actions[bot] made their first contribution in https://github.com/bancaditalia/BeforeIT.jl/pull/97
+* @erminnella made their first contribution in https://github.com/bancaditalia/BeforeIT.jl/pull/119
+
+**Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.4.0...v0.5.0
+
 0.4.0 (July 2025)
 ------------------
 
@@ -19,9 +68,7 @@ BeforeIT Release Notes
 
 * Modular bulk predictions by @aldoglielmo in https://github.com/bancaditalia/BeforeIT.jl/pull/64
 
-
 **Full Changelog**: https://github.com/bancaditalia/BeforeIT.jl/compare/v0.3.2...v0.3.3
-
 
 0.3.2 (May 2025)
 ------------------
