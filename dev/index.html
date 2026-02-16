@@ -15,13 +15,13 @@ plot(data.real_gdp)</code></pre><h2 id="License"><a class="docs-heading-anchor" 
   journal={arXiv preprint arXiv:2502.13267},
   year={2025}
 }</code></pre><p>and do not hesitate to get in touch to include your extension in the next release of the package and software description.</p><h2 id="Disclaimer"><a class="docs-heading-anchor" href="#Disclaimer">Disclaimer</a><a id="Disclaimer-1"></a><a class="docs-heading-anchor-permalink" href="#Disclaimer" title="Permalink"></a></h2><p>This package is an outcome of a research project. All errors are those of the authors. All views expressed are personal views, not those of Bank of Italy.</p><h2 id="Reproducibility"><a class="docs-heading-anchor" href="#Reproducibility">Reproducibility</a><a id="Reproducibility-1"></a><a class="docs-heading-anchor-permalink" href="#Reproducibility" title="Permalink"></a></h2><details><summary>The documentation of BeforeIT.jl was built using these direct dependencies,</summary><pre class="documenter-example-output"><code class="nohighlight hljs ansi">Status `~/work/BeforeIT.jl/BeforeIT.jl/docs/Project.toml`
-  [ca9fcad7] BeforeIT v0.4.0 `~/work/BeforeIT.jl/BeforeIT.jl`
+  [ca9fcad7] BeforeIT v0.5.0 `~/work/BeforeIT.jl/BeforeIT.jl`
   [336ed68f] CSV v0.10.15
   [8bb1440f] DelimitedFiles v1.9.1
   [e30172f5] Documenter v1.16.1
   [b964fa9f] LaTeXStrings v1.4.0
   [98b081ad] Literate v2.21.0
-  [23992714] MAT v0.11.4
+  [23992714] MAT v0.11.5
   [91a5bcdd] Plots v1.41.5
   [2913bbd2] StatsBase v0.34.10
   [f3b207a7] StatsPlots v0.15.8
@@ -46,7 +46,7 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [7d9fca2a] Arpack v0.5.4
   [4c555306] ArrayLayouts v1.12.2
   [13072b0f] AxisAlgorithms v1.1.0
-  [ca9fcad7] BeforeIT v0.4.0 `~/work/BeforeIT.jl/BeforeIT.jl`
+  [ca9fcad7] BeforeIT v0.5.0 `~/work/BeforeIT.jl/BeforeIT.jl`
   [d1d4a3ce] BitFlags v0.1.9
   [c3b6d118] BitIntegers v0.3.7
   [336ed68f] CSV v0.10.15
@@ -105,7 +105,7 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [98b081ad] Literate v2.21.0
   [2ab3a3ac] LogExpFunctions v0.3.29
   [e6f89c97] LoggingExtras v1.2.0
-  [23992714] MAT v0.11.4
+  [23992714] MAT v0.11.5
   [3da0fdf6] MPIPreferences v0.1.11
   [1914dd2f] MacroTools v0.5.16
   [d0879d2d] MarkdownAST v0.1.2
@@ -145,7 +145,7 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
   [a2af1166] SortingAlgorithms v1.2.2
-  [276daf66] SpecialFunctions v2.6.1
+  [276daf66] SpecialFunctions v2.7.1
   [860ef19b] StableRNGs v1.0.4
   [90137ffa] StaticArrays v1.9.16
   [1e83bf80] StaticArraysCore v1.4.4
@@ -154,7 +154,7 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [4c63d2b9] StatsFuns v1.5.2
   [f3b207a7] StatsPlots v0.15.8
   [69024149] StringEncodings v0.3.7
-  [ec057cc2] StructUtils v2.6.2
+  [ec057cc2] StructUtils v2.6.3
   [ab02a1b2] TableOperations v1.2.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
@@ -185,11 +185,11 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [61579ee1] Ghostscript_jll v9.55.1+0
   [020c3dae] Git_LFS_jll v3.7.0+0
   [f8c6e375] Git_jll v2.53.0+0
-  [7746bdde] Glib_jll v2.86.2+0
+  [7746bdde] Glib_jll v2.86.3+0
   [3b182d85] Graphite2_jll v1.3.15+0
-⌅ [0234f1f7] HDF5_jll v1.14.6+0
+⌅ [0234f1f7] HDF5_jll v1.14.2+1
   [2e76f6c2] HarfBuzz_jll v8.5.1+0
-  [e33a78d0] Hwloc_jll v2.12.2+0
+  [e33a78d0] Hwloc_jll v2.13.0+0
   [aacddb02] JpegTurbo_jll v3.1.4+0
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.0.1+0
@@ -201,7 +201,7 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [4b2f31a3] Libmount_jll v2.41.3+0
   [89763e89] Libtiff_jll v4.7.2+0
   [38a345b3] Libuuid_jll v2.41.3+0
-  [7cb0a576] MPICH_jll v4.3.2+0
+  [7cb0a576] MPICH_jll v5.0.0+0
   [f1f71cc9] MPItrampoline_jll v5.5.4+0
   [9237b28f] MicrosoftMPI_jll v10.1.4+3
   [e7412a2a] Ogg_jll v1.3.6+0
@@ -223,19 +223,19 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [ffd25f8a] XZ_jll v5.8.2+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
-  [4f6342f7] Xorg_libX11_jll v1.8.12+0
+  [4f6342f7] Xorg_libX11_jll v1.8.13+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
   [935fb764] Xorg_libXcursor_jll v1.2.4+0
   [a3789734] Xorg_libXdmcp_jll v1.1.6+0
-  [1082639a] Xorg_libXext_jll v1.3.7+0
+  [1082639a] Xorg_libXext_jll v1.3.8+0
   [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
   [a51aa0fd] Xorg_libXi_jll v1.8.3+0
-  [d1454406] Xorg_libXinerama_jll v1.1.6+0
-  [ec84b674] Xorg_libXrandr_jll v1.5.5+0
+  [d1454406] Xorg_libXinerama_jll v1.1.7+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.6+0
   [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
   [a65dc6b1] Xorg_libpciaccess_jll v0.18.1+0
   [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
-  [cc61e674] Xorg_libxkbfile_jll v1.1.3+0
+  [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
   [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.6+0
   [12413925] Xorg_xcb_util_image_jll v0.4.1+0
   [2def613f] Xorg_xcb_util_jll v0.4.1+0
@@ -255,7 +255,7 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
-  [b53b4c65] libpng_jll v1.6.54+0
+  [b53b4c65] libpng_jll v1.6.55+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
@@ -309,4 +309,4 @@ Threads: 2 default, 0 interactive, 1 GC (on 4 virtual cores)</code></pre></detai
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/BeforeIT/BeforeIT.jl/tree/gh-pages/v0.4.0/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/BeforeIT/BeforeIT.jl/tree/gh-pages/v0.4.0/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="examples/basic_example.html">Basics »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Friday 6 February 2026 14:47">Friday 6 February 2026</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></details><p>You can also download the <a href="https://github.com/BeforeIT/BeforeIT.jl/tree/gh-pages/v0.5.0/assets/Manifest.toml">manifest</a> file and the <a href="https://github.com/BeforeIT/BeforeIT.jl/tree/gh-pages/v0.5.0/assets/Project.toml">project</a> file.</p></article><nav class="docs-footer"><a class="docs-footer-nextpage" href="examples/basic_example.html">Basics »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.16.1 on <span class="colophon-date" title="Monday 16 February 2026 13:52">Monday 16 February 2026</span>. Using Julia version 1.10.10.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
