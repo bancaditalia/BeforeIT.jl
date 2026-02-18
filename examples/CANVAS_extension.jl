@@ -55,13 +55,12 @@ function Bit.growth_inflation_expectations(
 
     # Eq. 15a: AR(1) on growth rates γ(t) = Y(t)/Y(t-1) - 1
     gamma_series = Y_slice[2:end] ./ Y_slice[1:end-1] .- 1.0
-    gamma_e = Bit.estimate_next_value(gamma_series)
-
+    gamma_hat = Bit.estimate_next_value(gamma_series)
+    gamma_e = exp(gamma_hat) - 1
     Y_e = Y_slice[end] * (1 + gamma_e)
 
     # Eq. 15b: AR(1) on inflation π(t)
-    pi_slice = 1 .+ pi_[1:(T_prime + t - 1)]
-    pi_e = Bit.estimate_next_value(pi_slice) -1 
+    pi_e = Bit.estimate_next_value(1 .+ pi_[1:(T_prime + t - 1)]) -1
 
     return Y_e, gamma_e, pi_e
 end
