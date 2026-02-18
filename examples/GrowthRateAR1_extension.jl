@@ -15,9 +15,9 @@ Growth-rate AR(1) (this extension):
     where g_t = (Y_t - Y_{t-1}) / Y_{t-1}
     => Y_t = Y_{t-1} * (1 + g_t)
 
-Applied to C_G, C_E, Y_I only. Y_EA keeps the base log-level AR(1) so that
-gamma_EA (which feeds the Taylor rule → Euribor) remains consistent with the
-base calibration.
+Applied to GDP expectations (Y_e, gamma_e), inflation (pi_e), C_G, C_E, Y_I.
+Y_EA keeps the base log-level AR(1) so that gamma_EA (which feeds the Taylor
+rule → Euribor) remains consistent with the base calibration.
 
 
 ## Usage:
@@ -28,7 +28,6 @@ base calibration.
 
 import BeforeIT as Bit
 using Statistics, LinearAlgebra
-using Plots, StatsPlots, Dates
 
 # =====================================================
 # ABSTRACT TYPES FOR DISPATCH
@@ -133,6 +132,32 @@ end
 
 # NOTE: No override for growth_inflation_EA — Y_EA uses base log-level AR(1)
 # so that gamma_EA (Taylor rule input → Euribor) stays consistent.
+
+# =====================================================
+# OVERRIDE: growth_inflation_expectations (GDP on growth rates)
+# =====================================================
+
+function Bit.growth_inflation_expectations(
+    model::Bit.Model{<:Bit.AbstractWorkers, <:Bit.AbstractWorkers, <:Bit.AbstractFirms,
+                     <:Bit.AbstractBank, <:Bit.AbstractCentralBank, <:AbstractGovernmentGR,
+                     <:Bit.AbstractRestOfTheWorld, <:Bit.AbstractAggregates})
+    Y = model.agg.Y
+    pi_ = model.agg.pi_
+    T_prime = model.prop.T_prime
+    t = model.agg.t
+
+    Y_slice = Y[1:(T_prime + t - 1)]
+
+    # AR(1) on growth rates γ(t) = Y(t)/Y(t-1) - 1 (instead of log-level AR)
+    gamma_series = Y_slice[2:end] ./ Y_slice[1:end-1] .- 1.0
+    gamma_e = Bit.estimate_next_value(gamma_series)
+    Y_e = Y_slice[end] * (1 + gamma_e)
+
+    # AR(1) on (1+π) directly — π is already a rate, no log transform
+    pi_e = Bit.estimate_next_value(1 .+ pi_[1:(T_prime + t - 1)]) - 1
+
+    return Y_e, gamma_e, pi_e
+end
 
 # =====================================================
 # OVERRIDE: gov_expenditure (C_G, C_d_j)
@@ -269,21 +294,6 @@ function create_model(p, ic)
     alpha_E_gr, beta_E_gr, sigma_E_gr = estimate_gr_ar1(C_E_series)
     alpha_I_gr, beta_I_gr, sigma_I_gr = estimate_gr_ar1(Y_I_series)
 
-    # =====================================================
-    # 3. RESCALE series to match actual model values
-    # =====================================================
-    # AR(1) parameters are unaffected (computed on growth rates, which are scale-invariant).
-    # Rescaling ensures series[end] matches the actual model starting value.
-
-    C_G_scale = gov_std.C_G / C_G_series[end]
-    C_G_series = C_G_series .* C_G_scale
-
-    C_E_scale = rotw_std.C_E / C_E_series[end]
-    C_E_series = C_E_series .* C_E_scale
-
-    Y_I_scale = rotw_std.Y_I / Y_I_series[end]
-    Y_I_series = Y_I_series .* Y_I_scale
-
     # Compute lagged growth rates from rescaled series
     g_prev_C_G = last_growth_rate(C_G_series)
     g_prev_C_E = last_growth_rate(C_E_series)
@@ -310,17 +320,17 @@ function create_model(p, ic)
 end
 
 
-T = 12
-cal = Bit.ITALY_CALIBRATION
-calibration_date = DateTime(2010, 03, 31)
+#T = 12
+#cal = Bit.ITALY_CALIBRATION
+#calibration_date = DateTime(2010, 03, 31)
 
-p, ic = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = 0.001)
+#$p, ic = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = 0.001)
 
-model_std = Bit.Model(p, ic)
-model_gr = create_model(p, ic)
+#model_std = Bit.Model(p, ic)
+#model_gr = create_model(p, ic)
 
-model_vector_std = Bit.ensemblerun(model_std, T, 8)
-model_vector_gr = Bit.ensemblerun(model_gr, T, 8)
+#model_vector_std = Bit.ensemblerun(model_std, T, 8)
+#model_vector_gr = Bit.ensemblerun(model_gr, T, 8)
 
-ps = Bit.plot_data_vectors([model_vector_std, model_vector_gr])
-plot(ps..., layout = (3, 3))
+#ps = Bit.plot_data_vectors([model_vector_std, model_vector_gr])
+#plot(ps..., layout = (3, 3))

@@ -13,7 +13,6 @@ To introduce changes 1 and 2 we need dissagregated data at the household and fir
 """
 
 import BeforeIT as Bit
-using Plots, StatsPlots, Dates
 
 # =====================================================
 # AGENT TYPES
@@ -56,14 +55,13 @@ function Bit.growth_inflation_expectations(
 
     # Eq. 15a: AR(1) on growth rates γ(t) = Y(t)/Y(t-1) - 1
     gamma_series = Y_slice[2:end] ./ Y_slice[1:end-1] .- 1.0
-    gamma_hat = Bit.estimate_next_value(gamma_series)
-    gamma_e = exp(gamma_hat) - 1
+    gamma_e = Bit.estimate_next_value(gamma_series)
+
     Y_e = Y_slice[end] * (1 + gamma_e)
 
     # Eq. 15b: AR(1) on inflation π(t)
     pi_slice = pi_[1:(T_prime + t - 1)]
-    pi_hat = Bit.estimate_next_value(pi_slice)
-    pi_e = exp(pi_hat) - 1
+    pi_e = Bit.estimate_next_value(pi_slice) -1 
 
     return Y_e, gamma_e, pi_e
 end
@@ -201,17 +199,17 @@ end
 # DEMO: Only runs when executed directly
 # =====================================================
 
-T = 12
-cal = Bit.ITALY_CALIBRATION
-calibration_date = DateTime(2010, 03, 31)
+#T = 12
+#cal = Bit.ITALY_CALIBRATION
+#calibration_date = DateTime(2010, 03, 31)
 
-p, ic = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = 0.001)
+#p, ic = Bit.get_params_and_initial_conditions(cal, calibration_date; scale = 0.001)
 
-model_std = Bit.Model(p, ic)
-model_canvas = create_model(p, ic)
+#model_std = Bit.Model(p, ic)
+#model_canvas = create_model(p, ic)
 
-model_vector_std = Bit.ensemblerun(model_std, T, 8)
-model_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
+#model_vector_std = Bit.ensemblerun(model_std, T, 8)
+#model_vector_canvas = Bit.ensemblerun(model_canvas, T, 8)
 
-ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas])
-plot(ps..., layout = (3, 3))
+#ps = Bit.plot_data_vectors([model_vector_std, model_vector_canvas])
+#plot(ps..., layout = (3, 3))
