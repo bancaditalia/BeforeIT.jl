@@ -153,10 +153,10 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
 
     T_calibration = findall(
         calibration_data["years_num"] .== date2num(DateTime(year(min(calibration_date, max_calibration_date)), 12, 31)),
-    )[1] #[1]
-    T_calibration_quarterly = findall(calibration_data["quarters_num"] .== date2num(calibration_date))[1] #[2] # TODO: This indexing might not be correct
-    T_estimation_exo = findall(data["quarters_num"] .== date2num(estimation_date))[1] #[1]
-    T_calibration_exo = findall(data["quarters_num"] .== date2num(calibration_date))[1] #[1]
+    )[1][1] # Extract integer index from CartesianIndex
+    T_calibration_quarterly = findall(calibration_data["quarters_num"] .== date2num(calibration_date))[1][1] # Extract integer index from CartesianIndex
+    T_estimation_exo = findall(data["quarters_num"] .== date2num(estimation_date))[1][1] #[1]
+    T_calibration_exo = findall(data["quarters_num"] .== date2num(calibration_date))[1][1] #[1]
     T_calibration_exo_max = length(data["quarters_num"])
     intermediate_consumption = figaro["intermediate_consumption"][:, :, T_calibration]
     G = size(intermediate_consumption)[1]
@@ -277,13 +277,33 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
     # ## `import_calibration_data` (for all years), so not necessary to do here
     # ## again. Instead, we just extract the correct year-vector from the
     # ## capital-consumption-matrix.
-    capital_consumption = calibration_data["capital_consumption"][:, T_calibration]
+    # Handle capital_consumption: Zenodo format has pre-computed sectoral data,
+    # but ITALY_CALIBRATION needs the original calculation
+    if size(calibration_data["capital_consumption"], 1) == size(compensation_employees, 1)
+        # Zenodo format: capital_consumption is already sectoral
+        capital_consumption = calibration_data["capital_consumption"][:, T_calibration]
+    else
+        # ITALY_CALIBRATION format: need to compute sectoral capital_consumption
+        nace64_capital_consumption = calibration_data["nace64_capital_consumption"][:, T_calibration]
+        nominal_nace64_output = calibration_data["nominal_nace64_output"][:, T_calibration]
+        capital_consumption = nace64_capital_consumption ./ nominal_nace64_output .* output
+    end
+    
     unemployment_rate_quarterly = data["unemployment_rate_quarterly"][T_calibration_exo]
     operating_surplus = operating_surplus - capital_consumption
     taxes_products_export = 0 # TODO: unelegant hard coded zero
     # Employers' social contributions (D12) = Compensation (D1) - Wages (D11)
-    # Using sectoral wages_by_sector to get vector by sector
-    employers_social_contributions = compensation_employees - wages_by_sector
+    # Handle both old (scalar wages) and new (sectoral wages_by_sector) formats
+    if has_sectoral_wages
+        # New Zenodo format: both are sectoral vectors
+        employers_social_contributions = compensation_employees - wages_by_sector
+    else
+        # Old ITALY_CALIBRATION format: estimate sectoral contributions from scalar wages
+        # First calculate scalar employers' social contributions
+        scalar_employers_contributions = min(social_contributions, sum(compensation_employees) - wages_scalar)
+        # Then distribute proportionally to compensation_employees to create a sectoral vector
+        employers_social_contributions = scalar_employers_contributions .* (compensation_employees ./ sum(compensation_employees))
+    end
     fixed_capitalformation = Bit.pos(fixed_capitalformation)
     gross_capitalformation_dwellings = calibration_data["gross_capitalformation_dwellings"][T_calibration]
     taxes_products_capitalformation_dwellings =
