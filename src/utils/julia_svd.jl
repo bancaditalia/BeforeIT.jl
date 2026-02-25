@@ -40,12 +40,12 @@ function svd_mx2(A::AbstractMatrix)
 
         # 3. Construct orthonormal U by normalizing W
         # S[1] > 0 is numerically safe; S[2] uses a relative threshold
-        u1 = s1 > 1.0e-15 ? W[:, 1] ./ s1 : [1.0; zeros(Float64, M - 1)]
+        u1 = s1 > 1.0e-15 ? W[:, 1] ./ s1 : [1.0; zeros(Bit.typeFloat, M - 1)]
         u2 = if s2 > 1.0e-15
             W[:, 2] ./ s2
         else
             # Gram-Schmidt fallback for orthonormality
-            v = zeros(Float64, M)
+            v = zeros(Bit.typeFloat, M)
             v[argmin(abs.(u1))] = 1.0
             v .-= dot(u1, v) .* u1
             v ./= norm(v)
