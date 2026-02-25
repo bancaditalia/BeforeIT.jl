@@ -1,12 +1,13 @@
 name = "BeforeIT"
 uuid = "ca9fcad7-41d0-4f76-b1e5-366c28bce52e"
-authors = ["Aldo Glielmo <aldo.glielmo@bancaditalia.it>", "Mitja Devetak <m888itja@gmail.com>", "Adriano Meligrana <adrianomeligrana@proton.me>"]
 version = "0.5.0"
+authors = ["Aldo Glielmo <aldo.glielmo@bancaditalia.it>", "Mitja Devetak <m888itja@gmail.com>", "Adriano Meligrana <adrianomeligrana@proton.me>"]
 
 [deps]
 CommonSolve = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
 JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
 LazyArrays = "5078a376-72f3-5289-bfd5-ec5146d43c02"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
@@ -31,6 +32,7 @@ BeforeITPlots = ["Plots", "StatsPlots"]
 CommonSolve = "0.2"
 Dates = "1"
 Distributions = "0.25"
+Downloads = "1"
 JLD2 = "0.4, 0.5, 0.6"
 LazyArrays = "2"
 LinearAlgebra = "1"
