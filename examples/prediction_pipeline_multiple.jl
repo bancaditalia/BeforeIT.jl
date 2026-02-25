@@ -1,15 +1,15 @@
 # # Full multiple-prediction pipeline
 
 import BeforeIT as Bit
-using Plots, StatsPlots
+using Plots, StatsPlots, Dates, FileIO
 
 # Decide the name of a folder where to store all data
-folder_name = "data/italy"
+#folder_name = "data/italy"
 
 # Generate parameters and initial conditions from an initial to a final date
 cal = Bit.ITALY_CALIBRATION
-first_calibration_date = DateTime(2014, 03, 31)
-last_calibration_date = DateTime(2014, 12, 31)
+first_calibration_date = DateTime(2010, 03, 31)
+last_calibration_date = DateTime(2016, 12, 31)
 
 # Save all the generated parameters and initial conditions in the selected folder
 Bit.save_all_params_and_initial_conditions(
@@ -25,7 +25,8 @@ Bit.save_all_params_and_initial_conditions(
 # and initial conditions, it initialises the prediction, runs the prediction `n_sims` times, and finally
 # saves the `data_vector` into a `.jld2` file with an appropriate name.
 # The whole process is repeatead for all quarters from `2010Q1` to `2019Q4`
-Bit.save_all_simulations(folder_name; T = 16, n_sims = 2)
+
+#Bit.save_all_simulations(folder_name; T = 16, n_sims = 10)
 
 # Finally, align all simulations with the real data to transform them testable predictions
 real_data = Bit.ITALY_CALIBRATION.data
