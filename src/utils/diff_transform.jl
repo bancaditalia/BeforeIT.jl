@@ -1,4 +1,4 @@
-function _flatten_struct!(v::Vector{Float64}, obj)
+function _flatten_struct!(v::Vector{<:AbstractFloat}, obj)
     for fname in fieldnames(typeof(obj))
         # Skip fields that are not part of the differentiable state
         if fname in (:del, :lastid, :id_to_index, :ID)
@@ -9,15 +9,17 @@ function _flatten_struct!(v::Vector{Float64}, obj)
 
         # Append numbers and vectors of numbers
         if isa(field, Number)
-            push!(v, Float64(field))
+            push!(v, Bit.typeFloat(field))
         elseif isa(field, AbstractVector{<:Number})
-            append!(v, Float64.(field))
+            append!(v, Bit.typeFloat.(field))
+        elseif isa(field, AbstractMatrix{<:Number})
+            append!(v, Bit.typeFloat.(vec(field)))
         end
     end
     return
 end
 
-function _unflatten_struct!(obj, arr::AbstractVector{Float64}, pos_ref::Ref{Int})
+function _unflatten_struct!(obj, arr::AbstractVector{<:AbstractFloat}, pos_ref::Ref{Int})
     for fname in fieldnames(typeof(obj))
         # Skip fields that are not part of the differentiable state
         if fname in (:del, :lastid, :id_to_index, :ID)
@@ -32,7 +34,7 @@ function _unflatten_struct!(obj, arr::AbstractVector{Float64}, pos_ref::Ref{Int}
             val = arr[pos_ref[]]
 
             if FieldType <: Integer
-                setfield!(obj, fname, round(FieldType, val))
+                setfield!(obj, fname, round(FieldType, Float64(val)))
             else
                 setfield!(obj, fname, FieldType(val))
             end
@@ -47,9 +49,25 @@ function _unflatten_struct!(obj, arr::AbstractVector{Float64}, pos_ref::Ref{Int}
             ElType = eltype(field_val)
 
             if ElType <: Integer
-                field_val .= round.(ElType, chunk) # Broadcast round for integers
+                field_val .= round.(ElType, Float64.(chunk)) # Broadcast round for integers
             else
                 field_val .= ElType.(chunk)      # Broadcast conversion for floats
+            end
+
+            pos_ref[] += len
+
+        elseif FieldType <: AbstractMatrix{<:Number}
+            # Extract vector slice
+            len = length(field_val)
+            s = size(field_val)
+            chunk = @view arr[pos_ref[]:(pos_ref[] + len - 1)]
+
+            ElType = eltype(field_val)
+
+            if ElType <: Integer
+                field_val .= round.(ElType, reshape(Float64.(chunk), s...)) # Broadcast round for integers
+            else
+                field_val .= reshape(ElType.(chunk), s...)      # Broadcast conversion for floats
             end
 
             pos_ref[] += len
@@ -59,7 +77,7 @@ function _unflatten_struct!(obj, arr::AbstractVector{Float64}, pos_ref::Ref{Int}
 end
 
 function model_to_array(model)
-    v = Float64[]
+    v = Bit.typeFloat[]
 
     # The order of these calls is critical and must be mirrored in `array_to_model`
     _flatten_struct!(v, model.w_act)
@@ -75,7 +93,7 @@ function model_to_array(model)
     return v
 end
 
-function array_to_model(arr::AbstractVector{Float64}, original_model)
+function array_to_model(arr::AbstractVector, original_model)
     # Create a deep copy to preserve non-state fields (prop, data) and structure
     new_model = deepcopy(original_model)
     pos = Ref(1) # Use a Ref so its value can be mutated by the helper function
