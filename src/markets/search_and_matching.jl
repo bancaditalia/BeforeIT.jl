@@ -91,7 +91,7 @@ function update_aggregate_variables!(
     P_bar_i[DM_i .> 0] .= @view(P_bar_i[DM_i .> 0]) ./ @view(DM_i[DM_i .> 0])
 
     agg.P_bar_h = sum(C_h) / agg.P_bar_h
-    agg.P_bar_CF_h = sum(I_h) / agg.P_bar_CF_h
+    agg.P_bar_CF_h = sum(I_h) / zero_to_one(agg.P_bar_CF_h)
     gov.P_j = gov.C_j / gov.P_j
     rotw.P_l = rotw.C_l / rotw.P_l
 
