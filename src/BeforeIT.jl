@@ -96,6 +96,7 @@ include("shocks/shocks.jl")
 
 # model extensions
 include("model_extensions/init_CANVAS.jl")
+include("model_extensions/init_growth_rate_model.jl")
 
 # external functions definitions
 include("utils/extensions.jl")
