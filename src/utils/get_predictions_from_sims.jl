@@ -1,8 +1,11 @@
 # Helper functions
 
 function growth_rate(x; dims = 1)
-    rate = diff(log.(x), dims = dims)
-    return exp.(rate) .- 1
+    x_prev = selectdim(x, dims, 1:(size(x, dims) - 1))
+    x_next = selectdim(x, dims, 2:size(x, dims))
+    # Direct ratio handles negative values; replace exact zeros to avoid Inf
+    safe_prev = replace(x_prev, 0.0 => eps())
+    return x_next ./ safe_prev .- 1
 end
 
 function compound_quarterly(base, growth)

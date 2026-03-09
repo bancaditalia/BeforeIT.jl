@@ -4,7 +4,9 @@ version = "0.5.0"
 authors = ["Aldo Glielmo <aldo.glielmo@bancaditalia.it>", "Mitja Devetak <m888itja@gmail.com>", "Adriano Meligrana <adrianomeligrana@proton.me>"]
 
 [deps]
+CSV = "336ed68f-0bac-5ca0-87d4-7b16caf5d00b"
 CommonSolve = "38540f10-b2f7-11e9-35d8-d573e4eb0ff2"
+DataFrames = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
 Dates = "ade2ca70-3891-5945-98fb-dc099432e06a"
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
@@ -31,7 +33,9 @@ BeforeITFormat = "Runic"
 BeforeITPlots = ["Plots", "StatsPlots"]
 
 [compat]
+CSV = "0.10"
 CommonSolve = "0.2"
+DataFrames = "1"
 Dates = "1"
 Distributions = "0.25"
 Downloads = "1"
