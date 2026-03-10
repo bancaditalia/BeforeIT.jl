@@ -408,7 +408,7 @@ function process_variable!(cyclesvar, crosscorr, autocorr, cycles_data_ref::Ref{
         return
     end
     ndims(model[name]) == 2 || return
-    process_2d_variable!(cyclesvar, crosscorr, autocorr, cycles_data_ref, model, name, file_idx, gdp_size, correlation_lags, autocorr_lags, cycle_variables)
+    return process_2d_variable!(cyclesvar, crosscorr, autocorr, cycles_data_ref, model, name, file_idx, gdp_size, correlation_lags, autocorr_lags, cycle_variables)
 end
 
 """
@@ -545,4 +545,3 @@ function load_calibration_data(country_code)
         error("No calibration data found for $country_code in $country_dir")
     end
 end
-
