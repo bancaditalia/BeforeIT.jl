@@ -1,4 +1,3 @@
-import BeforeIT as Bit
 using LinearAlgebra, Statistics, JLD2, Dates
 
 # =============================================================================
