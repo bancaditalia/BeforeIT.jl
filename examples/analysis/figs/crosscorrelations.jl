@@ -78,10 +78,14 @@ p1 = plot(layout = (2, 2), size = (1200, 800), plot_title = "Cross-Correlations 
 
 for (k, var) in enumerate(plot_variables[1:min(4, length(plot_variables))])
     haskey(mean_xcorr, var) && haskey(real_crosscorr, var) || continue
-    plot!(p1, subplot = k, cross_lags, vec(mean_xcorr[var]), ribbon = vec(std_xcorr[var]),
-          label = "ABM", color = :steelblue, linewidth = 2)
-    plot!(p1, subplot = k, cross_lags, vec(real_crosscorr[var]),
-          label = "Real", color = :crimson, linewidth = 2)
+    plot!(
+        p1, subplot = k, cross_lags, vec(mean_xcorr[var]), ribbon = vec(std_xcorr[var]),
+        label = "ABM", color = :steelblue, linewidth = 2
+    )
+    plot!(
+        p1, subplot = k, cross_lags, vec(real_crosscorr[var]),
+        label = "Real", color = :crimson, linewidth = 2
+    )
     title!(p1, subplot = k, replace(var, "_quarterly" => ""))
     hline!(p1, [0], subplot = k, color = :gray, linestyle = :dot, label = false)
 end
@@ -94,11 +98,15 @@ p2 = plot(layout = (2, 2), size = (1200, 800), plot_title = "Autocorrelations")
 
 for (k, var) in enumerate(plot_variables[1:min(4, length(plot_variables))])
     haskey(mean_autocorr, var) || continue
-    plot!(p2, subplot = k, auto_lags, vec(mean_autocorr[var]), ribbon = vec(std_autocorr[var]),
-          label = "ABM", color = :steelblue, linewidth = 2)
+    plot!(
+        p2, subplot = k, auto_lags, vec(mean_autocorr[var]), ribbon = vec(std_autocorr[var]),
+        label = "ABM", color = :steelblue, linewidth = 2
+    )
     if haskey(real_autocorr, var)
-        plot!(p2, subplot = k, auto_lags, vec(real_autocorr[var]),
-              label = "Real", color = :crimson, linewidth = 2)
+        plot!(
+            p2, subplot = k, auto_lags, vec(real_autocorr[var]),
+            label = "Real", color = :crimson, linewidth = 2
+        )
     end
     title!(p2, subplot = k, replace(var, "_quarterly" => ""))
     hline!(p2, [0], subplot = k, color = :gray, linestyle = :dot, label = false)
