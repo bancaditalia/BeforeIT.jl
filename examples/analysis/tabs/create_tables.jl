@@ -18,10 +18,10 @@ n_sims = 100     # Ensemble size
 horizons = Bit.forecast_horizons   # [1, 2, 4, 8, 12]
 
 starting_quarter = DateTime(2010, 03, 31)
-ending_quarter   = DateTime(2019, 12, 31)
+ending_quarter = DateTime(2019, 12, 31)
 
 # Set to false after simulations and predictions have been saved once
-run_simulation   = true
+run_simulation = true
 save_predictions = true
 
 # =============================================================================
@@ -35,9 +35,9 @@ save_predictions = true
 #   model_variant = "growth_rate" prediction_folder = "abm_predictions_growth_rate"   model_factory = Bit.ModelGR
 #   model_variant = "canvas"      prediction_folder = "abm_predictions_canvas"        model_factory = Bit.ModelCANVAS
 
-model_variant     = "base"
+model_variant = "base"
 prediction_folder = "abm_predictions"
-model_factory     = nothing
+model_factory = nothing
 
 # =============================================================================
 # MAIN
@@ -46,8 +46,8 @@ model_factory     = nothing
 @info "Forecast error tables for $country (variant: $model_variant)"
 
 calibration = Bit.load_calibration_data(country)
-data        = calibration.data
-ea          = calibration.ea
+data = calibration.data
+ea = calibration.ea
 
 quarters = collect(starting_quarter:Dates.Month(3):ending_quarter)
 
@@ -58,7 +58,7 @@ if run_simulation
     @info "Running simulations (T=$t, n_sims=$n_sims)..."
     Bit.save_all_simulations(
         folder; T = t, n_sims = n_sims,
-        model_factory     = model_factory,
+        model_factory = model_factory,
         simulation_folder = model_variant == "base" ? nothing : model_variant,
     )
 end
@@ -66,12 +66,12 @@ end
 # --- Extract predictions ---
 if save_predictions
     @info "Extracting predictions..."
-    sim_suffix  = model_variant == "base" ? "simulations"      : "simulations_$(model_variant)"
-    pred_suffix = model_variant == "base" ? "abm_predictions"  : "abm_predictions_$(model_variant)"
+    sim_suffix = model_variant == "base" ? "simulations" : "simulations_$(model_variant)"
+    pred_suffix = model_variant == "base" ? "abm_predictions" : "abm_predictions_$(model_variant)"
     Bit.save_all_predictions_from_sims(
         folder, data;
-        simulation_suffix  = sim_suffix,
-        prediction_suffix  = pred_suffix,
+        simulation_suffix = sim_suffix,
+        prediction_suffix = pred_suffix,
     )
 end
 

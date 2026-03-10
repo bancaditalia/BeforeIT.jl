@@ -54,11 +54,11 @@ function write_latex_table(filename, country, input_data_S, horizons; model_vari
     row_labels = ["$(i)q" for i in horizons]
     lines = [
         join([row_labels[row]; input_data_S[row, :]], " & ") * (row < nrows ? " \\\\ " : "")
-        for row in 1:nrows
+            for row in 1:nrows
     ]
     analysis_dir = "data/$country/analysis/$model_variant"
     mkpath(analysis_dir)
-    open("$analysis_dir/$filename", "w") do f
+    return open("$analysis_dir/$filename", "w") do f
         foreach(line -> write(f, line * "\n"), lines)
     end
 end
@@ -70,7 +70,7 @@ function write_csv_table(filename, country, input_data, horizons, variable_names
     end
     analysis_dir = "data/$country/analysis/$model_variant"
     mkpath(analysis_dir)
-    CSV.write("$analysis_dir/$filename", df)
+    return CSV.write("$analysis_dir/$filename", df)
 end
 
 # =============================================================================
@@ -88,7 +88,7 @@ function generate_dm_test_comparison(error1, error2, rmse1, rmse2, horizons)
         dm_e1 = e1[.!isnan.(e1)]
         dm_e2 = e2[.!isnan.(e2)]
         _, p_value = dmtest_modified(dm_e2, dm_e1, horizons[j])
-        input_data_S[j, l] = "$(input_data[j, l])($(round(p_value, digits=2)), $(stars(p_value)))"
+        input_data_S[j, l] = "$(input_data[j, l])($(round(p_value, digits = 2)), $(stars(p_value)))"
         pval_matrix[j, l] = p_value
     end
     return input_data_S, pval_matrix
@@ -102,7 +102,7 @@ function generate_bias_ttest(error, bias, horizons)
     for j in eachindex(horizons), l in 1:size(bias, 2)
         e = view(error, :, j, l)
         _, p_value = bias_ttest(e[.!isnan.(e)], horizons[j])
-        input_data_S[j, l] = "$(input_data[j, l]) ($(round(p_value, digits=3)), $(stars(p_value)))"
+        input_data_S[j, l] = "$(input_data[j, l]) ($(round(p_value, digits = 3)), $(stars(p_value)))"
         pval_matrix[j, l] = p_value
     end
     return input_data_S, pval_matrix
