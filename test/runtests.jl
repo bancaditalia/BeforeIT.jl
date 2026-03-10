@@ -11,6 +11,7 @@ using Runic
     include("utils/nfvar3_and_estimate.jl")
     include("utils/estimations.jl")
     include("utils/modify.jl")
+    include("utils/zenodo_calibration.jl")
 
     # search_and_matching
     include("markets/search_and_matching.jl")
