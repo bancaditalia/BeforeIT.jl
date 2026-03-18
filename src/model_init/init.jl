@@ -22,7 +22,7 @@ function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, A
     workers_act, workers_inact = Bit.Workers(parameters, initial_conditions)
 
     # bank
-    bank = Bit.Bank(parameters, initial_conditions)
+    banks = Bit.Banks(parameters, initial_conditions)
 
     # central bank
     central_bank = Bit.CentralBank(parameters, initial_conditions)
@@ -39,7 +39,7 @@ function Model(parameters::Dict{String, Any}, initial_conditions::Dict{String, A
     # data
     data = Bit.Data()
 
-    return Model((workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data))
+    return Model((workers_act, workers_inact, firms, banks, central_bank, government, rotw, agg, properties, data))
 end
 
 """
@@ -56,20 +56,26 @@ This is the last step in the initialization process and it must be performed aft
 """
 function update_variables_with_totals!(model::AbstractModel)
 
-    # obtain total income by summing contributions from firm owners, workers and bank owner
-    tot_Y_h = sum(model.firms.Y_h) + sum(model.w_act.Y_h) + sum(model.w_inact.Y_h) + model.bank.Y_h
+    # obtain total income by summing contributions from firm owners, workers and all bank owners
+    tot_Y_h = sum(model.firms.Y_h) + sum(model.w_act.Y_h) + sum(model.w_inact.Y_h) + sum(model.banks.Y_h)
 
-    # uptade K_h and D_h in all agent types using total income
+    # update K_h and D_h in all agent types using total income
     model.firms.K_h .= model.firms.K_h / tot_Y_h
     model.firms.D_h .= model.firms.D_h / tot_Y_h
     model.w_act.K_h .= model.w_act.K_h / tot_Y_h
     model.w_act.D_h .= model.w_act.D_h / tot_Y_h
     model.w_inact.K_h .= model.w_inact.K_h / tot_Y_h
     model.w_inact.D_h .= model.w_inact.D_h / tot_Y_h
-    model.bank.K_h = model.bank.K_h / tot_Y_h
-    model.bank.D_h = model.bank.D_h / tot_Y_h
+    model.banks.K_h .= model.banks.K_h / tot_Y_h
+    model.banks.D_h .= model.banks.D_h / tot_Y_h
 
-    # get total deposits and update bank balance sheet
-    tot_D_h = sum(model.firms.D_h) + sum(model.w_act.D_h) + sum(model.w_inact.D_h) + model.bank.D_h
-    return model.bank.D_k += tot_D_h
+    # get total deposits and update each bank's balance sheet
+    for bank_id in eachbank(model)
+        D_h = [model.firms.D_h[i] for i in eachfirm(model) if model.firms.B_i[i] == bank_id]
+        D_h_act = [model.w_act.D_h[h] for h in eachindex(model.w_act.D_h) if model.w_act.B_h[h] == bank_id]
+        D_h_inact = [model.w_inact.D_h[h] for h in eachindex(model.w_inact.D_h) if model.w_inact.B_h[h] == bank_id]
+        tot_D_h = sum(D_h) + sum(D_h_act) + sum(D_h_inact) + sum(model.banks.D_h[bank_id])
+        model.banks.D_k[bank_id] += tot_D_h
+    end
+    return
 end

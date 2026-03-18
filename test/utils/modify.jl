@@ -9,16 +9,20 @@
     agentf = Bit.getfields(agent)
     delete!(actw, id)
     @test !(id in Bit.allids(actw))
+
+    # Add new worker with bank assignment (defaults to bank 1 for new agents)
     push!(
         actw, (
             Y_h = 1.0, D_h = 1.0, K_h = 1.0, w_h = 1.0, O_h = 1.0,
-            C_d_h = 1.0, I_d_h = 1.0, C_h = 1.0, I_h = 2.0,
+            C_d_h = 1.0, I_d_h = 1.0, C_h = 1.0, I_h = 2.0, B_h = 1,
         )
     )
     id = Bit.lastid(actw)
     agent = actw[id]
     @test agent.Y_h == 1.0
     @test agent.I_h == 2.0
+    @test agent.B_h == 1  # Verify bank assignment
+
     push!(actw, agentf)
     id = Bit.lastid(model.w_act)
     @test Bit.getfields(actw[id]) == agentf

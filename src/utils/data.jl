@@ -101,7 +101,7 @@ end
 function update_data_init!(m::AbstractModel)
     d, p = m.data, m.prop
 
-    tot_Y_h = sum(m.w_act.Y_h) + sum(m.w_inact.Y_h) + sum(m.firms.Y_h) + m.bank.Y_h
+    tot_Y_h = sum(m.w_act.Y_h) + sum(m.w_inact.Y_h) + sum(m.firms.Y_h) + sum(m.banks.Y_h)
     d.nominal_gdp[1] =
         sum(m.firms.Y_i .* (1 .- 1 ./ m.firms.beta_i)) +
         tot_Y_h * p.psi / (1 / p.tau_VAT + 1) +
@@ -150,8 +150,8 @@ end
 
 function update_data_step!(m::AbstractModel)
     d, p, t = m.data, m.prop, length(m.data.collection_time)
-    tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
-    tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
+    tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + sum(m.banks.C_h)
+    tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + sum(m.banks.I_h)
 
     d.nominal_gdp[t] =
         sum(m.firms.tau_Y_i .* m.firms.Y_i .* m.firms.P_i) +

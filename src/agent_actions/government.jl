@@ -40,27 +40,27 @@ imports.
 """
 function gov_revenues(model::AbstractModel)
     gov, w_act, w_inact = model.gov, model.w_act, model.w_inact
-    firms, bank, rotw = model.firms, model.bank, model.rotw
+    firms, banks, rotw = model.firms, model.banks, model.rotw
 
     prop, P_bar_HH = model.prop, model.agg.P_bar_HH
     tau_SIF, tau_SIW, tau_INC, tau_CF, tau_VAT = prop.tau_SIF, prop.tau_SIW, prop.tau_INC, prop.tau_CF, prop.tau_VAT
     tau_FIRM, tau_EXPORT, theta_DIV = prop.tau_FIRM, prop.tau_EXPORT, prop.theta_DIV
 
-    # compute total wages, consumption and investment
+    # compute total wages, consumption and investment (including all banks)
     tot_wages_emp = sum(w_act.w_h[w_act.O_h .!= 0])
-    tot_C_h = sum(w_act.C_h) + sum(w_inact.C_h) + sum(firms.C_h) + bank.C_h
-    tot_I_h = sum(w_act.I_h) + sum(w_inact.I_h) + sum(firms.I_h) + bank.I_h
+    tot_C_h = sum(w_act.C_h) + sum(w_inact.C_h) + sum(firms.C_h) + sum(banks.C_h)
+    tot_I_h = sum(w_act.I_h) + sum(w_inact.I_h) + sum(firms.I_h) + sum(banks.I_h)
 
     # compute government revenues
     social_security = (tau_SIF + tau_SIW) * tot_wages_emp * P_bar_HH
     labour_income = tau_INC * (1 - tau_SIW) * P_bar_HH * tot_wages_emp
     value_added = tau_VAT * tot_C_h
-    capital_income = tau_INC * (1 - tau_FIRM) * theta_DIV * (sum(pos.(firms.Pi_i)) + pos(bank.Pi_k))
-    corporate_income = tau_FIRM * (sum(pos.(firms.Pi_i)) + pos(bank.Pi_k))
+    capital_income = tau_INC * (1 - tau_FIRM) * theta_DIV * (sum(pos.(firms.Pi_i)) + sum(pos.(banks.Pi_k)))
+    corporate_income = tau_FIRM * (sum(pos.(firms.Pi_i)) + sum(pos.(banks.Pi_k)))
     capital_formation = tau_CF * tot_I_h
     products = sum(firms.tau_Y_i .* firms.P_i .* firms.Y_i)
     production = sum(firms.tau_K_i .* firms.P_i .* firms.Y_i)
-    export_ = tau_EXPORT * rotw.C_l
+    export_ = tau_EXPORT * model.rotw.C_l
 
     Y_G =
         social_security +

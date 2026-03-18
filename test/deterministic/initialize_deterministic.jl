@@ -23,6 +23,7 @@
                 :P_CF_i, :DS_i, :DM_i, :DL_i, :DL_d_i,
                 :K_e_i, :L_e_i, :Q_s_i, :I_d_i, :DM_d_i,
                 :N_d_i, :Pi_e_i, :C_d_h, :I_d_h, :C_h, :I_h,
+                :B_i,  # Bank assignment field (not in MATLAB data)
             ]
             continue
         end
@@ -39,21 +40,23 @@
     end
 
     init_vars = matread(joinpath(dir, "../matlab_code/init_vars_bank.mat"))
-    for fieldname in fieldnames(typeof(model.bank))
+    for fieldname in fieldnames(typeof(model.banks))
 
-        if fieldname in [:Pi_e_k, :Y_h, :K_h, :D_h, :C_d_h, :I_d_h, :C_h, :I_h]
+        if fieldname in [
+                :del, :lastid, :id_to_index, :ID,
+                :Pi_e_k, :Y_h, :K_h, :D_h, :C_d_h, :I_d_h, :C_h, :I_h, :id,
+            ]
             continue
         end
-        julia_var = getfield(model.bank, fieldname)
+        julia_var = getfield(model.banks, fieldname)
         matlab_var = init_vars[string(fieldname)]
-        @test isapprox(julia_var, matlab_var')
-
+        @test isapprox(mean(julia_var), matlab_var')
     end
 
     init_vars = matread(joinpath(dir, "../matlab_code/init_vars_households.mat"))
     for fn in fieldnames(typeof(model.w_act))
 
-        if fn in [:del, :lastid, :id_to_index, :ID, :C_d_h, :I_d_h, :C_h, :I_h]
+        if fn in [:del, :lastid, :id_to_index, :ID, :C_d_h, :I_d_h, :C_h, :I_h, :B_h]
             continue
         end
 
@@ -66,7 +69,7 @@
                 getfield(model.w_act, fn)
                 getfield(model.w_inact, fn)
                 getfield(model.firms, fn)
-                getfield(model.bank, fn)
+                getfield(model.banks, fn)
             ]
             matlab_var = init_vars[string(fn)]
             @test isapprox(julia_var, matlab_var')

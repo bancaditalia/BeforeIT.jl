@@ -68,20 +68,22 @@ function set_households_income_firms!(model; expected = false)
     return model.firms.Y_h .= households_income_firms(model; expected)
 end
 
-function households_income_bank(model; expected = false)
-    bank = model.bank
-
+function households_income_banks(model; expected = false)
+    banks = model.banks
     tau_INC, tau_FIRM, theta_DIV = model.prop.tau_INC, model.prop.tau_FIRM, model.prop.theta_DIV
     sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
 
-    Pi_k = expected ? bank.Pi_e_k : bank.Pi_k
+    Pi_k = expected ? banks.Pi_e_k : banks.Pi_k
     pi_e = expected ? model.agg.pi_e : zero(typeFloat)
 
-    Y_h = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k) + sb_other * P_bar_HH * (1 + pi_e)
+    Y_h = zeros(typeFloat, length(Pi_k))
+    for i in eachindex(Pi_k)
+        Y_h[i] = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k[i]) + sb_other * P_bar_HH * (1 + pi_e)
+    end
     return Y_h
 end
-function set_households_income_bank!(model; expected = false)
-    return model.bank.Y_h = households_income_bank(model; expected)
+function set_households_income_banks!(model; expected = false)
+    return model.banks.Y_h .= households_income_banks(model; expected)
 end
 
 function households_budget_act(model::AbstractModel)
@@ -141,49 +143,49 @@ function set_households_budget_firms!(model::AbstractModel)
     return firms.I_d_h .= I_d_h
 end
 
-function households_budget_bank(model)
-    bank = model.bank
-
+function households_budget_banks(model)
     psi, psi_H, tau_VAT, tau_CF = model.prop.psi, model.prop.psi_H, model.prop.tau_VAT, model.prop.tau_CF
 
-    Y_e_h = households_income_bank(model; expected = true)
+    Y_e_h = households_income_banks(model; expected = true)
     C_d_h = psi * Y_e_h / (1 + tau_VAT)
     I_d_h = psi_H * Y_e_h / (1 + tau_CF)
 
     return C_d_h, I_d_h
 end
-function set_households_budget_bank!(model)
-    bank = model.bank
-    C_d_h, I_d_h = households_budget_bank(model)
-    bank.C_d_h = C_d_h
-    return bank.I_d_h = I_d_h
+function set_households_budget_banks!(model)
+    banks = model.banks
+    C_d_h, I_d_h = households_budget_banks(model)
+    banks.C_d_h .= C_d_h
+    return banks.I_d_h .= I_d_h
 end
 
 function set_households_deposits_act!(model)
-    D_h = households_deposits(model.w_act, model)
+    r = [model.banks.r[model.w_act.B_h[i]] for i in eachindex(model.w_act.D_h)]
+    D_h = households_deposits(model.w_act, r, model)
     return model.w_act.D_h .= D_h
 end
 function set_households_deposits_inact!(model)
-    D_h = households_deposits(model.w_inact, model)
+    r = [model.banks.r[model.w_inact.B_h[i]] for i in eachindex(model.w_inact.D_h)]
+    D_h = households_deposits(model.w_inact, r, model)
     return model.w_inact.D_h .= D_h
 end
 function set_households_deposits_firms!(model)
-    D_h = households_deposits(model.firms, model)
+    r = [model.banks.r[model.firms.B_i[i]] for i in eachfirm(model)]
+    D_h = households_deposits(model.firms, r, model)
     return model.firms.D_h .= D_h
 end
-function set_households_deposits_bank!(model)
-    D_h = households_deposits(model.bank, model)
-    return model.bank.D_h = D_h
+function set_households_deposits_banks!(model)
+    D_h = households_deposits(model.banks, model.banks.r, model)
+    return model.banks.D_h .= D_h
 end
 
-function households_deposits(households, model)
+function households_deposits(households, r, model)
     tau_VAT, tau_CF = model.prop.tau_VAT, model.prop.tau_CF
     r_bar = model.cb.r_bar
-    r = model.bank.r
 
     DD_h =
         households.Y_h - (1 + tau_VAT) * households.C_h - (1 + tau_CF) * households.I_h +
-        r_bar * max.(0, households.D_h) - r * max.(0, -households.D_h)
+        r_bar * max.(0, households.D_h) - r .* max.(0, -households.D_h)
     D_h = households.D_h + DD_h
     return D_h
 end

@@ -10,7 +10,7 @@
         cb = model.cb # central bank
         rotw = model.rotw # rest of the world
         firms = model.firms # firms
-        bank = model.bank # bank
+        banks = model.banks # banks
         w_act = model.w_act # active workers
         w_inact = model.w_inact # inactive workers
         agg = model.agg # aggregates
@@ -35,8 +35,8 @@
         @test isapprox(cb.r_bar, 0.0017616, rtol = 1.0e-4)
 
         # update rate on loans and morgages
-        bank.r = Bit.bank_rate(model)
-        @test isapprox(bank.r, 0.028476, rtol = 1.0e-4)
+        Bit.set_banks_rate!(model)
+        @test isapprox(mean(banks.r), 0.028476, rtol = 1.0e-4)
 
         Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i =
             Bit.firms_expectations_and_decisions(model)
@@ -83,9 +83,9 @@
         @test isapprox(gov.sb_other, 0.59157, rtol = 1.0e-5)
         @test isapprox(gov.sb_inact, 2.2434, rtol = 1.0e-4)
 
-        Pi_e_k = Bit.bank_expected_profits(model)
-        bank.Pi_e_k = Pi_e_k
-        @test isapprox(Pi_e_k, 6510.4793, rtol = 1.0e-5)
+        Pi_e_k = Bit.banks_expected_profits(model)
+        banks.Pi_e_k .= Pi_e_k
+        @test isapprox(mean(Pi_e_k), 6510.4793, rtol = 1.0e-5)
 
         C_d_h, I_d_h = Bit.households_budget_act(model)
         w_act.C_d_h .= C_d_h
@@ -96,10 +96,12 @@
         C_d_h, I_d_h = Bit.households_budget_firms(model)
         firms.C_d_h .= C_d_h
         firms.I_d_h .= I_d_h
-        bank.C_d_h, bank.I_d_h = Bit.households_budget_bank(model)
+        C_d_h, I_d_h = Bit.households_budget_banks(model)
+        banks.C_d_h .= C_d_h
+        banks.I_d_h .= I_d_h
 
-        C_d_h_sum = sum(w_act.C_d_h) + sum(w_inact.C_d_h) + sum(firms.C_d_h) + bank.C_d_h
-        I_d_h_sum = sum(w_act.I_d_h) + sum(w_inact.I_d_h) + sum(firms.I_d_h) + bank.I_d_h
+        C_d_h_sum = sum(w_act.C_d_h) + sum(w_inact.C_d_h) + sum(firms.C_d_h) + sum(banks.C_d_h)
+        I_d_h_sum = sum(w_act.I_d_h) + sum(w_inact.I_d_h) + sum(firms.I_d_h) + sum(banks.I_d_h)
 
         @test isapprox(C_d_h_sum, 35538.3159, rtol = 1.0e-9, atol = 1.0e-6)
         @test isapprox(I_d_h_sum, 2950.5957, rtol = 1.0e-6, atol = 1.0e-6)
@@ -126,9 +128,9 @@
 
         Bit.search_and_matching!(model; parallel)
 
-        C_h_sum = sum(w_act.C_h) + sum(w_inact.C_h) + sum(firms.C_h) + bank.C_h
-        I_h_sum = sum(w_act.I_h) + sum(w_inact.I_h) + sum(firms.I_h) + bank.I_h
-        K_h_sum = sum(w_act.K_h) + sum(w_inact.K_h) + sum(firms.K_h) + bank.K_h
+        C_h_sum = sum(w_act.C_h) + sum(w_inact.C_h) + sum(firms.C_h) + sum(banks.C_h)
+        I_h_sum = sum(w_act.I_h) + sum(w_inact.I_h) + sum(firms.I_h) + sum(banks.I_h)
+        K_h_sum = sum(w_act.K_h) + sum(w_inact.K_h) + sum(firms.K_h) + sum(banks.K_h)
         @test isapprox(C_h_sum, 35136.4805, rtol = 1.0e-4, atol = 1.0e-4)
         @test isapprox(I_h_sum, 2699.6511, rtol = 1.0e-6, atol = 1.0e-6)
         @test isapprox(K_h_sum, 408076.5511, rtol = 1.0e-6, atol = 1.0e-6)
@@ -160,28 +162,32 @@
         @test isapprox(mean(firms.Pi_i), 17.5491, rtol = 1.0e-2)
 
         # update bank profits
-        bank.Pi_k = Bit.bank_profits(model)
-        @test isapprox(bank.Pi_k, 6486.6381, rtol = 1.0e-5)
+        banks.Pi_k .= Bit.banks_profits(model)
+        @test isapprox(mean(banks.Pi_k), 6486.6381, rtol = 1.0e-5)
 
         # update bank equity
-        bank.E_k = Bit.bank_equity(model)
-        @test isapprox(bank.E_k, 90742.39, rtol = 1.0e-5)
+        banks.E_k .= Bit.banks_equity(model)
+        @test isapprox(mean(banks.E_k), 90742.39, rtol = 1.0e-5)
 
         # update actual income of all households
         w_act.Y_h .= Bit.households_income_act(model)
         w_inact.Y_h .= Bit.households_income_inact(model)
 
         firms.Y_h .= Bit.households_income_firms(model)
-        bank.Y_h = Bit.households_income_bank(model)
+        banks.Y_h .= Bit.households_income_banks(model)
 
         # update savings (deposits) of all households
-        w_act.D_h .= Bit.households_deposits(w_act, model)
-        w_inact.D_h .= Bit.households_deposits(w_inact, model)
-        firms.D_h .= Bit.households_deposits(firms, model)
-        bank.D_h = Bit.households_deposits(bank, model)
+        r = [banks.r[w_act.B_h[i]] for i in Bit.eachindex(w_act.D_h)]
+        w_act.D_h .= Bit.households_deposits(w_act, r, model)
+        r = [banks.r[w_inact.B_h[i]] for i in Bit.eachindex(w_inact.D_h)]
+        w_inact.D_h .= Bit.households_deposits(w_inact, r, model)
+        r = [banks.r[firms.B_i[i]] for i in Bit.eachfirm(model)]
+        firms.D_h .= Bit.households_deposits(firms, r, model)
+        r = [banks.r[i] for i in Bit.eachindex(banks.D_h)]
+        banks.D_h .= Bit.households_deposits(banks, r, model)
 
-        Y_h_sum = sum(w_act.Y_h) + sum(w_inact.Y_h) + sum(firms.Y_h) + bank.Y_h
-        D_h_sum = sum(w_act.D_h) + sum(w_inact.D_h) + sum(firms.D_h) + bank.D_h
+        Y_h_sum = sum(w_act.Y_h) + sum(w_inact.Y_h) + sum(firms.Y_h) + sum(banks.Y_h)
+        D_h_sum = sum(w_act.D_h) + sum(w_inact.D_h) + sum(firms.D_h) + sum(banks.D_h)
         @test isapprox(Y_h_sum, 45032.3263, rtol = 1.0e-2)
         @test isapprox(D_h_sum, 221816.6764, rtol = 1.0e-3)
 
@@ -223,7 +229,7 @@
         @test isapprox(rotw.D_RoW, -644.0817, rtol = 1.0e-5)
 
         # update bank net credit/debit position
-        bank.D_k = Bit.bank_deposits(model)
-        @test isapprox(bank.D_k, 128349.3912, rtol = 1.0e-3)
+        banks.D_k .= Bit.banks_deposits(model)
+        @test isapprox(mean(banks.D_k), 128349.3912, rtol = 1.0e-3)
     end
 end

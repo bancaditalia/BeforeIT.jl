@@ -39,6 +39,7 @@ Bit.@object mutable struct Properties(Object) <: AbstractProperties
     sb_other::Bit.typeFloat
     E_k::Bit.typeFloat
     r_bar::Bit.typeFloat
+    N_banks::Bit.typeInt
 end
 
 function Properties(parameters::Dict{String, Any}, initial_conditions)
@@ -92,10 +93,11 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     sb_other = typeFloat(initial_conditions["sb_other"])
     E_k = typeFloat(initial_conditions["E_k"])
     r_bar = typeFloat(initial_conditions["r_bar"])
+    N_banks = typeInt(get(parameters, "N_banks", 1))
 
     return Properties(
         G, T_prime, H_act, H_inact, J, L, I_s, I, H, tau_INC, tau_FIRM, tau_VAT, tau_SIF,
         tau_SIW, tau_EXPORT, tau_CF, tau_G, theta_UB, psi, psi_H, mu, theta_DIV, theta, zeta, zeta_LTV,
-        zeta_b, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g, a_sg, C, D_H, K_H, sb_other, E_k, r_bar
+        zeta_b, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g, a_sg, C, D_H, K_H, sb_other, E_k, r_bar, N_banks
     )
 end

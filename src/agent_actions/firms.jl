@@ -213,7 +213,8 @@ where:
 function firms_profits(model::AbstractModel)
     firms = model.firms
 
-    P_bar_HH, tau_SIF, r, r_bar = model.agg.P_bar_HH, model.prop.tau_SIF, model.bank.r, model.cb.r_bar
+    P_bar_HH, tau_SIF, r_bar = model.agg.P_bar_HH, model.prop.tau_SIF, model.cb.r_bar
+    r = [model.banks.r[firms.B_i[i]] for i in eachfirm(model)]
 
     in_sales = firms.P_i .* firms.Q_i .+ firms.P_i .* firms.DS_i
     in_deposits = r_bar .* pos(firms.D_i)
@@ -266,7 +267,8 @@ function firms_deposits(model)
     firms = model.firms
 
     tau_FIRM, tau_SIF, theta_DIV = model.prop.tau_FIRM, model.prop.tau_SIF, model.prop.theta_DIV
-    theta, r, r_bar, P_bar_HH = model.prop.theta, model.bank.r, model.cb.r_bar, model.agg.P_bar_HH
+    theta, r_bar, P_bar_HH = model.prop.theta, model.cb.r_bar, model.agg.P_bar_HH
+    r = [model.banks.r[firms.B_i[i]] for i in eachfirm(model)]
 
     sales = firms.P_i .* firms.Q_i
     labour_cost = -(1 + tau_SIF) * firms.w_i .* firms.N_i * P_bar_HH
