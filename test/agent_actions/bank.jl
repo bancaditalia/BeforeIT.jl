@@ -18,6 +18,9 @@ using Test
         resize!(model.w_inact.D_h, 0)
         resize!(model.w_act.B_h, 0)
         resize!(model.w_inact.B_h, 0)
+        resize!(model.banks.firms[1], 3)
+        resize!(model.banks.w_act[1], 0)
+        resize!(model.banks.w_inact[1], 0)
         model.prop.H = 0  # Update number of workers
         model.banks.D_h[1] = 0.0
         model.banks.D_k[1] = 4.0
@@ -47,8 +50,11 @@ using Test
         # TODO
     end
 
+    parameters, initial_conditions = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
+    model = Bit.Model(parameters, initial_conditions)
+
     @testset "test bank_deposits" begin
-        w_act, w_inact, firms = model.w_act, model.w_inact, model.firms
+        w_act, w_inact, firms, banks = model.w_act, model.w_inact, model.firms, model.banks
         resize!(w_act.D_h, 3); w_act.D_h .= [1.0, 2.0, 3.0]
         resize!(w_inact.D_h, 3); w_inact.D_h .= [1.0, 2.0, 3.0]
         resize!(w_act.B_h, 3); w_act.B_h .= [1, 1, 1]  # Assign all active workers to bank 1
@@ -57,10 +63,13 @@ using Test
         resize!(firms.D_i, 3); firms.D_i .= [1.0, 2.0, 3.0]
         resize!(firms.L_i, 3); firms.L_i .= [6.0, 0.0, 0.0]
         resize!(firms.B_i, 3); firms.B_i .= [1, 1, 1]  # Assign all firms to bank 1
+        resize!(banks.firms[1], 3)
+        resize!(banks.w_act[1], 3)
+        resize!(banks.w_inact[1], 3)
         model.prop.I = 3  # Update number of firms
         model.prop.H = 3  # Update number of active workers
-        model.banks.D_h[1] = 6.0
-        model.banks.E_k[1] = 6.0
+        banks.D_h[1] = 6.0
+        banks.E_k[1] = 6.0
         expected_deposits = 30.0
         D_h = Bit.banks_deposits(model)
         @test isapprox(mean(D_h), expected_deposits, atol = 1.0e-10)

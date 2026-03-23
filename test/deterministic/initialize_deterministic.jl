@@ -23,7 +23,7 @@
                 :P_CF_i, :DS_i, :DM_i, :DL_i, :DL_d_i,
                 :K_e_i, :L_e_i, :Q_s_i, :I_d_i, :DM_d_i,
                 :N_d_i, :Pi_e_i, :C_d_h, :I_d_h, :C_h, :I_h,
-                :B_i,  # Bank assignment field (not in MATLAB data)
+                :B_i, :firms, :w_act, :w_inact, # Bank assignment field (not in MATLAB data)
             ]
             continue
         end
@@ -45,6 +45,7 @@
         if fieldname in [
                 :del, :lastid, :id_to_index, :ID,
                 :Pi_e_k, :Y_h, :K_h, :D_h, :C_d_h, :I_d_h, :C_h, :I_h, :id,
+                :firms, :w_act, :w_inact,
             ]
             continue
         end

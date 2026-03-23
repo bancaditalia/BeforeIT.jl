@@ -29,11 +29,11 @@ function banks_profits(model)
 
     Pi_k = zeros(typeFloat, length(banks))
     for bank_id in eachbank(model)
-        L_i = [model.firms.L_i[i] for i in eachfirm(model) if model.firms.B_i[i] == bank_id]
-        D_i = [model.firms.D_i[i] for i in eachfirm(model) if model.firms.B_i[i] == bank_id]
-        D_h_firms = [model.firms.D_h[i] for i in eachfirm(model) if model.firms.B_i[i] == bank_id]
-        D_h_act = [model.w_act.D_h[h] for h in eachindex(model.w_act.D_h) if model.w_act.B_h[h] == bank_id]
-        D_h_inact = [model.w_inact.D_h[h] for h in eachindex(model.w_inact.D_h) if model.w_inact.B_h[h] == bank_id]
+        L_i = (f.L_i for f in model.banks.firms[bank_id])
+        D_i = [f.D_i for f in model.banks.firms[bank_id]]
+        D_h_firms = [f.D_h for f in model.banks.firms[bank_id]]
+        D_h_act = [w.D_h for w in model.banks.w_act[bank_id]]
+        D_h_inact = [w.D_h for w in model.banks.w_inact[bank_id]]
         D_h = [D_h_act; D_h_inact; D_h_firms; banks.D_h[bank_id]]
 
         z = zero(typeFloat)
@@ -170,11 +170,11 @@ function banks_deposits(model)
     w_act, w_inact, firms = model.w_act, model.w_inact, model.firms
     D_k = zeros(typeFloat, length(model.banks))
     for bank_id in eachbank(model)
-        fL_i = [firms.L_i[i] for i in eachfirm(model) if firms.B_i[i] == bank_id]
-        fD_i = [firms.D_i[i] for i in eachfirm(model) if firms.B_i[i] == bank_id]
-        fD_h = [firms.D_h[i] for i in eachfirm(model) if firms.B_i[i] == bank_id]
-        waD_h = [w_act.D_h[h] for h in eachindex(w_act.D_h) if w_act.B_h[h] == bank_id]
-        wiD_h = [w_inact.D_h[h] for h in eachindex(w_inact.D_h) if w_inact.B_h[h] == bank_id]
+        fL_i = (f.L_i for f in model.banks.firms[bank_id])
+        fD_i = (f.D_i for f in model.banks.firms[bank_id])
+        fD_h = (f.D_h for f in model.banks.firms[bank_id])
+        waD_h = (w.D_h for w in model.banks.w_act[bank_id])
+        wiD_h = (w.D_h for w in model.banks.w_inact[bank_id])
         bD_h = banks.D_h[bank_id]
         bE_k = banks.E_k[bank_id]
 

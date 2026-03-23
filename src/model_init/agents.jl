@@ -9,6 +9,8 @@ abstract type AbstractRestOfTheWorld <: AbstractObject end
 abstract type AbstractAggregates <: AbstractObject end
 abstract type AbstractModel <: AbstractObject end
 
+include("../utils/modify.jl")
+
 """
 This is a Workers. Each field is an array which stores the values for all the workers in
 the economy. Note that the `O_h` field is an integer, while the rest are floats.
@@ -188,6 +190,9 @@ Bit.@object mutable struct Banks(Object) <: AbstractBanks
     const I_h::Vector{Bit.typeFloat}
     const K_h::Vector{Bit.typeFloat}
     const D_h::Vector{Bit.typeFloat}
+    const firms::Vector{Vector{Agent{Firms}}}
+    const w_act::Vector{Vector{Agent{Workers}}}
+    const w_inact::Vector{Vector{Agent{Workers}}}
 end
 
 """
@@ -420,10 +425,14 @@ function (::Type{T})(agents) where {T <: AbstractModel}
 
     # bank initialization which depends on firms
     for bank_id in eachbank(model)
-        L_i = [firms.L_i[i] for i in eachfirm(model) if firms.B_i[i] == bank_id]
-        D_i = [firms.D_i[i] for i in eachfirm(model) if firms.B_i[i] == bank_id]
-        Pi_k_base = prop.mu * sum(L_i) + prop.r_bar * prop.E_k
-        D_k_base = sum(D_i) + prop.E_k - sum(L_i)
+        banks.firms[bank_id] = [firms[i] for i in eachfirm(model) if firms.B_i[i] == bank_id]
+        banks.w_act[bank_id] = [w_act[i] for i in eachindex(model.w_act.D_h) if w_act.B_h[i] == bank_id]
+        banks.w_inact[bank_id] = [w_inact[i] for i in eachindex(model.w_inact.D_h) if w_inact.B_h[i] == bank_id]
+
+        L_base = sum(f.L_i for f in banks.firms[bank_id])
+        D_base = sum(f.D_i for f in banks.firms[bank_id])
+        Pi_k_base = prop.mu * L_base + prop.r_bar * prop.E_k
+        D_k_base = D_base + prop.E_k - L_base
         banks.Pi_k[bank_id] = Pi_k_base / N_banks
         banks.D_k[bank_id] = D_k_base / N_banks
         banks.Y_h[bank_id] = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, banks.Pi_k[bank_id]) + sb_other * P_bar_HH

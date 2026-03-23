@@ -48,9 +48,15 @@ function Banks(parameters, initial_conditions)
     index_to_id = collect(1:Int(B))
     lastid = Ref(Int(B))
     del = Ref(false)
+
+    firms = [Agent{Firms}[] for _ in 1:B]
+    w_act = [Agent{Workers}[] for _ in 1:B]
+    w_inact = [Agent{Workers}[] for _ in 1:B]
+
     return Banks(
         del, lastid, id_to_index, index_to_id,
-        E_k, Pi_k, Pi_e_k, D_k, r, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h
+        E_k, Pi_k, Pi_e_k, D_k, r, Y_h, C_d_h, I_d_h, C_h, I_h, K_h, D_h,
+        firms, w_act, w_inact
     )
 end
 

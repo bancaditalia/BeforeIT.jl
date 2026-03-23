@@ -80,7 +80,6 @@ include("utils/mztest.jl")
 include("utils/bias_ttest.jl")
 include("utils/correlation_utils.jl")
 include("utils/varx.jl")
-include("utils/modify.jl")
 include("utils/diff_transform.jl")
 include("utils/misc.jl")
 
