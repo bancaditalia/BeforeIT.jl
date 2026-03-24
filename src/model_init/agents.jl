@@ -384,6 +384,7 @@ function (::Type{T})(agents) where {T <: AbstractModel}
     N_banks = length(banks)
     N_firms = length(firms)
     N_workers_act = length(w_act)
+    N_workers_inact = length(w_inact)
 
     # For backward compatibility: N_banks=1 means all agents use bank 1
     if N_banks == 1
@@ -393,7 +394,7 @@ function (::Type{T})(agents) where {T <: AbstractModel}
     else
         firms.B_i .= rand(1:N_banks, N_firms)
         w_act.B_h .= rand(1:N_banks, N_workers_act)
-        w_inact.B_h .= rand(1:N_banks, length(w_inact))
+        w_inact.B_h .= rand(1:N_banks, N_workers_inact)
     end
 
     # add workers to firms
