@@ -433,8 +433,8 @@ function (::Type{T})(agents) where {T <: AbstractModel}
         D_base = sum(f.D_i for f in banks.firms[bank_id])
         Pi_k_base = prop.mu * L_base + prop.r_bar * prop.E_k
         D_k_base = D_base + prop.E_k - L_base
-        banks.Pi_k[bank_id] = Pi_k_base / N_banks
-        banks.D_k[bank_id] = D_k_base / N_banks
+        banks.Pi_k[bank_id] = Pi_k_base
+        banks.D_k[bank_id] = D_k_base
         banks.Y_h[bank_id] = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, banks.Pi_k[bank_id]) + sb_other * P_bar_HH
         banks.D_h[bank_id] = prop.D_H * banks.Y_h[bank_id] # Need to normalise wrt sum(Y_h) at the end of initialisation
         banks.K_h[bank_id] = prop.K_H * banks.Y_h[bank_id] # Need to normalise wrt sum(Y_h) at the end of initialisation
