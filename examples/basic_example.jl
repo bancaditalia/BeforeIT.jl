@@ -39,9 +39,6 @@ plot(ps..., layout = (3, 3))
 models = (Bit.Model(parameters, initial_conditions) for _ in 1:2)
 models = Bit.ensemblerun!(models, T)
 
-# Note that we can equivalently run n_sims models for T steps in the single command
-# `Bit.ensemblerun(model, T, n_sims)`.
-
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command
 Threads.nthreads()
