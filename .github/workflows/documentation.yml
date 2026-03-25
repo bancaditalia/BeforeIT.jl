@@ -8,10 +8,10 @@ permissions:
 on:
   pull_request:
     branches:
-      - main
+      - multibank
   push:
     branches:
-      - main
+      - multibank
     tags: '*'
 concurrency:
   # Skip intermediate builds: always.
