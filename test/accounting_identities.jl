@@ -37,8 +37,18 @@ using Test
     zero = model.cb.E_CB + model.rotw.D_RoW - model.gov.L_G + sum(model.banks.D_k)
     @test isapprox(zero, 0.0, atol = 1.0e-8)
 
-    # accounting identity of balance sheet of commercial bank
-    tot_D_h = sum(model.w_act.D_h) + sum(model.w_inact.D_h) + sum(model.firms.D_h) + sum(model.banks.D_h)
-    zero = sum(model.firms.D_i) + tot_D_h + sum(model.banks.E_k) - sum(model.firms.L_i) - sum(model.banks.D_k)
-    @test isapprox(zero, 0.0, atol = 1.0e-8)
+    # accounting identity of balance sheet of all banks
+    banks = model.banks
+    n_banks = length(banks)
+    zero = fill(0.0, n_banks)
+    for bank_id in 1:n_banks
+        L_i = (f.L_i for f in banks.firms[bank_id])
+        D_i = [f.D_i for f in banks.firms[bank_id]]
+        D_h_firms = [f.D_h for f in banks.firms[bank_id]]
+        D_h_act = [w.D_h for w in banks.w_act[bank_id]]
+        D_h_inact = [w.D_h for w in banks.w_inact[bank_id]]
+        D_h = [D_h_act; D_h_inact; D_h_firms; banks.D_h[bank_id]]
+        zero[bank_id] = sum(D_i) + sum(D_h) + banks.E_k[bank_id] - sum(L_i) - banks.D_k[bank_id]
+    end
+    @test isapprox(zero, fill(0.0, n_banks), atol = 1.0e-8)
 end
