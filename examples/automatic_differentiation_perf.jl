@@ -1,4 +1,3 @@
-
 using Mooncake, DifferentiationInterface
 using Plots
 using Random
@@ -6,12 +5,12 @@ using JLD2
 
 using Quadmath
 
-# this needs to be be rerun using Float64
+# this needs to be rerun using Float64
 const FloatType = Float128
 
 using Preferences
 
-set_preferences!("BeforeIT", "typeFloat" => "$FloatType"; force=true)
+set_preferences!("BeforeIT", "typeFloat" => "$FloatType"; force = true)
 import BeforeIT as Bit
 
 function gdp(m)
@@ -32,28 +31,24 @@ function step_and_reduce_auto!(gradient_vals, model_arr, gdpinit0, start_model)
     m = Bit.array_to_model(model_arr, start_model)
     gdpinit = gdp(m)
     Bit.step!(m, 1)
-    return 100 * (gdp(m) - gdpinit)/gdpinit - (100 * (gdpinit - gdpinit0)/gdpinit0)^2
+    return 100 * (gdp(m) - gdpinit) / gdpinit - (100 * (gdpinit - gdpinit0) / gdpinit0)^2
 end
 
-
-parameters = Bit.AUSTRIA2010Q1.parameters
-initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-Random.seed!(68)
-const model = Bit.Model(parameters, initial_conditions)
+const model = load("model.jld2")["model"];
 const gdpinit0 = gdp(model)
 const backend = AutoMooncake()
 const model_arr = Bit.model_to_array(model)
 
 step_and_reduce_auto!(gradient_vals) = step_and_reduce_auto!(gradient_vals, model_arr, gdpinit0, model)
 
-function step_and_reduce_num!(model_arr::AbstractVector{T}, start_model, gdpinit0, n) where T<:AbstractFloat
-    step_base = eps(FloatType)^(1/3)
+function step_and_reduce_num!(model_arr::AbstractVector{T}, start_model, gdpinit0, n) where {T <: AbstractFloat}
+    step_base = eps(FloatType)^(1 / 3)
 
     gstep = Vector{T}(undef, n)
     for i in 1:n
         v = model_arr[i]
-        
-        magnitude = FloatType(max(abs(v), 1e-4))
+
+        magnitude = FloatType(max(abs(v), 1.0e-4))
         h = step_base * magnitude
 
         model_arr[i] = v + h
@@ -61,17 +56,17 @@ function step_and_reduce_num!(model_arr::AbstractVector{T}, start_model, gdpinit
         m = Bit.array_to_model(model_arr, start_model)
         gdpinit = gdp(m)
         Bit.step!(m, 1)
-        g_plus_2 = 100 * (gdp(m) - gdpinit)/gdpinit - (100 * (gdpinit - gdpinit0)/gdpinit0)^2
+        g_plus_2 = 100 * (gdp(m) - gdpinit) / gdpinit - (100 * (gdpinit - gdpinit0) / gdpinit0)^2
 
         model_arr[i] = v - h
         Random.seed!(42)
         m = Bit.array_to_model(model_arr, start_model)
         gdpinit = gdp(m)
         Bit.step!(m, 1)
-        g_minus_2 = 100 * (gdp(m) - gdpinit)/gdpinit - (100 * (gdpinit - gdpinit0)/gdpinit0)^2
+        g_minus_2 = 100 * (gdp(m) - gdpinit) / gdpinit - (100 * (gdpinit - gdpinit0) / gdpinit0)^2
 
         model_arr[i] = v
-        
+
         derivative = (g_plus_2 - g_minus_2) / (2 * h)
 
         gstep[i] = derivative
@@ -98,6 +93,9 @@ for n in ns
     push!(ts_num, t)
 end
 
+# Not particularly well structured, but these are the hardcoded results of running
+# the benchmarks
+
 using Plots
 
 # Data
@@ -115,17 +113,15 @@ x3 = [1, 10, 100]
 y3 = [0.737497204, 7.422612335, 74.499984463]
 
 # Continuations
-x2_ext = [1000, 10000, 100000]
-y2_ext = [49.936250526, 499.36250526, 4993.6250526]
+x2_ext = [1000, 10000, 106955]
+y2_ext = [y2[end] * 10^x for x in 0:2]
 
-x3_ext = [100, 1000, 10000, 100000]
-y3_ext = [74.499984463, 744.99984463, 7449.9984463, 74499.984463]
+x3_ext = [100, 1000, 10000, 106955]
+y3_ext = [y3[end] * 10^x for x in 0:3]
 
-# X ticks (scientific style)
 xtick_vals = [1, 10, 100, 1000, 10000, 100000]
 xtick_labels = ["10^$(Int(log10(x)))" for x in xtick_vals]
 
-# Y major ticks (powers of 10)
 ymaj = 10.0 .^ (-1:5)
 ymaj_labels = ["10^$(i)" for i in -1:5]
 
@@ -143,8 +139,6 @@ p = plot(
     # Minor ticks + grid styling
     yminorgrid = true,
     ygrid = true,
-    gridalpha = 0.3,
-    minorgridalpha = 0.15,
 
     xlabel = "parameters count",
     ylabel = "time (s)",
@@ -152,7 +146,6 @@ p = plot(
     legend = :topleft,
 )
 
-# Dashed continuation (same color)
 plot!(p, x2_ext, y2_ext; label = "", lw = 2, linestyle = :dash, color = 2)
 plot!(p, x3_ext, y3_ext; label = "", lw = 2, linestyle = :dash, color = 3)
 
