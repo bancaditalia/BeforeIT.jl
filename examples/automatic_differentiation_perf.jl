@@ -1,4 +1,4 @@
-using Revise
+
 using Mooncake, DifferentiationInterface
 using Plots
 using Random
@@ -35,7 +35,11 @@ function step_and_reduce_auto!(gradient_vals, model_arr, gdpinit0, start_model)
     return 100 * (gdp(m) - gdpinit)/gdpinit - (100 * (gdpinit - gdpinit0)/gdpinit0)^2
 end
 
-const model = load("model.jld2")["model"];
+
+parameters = Bit.AUSTRIA2010Q1.parameters
+initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+Random.seed!(68)
+const model = Bit.Model(parameters, initial_conditions)
 const gdpinit0 = gdp(model)
 const backend = AutoMooncake()
 const model_arr = Bit.model_to_array(model)
