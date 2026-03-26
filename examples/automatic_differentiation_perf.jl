@@ -6,7 +6,7 @@ using JLD2
 
 using Quadmath
 
-# this needs to be rerun using Float64
+# this needs to be be rerun using Float64
 const FloatType = Float128
 
 using Preferences
