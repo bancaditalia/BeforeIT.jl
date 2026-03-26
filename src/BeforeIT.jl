@@ -6,6 +6,7 @@ using LazyArrays
 using LinearAlgebra
 using MacroTools
 using Preferences
+using Quadmath
 using Random
 using StatsBase
 using WeightVectors
