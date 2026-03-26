@@ -19,10 +19,10 @@ function Banks(parameters, initial_conditions)
     tau_INC = parameters["tau_INC"]
     tau_FIRM = parameters["tau_FIRM"]
     mu = parameters["mu"]
-    D_H = initial_conditions["D_H"]
-    K_H = initial_conditions["K_H"]
+    D_H = initial_conditions["D_H"] / B
+    K_H = initial_conditions["K_H"] / B
 
-    E_k = initial_conditions["E_k"]
+    E_k = initial_conditions["E_k"] / B
     E_k = fill(E_k, B)
     r_bar = initial_conditions["r_bar"]
     sb_other = initial_conditions["sb_other"]
