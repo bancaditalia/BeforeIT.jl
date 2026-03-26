@@ -149,7 +149,7 @@ function ModelCANVAS(parameters::Dict{String, Any}, initial_conditions::Dict{Str
 
     # standard initialisations: workers, bank, aggregats, government, properties and data
     workers_act, workers_inact = Bit.Workers(p, ic)
-    bank = Bit.Bank(p, ic)
+    bank = Bit.Banks(p, ic)
     agg = Bit.Aggregates(p, ic)
     government = Bit.Government(p, ic)
     properties = Bit.Properties(p, ic)

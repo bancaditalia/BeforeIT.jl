@@ -190,9 +190,9 @@ Bit.@object mutable struct Banks(Object) <: AbstractBanks
     const I_h::Vector{Bit.typeFloat}
     const K_h::Vector{Bit.typeFloat}
     const D_h::Vector{Bit.typeFloat}
-    const firms::Vector{Vector{Agent{Firms}}}
-    const w_act::Vector{Vector{Agent{Workers}}}
-    const w_inact::Vector{Vector{Agent{Workers}}}
+    const firms::Vector{Vector{Agent{<:AbstractFirms}}}
+    const w_act::Vector{Vector{Agent{<:AbstractWorkers}}}
+    const w_inact::Vector{Vector{Agent{<:AbstractWorkers}}}
 end
 
 """

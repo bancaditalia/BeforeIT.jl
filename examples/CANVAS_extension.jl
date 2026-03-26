@@ -138,7 +138,7 @@ rotw = RestOfTheWorldCANVAS(Bit.fields(rotw_st)..., Y_EA_series, pi_EA_series) #
 
 # standard initialisations: workers, bank, aggregats, government, properties and data
 w_act, w_inact = Bit.Workers(p, ic)
-bank = Bit.Bank(p, ic)
+banks = Bit.Banks(p, ic)
 agg = Bit.Aggregates(p, ic)
 gov = Bit.Government(p, ic)
 prop = Bit.Properties(p, ic)
@@ -152,7 +152,7 @@ model_std = [Bit.Model(p, ic) for _ in 1:n_sims]
 # define CANVAS models
 # importantly, initializing with a tuple "((w_act, w_inact, ...))" rathen than with "(w_act, w_inact, ...)"
 # will perform extra needed initialization operations internally (for example, updating totals after all agents have been initialized)
-model_canvas = [ModelCANVAS((w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)) for _ in 1:n_sims]
+model_canvas = [ModelCANVAS((w_act, w_inact, firms, banks, cb, gov, rotw, agg, prop, data)) for _ in 1:n_sims]
 
 # The CANVAS model extension is also included in the BeforeIT package.
 # You can instantiate a CANVAS model directly from parameters and initial conditions in a single line of code as
