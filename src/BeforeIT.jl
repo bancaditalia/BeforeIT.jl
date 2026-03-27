@@ -2,6 +2,8 @@ module BeforeIT
 
 import Base: length
 
+using CSV
+using DataFrames
 using LazyArrays
 using LinearAlgebra
 using MacroTools
@@ -75,6 +77,7 @@ include("utils/toannual.jl")
 include("utils/get_predictions_from_sims.jl")
 include("utils/dmtest.jl")
 include("utils/mztest.jl")
+include("utils/bias_ttest.jl")
 include("utils/varx.jl")
 include("utils/modify.jl")
 include("utils/diff_transform.jl")
@@ -97,6 +100,10 @@ include("shocks/shocks.jl")
 
 # model extensions
 include("model_extensions/init_CANVAS.jl")
+
+# forecast error analysis
+include("utils/analysis_utils.jl")
+include("utils/error_tables.jl")
 
 # external functions definitions
 include("utils/extensions.jl")
