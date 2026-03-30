@@ -17,9 +17,9 @@ function search_and_matching_credit!(model::AbstractModel)
     DL_i = zeros(typeFloat, size(firms.DL_i))
     for bank_id in eachbank(model)
         bank_firms = model.banks.firms[bank_id]
-        DL_d_i = [f.DL_d_i for f in bank_firms if f.DL_d_i > 0]
-        K_e_i = [f.K_e_i for f in bank_firms if f.DL_d_i > 0]
-        L_e_i = [f.L_e_i for f in bank_firms if f.DL_d_i > 0]
+        DL_d_i = typeFloat[f.DL_d_i for f in bank_firms if f.DL_d_i > 0]
+        K_e_i = typeFloat[f.K_e_i for f in bank_firms if f.DL_d_i > 0]
+        L_e_i = typeFloat[f.L_e_i for f in bank_firms if f.DL_d_i > 0]
         f_id = [f.ID for f in bank_firms if f.DL_d_i > 0]
         E_k = model.banks.E_k[bank_id]
 

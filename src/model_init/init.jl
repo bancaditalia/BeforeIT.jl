@@ -71,10 +71,10 @@ function update_variables_with_totals!(model::AbstractModel)
 
     # get total deposits and update each bank's balance sheet
     for bank_id in eachbank(model)
-        D_h = (f.D_h for f in model.banks.firms[bank_id])
-        D_h_act = (w.D_h for w in model.banks.w_act[bank_id])
-        D_h_inact = (w.D_h for w in model.banks.w_inact[bank_id])
-        tot_D_h = sum(D_h) + sum(D_h_act) + sum(D_h_inact) + sum(model.banks.D_h[bank_id])
+        D_h = typeFloat[f.D_h for f in model.banks.firms[bank_id]]
+        D_h_act = typeFloat[w.D_h for w in model.banks.w_act[bank_id]]
+        D_h_inact = typeFloat[w.D_h for w in model.banks.w_inact[bank_id]]
+        tot_D_h = sum(D_h) + sum(D_h_act) + sum(D_h_inact) + model.banks.D_h[bank_id]
         model.banks.D_k[bank_id] += tot_D_h
     end
     return

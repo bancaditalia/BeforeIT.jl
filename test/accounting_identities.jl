@@ -42,11 +42,11 @@ using Test
     n_banks = length(banks)
     zero = fill(0.0, n_banks)
     for bank_id in 1:n_banks
-        L_i = (f.L_i for f in banks.firms[bank_id])
-        D_i = [f.D_i for f in banks.firms[bank_id]]
-        D_h_firms = [f.D_h for f in banks.firms[bank_id]]
-        D_h_act = [w.D_h for w in banks.w_act[bank_id]]
-        D_h_inact = [w.D_h for w in banks.w_inact[bank_id]]
+        L_i = Bit.typeFloat[f.L_i for f in banks.firms[bank_id]]
+        D_i = Bit.typeFloat[f.D_i for f in banks.firms[bank_id]]
+        D_h_firms = Bit.typeFloat[f.D_h for f in banks.firms[bank_id]]
+        D_h_act = Bit.typeFloat[w.D_h for w in banks.w_act[bank_id]]
+        D_h_inact = Bit.typeFloat[w.D_h for w in banks.w_inact[bank_id]]
         D_h = [D_h_act; D_h_inact; D_h_firms; banks.D_h[bank_id]]
         zero[bank_id] = sum(D_i) + sum(D_h) + banks.E_k[bank_id] - sum(L_i) - banks.D_k[bank_id]
     end
