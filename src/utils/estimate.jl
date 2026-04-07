@@ -15,7 +15,8 @@ function estimate(ydata::Union{Matrix, Vector})
     cov_var_u = cov(var.u)
     # special case for Autodiff, TODO: adapt the general case
     if size(cov_var_u) == (1, 1)
-        epsilon = rand(Normal(0, sqrt(cov_var_u[1])))
+        sigma = sqrt(max(0.0, cov_var_u[1]))
+        epsilon = sigma > 0 ? rand(Normal(0, sigma)) : 0.0
     else
         epsilon = rand(Normal(0, sqrt(cov_var_u)[1, 1]))
     end
