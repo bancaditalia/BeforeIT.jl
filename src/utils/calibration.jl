@@ -138,9 +138,11 @@ function get_valid_calibration_quarters(calibration_object)
 end
 
 
-function get_params_and_initial_conditions(calibration_object, calibration_date;
-                                           scale = 0.001,
-                                           use_growth_rate_ar1 = false)
+function get_params_and_initial_conditions(
+        calibration_object, calibration_date;
+        scale = 0.001,
+        use_growth_rate_ar1 = false
+    )
     calibration_data = calibration_object.calibration
     figaro = calibration_object.figaro
     data = calibration_object.data
@@ -367,7 +369,7 @@ function get_params_and_initial_conditions(calibration_object, calibration_date;
         interest_government_debt_quarterly = timescale * interest_government_debt_quarterly
     end
     if !has_quarterly_govt_deficit
-        government_deficit_quarterly = timescale * government_deficit_quarterly
+        government_deficit_quarterly = government_deficit_annual
     end
 
     capitalformation_dwellings =
