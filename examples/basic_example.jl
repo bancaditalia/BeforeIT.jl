@@ -17,7 +17,7 @@ model = Bit.Model(parameters, initial_conditions);
 fieldnames(typeof(model))
 
 # and to inspect the specific attributes of one agent type by typing
-fieldnames(typeof(model.bank))
+fieldnames(typeof(model.banks))
 
 # We can run now the model for a number of epochs
 T = 16

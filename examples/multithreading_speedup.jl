@@ -15,8 +15,8 @@ model = Bit.Model(parameters, initial_conditions);
 model.prop.H
 
 # Note that the households number is actually the sum of active and
-# inactive households, the owners of firms and of the bank
-length(model.w_act) + length(model.w_inact) + length(model.firms) + 1
+# inactive households, the owners of firms and of the banks
+length(model.w_act) + length(model.w_inact) + length(model.firms) + length(model.banks)
 
 # Let's fist check how many threads we have available in this Julia session
 Threads.nthreads()

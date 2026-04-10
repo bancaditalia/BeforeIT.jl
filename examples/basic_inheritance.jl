@@ -24,7 +24,7 @@ p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
 cb = Bit.CentralBank(p, ic)
-bank = Bit.Bank(p, ic)
+banks = Bit.Banks(p, ic)
 government = Bit.Government(p, ic)
 rotw = Bit.RestOfTheWorld(p, ic)
 agg = Bit.Aggregates(p, ic)
@@ -35,8 +35,8 @@ data = Bit.Data()
 # and the fixed interest rate
 new_cb = NewCentralBank(Bit.fields(cb)..., 0.02)
 
-std_model = Bit.Model((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, data))
-new_model = NewModel((w_act, w_inact, firms, bank, new_cb, government, rotw, agg, properties, data))
+std_model = Bit.Model((w_act, w_inact, firms, banks, cb, government, rotw, agg, properties, data))
+new_model = NewModel((w_act, w_inact, firms, banks, new_cb, government, rotw, agg, properties, data))
 
 # After that, we simulate both models
 T = 20
@@ -72,13 +72,13 @@ end
 firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
 cb = Bit.CentralBank(p, ic)
-bank = Bit.Bank(p, ic)
+banks = Bit.Banks(p, ic)
 government = Bit.Government(p, ic)
 rotw = Bit.RestOfTheWorld(p, ic)
 agg = Bit.Aggregates(p, ic)
 properties = Bit.Properties(p, ic)
 mdata = MoreData()
-new_model = NewModel2((w_act, w_inact, firms, bank, cb, government, rotw, agg, properties, mdata))
+new_model = NewModel2((w_act, w_inact, firms, banks, cb, government, rotw, agg, properties, mdata))
 
 # and run the simulation
 Bit.run!(new_model, T);

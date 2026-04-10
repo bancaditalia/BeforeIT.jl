@@ -37,7 +37,7 @@ The existing minimal object types are:
 
 - `Bit.Workers`
 - `Bit.Firms`
-- `Bit.Bank`
+- `Bit.Banks`
 - `Bit.CentralBank`
 - `Bit.Government`
 - `Bit.RestOfTheWorld`

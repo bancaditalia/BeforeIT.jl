@@ -133,7 +133,7 @@ p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
 cb = Bit.CentralBank(p, ic)
-bank = Bit.Bank(p, ic)
+banks = Bit.Banks(p, ic)
 gov = Bit.Government(p, ic)
 rotw = Bit.RestOfTheWorld(p, ic)
 agg = Bit.Aggregates(p, ic)
@@ -143,7 +143,7 @@ data = Bit.Data()
 w_act_new = NewWorkers(Bit.fields(w_act)..., zeros(length(w_act.Y_h)))
 prop_new = NewProperties(Bit.fields(prop)..., ConsumerLoanContract[])
 
-model = NewModel(w_act_new, w_inact, firms, bank, cb, gov, rotw, agg, prop_new, data)
+model = NewModel(w_act_new, w_inact, firms, banks, cb, gov, rotw, agg, prop_new, data)
 
 # and evolve it
 Bit.step!(model)

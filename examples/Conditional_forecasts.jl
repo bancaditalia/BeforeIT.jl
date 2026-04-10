@@ -56,7 +56,7 @@ p, ic = Bit.AUSTRIA2010Q1.parameters, Bit.AUSTRIA2010Q1.initial_conditions
 firms = Bit.Firms(p, ic)
 w_act, w_inact = Bit.Workers(p, ic)
 cb = Bit.CentralBank(p, ic)
-bank = Bit.Bank(p, ic)
+banks = Bit.Banks(p, ic)
 agg = Bit.Aggregates(p, ic)
 properties = Bit.Properties(p, ic)
 data = Bit.Data()
@@ -79,7 +79,7 @@ println("Initial Y_I match: ", initial_Y_I == Y_Is[1])
 
 exog_government = ExogenousGovernment(Bit.fields(standard_government)..., C_Gs)
 exog_rotw = ExogenousRestOfTheWorld(Bit.fields(standard_rotw)..., C_Es, Y_Is)
-new_models = [NewModel((w_act, w_inact, firms, bank, cb, exog_government, exog_rotw, agg, properties, data)) for _ in 1:8]
+new_models = [NewModel((w_act, w_inact, firms, banks, cb, exog_government, exog_rotw, agg, properties, data)) for _ in 1:8]
 
 # run conditional forecasts
 T = 12  # forecast horizon

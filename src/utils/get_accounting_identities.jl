@@ -24,7 +24,7 @@ function get_accounting_identity_banks(model)
 
     cb_balance = model.cb.E_CB + model.rotw.D_RoW - model.gov.L_G + model.banks.D_k
 
-    # accounting identity of balance sheet of commercial bank
+    # accounting identity of balance sheet of commercial banks
     tot_D_h = sum(model.w_act.D_h) + sum(model.w_inact.D_h) + sum(model.firms.D_h) + sum(model.banks.D_h)
 
     bank_balance = sum(model.firms.D_i) + tot_D_h + sum(model.banks.E_k) - sum(model.firms.L_i) - sum(model.banks.D_k)

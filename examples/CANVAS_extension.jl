@@ -136,7 +136,7 @@ cb = CentralBankCANVAS(Bit.fields(cb_st)..., r_bar_series) # add new variables t
 rotw_st = Bit.RestOfTheWorld(p, ic)
 rotw = RestOfTheWorldCANVAS(Bit.fields(rotw_st)..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
-# standard initialisations: workers, bank, aggregats, government, properties and data
+# standard initialisations: workers, banks, aggregats, government, properties and data
 w_act, w_inact = Bit.Workers(p, ic)
 banks = Bit.Banks(p, ic)
 agg = Bit.Aggregates(p, ic)
