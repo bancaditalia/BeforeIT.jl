@@ -86,9 +86,6 @@ struct Investment
     quantity::Float64
 end
 
-struct LoansOutstanding
-    amount::Float64
-end
 
 struct Deposits
     amount::Float64
@@ -96,10 +93,6 @@ end
 
 
 struct Equity
-    amount::Float64
-end
-
-struct LoanFlow
     amount::Float64
 end
 
