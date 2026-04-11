@@ -1,129 +1,132 @@
-struct PrincipalProduct
+abstract type FirmComponent <: AbstractComponent end
+struct PrincipalProduct <: FirmComponent
     id::Int64
 end
 
-struct LaborProductivity
+struct LaborProductivity <: FirmComponent
     value::Float64
 end
 
-struct IntermediateProductivity
+struct IntermediateProductivity <: FirmComponent
     value::Float64
 end
 
-struct CapitalProductivity
+struct CapitalProductivity <: FirmComponent
     value::Float64
 end
 
-struct CapitalDepreciationRate
+struct CapitalDepreciationRate <: FirmComponent
     rate::Float64
 end
 
-struct OperatingMarginTarget
+struct OperatingMargins <: FirmComponent
     margin::Float64
 end
 
-struct WageBill
+struct WageBill <: FirmComponent
     amount::Float64
 end
 
-struct AverageWageRate
+struct AverageWageRate <: FirmComponent
     rate::Float64
 end
 
-struct ProductTaxRate
+struct OutputTaxRate <: FirmComponent
     rate::Float64
 end
 
-struct ProductionTaxRate
+struct CapitalTaxRate <: FirmComponent
     rate::Float64
 end
 
-struct Price
+struct Price <: FirmComponent
     value::Float64
 end
 
-struct PriceIndex
+struct PriceIndex <: FirmComponent
     value::Float64
 end
 
-struct CFPriceIndex
+struct CFPriceIndex <: FirmComponent
     value::Float64
 end
 
-struct Employment
+struct Employment <: FirmComponent
     count::Int
 end
 
-struct Vacancies
+struct Vacancies <: FirmComponent
     count::Int
 end
 
-struct DesiredEmployment
+struct DesiredEmployment <: FirmComponent
     count::Int
 end
 
-struct Output
+struct Output <: FirmComponent
     quantity::Float64
 end
 
-struct Sales
+struct Sales <: FirmComponent
     quantity::Float64
 end
 
-struct GoodsDemand
+struct GoodsDemand <: FirmComponent
     quantity::Float64
 end
 
-struct Inventories
+struct Inventories <: FirmComponent
     quantity::Float64
 end
 
-struct MaterialsStock
+struct Capital <: FirmComponent
+    quantity::Float64
+end
+struct Intermediates <: FirmComponent
+
     quantity::Float64
 end
 
-struct Investment
+struct Investment <: FirmComponent
     quantity::Float64
 end
 
-
-struct Deposits
+struct Deposits <: FirmComponent
     amount::Float64
 end
 
-
-struct Equity
+struct Equity <: FirmComponent
     amount::Float64
 end
 
-struct FinalGoodsStockChange
+struct FinalGoodsStockChange <: FirmComponent
     quantity::Float64
 end
 
-struct MaterialsStockChange
+struct MaterialsStockChange <: FirmComponent
     quantity::Float64
 end
 
-struct TargetLoans
+struct TargetLoans <: FirmComponent
     amount::Float64
 end
 
-struct ExpectedCapital
+struct ExpectedCapital <: FirmComponent
     quantity::Float64
 end
 
-struct ExpectedLoans
+struct ExpectedLoans <: FirmComponent
     amount::Float64
 end
 
-struct ExpectedSales
+struct ExpectedSales <: FirmComponent
     quantity::Float64
 end
 
-struct DesiredInvestment
+struct DesiredInvestment <: FirmComponent
     quantity::Float64
 end
 
-struct DesiredMaterials
+struct DesiredMaterials <: FirmComponent
     quantity::Float64
 end

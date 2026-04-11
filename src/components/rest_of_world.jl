@@ -1,95 +1,95 @@
-struct ExportAutoregressiveCoefficient
+struct ExportAutoregressiveCoefficient <: AbstractComponent
     value::Float64
 end
 
-struct ExportConstant
+struct ExportConstant <: AbstractComponent
     value::Float64
 end
 
-struct ExportShockVariance
+struct ExportShockVariance <: AbstractComponent
     value::Float64
 end
 
-struct ImportAutoregressiveCoefficient
+struct ImportAutoregressiveCoefficient <: AbstractComponent
     value::Float64
 end
 
-struct ImportConstant
+struct ImportConstant <: AbstractComponent
     value::Float64
 end
 
-struct ImportShockVariance
+struct ImportShockVariance <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGDP
+struct EuroAreaGDP <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGrowth
+struct EuroAreaGrowth <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaInflation
+struct EuroAreaInflation <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaInflationAR
+struct EuroAreaInflationAR <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaInflationConstant
+struct EuroAreaInflationConstant <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaInflationShockVariance
+struct EuroAreaInflationShockVariance <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGDPAR
+struct EuroAreaGDPAR <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGDPConstant
+struct EuroAreaGDPConstant <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGDPShockVariance
+struct EuroAreaGDPShockVariance <: AbstractComponent
     value::Float64
 end
 
-struct NetForeignPosition
+struct NetForeignPosition <: AbstractComponent
     amount::Float64
 end
 
-struct ImportSupply
+struct ImportSupply <: AbstractComponent
     quantity::Float64
 end
 
-struct ExportDemand
+struct ExportDemand <: AbstractComponent
     quantity::Float64
 end
 
-struct ExportDemand
+struct ExportDemand <: AbstractComponent
     values::Float64
 end
 
-struct ImportSupply
+struct ImportSupply <: AbstractComponent
     values::VectorFloat64
 end
 
-struct ImportSales
+struct ImportSales <: AbstractComponent
     values::Float64
 end
 
-struct ImportDemand
+struct ImportDemand <: AbstractComponent
     values::Float64
 end
 
-struct ImportPrice
+struct ImportPrice <: AbstractComponent
     values::Float64
 end
 
-struct ExportPriceInflation
+struct ExportPriceInflation <: AbstractComponent
     value::Float64
 end

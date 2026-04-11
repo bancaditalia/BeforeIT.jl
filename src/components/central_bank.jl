@@ -1,27 +1,27 @@
-struct NominalInterestRate
+struct NominalInterestRate <: AbstractComponent
     rate::Float64
 end
 
-struct GovernmentBondInterestRate
+struct GovernmentBondInterestRate <: AbstractComponent
     rate::Float64
 end
 
-struct GradualAdjustmentRate
+struct GradualAdjustmentRate <: AbstractComponent
     rate::Float64
 end
 
-struct EquilibriumInterestRate
+struct EquilibriumInterestRate <: AbstractComponent
     rate::Float64
 end
 
-struct InflationTargetingWeight
+struct InflationTargetingWeight <: AbstractComponent
     weight::Float64
 end
 
-struct EconomicWeight
+struct EconomicWeight <: AbstractComponent
     weight::Float64
 end
 
-struct CentralBankEquity
+struct CentralBankEquity <: AbstractComponent
     value::Float64
 end

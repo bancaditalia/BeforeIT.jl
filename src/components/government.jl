@@ -1,23 +1,23 @@
-struct GovernmentConsumptionAutoregressiveCoefficient
+struct GovernmentConsumptionAutoregressiveCoefficient <: AbstractComponent
     coeff::Float64
 
-struct GovernmentConsumptionVarianceCoefficient
+struct GovernmentConsumptionVarianceCoefficient <: AbstractComponent
     coeff::Float64
 end
 
-struct GovernmentRevenues
+struct GovernmentRevenues <: AbstractComponent
     amount::Float64
 end
 
-struct SocialBeneditsInactive
+struct SocialBeneditsInactive <: AbstractComponent
   amount::Float64
 end
 
-struct SocialBeneditsAll
+struct SocialBeneditsAll <: AbstractComponent
   amount::Float64
 end
 
-struct PriceInflationGovernmentGoods
+struct PriceInflationGovernmentGoods <: AbstractComponent
   value::Float64
 end
 
