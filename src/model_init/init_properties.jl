@@ -4,7 +4,7 @@ struct Dimensions
     T::Int64                                     # T
     interval_for_expectation_estimation::Int64   # T_prime
     maximum_periods::Int64                       # T_max
-    government_entities::Int64                   # J
+    local_governments::Int64                     # J
     foreign_consumers::Int64                     # L
     firms_per_sector::Vector{Int64}              # I_s
     total_firms::Int64                           # I
