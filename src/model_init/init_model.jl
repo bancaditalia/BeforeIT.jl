@@ -1,5 +1,5 @@
-struct ECSModel
-    world::Ark.World
+struct ECSModel{CS <: Tuple, CT <: Tuple, ST <: Tuple, N, M}
+    world::Ark.World{CS, CT, ST, N, M}
 end
 
 function ECSModel(properties::Properties)

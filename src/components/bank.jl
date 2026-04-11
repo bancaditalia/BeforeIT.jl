@@ -9,3 +9,5 @@ end
 @component struct LendingRate <: AbstractComponent
     rate::Float64
 end
+
+@component struct Banker <: AbstractComponent end

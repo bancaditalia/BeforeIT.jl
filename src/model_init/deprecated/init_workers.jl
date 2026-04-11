@@ -17,6 +17,8 @@ function Workers(parameters, initial_conditions)
     H_inact = Int(parameters["H_inact"])
     I = Int(sum(parameters["I_s"]))
     theta_UB = parameters["theta_UB"]
+    tau_SIW = parameters["tau_SIW"]
+    tau_INC = parameters["tau_INC"]
 
     sb_other = initial_conditions["sb_other"]
     sb_inact = initial_conditions["sb_inact"]

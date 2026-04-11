@@ -83,10 +83,10 @@ struct ProductCoefficients
     government_consumption::Vector{Float64}  # c_G_g: government consumption by product
     exports::Vector{Float64}                 # c_E_g: exports by product
     imports::Vector{Float64}                 # c_I_g: imports by product
-    
+
     # Investment coefficients
     capital_formation::Vector{Float64}       # b_CF_g: firm investment by product
-    
+
     # Technology
     technology_matrix::Matrix{Float64}       # a_sg: input-output coefficients
     consumption_matrix::Matrix{Float64}      # C: consumption share matrix
@@ -99,7 +99,7 @@ struct SectoralParams
     capital_coefficient::Vector{Float64}     # kappa_s: capital coefficient
     depreciation_rate::Vector{Float64}       # delta_s: depreciation rate
     wage_rate::Vector{Float64}               # w_s: base wage rate by sector
-    
+
     # Investment dynamics
     investment_autoregression::Float64       # alpha_I: AR(1) for investment
     investment_response_to_utilization::Float64 # beta_I: investment response to capacity utilization
@@ -111,12 +111,12 @@ struct ExternalParams
     # Foreign output dynamics
     output_autoregression::Float64           # alpha_Y_EA: AR(1) for foreign output
     output_shock_sd::Float64                 # sigma_Y_EA: std dev of foreign output shocks
-    
+
     # Foreign inflation dynamics
     inflation_autoregression::Float64        # alpha_pi_EA: AR(1) for foreign inflation
     inflation_response_to_output_gap::Float64 # beta_pi_EA: Phillips curve coefficient
     inflation_shock_sd::Float64              # sigma_pi_EA: std dev of foreign inflation shocks
-    
+
     # Trade elasticities
     export_elasticity::Float64               # beta_E: export elasticity (alternative naming)
 end
@@ -140,7 +140,7 @@ struct HouseholdInitialConditions
 end
 
 struct GovernmentInitialConditions
-  consumption::Vector{Float64}
+    consumption::Vector{Float64}
     debt::Float64
     subsidies_inactive::Float64
     subsidies_other::Float64
@@ -179,31 +179,31 @@ struct Properties
     # Core dimensions and demographics
     dimensions::Dimensions
     population::Population
-    
+
     # Policy parameters
     tax_rates::TaxRates
     sector_tax_rates::SectorTaxRates
     social_insurance::SocialInsurance
     monetary_policy::MonetaryPolicy
     fiscal_policy::FiscalPolicy
-    
+
     # Behavioral parameters
     household_params::HouseholdParams
     banking_params::BankingParams
-    
+
     # Technical coefficients
     product_coeffs::ProductCoefficients
     sectoral_params::SectoralParams
-    
+
     # External sector
     external_params::ExternalParams
-    
+
     # Initial conditions
     initial_conditions::InitialConditions
 end
 
 function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{String, Any})
-    
+
     # === DIMENSIONS ===
     G = Int64(parameters["G"])
     T = Int64(parameters["T"])
@@ -213,16 +213,16 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
     L = Int64(parameters["L"])
     I_s = Vector{Int64}(vec(parameters["I_s"]))
     I = Int64(sum(I_s))
-    
+
     dimensions = Dimensions(G, T, T_prime, T_max, J, L, I_s, I)
-    
+
     # === POPULATION ===
     H_act = Int64(parameters["H_act"])
     H_inact = Int64(parameters["H_inact"])
     H = H_act + H_inact
-    
+
     population = Population(H_act, H_inact, H)
-    
+
     # === TAX RATES ===
     tax_rates = TaxRates(
         Float64(parameters["tau_INC"]),
@@ -232,25 +232,25 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
         Float64(parameters["tau_CF"]),
         Float64(parameters["tau_G"])
     )
-    
+
     sector_tax_rates = SectorTaxRates(
         Vector{Float64}(vec(parameters["tau_Y_s"])),
         Vector{Float64}(vec(parameters["tau_K_s"]))
     )
-    
+
     # === SOCIAL INSURANCE ===
     social_insurance = SocialInsurance(
         Float64(parameters["tau_SIF"]),
         Float64(parameters["tau_SIW"]),
         Float64(parameters["theta_UB"])
     )
-    
+
     # === HOUSEHOLD BEHAVIOR ===
     household_params = HouseholdParams(
         Float64(parameters["psi"]),
         Float64(parameters["psi_H"])
     )
-    
+
     # === BANKING PARAMETERS ===
     banking_params = BankingParams(
         Float64(parameters["theta_DIV"]),
@@ -260,7 +260,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
         Float64(parameters["zeta_b"]),
         Float64(parameters["mu"])
     )
-    
+
     # === MONETARY POLICY ===
     monetary_policy = MonetaryPolicy(
         Float64(parameters["pi_star"]),
@@ -269,7 +269,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
         Float64(parameters["xi_gamma"]),
         Float64(parameters["r_star"])
     )
-    
+
     # === FISCAL POLICY ===
     fiscal_policy = FiscalPolicy(
         Float64(parameters["r_G"]),
@@ -279,7 +279,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
         Float64(parameters["alpha_E"]),
         Float64(parameters["sigma_E"])
     )
-    
+
     # === PRODUCT COEFFICIENTS ===
     product_coeffs = ProductCoefficients(
         Vector{Float64}(vec(parameters["b_HH_g"])),
@@ -291,7 +291,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
         Matrix{Float64}(parameters["a_sg"]),
         Matrix{Float64}(parameters["C"])
     )
-    
+
     # === SECTORAL PARAMETERS ===
     sectoral_params = SectoralParams(
         Vector{Float64}(vec(parameters["alpha_s"])),
@@ -303,7 +303,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
         Float64(parameters["beta_I"]),
         Float64(parameters["sigma_I"])
     )
-    
+
     # === EXTERNAL PARAMETERS ===
     external_params = ExternalParams(
         Float64(parameters["alpha_Y_EA"]),
@@ -313,7 +313,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
         Float64(parameters["sigma_pi_EA"]),
         Float64(parameters["beta_E"])
     )
-    
+
     # === INITIAL CONDITIONS ===
     init_conds = InitialConditions(
         SectorInitialConditions(
@@ -352,7 +352,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
             Vector{Float64}(vec(initial_conditions["pi"]))
         )
     )
-    
+
     return Properties(
         dimensions,
         population,
