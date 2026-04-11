@@ -143,7 +143,7 @@ data = Bit.Data()
 w_act_new = NewWorkers(Bit.fields(w_act)..., zeros(length(w_act.Y_h)))
 prop_new = NewProperties(Bit.fields(prop)..., ConsumerLoanContract[])
 
-model = NewModel(w_act_new, w_inact, firms, banks, cb, gov, rotw, agg, prop_new, data)
+model = NewModel((w_act_new, w_inact, firms, banks, cb, gov, rotw, agg, prop_new, data))
 
 # and evolve it
 Bit.step!(model)
