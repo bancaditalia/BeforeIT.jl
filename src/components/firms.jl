@@ -1,132 +1,138 @@
 abstract type FirmComponent <: AbstractComponent end
-struct PrincipalProduct <: FirmComponent
+@component struct PrincipalProduct <: FirmComponent
     id::Int64
 end
 
-struct LaborProductivity <: FirmComponent
+@component struct LaborProductivity <: FirmComponent
     value::Float64
 end
 
-struct IntermediateProductivity <: FirmComponent
+@component struct IntermediateProductivity <: FirmComponent
     value::Float64
 end
 
-struct CapitalProductivity <: FirmComponent
+@component struct CapitalProductivity <: FirmComponent
     value::Float64
 end
 
-struct CapitalDepreciationRate <: FirmComponent
+@component struct CapitalDeprecationRate <: FirmComponent
     rate::Float64
 end
 
-struct OperatingMargins <: FirmComponent
+@component struct OperatingMargins <: FirmComponent
     margin::Float64
 end
 
-struct WageBill <: FirmComponent
+@component struct WageBill <: FirmComponent
     amount::Float64
 end
 
-struct AverageWageRate <: FirmComponent
+@component struct AverageWageRate <: FirmComponent
     rate::Float64
 end
 
-struct OutputTaxRate <: FirmComponent
+@component struct OutputTaxRate <: FirmComponent
     rate::Float64
 end
 
-struct CapitalTaxRate <: FirmComponent
+@component struct CapitalTaxRate <: FirmComponent
     rate::Float64
 end
 
-struct Price <: FirmComponent
+@component struct Price <: FirmComponent
     value::Float64
 end
 
-struct PriceIndex <: FirmComponent
+@component struct PriceIndex <: FirmComponent
     value::Float64
 end
 
-struct CFPriceIndex <: FirmComponent
+@component struct CFPriceIndex <: FirmComponent
     value::Float64
 end
 
-struct Employment <: FirmComponent
+@component struct Employment <: FirmComponent
     count::Int
 end
 
-struct Vacancies <: FirmComponent
+@component struct Vacancies <: FirmComponent
     count::Int
 end
 
-struct DesiredEmployment <: FirmComponent
+@component struct DesiredEmployment <: FirmComponent
     count::Int
 end
 
-struct Output <: FirmComponent
+@component struct Output <: FirmComponent
     quantity::Float64
 end
 
-struct Sales <: FirmComponent
+@component struct Sales <: FirmComponent
     quantity::Float64
 end
 
-struct GoodsDemand <: FirmComponent
+@component struct GoodsDemand <: FirmComponent
     quantity::Float64
 end
 
-struct Inventories <: FirmComponent
+@component struct Inventories <: FirmComponent
     quantity::Float64
 end
 
-struct Capital <: FirmComponent
+@component struct Capital <: FirmComponent
     quantity::Float64
 end
-struct Intermediates <: FirmComponent
+@component struct Intermediates <: FirmComponent
 
     quantity::Float64
 end
 
-struct Investment <: FirmComponent
+@component struct Investment <: FirmComponent
     quantity::Float64
 end
 
-struct Deposits <: FirmComponent
+@component struct Deposits <: FirmComponent
     amount::Float64
 end
 
-struct Equity <: FirmComponent
+@component struct Equity <: FirmComponent
     amount::Float64
 end
 
-struct FinalGoodsStockChange <: FirmComponent
+@component struct FinalGoodsStockChange <: FirmComponent
     quantity::Float64
 end
 
-struct MaterialsStockChange <: FirmComponent
+@component struct MaterialsStockChange <: FirmComponent
     quantity::Float64
 end
 
-struct TargetLoans <: FirmComponent
+@component struct TargetLoans <: FirmComponent
     amount::Float64
 end
 
-struct ExpectedCapital <: FirmComponent
+@component struct ExpectedCapital <: FirmComponent
     quantity::Float64
 end
 
-struct ExpectedLoans <: FirmComponent
+@component struct ExpectedLoans <: FirmComponent
     amount::Float64
 end
 
-struct ExpectedSales <: FirmComponent
+@component struct ExpectedSales <: FirmComponent
     quantity::Float64
 end
 
-struct DesiredInvestment <: FirmComponent
+@component struct DesiredInvestment <: FirmComponent
     quantity::Float64
 end
 
-struct DesiredMaterials <: FirmComponent
+@component struct DesiredMaterials <: FirmComponent
     quantity::Float64
 end
+
+@component struct Owner <: FirmComponent
+    entity::Ark.Entity
+end
+
+@component struct Capitalist <: FirmComponent end

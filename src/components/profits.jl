@@ -1,7 +1,7 @@
-struct Profits <: AbstractComponent
+@component struct Profits <: AbstractComponent
     amount::Float64
 end
 
-struct ExpectedProfits <: AbstractComponent
+@component struct ExpectedProfits <: AbstractComponent
     amount::Float64
 end

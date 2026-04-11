@@ -1,95 +1,95 @@
-struct ExportAutoregressiveCoefficient <: AbstractComponent
+@component struct ExportAutoregressiveCoefficient <: AbstractComponent
     value::Float64
 end
 
-struct ExportConstant <: AbstractComponent
+@component struct ExportConstant <: AbstractComponent
     value::Float64
 end
 
-struct ExportShockVariance <: AbstractComponent
+@component struct ExportShockVariance <: AbstractComponent
     value::Float64
 end
 
-struct ImportAutoregressiveCoefficient <: AbstractComponent
+@component struct ImportAutoregressiveCoefficient <: AbstractComponent
     value::Float64
 end
 
-struct ImportConstant <: AbstractComponent
+@component struct ImportConstant <: AbstractComponent
     value::Float64
 end
 
-struct ImportShockVariance <: AbstractComponent
+@component struct ImportShockVariance <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGDP <: AbstractComponent
+@component struct EuroAreaGDP <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGrowth <: AbstractComponent
+@component struct EuroAreaGrowth <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaInflation <: AbstractComponent
+@component struct EuroAreaInflation <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaInflationAR <: AbstractComponent
+@component struct EuroAreaInflationAR <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaInflationConstant <: AbstractComponent
+@component struct EuroAreaInflationConstant <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaInflationShockVariance <: AbstractComponent
+@component struct EuroAreaInflationShockVariance <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGDPAR <: AbstractComponent
+@component struct EuroAreaGDPAR <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGDPConstant <: AbstractComponent
+@component struct EuroAreaGDPConstant <: AbstractComponent
     value::Float64
 end
 
-struct EuroAreaGDPShockVariance <: AbstractComponent
+@component struct EuroAreaGDPShockVariance <: AbstractComponent
     value::Float64
 end
 
-struct NetForeignPosition <: AbstractComponent
+@component struct NetForeignPosition <: AbstractComponent
     amount::Float64
 end
 
-struct ImportSupply <: AbstractComponent
+@component struct ImportSupply <: AbstractComponent
     quantity::Float64
 end
 
-struct ExportDemand <: AbstractComponent
+@component struct ExportDemand <: AbstractComponent
     quantity::Float64
 end
 
-struct ExportDemand <: AbstractComponent
+@component struct ExportDemand <: AbstractComponent
     values::Float64
 end
 
-struct ImportSupply <: AbstractComponent
-    values::VectorFloat64
+@component struct ImportSupply <: AbstractComponent
+    values::Vector{Float64}
 end
 
-struct ImportSales <: AbstractComponent
+@component struct ImportSales <: AbstractComponent
     values::Float64
 end
 
-struct ImportDemand <: AbstractComponent
+@component struct ImportDemand <: AbstractComponent
     values::Float64
 end
 
-struct ImportPrice <: AbstractComponent
+@component struct ImportPrice <: AbstractComponent
     values::Float64
 end
 
-struct ExportPriceInflation <: AbstractComponent
+@component struct ExportPriceInflation <: AbstractComponent
     value::Float64
 end

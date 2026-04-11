@@ -1,7 +1,7 @@
-struct LoansOutstanding <: AbstractComponent
+@component struct LoansOutstanding <: AbstractComponent
     amount::Float64
 end
 
-struct LoanFlow <: AbstractComponent
+@component struct LoanFlow <: AbstractComponent
     amount::Float64
 end

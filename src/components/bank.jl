@@ -1,11 +1,11 @@
-struct EquityCapital <: AbstractComponent
+@component struct EquityCapital <: AbstractComponent
     amount::Float64
 end
 
-struct ResidualItems <: AbstractComponent
+@component struct ResidualItems <: AbstractComponent
     amount::Float64
 end
 
-struct LendingRate <: AbstractComponent
+@component struct LendingRate <: AbstractComponent
     rate::Float64
 end

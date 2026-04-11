@@ -1,5 +1,5 @@
-struct Employed <: AbstractComponent
+@component struct Employed <: AbstractComponent
     wage::Float64
 end
-struct Inactive <: AbstractComponent end
-struct Unemployed <: AbstractComponent end
+@component struct Inactive <: AbstractComponent end
+@component struct Unemployed <: AbstractComponent end
