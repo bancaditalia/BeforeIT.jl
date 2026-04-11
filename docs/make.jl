@@ -33,7 +33,7 @@ Literate.markdown(joinpath(indir, "single_agents.jl"), outdir; credit = false)
 @info "Building Documentation"
 makedocs(
     sitename = "BeforeIT.jl",
-    format = Documenter.HTML(prettyurls = false, size_threshold = 409600),
+    format = Documenter.HTML(prettyurls = false, size_threshold = 1048576),
     pages = [
         "Home" => "index.md",
         "Basics" => "examples/basic_example.md",
