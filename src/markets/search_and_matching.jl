@@ -211,7 +211,7 @@ function perform_firms_market!(
     I_g = findall(x -> x > 0.0, DM_d_ig)
 
     # keep firms that have positive stock of good "g"
-    ufilter!(i -> S_fg[i] > 0.0, F_g)
+    filter!(i -> S_fg[i] > 0.0, F_g)
 
     # continue exchanges until either demand or supply terminates
 
@@ -240,13 +240,13 @@ function perform_firms_market!(
                 iszero(F_g_active) && break
             end
         end
-        ufilter!(i -> DM_d_ig[i] > 0.0, I_g)
+        filter!(i -> DM_d_ig[i] > 0.0, I_g)
     end
 
     if !isempty(I_g)
         DM_d_ig_ = copy(DM_d_ig)
         F_g_ = findall(x -> x == g, G_f)
-        ufilter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
+        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
@@ -270,7 +270,7 @@ function perform_firms_market!(
                     iszero(F_g_active) && break
                 end
             end
-            ufilter!(i -> DM_d_ig_[i] > 0.0, I_g)
+            filter!(i -> DM_d_ig_[i] > 0.0, I_g)
         end
     end
 
@@ -308,7 +308,7 @@ function perform_retail_market!(
     C_real_hg = zeros(typeFloat, size(C_d_hg))
     H_g = findall(x -> x > 0.0, C_d_hg)
 
-    ufilter!(i -> S_fg[i] > 0.0, F_g)
+    filter!(i -> S_fg[i] > 0.0, F_g)
 
     # weights according to size and price
     F_g_active = create_weighted_sampler(P_f, S_f, F_g)
@@ -332,13 +332,13 @@ function perform_retail_market!(
                 iszero(F_g_active) && break
             end
         end
-        ufilter!(h -> C_d_hg[h] > 0.0, H_g)
+        filter!(h -> C_d_hg[h] > 0.0, H_g)
     end
 
     if !isempty(H_g)
         C_d_hg_ = copy(C_d_hg)
         F_g_ = findall(x -> x == g, G_f)
-        ufilter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
+        filter!(i -> S_fg_[i] > 0.0 && S_f[i] > 0.0, F_g_)
 
         # weights according to size and price
         F_g_active = create_weighted_sampler(P_f, S_f, F_g_)
@@ -362,7 +362,7 @@ function perform_retail_market!(
                     iszero(F_g_active) && break
                 end
             end
-            ufilter!(h -> C_d_hg_[h] > 0.0, H_g)
+            filter!(h -> C_d_hg_[h] > 0.0, H_g)
         end
     end
 

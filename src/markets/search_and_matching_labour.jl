@@ -60,7 +60,7 @@ function search_and_matching_labour!(model::AbstractModel)
             popfirst!(H_U)
             isempty(H_U) && break
         end
-        ufilter!(i -> V_i[i] > 0, I_V)
+        filter!(i -> V_i[i] > 0, I_V)
     end
 
     firms.N_i .= N_i

@@ -32,6 +32,3 @@ end
 function Bit.fshuffle!(v::Vector)
     # do nothing
 end
-function Bit.ufilter!(cond, v::Vector)
-    return filter!(cond, v)
-end
