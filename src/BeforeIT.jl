@@ -20,5 +20,9 @@ include("components/components.jl")
 
 include("model_init/init_properties.jl")
 include("model_init/init_model.jl")
+include("model_init/firms.jl")
+include("model_init/workers.jl")
+
+include("utils/randpl.jl")
 
 end
