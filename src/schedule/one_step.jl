@@ -26,6 +26,7 @@ function CommonSolve.step!(model::AbstractModel, T; parallel = false, shock! = N
     end
     return model
 end
+
 function CommonSolve.step!(model::AbstractModel; parallel = false, shock! = NoShock())
 
     Bit.finance_insolvent_firms!(model)

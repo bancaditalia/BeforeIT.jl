@@ -1,4 +1,5 @@
-struct ECSModel{CS <: Tuple, CT <: Tuple, ST <: Tuple, N, M}
+abstract type AbstractModel end
+struct ECSModel{CS <: Tuple, CT <: Tuple, ST <: Tuple, N, M} <: AbstractModel
     world::Ark.World{CS, CT, ST, N, M}
 end
 
