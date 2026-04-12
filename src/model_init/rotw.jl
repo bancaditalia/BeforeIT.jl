@@ -12,7 +12,6 @@ function setup_rotw!(world::Ark.World, properties::Properties)
             Components.EuroAreaInflation(external.foreign_inflation),
             Components.NetForeignPosition(external.debt),
             Components.ForeignConsumption(0.0),
-            Components.RestOfWorld(),
         )
     )
 

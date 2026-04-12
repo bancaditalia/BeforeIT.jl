@@ -11,10 +11,7 @@ function ECSModel(properties::Properties)
     setup_central_bank!(world, properties)
     setup_government!(world, properties)
     setup_rotw!(world, properties)
-    setup_agg!(world, properties)
-
-
-    Ark.add_resource!(world, properties)
+    setup_aggregates!(world, properties)
 
     return ECSModel(world)
 end

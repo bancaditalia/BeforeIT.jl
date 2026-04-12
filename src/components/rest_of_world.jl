@@ -54,3 +54,7 @@ end
 @component struct ForeignConsumption <: AbstractComponent
     amount::Float64
 end
+
+@component struct RestOfWorldEntity <: AbstractComponent
+    entity::Ark.Entity
+end

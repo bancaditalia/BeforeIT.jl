@@ -3,7 +3,7 @@ function setup_government!(world, properties::Properties)::Nothing
     T_prime = properties.dimensions.interval_for_expectation_estimation
     local_governments = properties.dimensions.local_governments
 
-    Ark.new_entities!(world, local_governments, (Components.ConsumptionBudget(0.0), Component.LocalGovernment()))
+    Ark.new_entities!(world, local_governments, (Components.ConsumptionBudget(0.0), Components.LocalGovernment()))
 
     Ark.new_entity!(
         world, (
