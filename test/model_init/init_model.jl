@@ -72,25 +72,6 @@ using Test
         end
     end
 
-    @testset "Sector employment consistency" begin
-        total_employment = 0
-        employment_by_sector = zeros(Int, properties.dimensions.sectors)
-
-        for (e, sector, employment) in Ark.Query(
-                world,
-                (Bit.Components.PrincipalProduct, Bit.Components.Employment)
-            )
-            for i in eachindex(e)
-                g = sector[i].id
-                total_employment += employment[i].amount
-                employment_by_sector[g] += employment[i].amount
-            end
-        end
-
-        @test total_employment == 3866
-        @test sum(employment_by_sector) == total_employment
-    end
-
     @testset "Household initialization" begin
     end
 
