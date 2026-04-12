@@ -28,9 +28,6 @@ include("model_init/rotw.jl")
 include("model_init/aggregates.jl")
 
 include("utils/randpl.jl")
-
-params = JLD2.load("data/austria/parameters/2010Q1.jld2")
-init_conditions = JLD2.load("data/austria/initial_conditions/2010Q1.jld2")
-const AUSTRIA = Properties(params, init_conditions)
+include("utils/standard_params_initial_conditions.jl")
 
 end

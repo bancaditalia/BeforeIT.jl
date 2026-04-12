@@ -75,7 +75,7 @@ function setup_firms!(world::Ark.World, properties::Properties)
                 Components.Capitalist(),
             )
         )
-        e = Ark.new_entity!(
+        Ark.new_entity!(
             world,
             (
                 Components.PrincipalProduct(principal_product[i]),

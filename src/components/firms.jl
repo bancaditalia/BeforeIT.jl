@@ -52,43 +52,43 @@ end
 end
 
 @component struct Employment <: FirmComponent
-    count::Int
+    amount::Int
 end
 
 @component struct Vacancies <: FirmComponent
-    count::Int
+    amount::Int
 end
 
 @component struct DesiredEmployment <: FirmComponent
-    count::Int
+    amount::Int
 end
 
 @component struct Output <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct Sales <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct GoodsDemand <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct Inventories <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct Capital <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 @component struct Intermediates <: FirmComponent
 
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct Investment <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct Deposits <: FirmComponent
@@ -100,11 +100,11 @@ end
 end
 
 @component struct FinalGoodsStockChange <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct MaterialsStockChange <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct TargetLoans <: FirmComponent
@@ -112,7 +112,7 @@ end
 end
 
 @component struct ExpectedCapital <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct ExpectedLoans <: FirmComponent
@@ -120,15 +120,15 @@ end
 end
 
 @component struct ExpectedSales <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct DesiredInvestment <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct DesiredMaterials <: FirmComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct Owner <: FirmComponent

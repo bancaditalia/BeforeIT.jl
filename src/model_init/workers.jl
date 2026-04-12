@@ -11,7 +11,7 @@ function setup_workers!(world::Ark.World, properties::Properties)
     Ark.new_entities!(
         world, employable, (
             Components.NetDisposableIncome(0.0),
-            Components.HouseholdDesposit(0.0),
+            Components.HouseholdDeposit(0.0),
             Components.CapitalStock(0.0),
             Components.Unemployed(unemployment_benefit / unemployment_benefit_rate),
             Components.ConsumptionBudget(0.0),
@@ -25,7 +25,7 @@ function setup_workers!(world::Ark.World, properties::Properties)
     Ark.new_entities!(
         world, inactive, (
             Components.NetDisposableIncome(disposable_income),
-            Components.HouseholdDesposit(debt * disposable_income),
+            Components.HouseholdDeposit(debt * disposable_income),
             Components.CapitalStock(capital * disposable_income),
             Components.Inactive(),
             Components.ConsumptionBudget(0.0),
