@@ -20,7 +20,7 @@ end
 end
 
 @component struct OperatingMargins <: FirmComponent
-    margin::Float64
+    rate::Float64
 end
 
 @component struct WageBill <: FirmComponent

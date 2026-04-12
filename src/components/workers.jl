@@ -1,5 +1,5 @@
 @component struct Employed <: AbstractComponent
-    wage::Float64
+    rate::Float64
 end
 @component struct Inactive <: AbstractComponent end
 

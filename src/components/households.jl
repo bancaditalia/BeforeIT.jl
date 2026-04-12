@@ -1,13 +1,13 @@
 @component struct NetDisposableIncome <: AbstractComponent
-    value::Float64
+    amount::Float64
 end
 
 @component struct HouseholdDeposit <: AbstractComponent
-    value::Float64
+    amount::Float64
 end
 
 @component struct CapitalStock <: AbstractComponent
-    value::Float64
+    amount::Float64
 end
 
 @component struct ConsumptionBudget <: AbstractComponent
