@@ -1,21 +1,22 @@
-@component struct GovernmentRevenues <: AbstractComponent
+abstract type GovernmentComponent <: AbstractComponent end
+@component struct GovernmentRevenues <: GovernmentComponent
     amount::Float64
 end
 
-@component struct SocialBenefitsInactive <: AbstractComponent
+@component struct SocialBenefitsInactive <: GovernmentComponent
     amount::Float64
 end
 
-@component struct SocialBenefitsOther <: AbstractComponent
+@component struct SocialBenefitsOther <: GovernmentComponent
     amount::Float64
 end
 
-@component struct PriceInflationGovernmentGoods <: AbstractComponent
+@component struct PriceInflationGovernmentGoods <: GovernmentComponent
     value::Float64
 end
 
-@component struct GovernmentDebt <: AbstractComponent
+@component struct GovernmentDebt <: GovernmentComponent
     value::Float64
 end
 
-@component struct LocalGovernment end
+@component struct LocalGovernment <: GovernmentComponent end

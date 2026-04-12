@@ -18,25 +18,20 @@ end
     quantity::Float64
 end
 
-
 @component struct ExportDemand <: AbstractComponent
-    values::Float64
-end
-
-@component struct ImportSupply <: AbstractComponent
-    values::Float64
+    quantity::Float64
 end
 
 @component struct ImportSales <: AbstractComponent
-    values::Float64
+    quantity::Float64
 end
 
 @component struct ImportDemand <: AbstractComponent
-    values::Float64
+    quantity::Float64
 end
 
 @component struct ImportPrice <: AbstractComponent
-    values::Float64
+    value::Float64
 end
 
 @component struct ExportPriceInflation <: AbstractComponent
@@ -58,3 +53,5 @@ end
 @component struct RestOfWorldEntity <: AbstractComponent
     entity::Ark.Entity
 end
+
+@component struct RestOfWorld <: AbstractComponent end
