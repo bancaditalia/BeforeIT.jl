@@ -18,16 +18,13 @@ end
     quantity::Float64
 end
 
-@component struct ExportDemand <: AbstractComponent
-    quantity::Float64
-end
 
 @component struct ExportDemand <: AbstractComponent
     values::Float64
 end
 
 @component struct ImportSupply <: AbstractComponent
-    values::Vector{Float64}
+    values::Float64
 end
 
 @component struct ImportSales <: AbstractComponent
@@ -44,4 +41,16 @@ end
 
 @component struct ExportPriceInflation <: AbstractComponent
     value::Float64
+end
+
+@component struct ForeignSector <: AbstractComponent
+    id::Int
+end
+
+@component struct ForeignConsumptionDemand <: AbstractComponent
+    amount::Float64
+end
+
+@component struct ForeignConsumption <: AbstractComponent
+    amount::Float64
 end
