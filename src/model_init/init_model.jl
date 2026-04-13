@@ -43,7 +43,6 @@ function add_deposits_to_bank!(world)
         b.amount .+= total_deposits
     end
 
-
     return
 end
 

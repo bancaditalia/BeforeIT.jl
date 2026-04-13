@@ -2,7 +2,7 @@
     amount::Float64
 end
 
-@component struct HouseholdDeposit <: AbstractComponent
+@component struct Deposits <: AbstractComponent
     amount::Float64
 end
 

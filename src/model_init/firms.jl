@@ -93,7 +93,7 @@ function setup_firms!(world::Ark.World, properties::Properties)
                 Components.GoodsDemand(output[i]),
                 Components.Price(1.0),
                 Components.Inventories(0.0),
-                Components.Capital(capital[i]),
+                Components.CapitalStock(capital[i]),
                 Components.Intermediates(intermediates[i]),
                 Components.LoansOutstanding(outstanding_loans[i]),
                 Components.OperatingMargins(operating_margins[i]),

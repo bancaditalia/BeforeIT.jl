@@ -79,19 +79,11 @@ end
     amount::Float64
 end
 
-@component struct Capital <: FirmComponent
-    amount::Float64
-end
 @component struct Intermediates <: FirmComponent
-
     amount::Float64
 end
 
 @component struct Investment <: FirmComponent
-    amount::Float64
-end
-
-@component struct Deposits <: FirmComponent
     amount::Float64
 end
 

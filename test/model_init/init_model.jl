@@ -56,7 +56,7 @@ using Test
                 (
                     Bit.Components.PrincipalProduct,
                     Bit.Components.Output,
-                    Bit.Components.Capital,
+                    Bit.Components.CapitalStock,
                     Bit.Components.Intermediates,
                     Bit.Components.Employment,
                     Bit.Components.Vacancies,
