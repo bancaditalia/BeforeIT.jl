@@ -12,6 +12,7 @@ function setup_bank!(world::Ark.World, properties::Properties)
             Components.CapitalStock(0.0),
             Components.Deposits(0.0),
             Components.Banker(),
+            Components.Household(),
         )
     )
     Ark.new_entity!(

@@ -28,7 +28,7 @@ function normalize_deposits_and_capital_stocks!(world)
     total_disposable_income = @sum_over (income.amount for income in Ark.Query(world, (Components.NetDisposableIncome,)))
 
 
-    for (_, capital, deposits) in Ark.Query(world, (Components.CapitalStock, Components.Deposits))
+    for (_, capital, deposits) in Ark.Query(world, (Components.CapitalStock, Components.Deposits), with = (Components.Household,))
         capital.amount .= capital.amount ./ total_disposable_income
         deposits.amount .= deposits.amount ./ total_disposable_income
     end

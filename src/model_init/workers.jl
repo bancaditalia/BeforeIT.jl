@@ -18,6 +18,7 @@ function setup_workers!(world::Ark.World, properties::Properties)
             Components.InvestmentBudget(0.0),
             Components.RealisedConsumption(0.0),
             Components.RealisedInvestment(0.0),
+            Components.Household(),
         )
     )
 
@@ -32,6 +33,8 @@ function setup_workers!(world::Ark.World, properties::Properties)
             Components.InvestmentBudget(0.0),
             Components.RealisedConsumption(0.0),
             Components.RealisedInvestment(0.0),
+
+            Components.Household(),
         )
     )
 

@@ -37,14 +37,14 @@ using Test
                     Bit.Components.Equity,
                 )
             )
-            @test all(collect(output.amount) .>= 0.0)
-            @test all(collect(sales.amount) .== collect(output.amount))
-            @test all(collect(demand.amount) .== collect(output.amount))
-            @test all(collect(price.value) .== 1.0)
-            @test all(collect(inventories.amount) .== 0.0)
-            @test all(collect(investment.amount) .== 0.0)
-            @test all(collect(equity.amount) .== 0.0)
-            @test all(collect(vacancies.amount) .>= 0)
+            @test all(output.amount .>= 0.0)
+            @test all(sales.amount .== output.amount)
+            @test all(demand.amount .== output.amount)
+            @test all(price.value .== 1.0)
+            @test all(inventories.amount .== 0.0)
+            @test all(investment.amount .== 0.0)
+            @test all(equity.amount .== 0.0)
+            @test all(vacancies.amount .>= 0)
         end
     end
 
@@ -65,10 +65,10 @@ using Test
                     Bit.Components.IntermediateProductivity,
                 )
             )
-            @test isapprox.(collect(output.amount), collect(labor_prod.value .* employment.amount), atol = 1.0e-7) |> all
-            @test isapprox.(collect(capital.amount), collect(output.amount ./ (omega .* capital_prod.value)), atol = 1.0e-7) |> all
-            @test isapprox.(collect(intermediates.amount), collect(output.amount ./ (omega .* material_prod.value)), atol = 1.0e-7) |> all
-            @test all(collect(vacancies.amount) .== collect(employment.amount))
+            @test isapprox.(output.amount, labor_prod.value .* employment.amount, atol = 1.0e-7) |> all
+            @test isapprox.(capital.amount, output.amount ./ (omega .* capital_prod.value), atol = 1.0e-7) |> all
+            @test isapprox.(intermediates.amount, output.amount ./ (omega .* material_prod.value), atol = 1.0e-7) |> all
+            @test all(vacancies.amount .== employment.amount)
         end
     end
 

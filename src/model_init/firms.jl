@@ -73,6 +73,7 @@ function setup_firms!(world::Ark.World, properties::Properties)
                 Components.CapitalStock(K_h[i]),
                 Components.Deposits(D_h[i]),
                 Components.Capitalist(),
+                Components.Household(),
             )
         )
         Ark.new_entity!(

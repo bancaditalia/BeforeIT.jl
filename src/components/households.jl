@@ -25,3 +25,4 @@ end
 @component struct RealisedInvestment <: AbstractComponent
     amount::Float64
 end
+@component struct Household <: AbstractComponent end
