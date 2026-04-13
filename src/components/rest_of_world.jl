@@ -3,11 +3,11 @@
 end
 
 @component struct EuroAreaGrowth <: AbstractComponent
-    value::Float64
+    rate::Float64
 end
 
 @component struct EuroAreaInflation <: AbstractComponent
-    value::Float64
+    rate::Float64
 end
 
 @component struct NetForeignPosition <: AbstractComponent

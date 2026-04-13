@@ -35,7 +35,7 @@ function setup_central_bank!(world::Ark.World, properties::Properties)
     return Ark.new_entity!(
         world, (
             Components.CentralBankEquity(central_bank_equity),
-            Components.EquilibriumInterestRate(policy_rate),
+            Components.NominalInterestRate(policy_rate),
         )
     )
 end

@@ -19,11 +19,12 @@ function central_bank_rate(model::AbstractModel)
     r_bar = taylor_rule(cb.rho, cb.r_bar, cb.r_star, cb.pi_star, cb.xi_pi, cb.xi_gamma, gamma_EA, pi_EA)
     return r_bar
 end
+
 function set_central_bank_rate!(model::AbstractModel)
     return model.cb.r_bar = central_bank_rate(model)
 end
 
-"""
+""" 
     taylor_rule(rho, r_bar, r_star, pi_star, xi_pi, xi_gamma, gamma_EA, pi_EA)
 
 Calculate the interest rate according to the Taylor rule.

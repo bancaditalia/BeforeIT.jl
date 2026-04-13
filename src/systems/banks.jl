@@ -49,7 +49,7 @@ end
 
 function set_bank_rate!(world)
     cb_rate = 0.0
-    for (e, cb) in Query(world, (Components.EquilibriumInterestRate,))
+    for (e, cb) in Query(world, (Components.NominalInterestRate,))
         for i in eachindex(e)
             cb_rate = cb[i].rate
         end
@@ -89,7 +89,7 @@ function set_bank_profits!(world)
     total_loans = @sum_over (loans.amount for loans in Ark.Query(world, (Components.LoansOutstanding,)))
 
     cb_rate = 0.0
-    for (e, cb) in Query(world, (Components.EquilibriumInterestRate,))
+    for (e, cb) in Query(world, (Components.NominalInterestRate,))
         for i in eachindex(e)
             cb_rate = cb[i].rate
         end
