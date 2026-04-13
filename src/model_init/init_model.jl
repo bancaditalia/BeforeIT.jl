@@ -25,12 +25,7 @@ function ECSModel(properties::Properties)
 end
 
 function normalize_deposits_and_capital_stocks!(world)
-    total_disposable_income = 0.0
-    for (e, v) in Ark.Query(world, (Components.NetDisposableIncome,))
-        for i in eachindex(e)
-            total_disposable_income += v[i].amount
-        end
-    end
+    total_disposable_income = @sum_over (income.amount for income in Ark.Query(world, (Components.NetDisposableIncome,)))
 
 
     for (_, capital, deposits) in Ark.Query(world, (Components.CapitalStock, Components.Deposits))
@@ -42,12 +37,7 @@ function normalize_deposits_and_capital_stocks!(world)
 end
 
 function add_deposits_to_bank!(world)
-    total_deposits = 0.0
-    for (e, v) in Ark.Query(world, (Components.Deposits,))
-        for i in eachindex(e)
-            total_deposits += v[i].amount
-        end
-    end
+    total_deposits = @sum_over (deposits.amount for deposits in Ark.Query(world, (Components.Deposits,)))
 
     for (e, b) in Ark.Query(world, (Components.ResidualItems,))
         b.amount .+= total_deposits

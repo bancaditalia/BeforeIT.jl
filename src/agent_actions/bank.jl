@@ -165,6 +165,7 @@ function bank_deposits(model)
     D_k = sum(fD_i) + tot_D_h + bE_k - sum(fL_i)
     return D_k
 end
+
 function set_bank_deposits!(model)
     return model.bank.D_k = bank_deposits(model)
 end

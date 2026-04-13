@@ -14,6 +14,7 @@ using WeightVectors
 import JLD2
 
 
+include("utils/ecs_utils.jl")
 include("components/components.jl")
 
 include("resources/aggregates.jl")
