@@ -30,17 +30,12 @@ end
     quantity::Float64
 end
 
-@component struct ImportPrice <: AbstractComponent
-    value::Float64
-end
 
 @component struct ExportPriceInflation <: AbstractComponent
     value::Float64
 end
 
-@component struct ForeignSector <: AbstractComponent
-    id::Int
-end
+@component struct ForeignSector <: AbstractComponent end
 
 @component struct ForeignConsumptionDemand <: AbstractComponent
     amount::Float64

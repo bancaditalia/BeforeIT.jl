@@ -110,6 +110,7 @@ end
 struct ExternalParams
     # Foreign output dynamics
     output_autoregression::Float64           # alpha_Y_EA: AR(1) for foreign output
+    output_autoregression_scalar::Float64    # beta_Y_EA: Autoregressive coefficient for euro area GDP Scalar constant for euro area GDP
     output_shock_sd::Float64                 # sigma_Y_EA: std dev of foreign output shocks
 
     # Foreign inflation dynamics
@@ -307,6 +308,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
     # === EXTERNAL PARAMETERS ===
     external_params = ExternalParams(
         Float64(parameters["alpha_Y_EA"]),
+        Float64(parameters["beta_Y_EA"]),
         Float64(parameters["sigma_Y_EA"]),
         Float64(parameters["alpha_pi_EA"]),
         Float64(parameters["beta_pi_EA"]),

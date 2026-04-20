@@ -27,7 +27,6 @@ The expected inflation rate `pi_e` is calculated as follows:
 ```
 """
 function growth_inflation_expectations(model::AbstractModel)
-    agg = model.agg
 
     Y, pi_, T_prime, t = model.agg.Y, model.agg.pi_, model.prop.T_prime, model.agg.t
 
@@ -40,6 +39,7 @@ function growth_inflation_expectations(model::AbstractModel)
 
     return Y_e, gamma_e, pi_e
 end
+
 function set_growth_inflation_expectations!(model::AbstractModel)
     agg = model.agg
     return agg.Y_e, agg.gamma_e, agg.pi_e = growth_inflation_expectations(model)
@@ -89,6 +89,7 @@ function growth_inflation_EA(model::AbstractModel)
 
     return Y_EA, gamma_EA, pi_EA
 end
+
 function set_growth_inflation_EA!(model::AbstractModel)
     rotw = model.rotw
     return rotw.Y_EA, rotw.gamma_EA, rotw.pi_EA = growth_inflation_EA(model)

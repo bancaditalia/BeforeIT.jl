@@ -2,7 +2,7 @@ module BeforeIT
 
 import Base: length
 
-using Ark
+import Ark
 using LazyArrays
 using LinearAlgebra
 using MacroTools
@@ -19,6 +19,8 @@ include("components/components.jl")
 
 include("resources/aggregates.jl")
 include("resources/properties.jl")
+include("resources/shocks.jl")
+include("resources/epsilons.jl")
 
 include("model_init/init_model.jl")
 include("model_init/firms.jl")
