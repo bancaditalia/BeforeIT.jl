@@ -21,7 +21,12 @@ end
 
 function set_growth_inflation_for_EA!(world::Ark.World)
     epsilon_Y_EA = Ark.get_resource(world, Epsilons).Y_EA
-    (; inflation_shock_sd, output_outoregression, inflation_response_to_output_gap, inflation_autoregression, output_autoregression_scalar) = Ark.get_resource(world, Properties).external_params
+    (;
+        inflation_shock_sd,
+        output_outoregression,
+        inflation_response_to_output_gap,
+        inflation_autoregression, output_autoregression_scalar,
+    ) = Ark.get_resource(world, Properties).external_params
 
     random_inflation_shock = inflation_shock_sd * randn()
 
@@ -43,6 +48,7 @@ end
 
 function set_inflation_price_index!(world::Ark.World)
     macro_state = Ark.get_resource(world, MacroeconomicState)
+    price_indices = Ark.get_resource(world, PriceIndices)
     properties = Ark.get_resource(world, Properties)
 
     interval = properties.dimensions.interval_for_expectation_estimation
@@ -55,7 +61,7 @@ function set_inflation_price_index!(world::Ark.World)
         total_output += sum(quantities.amount)
     end
     price_index = total_monetary_output_value / total_output
-    macro_state.aggregate_price_index = log(price_index / macro_state.aggregate_price_index)
+    price_indices.aggregate = log(price_index / price_indices.aggregate)
     push!(macro_state.inflation_history, 0.0)
     macro_state.inflation_history[interval + t] = price_index
 
@@ -63,40 +69,40 @@ function set_inflation_price_index!(world::Ark.World)
 end
 
 function set_sector_specific_priceindex!(world::Ark.World)
-    macro_state = Ark.get_resource(world, MacroeconomicState)
-    fill!(macro_state.sector_price_index, 0.0)
-    total_quantities = similar(macro_state.sector_price_index)
+    price_indices = Ark.get_resource(world, PriceIndices)
+    fill!(price_indices.sector, 0.0)
+    total_quantities = zeros(size(price_indices.sector))
 
     for (entities, principal_product, prices, quantities) in Ark.Query(world, (Components.PrincipalProduct, Components.Price, Components.Quantities))
         @inbounds for i in eachindex(entities)
-            macro_state.sector_price_index[principal_product[i].id] += prices[i].value * quantities[i].amount
+            price_indices.sector[principal_product[i].id] += prices[i].value * quantities[i].amount
             total_quantities[principal_product[i].id] += quantities[i].amount
         end
     end
 
     for (entities, principal_product, prices, quantities) in Ark.Query(world, (Components.PrincipalProduct, Components.ImportPrice, Components.ImportSales))
         @inbounds for i in eachindex(entities)
-            macro_state.sector_price_index[principal_product[i].id] += prices[i].value * quantities[i].amount
+            price_indices.sector[principal_product[i].id] += prices[i].value * quantities[i].amount
             total_quantities[principal_product[i].id] += quantities[i].amount
         end
     end
 
-    macro_state.sector_price_index ./= total_quantities
+    price_indices.sector ./= total_quantities
     return nothing
 end
 
 function set_capital_formation_priceindex!(world::Ark.World)
-    macro_state = Ark.get_resource(world, MacroeconomicState)
+    price_indices = Ark.get_resource(world, PriceIndices)
     properties = Ark.get_resource(world, Properties)
-    macro_state.capital_goods_price_index = dot(properties.product_coefficients.capital_formation, macro_state.sector_price_index)
+    price_indices.capital_goods = LinearAlgebra.dot(properties.product_coefficients.capital_formation, price_indices.sector)
     return nothing
 end
 
 function set_household_price_index!(world::Ark.World)
-    macro_state = Ark.get_resource(world, MacroeconomicState)
+    price_indices = Ark.get_resource(world, PriceIndices)
     properties = Ark.get_resource(world, Properties)
 
-    macro_state.household_consumption_price_index = dot(properties.product_coefficients.household_consumption, macro_state.sector_price_index)
+    price_indices.household_consumption = dot(properties.product_coefficients.household_consumption, price_indices.sector)
     return nothing
 
 end

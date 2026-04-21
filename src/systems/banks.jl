@@ -2,7 +2,7 @@ function set_bank_deposits!(world)
     total_deposits = @sum_over (deposits.amount for deposits in Ark.Query(world, (Components.Deposits,)))
     total_loans = @sum_over (loans.amount for loans in Ark.Query(world, (Components.LoansOutstanding,)))
 
-    for (e, equity, resisdual) in Ark.Query(world, (Components.Equity, Components.ResidualItem))
+    for (e, equity, resisdual) in Ark.Query(world, (Components.Equity, Components.ResidualItems))
         for i in eachindex(e)
             resisdual[i] = Components.ResidualItem(equity[i] - total_loans + total_deposits)
         end
@@ -12,7 +12,7 @@ function set_bank_deposits!(world)
 end
 
 function finance_insolvant_firms(world)
-    P_bar_CF = Ark.get_resource(world, MacroeconomicState).capital_goods_price_index
+    P_bar_CF = Ark.get_resource(world, PriceIndices).capital_goods
     ζ = Ark.get_resource(world, Properties).banking_params.new_firm_loan_ratio
 
     financed_total_equity = 0.0
@@ -49,7 +49,7 @@ end
 
 function set_bank_rate!(world)
     cb_rate = 0.0
-    for (e, cb) in Query(world, (Components.NominalInterestRate,))
+    for (e, cb) in Ark.Query(world, (Components.NominalInterestRate,))
         for i in eachindex(e)
             cb_rate = cb[i].rate
         end
@@ -57,7 +57,7 @@ function set_bank_rate!(world)
 
     mu = Ark.get_resource(world, Properties).banking_params.risk_premium
 
-    for (_, lending_rate) in Query(world, (Components.LendingRate,))
+    for (_, lending_rate) in Ark.Query(world, (Components.LendingRate,))
         lending_rate.rate .= cb_rate + mu
     end
 
@@ -89,14 +89,14 @@ function set_bank_profits!(world)
     total_loans = @sum_over (loans.amount for loans in Ark.Query(world, (Components.LoansOutstanding,)))
 
     cb_rate = 0.0
-    for (e, cb) in Query(world, (Components.NominalInterestRate,))
+    for (e, cb) in Ark.Query(world, (Components.NominalInterestRate,))
         for i in eachindex(e)
             cb_rate = cb[i].rate
         end
     end
 
     rterm = total_loans + total_negative_deposits
-    for (e, profits, lending_rate, residual_item) in Query(world, (Components.Profits, Components.LendingRate, Components.ResidualItem))
+    for (e, profits, lending_rate, residual_item) in Ark.Query(world, (Components.Profits, Components.LendingRate, Components.ResidualItem))
         @inbounds for i in eachindex(e)
             central_bank_term = residual_item[i] - total_positive_deposits - total_negative_deposits
             profits[i] = Components.Profits(lending_rate[i].rate * rterm + cb_rate * central_bank_term)
