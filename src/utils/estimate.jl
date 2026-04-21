@@ -5,10 +5,7 @@ function estimate_next_value(data, type = nothing)
     return alpha * data[end] + beta + epsilon
 end
 
-function estimate(ydata::Union{Matrix, Vector})
-    if typeof(ydata) <: Vector
-        ydata = ydata[:, :]
-    end
+function estimate(ydata::AbstractMatrix)
     var = rfvar3(ydata, 1, ones(size(ydata, 1), 1))
     alpha = var.By[1]
     beta = var.Bx[1]
@@ -20,6 +17,10 @@ function estimate(ydata::Union{Matrix, Vector})
         epsilon = rand(Normal(0, sqrt(cov_var_u)[1, 1]))
     end
     return alpha, beta, epsilon
+end
+
+function estimate(ydata::AbstractVector)
+    return estimate(ydata[:, :])
 end
 
 function estimate_for_calibration_script(ydata::Union{Matrix, Vector})
