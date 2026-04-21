@@ -1,5 +1,3 @@
-using LinearAlgebra
-
 """
 This algorithm goes for accuracy without worrying about memory requirements. (simplified version from Dynare)
 - `ydata`: dependent variable data matrix

@@ -87,6 +87,7 @@ function firms_expectations_and_decisions(model::AbstractModel)
 
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
+
 function set_firms_expectations_and_decisions!(model::AbstractModel)
     firms = model.firms
 
