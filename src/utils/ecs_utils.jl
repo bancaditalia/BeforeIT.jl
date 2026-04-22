@@ -29,3 +29,7 @@ macro sum_over(generator)
 end
 
 sinlge(q::Ark.Query) = Iterators.flatten(zip(tup...) for tup in q) |> only
+
+properties(w::Ark.World) = Ark.get_resource(w, Properties)
+expectations(w::Ark.World) = Ark.get_resource(w, Expectations)
+price_indices(w::Ark.World) = Ark.get_resource(w, PriceIndices)
