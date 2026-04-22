@@ -3,6 +3,7 @@ module BeforeIT
 import Base: length
 
 import Ark
+import JLD2
 using LazyArrays
 using LinearAlgebra
 using MacroTools
@@ -11,7 +12,6 @@ using Quadmath
 using Random
 using StatsBase
 using WeightVectors
-import JLD2
 
 
 include("utils/estimate.jl")

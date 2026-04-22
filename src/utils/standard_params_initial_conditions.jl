@@ -1,5 +1,3 @@
-import JLD2
-
 dir = joinpath(splitpath(dirname(pathof(@__MODULE__)))[1:(end - 1)])
 
 parameters = JLD2.load(joinpath(dir, "data/austria/parameters/2010Q1.jld2"))

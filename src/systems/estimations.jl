@@ -56,7 +56,7 @@ function set_inflation_price_index!(world::Ark.World)
     total_monetary_output_value = 0.0
     total_output = 0.0
 
-    for (entities, prices, quantities) in Ark.Query(world, (Component.Price, Component.Output))
+    for (entities, prices, quantities) in Ark.Query(world, (Components.Price, Components.Output))
         total_monetary_output_value += sum(prices.value .* quantities.amount)
         total_output += sum(quantities.amount)
     end
