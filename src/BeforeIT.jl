@@ -23,6 +23,7 @@ include("resources/aggregates.jl")
 include("resources/properties.jl")
 include("resources/shocks.jl")
 include("resources/epsilons.jl")
+include("cache/firm_cache.jl")
 
 include("model_init/init_model.jl")
 include("model_init/firms.jl")

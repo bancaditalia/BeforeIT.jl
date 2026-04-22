@@ -19,6 +19,8 @@ function setup_aggregates!(world::Ark.World, properties::Properties)
         )
     )
 
+    Ark.add_resource!(world,FirmTmpBuffers{Float64}(zeros(properties.dimensions.sectors)))
+
     Ark.add_resource!(world, Epsilon(0.0, 0.0, 0.0))
     Ark.add_resource!(world, Expectations(0.0, 0.0, 0.0))
     Ark.add_resource!(
