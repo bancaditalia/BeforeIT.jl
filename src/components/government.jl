@@ -17,11 +17,11 @@ end
 end
 
 @component struct GovernmentDebt <: GovernmentComponent #L_G
-    value::Float64
+    amount::Float64
 end
 
 @component struct ConsumptionDemand <: GovernmentComponent #C_G
-    value::Float64
+    amount::Float64
 end
 
 @component struct LocalGovernment <: GovernmentComponent end

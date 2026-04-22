@@ -318,7 +318,7 @@ function set_firms_expectations_and_decisions!(world::Ark.World)
             expected_capital[i] = Components.ExpectedCapital(expected_capital_amount)
             expected_loans[i] = Components.ExpectedLoans(expected_loans_amount)
             target_loans[i] = Components.TargetLoans(target_loans_amount)
-            prices[i] = Components.Prices(price * (1 + cost_push_inflation) * (1 + inflation))
+            prices[i] = Components.Price(price * (1 + cost_push_inflation) * (1 + inflation))
         end
     end
 
