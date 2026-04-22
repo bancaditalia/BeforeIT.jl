@@ -28,6 +28,7 @@ function households_income_act(model; expected = false)
     end
     return Y_h
 end
+
 function set_households_income_act!(model; expected = false)
     return model.w_act.Y_h .= households_income_act(model; expected)
 end

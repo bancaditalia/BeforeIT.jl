@@ -39,7 +39,6 @@ function set_gov_revenues!(world::Ark.World)
     τ_cf = taxes.capital_goods
     θ_div = properties.banking_params.dividend_payout_ratio
 
-
     (;
         employers_contribution,
         employees_contribution,
@@ -75,7 +74,6 @@ function set_gov_loans!(world::Ark.World)
     (; active, total, inactive) = properties.population
     theta_UB = properties.social_insurance.unemployment_benefit
     r_g = properties.fiscal_policy.government_interest_rate
-  (_,r_g) = sinlge(Ark.Query(world, (Components.  )))
 
     total_wages_unemployed = @sum_over (w.unemployment_benefits for (_, w) in Ark.Query(world, (Components.Unemployed,)))
     for (e, sb_inactive, sb_other, debt, realised_consumption, revenues, debt) in Ark.Query(world, (Components.SocialBenefitsInactive, Components.SocialBenefitsOther, Components.GovernmentDebt, Components.RealisedConsumption, Components.GovernmentRevenues, Components.GovernmentDebt))
@@ -93,9 +91,9 @@ function set_gov_social_benefits!(world::Ark.World)
     expected_growth = Ark.get_resource(world, Expectations).growth
 
     for (e, sb_inactive, sb_other) in Ark.Query(world, (Components.SocialBenefitsInactive, Components.SocialBenefitsOther, Components.GovernmentDebt))
-        sb_inactive.amount .*= (1 + expected_growth) 
-        sb_other.amount .*= (1 + expected_growth) 
-        
+        sb_inactive.amount .*= (1 + expected_growth)
+        sb_other.amount .*= (1 + expected_growth)
+
     end
-  
+    return nothing
 end
