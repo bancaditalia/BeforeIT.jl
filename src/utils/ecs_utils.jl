@@ -28,7 +28,7 @@ macro sum_over(generator)
     end |> esc
 end
 
-sinlge(q::Ark.Query) = Iterators.flatten(zip(tup...) for tup in q) |> only
+single(q::Ark.Query) = Iterators.flatten(zip(tup...) for tup in q) |> only
 
 properties(w::Ark.World) = Ark.get_resource(w, Properties)
 expectations(w::Ark.World) = Ark.get_resource(w, Expectations)

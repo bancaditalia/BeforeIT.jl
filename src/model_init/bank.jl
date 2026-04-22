@@ -6,6 +6,7 @@ function setup_bank!(world::Ark.World, properties::Properties)
         (
             Components.NetDisposableIncome(0.0),
             Components.ConsumptionBudget(0.0),
+            Components.ExpectedIncome(0.0),
             Components.InvestmentBudget(0.0),
             Components.RealisedConsumption(0.0),
             Components.RealisedInvestment(0.0),

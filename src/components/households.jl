@@ -2,6 +2,10 @@
     amount::Float64
 end
 
+@component struct ExpectedIncome <: AbstractComponent
+    amount::Float64
+end
+
 @component struct Deposits <: AbstractComponent
     amount::Float64
 end

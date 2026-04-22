@@ -124,7 +124,6 @@ end
 end
 
 @component struct Owner <: FirmComponent
-    entity::Ark.Entity
 end
 
 @component struct Capitalist <: FirmComponent end
