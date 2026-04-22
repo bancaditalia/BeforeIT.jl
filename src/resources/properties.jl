@@ -69,6 +69,7 @@ end
 struct FiscalPolicy
     government_interest_rate::Float64 # r_G: interest rate on government debt
     consumption_autoregression::Float64 # alpha_G: AR(1) coefficient for gov consumption
+    consumption_autoregression_scalar::Float64 # beta_B
     consumption_shock_sd::Float64    # sigma_G: std dev of gov consumption shocks
     exports_autoregression::Float64  # beta_E: AR(1) for exports (if applicable)
     exports_response_to_foreign_output::Float64 # alpha_E: exports response to foreign output
@@ -275,6 +276,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
     fiscal_policy = FiscalPolicy(
         Float64(parameters["r_G"]),
         Float64(parameters["alpha_G"]),
+        Float64(parameters["beta_G"]),
         Float64(parameters["sigma_G"]),
         Float64(parameters["beta_E"]),
         Float64(parameters["alpha_E"]),
