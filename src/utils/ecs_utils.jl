@@ -27,3 +27,5 @@ macro sum_over(generator)
         end
     end |> esc
 end
+
+sinlge(q::Ark.Query) = Iterators.flatten(zip(tup...) for tup in q) |> only

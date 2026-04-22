@@ -113,13 +113,11 @@ function setup_firms!(world::Ark.World, properties::Properties)
                 Components.DesiredMaterials(0.0),
                 Components.DesiredEmployment(0.0),
                 Components.ExpectedProfits(0.0),
+                Components.FinalGoodsStockChange(0.0),
+                Components.MaterialsStockChange(0.0),
+                Components.LoanFlow(0.0),
                 Components.Owner(owner),
 
-                #=
-- `DS_i`: Differnece in stock of final goods
-- `DM_i`: Difference in stock of intermediate goods
-- `DL_i`: Obtained loans
-=#
             )
         )
     end
