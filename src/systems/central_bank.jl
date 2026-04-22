@@ -31,10 +31,10 @@ end
 function set_central_bank_equity!(world)
     properties = Ark.get_resource(world, Properties)
     government_interest_rate = properties.fiscal_policy.government_interest_rate
-    total_government_debt = @sum_over (government_debt.amount for government_debt in Query(world, (Components.GovernmentDebt,)))
-    total_banking_residuals = @sum_over (residual.amount for residual in Query(world, (Components.ResidualItem,)))
+    total_government_debt = @sum_over (government_debt.amount for government_debt in Ark.Query(world, (Components.GovernmentDebt,)))
+    total_banking_residuals = @sum_over (residual.amount for residual in Ark.Query(world, (Components.ResidualItems,)))
 
-    for (e, equity, interest_rate) in Query(world, (Components.CentralBankEquity, Components.NominalInterestRate))
+    for (e, equity, interest_rate) in Ark.Query(world, (Components.CentralBankEquity, Components.NominalInterestRate))
         for i in eachindex(e)
             profits = government_interest_rate * total_government_debt - interest_rate[i].rate * total_banking_residuals
             equity[i] = Components.CentralBankEquity(

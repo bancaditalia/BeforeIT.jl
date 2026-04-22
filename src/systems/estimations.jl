@@ -23,7 +23,7 @@ function set_growth_inflation_for_EA!(world::Ark.World)
     epsilon_Y_EA = Ark.get_resource(world, Epsilons).Y_EA
     (;
         inflation_shock_sd,
-        output_outoregression,
+        output_autoregression,
         inflation_response_to_output_gap,
         inflation_autoregression, output_autoregression_scalar,
     ) = Ark.get_resource(world, Properties).external_params
@@ -33,7 +33,7 @@ function set_growth_inflation_for_EA!(world::Ark.World)
 
     for (e, gdp, growth, inflation) in Ark.Query(world, (Components.EuroAreaGDP, Components.EuroAreaGrowth, Components.EuroAreaInflation))
         @inbounds for i in eachindex(e)
-            expected_growth = exp(output_outoregression * log(gdp[i].value) + output_autoregression_scalar + epsilon_Y_EA)
+            expected_growth = exp(output_autoregression * log(gdp[i].value) + output_autoregression_scalar + epsilon_Y_EA)
             growth[i] = Components.EuroAreaGrowth(expected_growth / gdp[i].value)
             gdp[i] = Components.EuroAreaGDP(expected_growth)
             inflation[i] = Components.EuroAreaInflation(
@@ -56,7 +56,7 @@ function set_inflation_price_index!(world::Ark.World)
     total_monetary_output_value = 0.0
     total_output = 0.0
 
-    for (entities, prices, quantities) in Ark.Query(world, (Components.Price, Components.Output))
+    for (_, prices, quantities) in Ark.Query(world, (Components.Price, Components.Output))
         total_monetary_output_value += sum(prices.value .* quantities.amount)
         total_output += sum(quantities.amount)
     end
@@ -73,7 +73,7 @@ function set_sector_specific_priceindex!(world::Ark.World)
     fill!(price_indices.sector, 0.0)
     total_quantities = zeros(size(price_indices.sector))
 
-    for (entities, principal_product, prices, quantities) in Ark.Query(world, (Components.PrincipalProduct, Components.Price, Components.Quantities))
+    for (entities, principal_product, prices, quantities) in Ark.Query(world, (Components.PrincipalProduct, Components.Price, Components.Output))
         @inbounds for i in eachindex(entities)
             price_indices.sector[principal_product[i].id] += prices[i].value * quantities[i].amount
             total_quantities[principal_product[i].id] += quantities[i].amount
@@ -92,17 +92,17 @@ function set_sector_specific_priceindex!(world::Ark.World)
 end
 
 function set_capital_formation_priceindex!(world::Ark.World)
-    price_indices = Ark.get_resource(world, PriceIndices)
-    properties = Ark.get_resource(world, Properties)
-    price_indices.capital_goods = LinearAlgebra.dot(properties.product_coefficients.capital_formation, price_indices.sector)
+    price_indices = BeforeIT.price_indices(world)
+    properties = BeforeIT.properties(world)
+    price_indices.capital_goods = LinearAlgebra.dot(properties.product_coeffs.capital_formation, price_indices.sector)
     return nothing
 end
 
 function set_household_price_index!(world::Ark.World)
-    price_indices = Ark.get_resource(world, PriceIndices)
-    properties = Ark.get_resource(world, Properties)
+    price_indices = BeforeIT.price_indices(world)
+    properties = BeforeIT.properties(world)
 
-    price_indices.household_consumption = dot(properties.product_coefficients.household_consumption, price_indices.sector)
+    price_indices.household_consumption = dot(properties.product_coeffs.household_consumption, price_indices.sector)
     return nothing
 
 end

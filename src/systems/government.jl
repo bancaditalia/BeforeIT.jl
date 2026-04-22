@@ -1,14 +1,14 @@
 function set_gov_expenditure!(world::Ark.World)
-    properties = Ark.get_resource(world, Properties)
-    expectations = Ark.get_resource(world, Expectations)
-    price_indices = Ark.get_resource(world, PriceIndices)
+    prop = properties(world)
+    expect = expectations(world)
+    price_indices = BeforeIT.price_indices(world)
 
-    c_G_g = properties.product_coefficients.government_consumption
+    c_G_g = prop.product_coeffs.government_consumption
     P_bar_g = price_indices.sector
-    pi_e = expectations.inflation
+    pi_e = expect.inflation
 
-    local_governments = properties.dimensions.local_governments
-    (; consumption_autoregression, consumption_autoregression_scalar, consumption_shock_sd) = properties.fiscal_policy
+    local_governments = prop.dimensions.local_governments
+    (; consumption_autoregression, consumption_autoregression_scalar, consumption_shock_sd) = prop.fiscal_policy
     epsilon_G = consumption_shock_sd .* randn()
 
     nominal_sector_demand = dot(P_bar_g, c_G_g)
@@ -29,20 +29,19 @@ end
 
 function set_gov_revenues!(world::Ark.World)
 
-    properties = Ark.get_resource(world, Properties)
+    prop = properties(world)
 
-    taxes = properties.tax_rates
+    taxes = prop.tax_rates
     τ_income = taxes.income
-    τ_corp = taxes.corporate
     τ_vat = taxes.value_added
     τ_firm = taxes.corporate
-    τ_cf = taxes.capital_goods
-    θ_div = properties.banking_params.dividend_payout_ratio
+    τ_cf = taxes.capital_formation
+    θ_div = prop.banking_params.dividend_payout_ratio
 
     (;
         employers_contribution,
         employees_contribution,
-    ) = properties.social_insurance
+    ) = prop.social_insurance
 
     cpi = Ark.get_resource(world, PriceIndices).household_consumption
 
@@ -62,7 +61,7 @@ function set_gov_revenues!(world::Ark.World)
 
     for (e, government_revenues) in Ark.Query(world, (Components.GovernmentRevenues,))
         for i in eachindex(e)
-            government_revenues[i] = Components.GovernmentRevenues(social_security + labor_income + value_added + capital_income + capital_formation + products + production)
+            government_revenues[i] = Components.GovernmentRevenues(social_security + labor_income + value_added + capital_income + capital_formation + products + production + corporate_income)
         end
     end
     return nothing
@@ -79,7 +78,7 @@ function set_gov_loans!(world::Ark.World)
     for (e, sb_inactive, sb_other, debt, realised_consumption, revenues, debt) in Ark.Query(world, (Components.SocialBenefitsInactive, Components.SocialBenefitsOther, Components.GovernmentDebt, Components.RealisedConsumption, Components.GovernmentRevenues, Components.GovernmentDebt))
         for i in eachindex(e)
             social_benefits = cpi * (inactive * sb_inactive[i].amount + theta_UB * total_wages_unemployed + total * sb_other[i].amount)
-            debt[i] = Components.GovernmentDebt(social_benefits + realised_consumption[i].amount + r_G * debt[i].amount - revenues[i].amount)
+            debt[i] = Components.GovernmentDebt(social_benefits + realised_consumption[i].amount + r_g * debt[i].amount - revenues[i].amount)
         end
     end
 
@@ -88,9 +87,9 @@ function set_gov_loans!(world::Ark.World)
 end
 
 function set_gov_social_benefits!(world::Ark.World)
-    expected_growth = Ark.get_resource(world, Expectations).growth
+    expected_growth = BeforeIT.expectations(world).output_growth
 
-    for (e, sb_inactive, sb_other) in Ark.Query(world, (Components.SocialBenefitsInactive, Components.SocialBenefitsOther, Components.GovernmentDebt))
+    for (_, sb_inactive, sb_other) in Ark.Query(world, (Components.SocialBenefitsInactive, Components.SocialBenefitsOther, Components.GovernmentDebt))
         sb_inactive.amount .*= (1 + expected_growth)
         sb_other.amount .*= (1 + expected_growth)
 

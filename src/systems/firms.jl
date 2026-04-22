@@ -80,6 +80,16 @@ end
     return max(0.0, -expected_deposits - deposits)
 end
 
+@inline function labor_cost_component(wage, labor_productivity, employer_contribution, household_price, inv_price)
+    return (1.0 + employer_contribution) * wage / labor_productivity * (household_price * inv_price - 1.0)
+end
+@inline function material_cost_component(intermediate_productivity, sector_production_cost, inv_price)
+    return inv(intermediate_productivity) * (sector_production_cost * inv_price - 1.0)
+end
+@inline function capital_cost_component(depreciation_rate, capital_productivity, capital_goods_price, inv_price)
+    return depreciation_rate / capital_productivity * (capital_goods_price * inv_price - 1.0)
+end
+
 @inline function compute_firm_cost_push_inflation(
         wage::Float64,
         employer_contribution::Float64,
@@ -93,7 +103,7 @@ end
         inv_price::Float64,
     )
     labor_cost = labor_cost_component(
-        wage, employer_contribution, household_price, inv_price
+        wage, labor_productivity, employer_contribution, household_price, inv_price
     )
 
     material_cost = material_cost_component(
@@ -207,21 +217,21 @@ function set_firms_expectations_and_decisions!(world::Ark.World)
     properties = Ark.get_resource(world, Properties)
     firm_cache = Ark.get_resource(world, FirmTmpBuffers{Float64})
 
-    growth = expectations.growth
+    growth = expectations.output_growth
     inflation = expectations.inflation
 
     sector = price_indices.sector
-    household = price_indices.household
+    household = price_indices.household_consumption
     capital_goods = price_indices.capital_goods
 
-    technology_matrix = properties.production_coefficients.technology_matrix
-    employer_contribution = properties.social_insurance.employer_contribution
+    technology_matrix = properties.product_coeffs.technology_matrix
+    employer_contribution = properties.social_insurance.employers_contribution
 
     debt_installment_rate = properties.banking_params.debt_installment_rate
     dividend_payout_ratio = properties.banking_params.dividend_payout_ratio
     corporate_tax = properties.tax_rates.corporate
 
-    sector_costs = precompute_sector_production_costs!(
+    precompute_sector_production_costs!(
         firm_cache.sector_production_cost,
         technology_matrix,
         sector,
@@ -268,7 +278,7 @@ function set_firms_expectations_and_decisions!(world::Ark.World)
             current_loans = loans[i].amount
             current_deposits = deposits[i].amount
 
-            sector_production_cost = sector_costs[product_id]
+            sector_production_cost = firm_cache.sector_production_cost[product_id]
 
             cost_push_inflation = compute_firm_cost_push_inflation(
                 wage,
@@ -554,8 +564,8 @@ function set_firm_profits!(world::Ark.World)
             deposits.amount,
             wage_bill.amount,
             employment.amount,
-            price_indices.household,
-            properties.social_insurance.employer_contribution,
+            price_indices.household_consumption,
+            properties.social_insurance.employers_contribution,
             intermediate_productivity.value,
             intermediate_price.value,
             production.amount,
@@ -689,12 +699,12 @@ function set_firms_deposits!(world::Ark.World)
     (_, r) = single(Ark.Query(world, (Components.LendingRate,)))
     (_, r_bar) = single(Ark.Query(world, (Components.NominalInterestRate,)))
 
-    employer_contribution = properties.social_insurance.employer_contribution
+    employer_contribution = properties.social_insurance.employers_contribution
     corporate_tax_rate = properties.tax_rates.corporate
     dividend_payout_ratio = properties.banking_params.dividend_payout_ratio
     debt_installment_rate = properties.banking_params.debt_installment_rate
 
-    household_price_index = price_indices.household
+    household_price_index = price_indices.household_consumption
     capital_goods_price_index = price_indices.capital_goods
 
     for (
@@ -762,7 +772,7 @@ function set_firms_equity!(world::Ark.World)
 
     precompute_sector_production_costs!(
         firm_cache.sector_production_cost,
-        properties.production_coefficients.technology_matrix,
+        properties.product_coeffs.technology_matrix,
         price_indices.sector,
     )
 

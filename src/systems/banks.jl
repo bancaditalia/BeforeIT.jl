@@ -4,7 +4,7 @@ function set_bank_deposits!(world)
 
     for (e, equity, resisdual) in Ark.Query(world, (Components.Equity, Components.ResidualItems))
         for i in eachindex(e)
-            resisdual[i] = Components.ResidualItem(equity[i] - total_loans + total_deposits)
+            resisdual[i] = Components.ResidualItems(equity[i] - total_loans + total_deposits)
         end
     end
 
@@ -16,7 +16,7 @@ function finance_insolvant_firms(world)
     ζ = Ark.get_resource(world, Properties).banking_params.new_firm_loan_ratio
 
     financed_total_equity = 0.0
-    for (e, outstanding_loans, equity, deposits, capital) in Ark.Query(world, Components.LoansOutstanding, Components.Equity, Components.Deposits, Components.CapitalStock)
+    for (e, outstanding_loans, equity, deposits, capital) in Ark.Query(world, (Components.LoansOutstanding, Components.Equity, Components.Deposits, Components.CapitalStock))
         for i in eachindex(e)
             deposits[i].amount >= 0.0 && equity[i].amount >= 0 && continue
             loan = ζ * P_bar_CF * capital[i].amount
@@ -37,10 +37,10 @@ function finance_insolvant_firms(world)
 end
 
 function set_expected_profits!(world)
-    (; expected_inflation, expected_output_growth) = Ark.get_resource(world, MacroeconomicState)
+    (; inflation, output_growth) = BeforeIT.expectations(world)
 
     for (_, expected_profits, profits) in Ark.Query(world, (Components.ExpectedProfits, Components.Profits), with = (Components.LendingRate,))
-        expected_profits.amount .= profits.amount .* (1 + expected_output_growth) .* (1 + expected_inflation)
+        expected_profits.amount .= profits.amount .* (1 + output_growth) .* (1 + inflation)
     end
 
 
@@ -96,7 +96,7 @@ function set_bank_profits!(world)
     end
 
     rterm = total_loans + total_negative_deposits
-    for (e, profits, lending_rate, residual_item) in Ark.Query(world, (Components.Profits, Components.LendingRate, Components.ResidualItem))
+    for (e, profits, lending_rate, residual_item) in Ark.Query(world, (Components.Profits, Components.LendingRate, Components.ResidualItems))
         @inbounds for i in eachindex(e)
             central_bank_term = residual_item[i] - total_positive_deposits - total_negative_deposits
             profits[i] = Components.Profits(lending_rate[i].rate * rterm + cb_rate * central_bank_term)

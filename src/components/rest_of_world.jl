@@ -29,7 +29,9 @@ end
 @component struct ImportDemand <: AbstractComponent
     quantity::Float64
 end
-
+@component struct ImportPrice <: AbstractComponent
+    value::Float64
+end
 
 @component struct ExportPriceInflation <: AbstractComponent
     value::Float64
