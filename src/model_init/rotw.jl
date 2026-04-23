@@ -1,6 +1,8 @@
 function setup_rotw!(world::Ark.World, properties::Properties)
     L = properties.dimensions.foreign_consumers
     G = properties.dimensions.sectors
+    T_prime = properties.dimensions.interval_for_expectation_estimation
+
 
     external = properties.initial_conditions.external
 
@@ -12,6 +14,8 @@ function setup_rotw!(world::Ark.World, properties::Properties)
             Components.EuroAreaInflation(external.foreign_inflation),
             Components.NetForeignPosition(external.debt),
             Components.ForeignConsumption(0.0),
+            Components.TotalExportDemand(external.exports[T_prime]),
+            Components.TotalImportSupply(external.imports[T_prime]),
         )
     )
 

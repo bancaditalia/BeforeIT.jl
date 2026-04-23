@@ -15,19 +15,27 @@ end
 end
 
 @component struct ImportSupply <: AbstractComponent
-    quantity::Float64
+    amount::Float64
+end
+
+@component struct TotalExportDemand <: AbstractComponent
+    amount::Float64
+end
+
+@component struct TotalImportSupply <: AbstractComponent
+    amount::Float64
 end
 
 @component struct ExportDemand <: AbstractComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct ImportSales <: AbstractComponent
-    quantity::Float64
+    amount::Float64
 end
 
 @component struct ImportDemand <: AbstractComponent
-    quantity::Float64
+    amount::Float64
 end
 @component struct ImportPrice <: AbstractComponent
     value::Float64

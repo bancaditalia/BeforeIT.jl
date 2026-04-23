@@ -157,6 +157,7 @@ end
 struct ExternalInitialConditions
     debt::Float64
     exports::Vector{Float64}
+    imports::Vector{Float64}
     foreign_output::Float64
     foreign_inflation::Float64
 end
@@ -348,6 +349,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions::Dict{Stri
         ExternalInitialConditions(
             Float64(initial_conditions["D_RoW"]),
             Vector{Float64}(vec(initial_conditions["C_E"])),
+            Vector{Float64}(vec(initial_conditions["Y_I"])),
             Float64(initial_conditions["Y_EA"]),
             Float64(initial_conditions["pi_EA"])
         ),

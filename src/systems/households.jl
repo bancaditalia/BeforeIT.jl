@@ -39,27 +39,57 @@ function set_households_income!(world::Ark.World)
     cpi = price_indices(world).household_consumption
     (_, sb_other, sb_inact) = single(Ark.Query(world, (Components.SocialBenefitsOther, Components.SocialBenefitsInactive)))
 
+    for (_, employment, net_disposable_income) in Ark.Query(world, (Components.Employed, Components.NetDisposableIncome))
+        net_disposable_income.amount .= employed_worker_income.(employment.rate, τ_SIW, τ_INC, sb_other.amount, cpi, 0.0)
+    end
+
+    for (_, unemployed, net_disposable_income) in Ark.Query(world, (Components.Unemployed, Components.NetDisposableIncome))
+        net_disposable_income.amount .= unemployed_worker_income.(unemployed.unemployment_benefit, θ_UB, sb_other.amount, cpi, 0.0)
+    end
+
+    for (_, net_disposable_income) in Ark.Query(world, (Components.NetDisposableIncome,), with = (Components.Inactive,))
+        net_disposable_income.amount .= inactive_worker_income(sb_inact.amount, sb_other.amount, cpi, 0.0)
+    end
+
+    for (e_owner, net_disposable_income) in Ark.Query(world, (Components.NetDisposableIncome,), without = (Components.Employed, Components.Unemployed, Components.Inactive))
+        for i in eachindex(e_owner)
+            (_, profits) = single(Ark.Query(world, (Components.Profits,), relationship = (Components.Owner => e_owner[i])))
+            net_disposable_income[i] = Components.NetDisposableIncome(firm_owner_disposable_income(θ_DIV, τ_INC, τ_FIRM, cpi, sb_other, profits.amount, 0.0))
+        end
+    end
+
+    return nothing
+end
+
+function set_households_expected_income!(world)
+    prop = properties(world)
+    τ_INC = prop.tax_rates.income
+    τ_SIW = prop.social_insurance.employees_contribution
+    τ_FIRM = prop.tax_rates.corporate
+    θ_DIV = prop.banking_params.dividend_payout_ratio
+
+
+    θ_UB = prop.social_insurance.unemployment_benefit
+    cpi = price_indices(world).household_consumption
+    (_, sb_other, sb_inact) = single(Ark.Query(world, (Components.SocialBenefitsOther, Components.SocialBenefitsInactive)))
+
     expected_inflation = expectations(world).inflation
 
-    for (_, employment, net_disposable_income, expected_income) in Ark.Query(world, (Components.Employed, Components.NetDisposableIncome, Components.ExpectedIncome))
-        net_disposable_income.amount .= employed_worker_income.(employment.rate, τ_SIW, τ_INC, sb_other.amount, cpi, 0.0)
+    for (_, employment, expected_income) in Ark.Query(world, (Components.Employed, Components.ExpectedIncome))
         expected_income.amount .= employed_worker_income.(employment.rate, τ_SIW, τ_INC, sb_other.amount, cpi, expected_inflation)
     end
 
-    for (_, unemployed, net_disposable_income, expected_income) in Ark.Query(world, (Components.Unemployed, Components.NetDisposableIncome, Components.ExpectedIncome))
-        net_disposable_income.amount .= unemployed_worker_income.(unemployed.unemployment_benefit, θ_UB, sb_other.amount, cpi, 0.0)
+    for (_, unemployed, expected_income) in Ark.Query(world, (Components.Unemployed, Components.ExpectedIncome))
         expected_income.amount .= unemployed_worker_income.(unemployed.unemployment_benefit, θ_UB, sb_other.amount, cpi, expected_inflation)
     end
 
-    for (_, net_disposable_income, expected_income) in Ark.Query(world, (Components.NetDisposableIncome, Components.ExpectedIncome), with = (Components.Inactive,))
-        net_disposable_income.amount .= inactive_worker_income(sb_inact.amount, sb_other.amount, cpi, 0.0)
+    for (_, expected_income) in Ark.Query(world, (Components.ExpectedIncome,), with = (Components.Inactive,))
         expected_income.amount .= inactive_worker_income(sb_inact.amount, sb_other.amount, cpi, expected_inflation)
     end
 
-    for (e_owner, net_disposable_income, expected_income) in Ark.Query(world, (Components.NetDisposableIncome, Components.ExpectedIncome), without = (Components.Employed, Components.Unemployed, Components.Inactive))
+    for (e_owner, expected_income) in Ark.Query(world, (Components.ExpectedIncome,), without = (Components.Employed, Components.Unemployed, Components.Inactive))
         for i in eachindex(e_owner)
-            (_, profits, expected_profits) = single(Ark.Query(world, (Components.Profits, Components.ExpectedProfits), relationship = (Components.Owner => e_owner[i])))
-            net_disposable_income[i] = Components.NetDisposableIncome(firm_owner_disposable_income(θ_DIV, τ_INC, τ_FIRM, cpi, sb_other, profits.amount, 0.0))
+            (_, expected_profits) = single(Ark.Query(world, (Components.ExpectedProfits,), relationship = (Components.Owner => e_owner[i])))
             expected_income[i] = Components.ExpectedIncome(firm_owner_disposable_income(θ_DIV, τ_INC, τ_FIRM, cpi, sb_other, expected_profits.amount, expected_inflation))
         end
     end

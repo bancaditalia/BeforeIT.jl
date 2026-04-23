@@ -80,6 +80,7 @@ function CommonSolve.step!(model)
     Bit.set_bank_expected_profits!(world)
 
     # update consumption and investment budget for all households
+    Bit.set_households_expected_income!(world)
     Bit.set_households_budget!(world)
 
     ####### GOVERNMENT SPENDING BUDGET, IMPORT-EXPORT BUDGET #######
