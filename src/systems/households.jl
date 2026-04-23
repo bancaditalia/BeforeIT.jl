@@ -61,7 +61,7 @@ function set_households_income!(world::Ark.World)
     return nothing
 end
 
-function set_households_expected_income!(world)
+function set_households_expected_income!(world::Ark.World)
     prop = properties(world)
     τ_INC = prop.tax_rates.income
     τ_SIW = prop.social_insurance.employees_contribution

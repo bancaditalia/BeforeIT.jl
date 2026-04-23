@@ -25,7 +25,7 @@ function setup_bank!(world::Ark.World, properties::Properties)
             Components.LendingRate(policy_rate + risk_premium),
             Components.Owner(),
         ),
-        relations = (Components.Owner => owner)
+        relations = (Components.Owner => owner,)
     )
 
     return nothing

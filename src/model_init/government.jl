@@ -18,6 +18,6 @@ function setup_government!(world, properties::Properties)::Nothing
         )
     )
 
-    Ark.new_entities!(world, local_governments, (Components.ConsumptionDemand(0.0), Components.LocalGovernment()), relations = ((Components.LocalGovernment => e)))
+    Ark.new_entities!(world, local_governments, (Components.ConsumptionDemand(0.0), Components.LocalGovernment()), relations = ((Components.LocalGovernment => e,)))
     return nothing
 end

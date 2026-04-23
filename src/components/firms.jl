@@ -123,7 +123,7 @@ end
     amount::Float64
 end
 
-@component struct Owner <: FirmComponent
+@component struct Owner <: Ark.Relationship
 end
 
 @component struct Capitalist <: FirmComponent end
