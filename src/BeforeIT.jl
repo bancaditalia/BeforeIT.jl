@@ -23,7 +23,9 @@ include("resources/aggregates.jl")
 include("resources/properties.jl")
 include("resources/shocks.jl")
 include("resources/epsilons.jl")
+
 include("cache/firm_cache.jl")
+include("cache/search_and_matching.jl")
 
 include("model_init/init_model.jl")
 include("model_init/firms.jl")
@@ -43,6 +45,7 @@ include("systems/firms.jl")
 include("systems/government.jl")
 include("systems/households.jl")
 include("systems/rotw.jl")
+include("systems/markets/search_and_matching.jl")
 
 
 end

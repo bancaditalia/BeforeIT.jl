@@ -227,18 +227,13 @@ function perform_firms_market!(
             e = rand(F_g_active)
             f = F_g[e]
 
-            # selected firm has sufficient stock
-            if S_fg[f] > DM_d_ig[i]
-                S_fg[f] -= DM_d_ig[i]
-                DM_nominal_ig[i] += DM_d_ig[i] * P_f[f]
-                DM_d_ig[i] = 0.0
-            else
-                DM_d_ig[i] -= S_fg[f]
-                DM_nominal_ig[i] += S_fg[f] * P_f[f]
-                S_fg[f] = 0.0
-                F_g_active[e] = 0.0
-                iszero(F_g_active) && break
-            end
+            x = min(S_fg[f], DM_d_ig[i])
+            S_fg[f] -= x
+            DM_nominal_ig[i] += x * P_f[f]
+            DM_d_ig[i] -= x
+            F_g_active[e] *= !iszero(S_fg[f])
+
+            iszero(F_g_active) && break
         end
         filter!(i -> DM_d_ig[i] > 0.0, I_g)
     end
