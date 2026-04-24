@@ -314,18 +314,12 @@ function perform_retail_market!(
         for h in H_g
             e = rand(F_g_active)
             f = F_g[e]
-
-            if S_fg[f] > C_d_hg[h] / P_f[f]
-                S_fg[f] -= C_d_hg[h] / P_f[f]
-                C_real_hg[h] += C_d_hg[h] / P_f[f]
-                C_d_hg[h] = 0.0
-            else
-                C_d_hg[h] -= S_fg[f] * P_f[f]
-                C_real_hg[h] += S_fg[f]
-                S_fg[f] = 0.0
-                F_g_active[e] = 0.0
-                iszero(F_g_active) && break
-            end
+            q = min(S_fg[f], C_d_hg[h] / P_f[f])
+            S_fg[f] -= q
+            C_real_hg[h] += q
+            C_d_hg[h] -= q * P_f[f]
+            F_g_active[e] *= !iszero(S_fg[f])
+            iszero(F_g_active) && break
         end
         filter!(h -> C_d_hg[h] > 0.0, H_g)
     end

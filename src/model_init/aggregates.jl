@@ -20,10 +20,18 @@ function setup_aggregates!(world::Ark.World, properties::Properties)
     )
 
     Ark.add_resource!(world, FirmTmpBuffers{Float64}(zeros(properties.dimensions.sectors)))
-    Ark.add_resource!(world, DesiredIntermediatesCache(zeros(properties.dimensions.sectors, properties.dimensions.total_firms)))
+    Ark.add_resource!(world, DesiredIntermediatesCache(properties.dimensions.total_firms, properties.dimensions.sectors))
     Ark.add_resource!(
         world, DesiredHouseholdConsumptionCache(
-            zeros(properties.dimensions.sectors, properties.population.total + properties.dimensions.local_governments + properties.dimensions.foreign_consumers)
+            properties.population.total + properties.dimensions.local_governments + properties.dimensions.foreign_consumers, properties.dimensions.sectors
+        )
+
+    )
+
+    Ark.add_resource!(
+        world, StockCache(
+            properties.dimensions.total_firms + properties.dimensions.sectors,
+            properties.dimensions.sectors
         )
     )
 
