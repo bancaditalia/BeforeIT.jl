@@ -61,3 +61,7 @@ function build_consumption_demand_cache!(world::Ark.World)
 
     return nothing
 end
+
+function build_stock_cache!(world)
+
+end
