@@ -3,7 +3,7 @@ abstract type AbstractDemandCache end
 mutable struct DesiredIntermediatesCache <: AbstractDemandCache
     vals::Matrix{Float64}
     nominal::Matrix{Float64}
-    indices::Vector{Ark.Entity}
+    indices::Dict{Ark.Entity, Int64}
     current_index::Int64
 end
 
@@ -16,7 +16,7 @@ end
 
 function emblace!(val, entity, cache::T) where {T <: AbstractDemandCache}
     cache.vals[cache.current_index, :] .= val
-    cache.indices[cache.current_index] = entity
+    cache.indices[entity] = current_index
     cache.current_index += 1
     return nothing
 end
@@ -28,7 +28,7 @@ function reset_cache!(cache::T) where {T <: AbstractDemandCache}
 end
 
 function (::Type{T})(values::Int64, sectors::Int64) where {T <: AbstractDemandCache}
-    return T(Matrix{Float64}(undef, values, sectors), Matrix{Float64}(undef, values, sectors), fill(Ark.zero_entity, values), 1)
+    return T(Matrix{Float64}(undef, values, sectors), zeros(values, sectors), Dict{Ark.Entity, Int64}(), 1)
 end
 
 
@@ -38,7 +38,7 @@ mutable struct StockCache
     prices::Vector{Float64}
     weights::Vector{Float64}
     sector::Vector{Int64}
-    indices::Vector{Ark.Entity}
+    indices::Dict{Ark.Entity, Int64}
     current_index::Int64
     sector_offset::Vector{Int}
 end
@@ -50,7 +50,7 @@ function StockCache(size::Int64, sectors::Int64)
         Vector{Float64}(undef, size),
         Vector{Float64}(undef, size),
         Vector{Int64}(undef, size),
-        Vector{Ark.Entity}(undef, size),
+        Dict{Ark.Entity, Int64}(),
         1,
         Vector{Int64}(undef, sectors + 1),
     )
@@ -61,7 +61,7 @@ function emblace!(available, stock_capacity, price, sector, entity, cache::Stock
     cache.stock_capacity[cache.current_index] = stock_capacity
     cache.prices[cache.current_index] = price
     cache.sector[cache.current_index] = sector
-    cache.indices[cache.current_index] = entity
+    cache.indices[entity] = cache.current_index
     cache.current_index += 1
     return nothing
 end
@@ -80,7 +80,10 @@ function finalize_stock_cache!(cache::StockCache)
     permute!(cache.stock_capacity, p)
     permute!(cache.sector, p)
     permute!(cache.prices, p)
-    permute!(cache.indices, p)
+
+
+    invp = invperm(p)
+    cache.indices = Dict{Ark.Entity, Int64}(e => invp[i] for (e, i) in cache.indices)
 
     prev_sector = -1
     for (i, sector) in enumerate(cache.sector)
@@ -145,4 +148,8 @@ end
 
 function choose_random_firm(cache::StockCache, sector, weights)
     return rand(weights) + cache.sector_offset[sector]
+end
+
+function find_entity_index(entity, cache)
+    return cache.indices[entity]
 end

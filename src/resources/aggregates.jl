@@ -19,5 +19,5 @@ mutable struct PriceIndices
     household_consumption::Float64            #P_bar_HH
     capital_goods::Float64                    #P_bar_CF
     household_consumption_previous::Float64   #P_bar_h
-    capital_formation_previous::Float64       #P_bar_CF_H
+    capital_formation_households::Float64       #P_bar_CF_H
 end

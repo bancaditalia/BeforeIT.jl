@@ -257,7 +257,7 @@ function perform_firms_market!(
                     S_fg[f] -= DM_d_ig_[i]
                     S_fg_[f] -= DM_d_ig_[i]
                     DM_d_ig_[i] = 0.0
-                else
+
                     DM_d_ig_[i] -= S_fg_[f]
                     S_fg[f] -= S_fg_[f]
                     S_fg_[f] = 0.0
@@ -269,15 +269,13 @@ function perform_firms_market!(
         end
     end
 
-    a = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .- pos.(DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
-    b = @~ pos.(b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
-    c = @~ @view(a_sg[g, firms.G_i]) .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
+    c = a_sg[g, firms.G_i] .* firms.DM_d_i .+ b_CF_g[g] .* firms.I_d_i .- DM_d_ig
 
-    @~ DM_i_g[:, g] .= a
-    @~ I_i_g[:, g] .= b
+    DM_i_g[:, g] .= a_sg[g, firms.G_i] .* firms.DM_d_i .- max.(0.0, DM_d_ig .- b_CF_g[g] .* firms.I_d_i)
+    I_i_g[:, g] .= max.(0.0, b_CF_g[g] .* firms.I_d_i .- DM_d_ig)
 
-    @~ P_bar_i_g[:, g] .= DM_nominal_ig .* a ./ zero_to_one.(c)
-    @~ P_CF_i_g[:, g] .= DM_nominal_ig .* b ./ zero_to_one.(c)
+    P_bar_i_g[:, g] .= DM_nominal_ig .* a ./ zero_to_one.(c)
+    P_CF_i_g[:, g] .= DM_nominal_ig .* b ./ zero_to_one.(c)
 
     return
 end
