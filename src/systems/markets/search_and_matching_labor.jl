@@ -42,6 +42,7 @@ function fire_employed_workers!(world::Ark.World)
 end
 
 
+#TODO: Make this more efficient 111ms :(
 function hire_workers!(world::Ark.World)
 
     f = Ark.Filter(world, (Components.Unemployed,))
@@ -56,7 +57,7 @@ function hire_workers!(world::Ark.World)
         for j in eachindex(worker_e)
 
             for (firm_e, vacancies, employment) in Ark.Query(firms)
-                for i in eachindex(firm_e)
+                for i in shuffle(eachindex(firm_e))
                     vacancies[i].amount < 0 && haskey(add_employment, worker_e[j]) && continue
                     vacancies[i] = Components.Vacancies(vacancies[i].amount - 1)
                     employment[i] = Components.Employment(employment[i].amount + 1)
