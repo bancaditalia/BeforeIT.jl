@@ -38,7 +38,6 @@ function setup_rotw!(world::Ark.World, properties::Properties)
 
             Components.ForeignSector,
             Components.PrincipalProduct,
-            Components.ExportDemand,
             Components.ImportSupply,
             Components.ImportSales,
             Components.ImportDemand,
@@ -46,11 +45,10 @@ function setup_rotw!(world::Ark.World, properties::Properties)
             Components.ExportPriceInflation,
             Components.RestOfWorldEntity,
         )
-    ) do (entities, fs, pp, edemand, isupply, isales, idemand, iprice, epi, rowe)
+    ) do (entities, fs, pp, isupply, isales, idemand, iprice, epi, rowe)
         for (g, i) in enumerate(eachindex(entities))
             fs[i] = Components.ForeignSector()
             pp[i] = Components.PrincipalProduct(g)
-            edemand[i] = Components.ExportDemand(external.exports[g])
             isupply[i] = Components.ImportSupply(0.0)
             isales[i] = Components.ImportSales(0.0)
             idemand[i] = Components.ImportDemand(0.0)

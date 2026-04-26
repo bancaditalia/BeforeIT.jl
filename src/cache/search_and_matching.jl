@@ -10,13 +10,13 @@ end
 mutable struct DesiredHouseholdConsumptionCache <: AbstractDemandCache
     vals::Matrix{Float64}
     nominal::Matrix{Float64}
-    indices::Vector{Ark.Entity}
+    indices::Dict{Ark.Entity, Int64}
     current_index::Int64
 end
 
 function emblace!(val, entity, cache::T) where {T <: AbstractDemandCache}
     cache.vals[cache.current_index, :] .= val
-    cache.indices[entity] = current_index
+    cache.indices[entity] = cache.current_index
     cache.current_index += 1
     return nothing
 end

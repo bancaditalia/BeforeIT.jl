@@ -13,7 +13,7 @@ function set_rotw_import_export!(world::Ark.World)
         total_export_demand.amount .= exp.(exports_response_to_foreign_output .* log.(total_export_demand.amount) .+ exports_autoregression .+ E)
         total_import_supply.amount .= exp.(investment_autoregression .* log.(total_import_supply.amount) .+ investment_response_to_utilization .+ I)
 
-        for (_, export_demand) in Ark.Query(world, (Components.ExportDemand,))
+        for (_, export_demand) in Ark.Query(world, (Components.ForeignConsumptionDemand,))
             export_demand.amount .= only(total_export_demand.amount) / foreign_consumers * dot(exports, sector_price_index) * (1 + expected_inflation)
 
         end
