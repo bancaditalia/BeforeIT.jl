@@ -72,6 +72,7 @@ function reset_cache!(cache::StockCache)
     return nothing
 end
 
+
 function finalize_stock_cache!(cache::StockCache)
 
     p = sortperm(cache.sector)

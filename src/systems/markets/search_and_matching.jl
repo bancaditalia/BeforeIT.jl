@@ -7,56 +7,87 @@ end
 
 function build_intermediate_demand_cache!(world::Ark.World)
     properties = BeforeIT.properties(world)
-    demand_from_intermediates_cache = Ark.get_resource(world, DesiredIntermediatesCache)
-    BeforeIT.reset_cache!(demand_from_intermediates_cache)
+    demand_cache = Ark.get_resource(world, DesiredIntermediatesCache)
+    BeforeIT.reset_cache!(demand_cache)
 
     (; technology_matrix, capital_formation) = properties.product_coeffs
-    for (e, principal_product, desired_investment, desired_materials) in Ark.Query(world, (Components.PrincipalProduct, Components.DesiredInvestment, Components.DesiredMaterials))
+
+    for (e, principal_product, desired_investment, desired_materials) in
+        Ark.Query(world, (Components.PrincipalProduct, Components.DesiredInvestment, Components.DesiredMaterials))
         for i in eachindex(e)
-            BeforeIT.emblace!(
-                @view(technology_matrix[:, principal_product[i].id]) .* desired_materials[i].amount + capital_formation .* desired_investment[i].amount,
-                e[i],
-                demand_from_intermediates_cache
+            demand = compute_intermediate_demand_vector(
+                technology_matrix,
+                capital_formation,
+                principal_product[i].id,
+                desired_materials[i].amount,
+                desired_investment[i].amount,
             )
+            BeforeIT.emblace!(demand, e[i], demand_cache)
         end
     end
 
     return nothing
 end
 
+function compute_intermediate_demand_vector(
+        technology_matrix,
+        capital_formation,
+        product_id,
+        desired_materials_amount,
+        desired_investment_amount,
+    )
+    return @view(technology_matrix[:, product_id]) .* desired_materials_amount +
+        capital_formation .* desired_investment_amount
+end
+
 #TODO: This allocates alot and should be fixed, A single execution takes arround 14ms
 function build_consumption_demand_cache!(world::Ark.World)
     properties = BeforeIT.properties(world)
-    demand_from_consumption_cache = Ark.get_resource(world, DesiredHouseholdConsumptionCache)
-    BeforeIT.reset_cache!(demand_from_consumption_cache)
-    (; household_consumption, household_investment, exports, government_consumption) = properties.product_coeffs
+    demand_cache = Ark.get_resource(world, DesiredHouseholdConsumptionCache)
+    BeforeIT.reset_cache!(demand_cache)
 
-    for (e, consumption_budget, investment_budget) in Ark.Query(world, (Components.ConsumptionBudget, Components.InvestmentBudget))
+    coeffs = properties.product_coeffs
+    build_household_consumption_demand_cache!(world, demand_cache, coeffs)
+    build_import_consumption_demand_cache!(world, demand_cache, coeffs.exports)
+    build_government_consumption_demand_cache!(world, demand_cache, coeffs.government_consumption)
+
+    return nothing
+end
+
+function build_household_consumption_demand_cache!(world::Ark.World, demand_cache, coeffs)
+    (; household_consumption, household_investment) = coeffs
+
+    for (e, consumption_budget, investment_budget) in
+        Ark.Query(world, (Components.ConsumptionBudget, Components.InvestmentBudget))
         for i in eachindex(e)
-            BeforeIT.emblace!(
-                household_consumption .* consumption_budget[i].amount + household_investment .* investment_budget[i].amount,
-                e[i],
-                demand_from_consumption_cache
-            )
+            demand =
+                household_consumption .* consumption_budget[i].amount +
+                household_investment .* investment_budget[i].amount
+            BeforeIT.emblace!(demand, e[i], demand_cache)
         end
     end
 
+    return nothing
+end
+
+function build_import_consumption_demand_cache!(world::Ark.World, demand_cache, exports)
     for (e, import_demand) in Ark.Query(world, (Components.ImportDemand,))
         for i in eachindex(e)
-            BeforeIT.emblace!(
-                exports * import_demand[i].amount,
-                e[i],
-                demand_from_consumption_cache
-            )
+            BeforeIT.emblace!(exports * import_demand[i].amount, e[i], demand_cache)
         end
     end
 
-    for (e, consumption_demand) in Ark.Query(world, (Components.ConsumptionDemand,), with = (Components.LocalGovernment,))
+    return nothing
+end
+
+function build_government_consumption_demand_cache!(world::Ark.World, demand_cache, government_consumption)
+    for (e, consumption_demand) in
+        Ark.Query(world, (Components.ConsumptionDemand,), with = (Components.LocalGovernment,))
         for i in eachindex(e)
             BeforeIT.emblace!(
                 government_consumption * consumption_demand[i].amount,
                 e[i],
-                demand_from_consumption_cache
+                demand_cache,
             )
         end
     end
@@ -68,20 +99,47 @@ function build_stock_cache!(world::Ark.World)
     stock_cache = Ark.get_resource(world, BeforeIT.StockCache)
     BeforeIT.reset_cache!(stock_cache)
 
-    for (e, pp, output, stocks, capital, capital_productivity, price) in Ark.Query(world, (Components. PrincipalProduct, Components.Output, Components.Inventories, Components.CapitalStock, Components.CapitalProductivity, Components.Price))
+    build_domestic_stock_cache!(world, stock_cache)
+    build_import_stock_cache!(world, stock_cache)
+    BeforeIT.finalize_stock_cache!(stock_cache)
+
+    return nothing
+end
+
+function build_domestic_stock_cache!(world::Ark.World, stock_cache)
+    for (e, pp, output, stocks, capital, capital_productivity, price) in
+        Ark.Query(
+            world,
+            (
+                Components.PrincipalProduct,
+                Components.Output,
+                Components.Inventories,
+                Components.CapitalStock,
+                Components.CapitalProductivity,
+                Components.Price,
+            ),
+        )
         @inbounds for i in eachindex(e)
+            available_stock = output[i].amount + stocks[i].amount
+            stock_capacity = capital[i].amount * capital_productivity[i].value - output[i].amount
+
             BeforeIT.emblace!(
-                output[i].amount + stocks[i].amount,
-                capital[i].amount * capital_productivity[i].value - output[i].amount,
+                available_stock,
+                stock_capacity,
                 price[i].value,
                 pp[i].id,
                 e[i],
-                stock_cache
+                stock_cache,
             )
         end
     end
 
-    for (e, pp, import_supply, price) in Ark.Query(world, (Components. PrincipalProduct, Components.ImportSupply, Components.ImportPrice))
+    return nothing
+end
+
+function build_import_stock_cache!(world::Ark.World, stock_cache)
+    for (e, pp, import_supply, price) in
+        Ark.Query(world, (Components.PrincipalProduct, Components.ImportSupply, Components.ImportPrice))
         @inbounds for i in eachindex(e)
             BeforeIT.emblace!(
                 import_supply[i].amount,
@@ -89,17 +147,15 @@ function build_stock_cache!(world::Ark.World)
                 price[i].value,
                 pp[i].id,
                 e[i],
-                stock_cache
+                stock_cache,
             )
         end
     end
-    BeforeIT.finalize_stock_cache!(stock_cache)
 
     return nothing
 end
 
 function rebuild_active_buyers!(active, demand, sector)
-
     nactive = 0
     @inbounds for i in axes(demand, 1)
         if demand[i, sector] > 0.0
@@ -110,133 +166,230 @@ function rebuild_active_buyers!(active, demand, sector)
     return nactive
 end
 
+function allocate_intermediate_from_available_stocks!(
+        demand_cache,
+        stock_cache,
+        active,
+        sector,
+        weights,
+        remaining_supply,
+    )
+    nactive = rebuild_active_buyers!(active, demand_cache.vals, sector)
+
+    while nactive > 0 && !iszero(remaining_supply)
+        i = 1
+        shuffle!(view(active, 1:nactive))
+
+        while i <= nactive
+            buyer = active[i]
+            firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
+            sold_amount = min(stock_cache.available_stocks[firm_index], demand_cache.vals[buyer, sector])
+
+            stock_cache.available_stocks[firm_index] -= sold_amount
+            demand_cache.nominal[buyer, sector] += sold_amount * stock_cache.prices[firm_index]
+            demand_cache.vals[buyer, sector] = max(demand_cache.vals[buyer, sector] - sold_amount, 0.0)
+            remaining_supply -= sold_amount
+
+            weights[firm_index - stock_cache.sector_offset[sector]] *=
+                !iszero(stock_cache.available_stocks[firm_index])
+
+            if iszero(demand_cache.vals[buyer, sector])
+                active[i] = active[nactive]
+                nactive -= 1
+            else
+                i += 1
+            end
+        end
+    end
+
+    return nothing
+end
+
+function allocate_intermediate_from_stock_capacity!(
+        demand_cache,
+        stock_cache,
+        active,
+        sector,
+        weights,
+        remaining_supply,
+    )
+    nactive = rebuild_active_buyers!(active, demand_cache.vals, sector)
+
+    while nactive > 0 && !iszero(remaining_supply)
+        i = 1
+        shuffle!(view(active, 1:nactive))
+
+        while i <= nactive
+            buyer = active[i]
+            firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
+            sold_amount = min(stock_cache.stock_capacity[firm_index], demand_cache.vals[buyer, sector])
+
+            stock_cache.available_stocks[firm_index] -= sold_amount
+            stock_cache.stock_capacity[firm_index] -= sold_amount
+            demand_cache.vals[buyer, sector] = max(demand_cache.vals[buyer, sector] - sold_amount, 0.0)
+            remaining_supply -= sold_amount
+
+            weights[firm_index - stock_cache.sector_offset[sector]] *=
+                !iszero(stock_cache.stock_capacity[firm_index])
+
+            if iszero(demand_cache.vals[buyer, sector])
+                active[i] = active[nactive]
+                nactive -= 1
+            else
+                i += 1
+            end
+        end
+    end
+
+    return nothing
+end
+
+function update_firm_realisations!(world::Ark.World, sector::Int64, demand_cache, technology_matrix, capital_formation)
+    for (e, material_stock_change, investment, principal_product, desired_materials, desired_investment, price_index, cf_price_index) in
+        Ark.Query(
+            world,
+            (
+                Components.MaterialsStockChange,
+                Components.Investment,
+                Components.PrincipalProduct,
+                Components.DesiredMaterials,
+                Components.DesiredInvestment,
+                Components.PriceIndex,
+                Components.CFPriceIndex,
+            ),
+        )
+        for i in eachindex(e)
+            update_firm_realisation_components!(
+                e[i],
+                i,
+                sector,
+                demand_cache,
+                technology_matrix,
+                capital_formation,
+                material_stock_change,
+                investment,
+                principal_product,
+                desired_materials,
+                desired_investment,
+                price_index,
+                cf_price_index,
+            )
+        end
+    end
+
+    return nothing
+end
+
+function update_firm_realisation_components!(
+        entity,
+        i,
+        sector,
+        demand_cache,
+        technology_matrix,
+        capital_formation,
+        material_stock_change,
+        investment,
+        principal_product,
+        desired_materials,
+        desired_investment,
+        price_index,
+        cf_price_index,
+    )
+    entity_index = BeforeIT.find_entity_index(entity, demand_cache)
+
+    materials_component =
+        technology_matrix[sector, principal_product[i].id] * desired_materials[i].amount
+    investment_component = capital_formation[sector] * desired_investment[i].amount
+    residual_demand = demand_cache.vals[entity_index, sector]
+    realised_quantities = materials_component + investment_component - residual_demand
+
+    material_stock_change[i] = Components.MaterialStockChange(
+        material_stock_change[i].amount +
+            materials_component - max(0.0, residual_demand - investment_component),
+    )
+
+    investment[i] = Components.Investment(
+        investment[i].amount + max(0.0, investment_component - residual_demand),
+    )
+
+    price_index[i] = Components.PriceIndex(
+        price_index[i].value +
+            demand_cache.nominal[entity_index, sector] *
+            material_stock_change[i].amount / realised_quantities,
+    )
+
+    cf_price_index[i] = Components.CFPriceIndex(
+        cf_price_index[i].value +
+            demand_cache.nominal[entity_index, sector] *
+            investment[i].amount / realised_quantities,
+    )
+
+    return nothing
+end
+
 function perform_firm_market!(world::Ark.World, sector::Int64)
-    demand_from_intermediates_cache = Ark.get_resource(world, BeforeIT.DesiredIntermediatesCache)
+    demand_cache = Ark.get_resource(world, BeforeIT.DesiredIntermediatesCache)
     stock_cache = Ark.get_resource(world, BeforeIT.StockCache)
 
     (; technology_matrix, capital_formation) = BeforeIT.properties(world).product_coeffs
+    active = Vector{Int64}(undef, size(demand_cache.vals, 1))
+
     weights = BeforeIT.get_weights(stock_cache, sector) |> FixedSizeWeightVector
-
-
     remaining_supply = sum(BeforeIT.get_available_stocks(stock_cache, sector))
 
-    active = Vector{Int64}(undef, size(demand_from_intermediates_cache.vals, 1))
-
-    nactive = rebuild_active_buyers!(active, demand_from_intermediates_cache.vals, sector)
-
-    while nactive > 0 && !iszero(remaining_supply)
-        i = 1
-        shuffle!(view(active, 1:nactive))
-        while i <= nactive
-            buyer = active[i]
-            firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
-            sold_amount = min(stock_cache.available_stocks[firm_index, sector], demand_from_intermediates_cache.vals[buyer, sector])
-            stock_cache.available_stocks[firm_index, sector] -= sold_amount
-            demand_from_intermediates_cache.nominal[buyer, sector] += sold_amount * stock_cache.prices[firm_index, sector]
-            demand_from_intermediates_cache.vals[buyer, sector] = max(demand_from_intermediates_cache.vals[buyer, sector] - sold_amount, 0.0)
-            remaining_supply -= sold_amount
-            weights[firm_index - stock_cache.sector_offset[sector]] *= !iszero(stock_cache.available_stocks[firm_index, sector])
-            if iszero(demand_from_intermediates_cache.vals[buyer, sector])
-                active[i] = active[nactive]
-                nactive -= 1
-            else
-                i += 1
-            end
-
-        end
-    end
+    allocate_intermediate_from_available_stocks!(
+        demand_cache,
+        stock_cache,
+        active,
+        sector,
+        weights,
+        remaining_supply,
+    )
 
     remaining_supply = sum(BeforeIT.get_stock_capacity(stock_cache, sector))
-
-    for (e, material_stock_change, investment, principal_product, desired_materials, desired_investment, price_index, cf_price_index) in Ark.Query(
-            world,
-            (Components.MaterialStockChange, Components.Investment, Components.PrincipalProduct, Components.DesiredMaterials, Components.DesiredInvestment, Components.PriceIndex, Components.CFPriceIndex)
-        )
-        for i in eachindex(e)
-            index_of_entity = BeforeIT.find_entity_index(e[i], demand_from_intermediates_cache)
-            material_stock_change[i] = Components.MaterialStockChange(
-                material_stock_change[i].amount +
-                    technology_matrix[sector, principal_product[i].id] * desired_materials[i].amount - max(
-                    0.0, demand_from_intermediates_cache.vals[index_of_entity, sector] - capital_formation[sector] * desired_investment[i].amount
-                )
-            )
-            investment[i] = Components.Investment(
-                investment[i].amount + max(0.0, capital_formation[sector] * desired_investment[i].amount - demand_from_intermediates_cache.vals[index_of_entity, sector])
-            )
-
-            realised_quantities = technology_matrix[sector, principal_product[i].id] * desired_materials[i].amount + capital_formation[sector] * desired_investment[i].amount - demand_from_intermediates_cache.vals[index_of_entity, sector]
-
-            price_index[i] = Components.PriceIndex(
-                price_index[i].value +
-                    demand_from_intermediates_cache.nominal[index_of_entity, sector] * material_stock_change[i].amount / realised_quantities
-            )
-
-            cf_price_index[i] = Components.CFPriceIndex(
-                cf_price_index[i].value +
-                    demand_from_intermediates_cache.nominal[index_of_entity, sector] * investment[i].amount / realised_quantities
-            )
-        end
-    end
-
-    nactive = rebuild_active_buyers!(active, demand_from_intermediates_cache.vals, sector)
-
+    update_firm_realisations!(world, sector, demand_cache, technology_matrix, capital_formation)
 
     weights = BeforeIT.get_weights(stock_cache, sector) |> FixedSizeWeightVector
-    while nactive > 0 && !iszero(remaining_supply)
-        i = 1
-        shuffle!(view(active, 1:nactive))
-        while i <= nactive
-            buyer = active[i]
-            firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
-            sold_amount = min(stock_cache.stock_capacity[firm_index, sector], demand_from_intermediates_cache.vals[buyer, sector])
-            stock_cache.available_stocks[firm_index, sector] -= sold_amount
-            stock_cache.stock_capacity[firm_index, sector] -= sold_amount
-            remaining_supply -= sold_amount
+    allocate_intermediate_from_stock_capacity!(
+        demand_cache,
+        stock_cache,
+        active,
+        sector,
+        weights,
+        remaining_supply,
+    )
 
-            demand_from_intermediates_cache.vals[buyer, sector] = max(demand_from_intermediates_cache.vals[buyer, sector] - sold_amount, 0.0)
-
-            weights[firm_index - stock_cache.sector_offset[sector]] *= !iszero(stock_cache.stock_capacity[firm_index, sector])
-
-            if iszero(demand_from_intermediates_cache.vals[buyer, sector])
-                active[i] = active[nactive]
-                nactive -= 1
-            else
-                i += 1
-            end
-        end
-    end
-
-
-    return
+    return nothing
 end
 
-function perform_retail_market!(world::Ark.World, sector::Int64)
-    demand_from_consumption_cache = Ark.get_resource(world, BeforeIT.DesiredHouseholdConsumptionCache)
-    stock_cache = Ark.get_resource(world, BeforeIT.StockCache)
-
-    active = Vector{Int64}(undef, size(demand_from_consumption_cache.vals, 1))
-    (; government_consumption, exports, household_consumption, household_investment) = BeforeIT.properties(world).product_coeffs
-
-    nactive = rebuild_active_buyers!(active, demand_from_consumption_cache.vals, sector)
-    remaining_stocks = sum(BeforeIT.get_available_stocks(stock_cache, sector))
-
-    weights = BeforeIT.get_weights(stock_cache, sector) |> FixedSizeWeightVector
+function allocate_retail_from_available_stocks!(
+        demand_cache,
+        stock_cache,
+        active,
+        sector,
+        weights,
+        remaining_stocks,
+    )
+    nactive = rebuild_active_buyers!(active, demand_cache.vals, sector)
 
     while nactive > 0 && !iszero(remaining_stocks)
         i = 1
         shuffle!(view(active, 1:nactive))
+
         while i <= nactive
             buyer = active[i]
             firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
-            price = stock_cache.prices[firm_index, sector]
-            sold_amount = min(stock_cache.available_stocks[firm_index, sector], demand_from_consumption_cache.vals[buyer, sector] / price)
-            stock_cache.available_stocks[firm_index, sector] -= sold_amount
-            demand_from_consumption_cache.nominal[buyer, sector] += sold_amount
-            demand_from_consumption_cache.vals[buyer, sector] = max(demand_from_consumption_cache.vals[buyer, sector] - sold_amount * price, 0.0)
-            weights[firm_index - stock_cache.sector_offset[sector]] *= !iszero(stock_cache.available_stocks[firm_index, sector])
+            price = stock_cache.prices[firm_index]
+            sold_amount = min(stock_cache.available_stocks[firm_index], demand_cache.vals[buyer, sector] / price)
+
+            stock_cache.available_stocks[firm_index] -= sold_amount
+            demand_cache.nominal[buyer, sector] += sold_amount
+            demand_cache.vals[buyer, sector] = max(demand_cache.vals[buyer, sector] - sold_amount * price, 0.0)
+            weights[firm_index - stock_cache.sector_offset[sector]] *=
+                !iszero(stock_cache.available_stocks[firm_index])
             remaining_stocks = max(0.0, remaining_stocks - sold_amount)
 
-            if iszero(demand_from_consumption_cache.vals[buyer, sector])
+            if iszero(demand_cache.vals[buyer, sector])
                 active[i] = active[nactive]
                 nactive -= 1
             else
@@ -245,39 +398,104 @@ function perform_retail_market!(world::Ark.World, sector::Int64)
         end
     end
 
+    return nothing
+end
 
-    for (e, realised_consumption) in Ark.Query(world, (Components.RealisedConsumption,), with = (Components.Government,))
+function allocate_retail_from_stock_capacity!(
+        demand_cache,
+        stock_cache,
+        active,
+        sector,
+        weights,
+        remaining_stocks,
+    )
+    nactive = rebuild_active_buyers!(active, demand_cache.vals, sector)
+
+    while nactive > 0 && !iszero(remaining_stocks)
+        i = 1
+        shuffle!(view(active, 1:nactive))
+
+        while i <= nactive
+            buyer = active[i]
+            firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
+            price = stock_cache.prices[firm_index]
+            sold_amount = min(
+                stock_cache.stock_capacity[firm_index],
+                demand_cache.vals[buyer, sector] / price,
+            )
+
+            stock_cache.available_stocks[firm_index] -= sold_amount
+            stock_cache.stock_capacity[firm_index] -= sold_amount
+            demand_cache.vals[buyer, sector] = max(demand_cache.vals[buyer, sector] - sold_amount * price, 0.0)
+            weights[firm_index - stock_cache.sector_offset[sector]] *=
+                !iszero(stock_cache.stock_capacity[firm_index])
+
+            if iszero(demand_cache.vals[buyer, sector])
+                active[i] = active[nactive]
+                nactive -= 1
+            else
+                i += 1
+            end
+        end
+    end
+
+    return nothing
+end
+
+function update_government_realised_consumption!(world::Ark.World, sector::Int64, demand_cache, government_consumption)
+    for (e, realised_consumption, price_inflation) in
+        Ark.Query(world, (Components.RealisedConsumption, Components.PriceInflationGovernmentGoods), with = (Components.Government,))
         for i in eachindex(e)
-            for (local_gov_e, consumption_demand) in Ark.Query(world, (Components.ConsumptionDemand,), relations = (Components.LocalGovernment => e[i]))
+            for (local_gov_e, consumption_demand) in
+                Ark.Query(world, (Components.ConsumptionDemand,), relations = (Components.LocalGovernment => e[i]))
                 for j in eachindex(local_gov_e)
-
-                    idx = BeforeIT.find_entity_index(local_gov_e[j], demand_from_consumption_cache)
+                    idx = BeforeIT.find_entity_index(local_gov_e[j], demand_cache)
                     realised_consumption[i] = Components.RealisedConsumption(
                         realised_consumption[i].amount +
                             government_consumption[sector] * consumption_demand[j].amount -
-                            demand_from_consumption_cache.val[idx, sector]
+                            demand_cache.vals[idx, sector],
+                    )
+                    price_inflation[i] = Components.PriceInflationGovernmentGoods(
+                        price_inflation[i].value + demand_cache.nominal[idx, sector]
                     )
                 end
             end
         end
     end
 
-    for (e, foreign_consumption) in Ark.Query(world, (Components.ForeignConsumption,))
-        for i in eachindex(e)
-            for (foreign_sector_e, consumption_demand) in Ark.Query(world, (Components.ForeignConsumptionDemand,))
-                for j in eachindex(foreign_sector_e)
+    return nothing
+end
 
-                    idx = BeforeIT.find_entity_index(foreign_sector_e[j], demand_from_consumption_cache)
+function update_foreign_consumption!(world::Ark.World, sector::Int64, demand_cache, exports)
+    for (e, foreign_consumption, price_inflation) in Ark.Query(world, (Components.ForeignConsumption, Components.EuroAreaInflation))
+        for i in eachindex(e)
+            for (foreign_sector_e, consumption_demand) in
+                Ark.Query(world, (Components.ForeignConsumptionDemand,))
+                for j in eachindex(foreign_sector_e)
+                    idx = BeforeIT.find_entity_index(foreign_sector_e[j], demand_cache)
                     foreign_consumption[i] = Components.ForeignConsumption(
                         foreign_consumption[i].amount +
                             exports[sector] * consumption_demand[j].amount -
-                            demand_from_consumption_cache.val[idx, sector]
+                            demand_cache.vals[idx, sector],
+                    )
+                    price_inflation[i] = Components.EuroAreaInflation(
+                        price_inflation[i].value + demand_cache.nominal[idx, sector]
                     )
                 end
             end
         end
     end
 
+    return nothing
+end
+
+function update_household_realised_consumption_and_prices!(
+        world::Ark.World,
+        sector::Int64,
+        demand_cache,
+        household_consumption,
+        household_investment,
+    )
     price_indices = BeforeIT.price_indices(world)
 
     total_real_demand = 0.0
@@ -285,69 +503,128 @@ function perform_retail_market!(world::Ark.World, sector::Int64)
     total_realized_investment_expenditure = 0.0
     total_expenditure = 0.0
 
-    for (e, consumption_budget, investment_budget, realised_consumption, realised_investmet) in Ark.Query(world, (Components.ConsumptionBudget, Components.InvestmentBudget, Components.RealisedConsumption, Components.RealisedInvestmet), with = (Components.Household,))
-
+    for (e, consumption_budget, investment_budget, realised_consumption, realised_investment) in
+        Ark.Query(
+            world,
+            (
+                Components.ConsumptionBudget,
+                Components.InvestmentBudget,
+                Components.RealisedConsumption,
+                Components.RealisedInvestment,
+            ),
+            with = (Components.Household,),
+        )
         for i in eachindex(e)
-            household_index = BeforeIT.find_entity_index(e[i], demand_from_consumption_cache)
-            total_real_demand += demand_from_consumption_cache.nominal[household_index, sector]
+            household_index = BeforeIT.find_entity_index(e[i], demand_cache)
 
-            residual = household_investment[sector] * investment_budget[i].amount - demand_from_consumption_cache.vals[household_index, sector]
+            total_real_demand += demand_cache.nominal[household_index, sector]
+
+            residual =
+                household_investment[sector] * investment_budget[i].amount -
+                demand_cache.vals[household_index, sector]
             sector_consumption_demand = household_consumption[sector] * consumption_budget[i].amount
 
-            realised_consumption_comp =
-                sector_consumption_demand - max(0.0, -residual)
+            realised_consumption_comp = sector_consumption_demand - max(0.0, -residual)
             realised_consumption[i] = Components.RealisedConsumption(
-                realised_consumption[i].amount + realised_consumption_comp
+                realised_consumption[i].amount + realised_consumption_comp,
             )
             total_realized_consumption_expenditure += realised_consumption_comp
 
-            realized_investment_comp =
-                max(0.0, residual)
-
-            realised_investmet[i] = Components.RealisedConsumption(
-                realised_investmet[i].amount + realized_investment_comp
+            realized_investment_comp = max(0.0, residual)
+            realised_investment[i] = Components.RealisedInvestment(
+                realised_investment[i].amount + realized_investment_comp,
             )
             total_realized_investment_expenditure += realized_investment_comp
             total_expenditure += sector_consumption_demand + residual
-
         end
     end
 
-    price_indices.household_consumption += total_real_demand * total_realized_consumption_expenditure / total_expenditure
-    price_indices.capital_formation_households += total_real_demand * total_realized_investment_expenditure / total_expenditure
+    price_indices.household_consumption +=
+        total_real_demand * total_realized_consumption_expenditure / total_expenditure
+    price_indices.capital_formation_households +=
+        total_real_demand * total_realized_investment_expenditure / total_expenditure
 
+    return nothing
+end
 
-    nactive = rebuild_active_buyers!(active, demand_from_consumption_cache.vals, sector)
+function update_goods_demand_from_remaining_stocks!(world::Ark.World, sector::Int64, stock_cache)
+    for (e, principal_product, good_demand, output, inventories) in
+        Ark.Query(world, (Components.PrincipalProduct, Components.GoodsDemand, Components.Output, Components.Inventories))
+        for i in eachindex(e)
+            principal_product[i].id == sector && continue
+            firm_index = BeforeIT.find_entity_index(e[i], stock_cache)
+
+            good_demand[i] = Components.GoodsDemand(
+                good_demand[i].amount +
+                    output[i].amount + inventories[i].amount - stock_cache.available_stocks[firm_index],
+            )
+        end
+    end
+
+    return nothing
+end
+
+function update_import_demand_from_remaining_stocks!(world::Ark.World, sector::Int64, stock_cache)
+    for (e, principal_product, good_demand, good_supply) in
+        Ark.Query(world, (Components.PrincipalProduct, Components.ImportDemand, Components.ImportSupply))
+        for i in eachindex(e)
+            principal_product[i].id == sector && continue
+            rotw_index = BeforeIT.find_entity_index(e[i], stock_cache)
+
+            good_demand[i] = Components.ImportDemand(
+                good_demand[i].amount +
+                    good_supply[i].amount - stock_cache.available_stocks[rotw_index],
+            )
+        end
+    end
+
+    return nothing
+end
+
+function perform_retail_market!(world::Ark.World, sector::Int64)
+    demand_cache = Ark.get_resource(world, DesiredHouseholdConsumptionCache)
+    stock_cache = Ark.get_resource(world, BeforeIT.StockCache)
+
+    active = Vector{Int64}(undef, size(demand_cache.vals, 1))
+    (; government_consumption, exports, household_consumption, household_investment) =
+        BeforeIT.properties(world).product_coeffs
 
     weights = BeforeIT.get_weights(stock_cache, sector) |> FixedSizeWeightVector
+    remaining_stocks = sum(BeforeIT.get_available_stocks(stock_cache, sector))
 
+    allocate_retail_from_available_stocks!(
+        demand_cache,
+        stock_cache,
+        active,
+        sector,
+        weights,
+        remaining_stocks,
+    )
+
+    update_government_realised_consumption!(world, sector, demand_cache, government_consumption)
+    update_foreign_consumption!(world, sector, demand_cache, exports)
+    update_household_realised_consumption_and_prices!(
+        world,
+        sector,
+        demand_cache,
+        household_consumption,
+        household_investment,
+    )
+
+    weights = BeforeIT.get_weights(stock_cache, sector) |> FixedSizeWeightVector
     remaining_stocks = sum(BeforeIT.get_stock_capacity(stock_cache, sector))
 
-    while nactive > 0 && !iszero(remaining_stocks)
-        i = 1
-        shuffle!(view(active, 1:nactive))
-        while i <= nactive
-            buyer = active[i]
-            firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
-            price = stock_cache.prices[firm_index, sector]
-            sold_amount = min(
-                stock_cache.stock_capacity[firm_index, sector],
-                demand_from_consumption_cache.vals[buyer, sector] / price
-            )
-            stock_cache.available_stocks[firm_index, sector] -= sold_amount
-            stock_cache.stock_capacity[firm_index, sector] -= sold_amount
-            demand_from_consumption_cache.vals[buyer, sector] = max(demand_from_consumption_cache.vals[buyer, sector] - sold_amount * price, 0.0)
-            weights[firm_index - stock_cache.sector_offset[sector]] *= !iszero(stock_cache.stock_capacity[firm_index, sector])
+    allocate_retail_from_stock_capacity!(
+        demand_cache,
+        stock_cache,
+        active,
+        sector,
+        weights,
+        remaining_stocks,
+    )
 
-            if iszero(demand_from_consumption_cache.vals[buyer, sector])
-                active[i] = active[nactive]
-                nactive -= 1
-            else
-                i += 1
+    update_goods_demand_from_remaining_stocks!(world, sector, stock_cache)
+    update_import_demand_from_remaining_stocks!(world, sector, stock_cache)
 
-            end
-        end
-    end
-
-    return
+    return nothing
 end
