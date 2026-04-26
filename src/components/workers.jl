@@ -1,6 +1,7 @@
 @component struct Employed <: AbstractComponent
     rate::Float64
 end
+@component struct EmployedAt <: Ark.Relationship end
 
 @component struct Inactive <: AbstractComponent end
 

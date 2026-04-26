@@ -46,6 +46,8 @@ include("systems/government.jl")
 include("systems/households.jl")
 include("systems/rotw.jl")
 include("systems/markets/search_and_matching.jl")
+include("systems/markets/search_and_matching_credit.jl")
+include("systems/markets/search_and_matching_labor.jl")
 
 
 end

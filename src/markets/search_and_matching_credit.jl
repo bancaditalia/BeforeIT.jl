@@ -22,9 +22,15 @@ function search_and_matching_credit!(model::AbstractModel)
     I_FG = findall(DL_d_i .> 0)
     fshuffle!(I_FG)
     for i in I_FG
-        DL_i_p = DL_i[i]
-        DL_i[i] = max(0.0, min(DL_d_i[i], zeta_LTV * K_e_i[i] - L_e_i[i], E_k / zeta - s_L_e - s_DL))
-        s_DL += (DL_i[i] - DL_i_p)
+        DL_i[i] = max(
+            0.0,
+            min(
+                DL_d_i[i],
+                zeta_LTV * K_e_i[i] - L_e_i[i],
+                E_k / zeta - s_L_e - s_DL
+            )
+        )
+        s_DL += DL_i[i]
     end
     return firms.DL_i .= DL_i # actual new loans obtained
 end
