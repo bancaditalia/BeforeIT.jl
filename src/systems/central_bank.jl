@@ -38,7 +38,7 @@ function set_central_bank_equity!(world)
         for i in eachindex(e)
             profits = government_interest_rate * total_government_debt - interest_rate[i].rate * total_banking_residuals
             equity[i] = Components.CentralBankEquity(
-                equity[i] + profits
+                equity[i].value + profits
             )
         end
     end

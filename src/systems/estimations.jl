@@ -1,6 +1,7 @@
 function set_growth_inflation_expectations!(world::Ark.World)
     macro_state = Ark.get_resource(world, MacroeconomicState)
-    properties = Ark.get_resource(world, Properties)
+    properties = BeforeIT.properties(world)
+    expectations = BeforeIT.expectations(world)
     interval = properties.dimensions.interval_for_expectation_estimation
     t = Ark.get_resource(world, TimeIndex).step
 
@@ -9,17 +10,17 @@ function set_growth_inflation_expectations!(world::Ark.World)
 
     expected_gdp = estimate_next_value(log.(gross_domestic_product_history[1:(interval + t - 1)])) |> exp
     expected_growth = expected_gdp / gross_domestic_product_history[interval + t - 1] - 1
-    expected_inflation = estimate_next_value(log.(inflation_history[1:(interval + t - 1)])) |> exp
+    expected_inflation = estimate_next_value(inflation_history[1:(interval + t - 1)]) |> exp
 
-    macro_state.expected_gross_domestic_product = expected_gdp
-    macro_state.expected_output_growth = expected_growth
-    macro_state.expected_inflation = expected_inflation
+    expectations.gross_domestic_product = expected_gdp
+    expectations.output_growth = expected_growth
+    expectations.inflation = expected_inflation
 
 
     return nothing
 end
 
-function set_growth_inflation_for_EA!(world::Ark.World)
+function set_growth_inflation_EA!(world::Ark.World)
     epsilon_Y_EA = Ark.get_resource(world, Epsilons).Y_EA
     (;
         inflation_shock_sd,
@@ -37,7 +38,7 @@ function set_growth_inflation_for_EA!(world::Ark.World)
             growth[i] = Components.EuroAreaGrowth(expected_growth / gdp[i].value)
             gdp[i] = Components.EuroAreaGDP(expected_growth)
             inflation[i] = Components.EuroAreaInflation(
-                exp(inflation_autoregression * log1p(inflation[i].value) + inflation_response_to_output_gap + random_inflation_shock)
+                exp(inflation_autoregression * log1p(inflation[i].rate) + inflation_response_to_output_gap + random_inflation_shock)
             )
         end
     end
@@ -46,7 +47,7 @@ function set_growth_inflation_for_EA!(world::Ark.World)
     return nothing
 end
 
-function set_inflation_price_index!(world::Ark.World)
+function set_inflation_priceindex!(world::Ark.World)
     macro_state = Ark.get_resource(world, MacroeconomicState)
     price_indices = Ark.get_resource(world, PriceIndices)
     properties = Ark.get_resource(world, Properties)
@@ -98,7 +99,7 @@ function set_capital_formation_priceindex!(world::Ark.World)
     return nothing
 end
 
-function set_household_price_index!(world::Ark.World)
+function set_households_priceindex!(world::Ark.World)
     price_indices = BeforeIT.price_indices(world)
     properties = BeforeIT.properties(world)
 

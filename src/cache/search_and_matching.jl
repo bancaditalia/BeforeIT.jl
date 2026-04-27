@@ -94,7 +94,7 @@ function finalize_stock_cache!(cache::StockCache)
         end
     end
 
-    cache.sector_offset[cache.sector[end] + 1] = length(cache.sector)
+    cache.sector_offset[cache.sector[end] + 1] = length(cache.sector) + 1
 
     @inbounds for i in 1:(length(cache.sector_offset) - 1)
         build_sampling_weights!(
@@ -109,19 +109,19 @@ function finalize_stock_cache!(cache::StockCache)
 end
 
 function get_available_stocks(cache::StockCache, sector::Int64)
-    return @view cache.available_stocks[cache.sector_offset[sector]:cache.sector_offset[sector + 1]]
+    return @view cache.available_stocks[cache.sector_offset[sector]:(cache.sector_offset[sector + 1] - 1)]
 end
 
 function get_stock_capacity(cache::StockCache, sector::Int64)
-    return @view cache.stock_capacity[cache.sector_offset[sector]:cache.sector_offset[sector + 1]]
+    return @view cache.stock_capacity[cache.sector_offset[sector]:(cache.sector_offset[sector + 1] - 1)]
 end
 
 function get_prices(cache::StockCache, sector::Int64)
-    return @view cache.prices[cache.sector_offset[sector]:cache.sector_offset[sector + 1]]
+    return @view cache.prices[cache.sector_offset[sector]:(cache.sector_offset[sector + 1] - 1)]
 end
 
 function get_weights(cache::StockCache, sector::Int64)
-    return @view cache.weights[cache.sector_offset[sector]:cache.sector_offset[sector + 1]]
+    return @view cache.weights[cache.sector_offset[sector]:(cache.sector_offset[sector + 1] - 1)]
 end
 
 function build_sampling_weights!(
@@ -148,7 +148,7 @@ function build_sampling_weights!(
 end
 
 function choose_random_firm(cache::StockCache, sector, weights)
-    return rand(weights) + cache.sector_offset[sector]
+    return rand(weights) + cache.sector_offset[sector] - 1
 end
 
 function find_entity_index(entity, cache)

@@ -4,7 +4,7 @@ function setup_aggregates!(world::Ark.World, properties::Properties)
 
     Ark.add_resource!(
         world,
-        TimeIndex(0.0)
+        TimeIndex(1)
     )
 
     Ark.add_resource!(

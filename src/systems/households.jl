@@ -1,7 +1,7 @@
-function update_worker_wages!(world::Ark.World)
+function update_workers_wages!(world::Ark.World)
     for (firm_e, wage_bill) in Ark.Query(world, (Components.WageBill,))
         for i in eachindex(firm_e)
-            for (_, employed) in Ark.Query(world, (Components.Employed,), with = (Components.Employed => firm_e[i]))
+            for (_, employed, _) in Ark.Query(world, (Components.Employed, Components.EmployedAt), relations = (Components.EmployedAt => firm_e[i],))
                 employed.rate .= wage_bill[i].amount
             end
         end
@@ -53,8 +53,8 @@ function set_households_income!(world::Ark.World)
 
     for (e_owner, net_disposable_income) in Ark.Query(world, (Components.NetDisposableIncome,), without = (Components.Employed, Components.Unemployed, Components.Inactive))
         for i in eachindex(e_owner)
-            (_, profits) = single(Ark.Query(world, (Components.Profits,), relationship = (Components.Owner => e_owner[i])))
-            net_disposable_income[i] = Components.NetDisposableIncome(firm_owner_disposable_income(θ_DIV, τ_INC, τ_FIRM, cpi, sb_other, profits.amount, 0.0))
+            (_, profits, _) = single(Ark.Query(world, (Components.Profits, Components.Owner), relations = (Components.Owner => e_owner[i],)))
+            net_disposable_income[i] = Components.NetDisposableIncome(firm_owner_disposable_income(θ_DIV, τ_INC, τ_FIRM, cpi, sb_other.amount, profits.amount, 0.0))
         end
     end
 
@@ -89,8 +89,8 @@ function set_households_expected_income!(world::Ark.World)
 
     for (e_owner, expected_income) in Ark.Query(world, (Components.ExpectedIncome,), without = (Components.Employed, Components.Unemployed, Components.Inactive))
         for i in eachindex(e_owner)
-            (_, expected_profits) = single(Ark.Query(world, (Components.ExpectedProfits,), relationship = (Components.Owner => e_owner[i])))
-            expected_income[i] = Components.ExpectedIncome(firm_owner_disposable_income(θ_DIV, τ_INC, τ_FIRM, cpi, sb_other, expected_profits.amount, expected_inflation))
+            (_, expected_profits, _) = single(Ark.Query(world, (Components.ExpectedProfits, Components.Owner), relations = (Components.Owner => e_owner[i],)))
+            expected_income[i] = Components.ExpectedIncome(firm_owner_disposable_income(θ_DIV, τ_INC, τ_FIRM, cpi, sb_other.amount, expected_profits.amount, expected_inflation))
         end
     end
 
@@ -113,7 +113,7 @@ function set_households_budget!(world::Ark.World)
     return nothing
 end
 
-function set_households_deposits!(world::Ark.World)
+function set_households_deposit!(world::Ark.World)
 
     prop = properties(world)
     τ_VAT = prop.tax_rates.value_added
@@ -125,8 +125,8 @@ function set_households_deposits!(world::Ark.World)
     for (_, net_disposable_income, realised_consumption, realised_investment, deposits) in Ark.Query(world, (Components.NetDisposableIncome, Components.RealisedConsumption, Components.RealisedInvestment, Components.Deposits))
         deposits.amount .+= net_disposable_income.amount
         .- (1 + τ_VAT) .* realised_consumption.amount
-        .- (1 + τ_CF) .* realised_investment
-        .+ r_bar .* max.(0.0, deposits.amount) .+ r .* min.(0.0, deposits.amount)
+        .- (1 + τ_CF) .* realised_investment.amount
+        .+ r_bar.rate .* max.(0.0, deposits.amount) .+ r.rate .* min.(0.0, deposits.amount)
     end
 
 

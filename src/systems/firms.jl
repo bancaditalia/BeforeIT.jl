@@ -360,7 +360,7 @@ const FIRM_WAGE_COMPONENTS = (
     Components.LaborProductivity, Components.CapitalProductivity, Components.IntermediateProductivity, Components.AverageWageRate,
 )
 
-function set_firm_wages!(world::Ark.World)
+function set_firms_wages!(world::Ark.World)
     for (
             _,
             expected_sales,
@@ -531,7 +531,7 @@ const FIRM_PROFIT_COMPONENTS = (
     Components.LoansOutstanding,
 )
 
-function set_firm_profits!(world::Ark.World)
+function set_firms_profits!(world::Ark.World)
     price_indices = Ark.get_resource(world, PriceIndices)
     properties = Ark.get_resource(world, Properties)
 
@@ -819,7 +819,7 @@ function set_firms_loans!(world::Ark.World)
     debt_installment_rate = Ark.get_resource(world, Properties).banking_params.debt_installment_rate
 
     for (_, loans, loan_flow) in Ark.Query(world, FIRM_LOAN_COMPONENTS)
-        @inbounds loans.amount .= (1.0 - debt_installment_rate) * loans.amoun + loan_flow.amoun
+        @inbounds loans.amount .= (1.0 - debt_installment_rate) .* loans.amount .+ loan_flow.amount
     end
 
     return nothing

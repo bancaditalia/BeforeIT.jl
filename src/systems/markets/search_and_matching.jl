@@ -244,18 +244,21 @@ function allocate_intermediate_from_available_stocks!(
         i = 1
         shuffle!(view(active, 1:nactive))
 
-        while i <= nactive
+        while i <= nactive && !iszero(remaining_supply)
+
             buyer = active[i]
+
             firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
+
             sold_amount = min(stock_cache.available_stocks[firm_index], demand_cache.vals[buyer, sector])
 
-            stock_cache.available_stocks[firm_index] -= sold_amount
+            stock_cache.available_stocks[firm_index] = max(0.0, stock_cache.available_stocks[firm_index] - sold_amount)
             demand_cache.nominal[buyer, sector] += sold_amount * stock_cache.prices[firm_index]
             demand_cache.vals[buyer, sector] = max(demand_cache.vals[buyer, sector] - sold_amount, 0.0)
-            remaining_supply -= sold_amount
+            remaining_supply = max(0.0, remaining_supply - sold_amount)
 
-            weights[firm_index - stock_cache.sector_offset[sector]] *=
-                !iszero(stock_cache.available_stocks[firm_index])
+            weights[firm_index - stock_cache.sector_offset[sector] + 1] *=
+                (stock_cache.available_stocks[firm_index] > 0.0)
 
             if iszero(demand_cache.vals[buyer, sector])
                 active[i] = active[nactive]
@@ -283,7 +286,8 @@ function allocate_intermediate_from_stock_capacity!(
         i = 1
         shuffle!(view(active, 1:nactive))
 
-        while i <= nactive
+        while i <= nactive && !iszero(remaining_supply)
+
             buyer = active[i]
             firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
             sold_amount = min(stock_cache.stock_capacity[firm_index], demand_cache.vals[buyer, sector])
@@ -291,10 +295,10 @@ function allocate_intermediate_from_stock_capacity!(
             stock_cache.available_stocks[firm_index] -= sold_amount
             stock_cache.stock_capacity[firm_index] -= sold_amount
             demand_cache.vals[buyer, sector] = max(demand_cache.vals[buyer, sector] - sold_amount, 0.0)
-            remaining_supply -= sold_amount
+            remaining_supply = max(0.0, remaining_supply - sold_amount)
 
-            weights[firm_index - stock_cache.sector_offset[sector]] *=
-                !iszero(stock_cache.stock_capacity[firm_index])
+            weights[firm_index - stock_cache.sector_offset[sector] + 1] *=
+                (stock_cache.stock_capacity[firm_index] > 0.0)
 
             if iszero(demand_cache.vals[buyer, sector])
                 active[i] = active[nactive]
@@ -423,6 +427,7 @@ function perform_firm_market!(world::Ark.World, sector::Int64)
         remaining_supply,
     )
 
+
     return nothing
 end
 
@@ -436,20 +441,21 @@ function allocate_retail_from_available_stocks!(
     )
     nactive = rebuild_active_buyers!(active, demand_cache.vals, sector)
 
-    while nactive > 0 && !iszero(remaining_stocks)
+    while nactive > 0 && remaining_stocks > 0.0&& !iszero(weights)
         i = 1
         shuffle!(view(active, 1:nactive))
 
-        while i <= nactive
+        while i <= nactive && remaining_stocks > 0.0 && !iszero(weights)
             buyer = active[i]
             firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
+
             price = stock_cache.prices[firm_index]
             sold_amount = min(stock_cache.available_stocks[firm_index], demand_cache.vals[buyer, sector] / price)
 
             stock_cache.available_stocks[firm_index] -= sold_amount
             demand_cache.nominal[buyer, sector] += sold_amount
             demand_cache.vals[buyer, sector] = max(demand_cache.vals[buyer, sector] - sold_amount * price, 0.0)
-            weights[firm_index - stock_cache.sector_offset[sector]] *=
+            weights[firm_index - stock_cache.sector_offset[sector] + 1] *=
                 !iszero(stock_cache.available_stocks[firm_index])
             remaining_stocks = max(0.0, remaining_stocks - sold_amount)
 
@@ -461,6 +467,7 @@ function allocate_retail_from_available_stocks!(
             end
         end
     end
+
 
     return nothing
 end
@@ -475,12 +482,13 @@ function allocate_retail_from_stock_capacity!(
     )
     nactive = rebuild_active_buyers!(active, demand_cache.vals, sector)
 
-    while nactive > 0 && !iszero(remaining_stocks)
+    while nactive > 0 && !iszero(weights)
         i = 1
         shuffle!(view(active, 1:nactive))
 
-        while i <= nactive
+        while i <= nactive && !iszero(weights)
             buyer = active[i]
+
             firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
             price = stock_cache.prices[firm_index]
             sold_amount = min(
@@ -489,10 +497,10 @@ function allocate_retail_from_stock_capacity!(
             )
 
             stock_cache.available_stocks[firm_index] -= sold_amount
-            stock_cache.stock_capacity[firm_index] -= sold_amount
+            stock_cache.stock_capacity[firm_index] = max(0.0, stock_cache.stock_capacity[firm_index] - sold_amount)
             demand_cache.vals[buyer, sector] = max(demand_cache.vals[buyer, sector] - sold_amount * price, 0.0)
-            weights[firm_index - stock_cache.sector_offset[sector]] *=
-                !iszero(stock_cache.stock_capacity[firm_index])
+            weights[firm_index - stock_cache.sector_offset[sector] + 1] *=
+                (stock_cache.stock_capacity[firm_index] > 0.0)
 
             if iszero(demand_cache.vals[buyer, sector])
                 active[i] = active[nactive]
@@ -502,7 +510,6 @@ function allocate_retail_from_stock_capacity!(
             end
         end
     end
-
     return nothing
 end
 
@@ -615,7 +622,7 @@ function update_goods_demand_from_remaining_stocks!(world::Ark.World, sector::In
     for (e, principal_product, good_demand, output, inventories) in
         Ark.Query(world, (Components.PrincipalProduct, Components.GoodsDemand, Components.Output, Components.Inventories))
         for i in eachindex(e)
-            principal_product[i].id == sector && continue
+            principal_product[i].id != sector && continue
             firm_index = BeforeIT.find_entity_index(e[i], stock_cache)
 
             good_demand[i] = Components.GoodsDemand(

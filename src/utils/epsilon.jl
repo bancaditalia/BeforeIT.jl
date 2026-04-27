@@ -1,6 +1,7 @@
-using LinearAlgebra, Random
+using LinearAlgebra, Random, Distributions
 
 function epsilon(C::AbstractMatrix)
+    d = Normal()
     if isapprox(sum(C), 0, atol = 1.0e-8)
         return 0.0, 0.0, 0.0
     end

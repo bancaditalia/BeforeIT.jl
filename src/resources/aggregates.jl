@@ -1,4 +1,4 @@
-struct TimeIndex
+mutable struct TimeIndex
     step::Int64
 end
 

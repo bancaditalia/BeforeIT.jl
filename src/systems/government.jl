@@ -15,8 +15,10 @@ function set_gov_expenditure!(world::Ark.World)
     for (gov_e, government_consumption) in Ark.Query(world, (Components.ConsumptionDemand,), with = (Components.Government,))
         for i in eachindex(gov_e)
 
-            government_consumption[i] .= Components.ConsumptionDemand(exp(consumption_autoregression .* log(government_consumption[i].amount) + consumption_autoregression_scalar + epsilon_G))
-            for (_, local_gov_consumption) in Ark.Query(world, (Components.ConsumptionDemand), relations = (Components.LocalGovernment => gov_e[i]))
+            government_consumption[i] = Components.ConsumptionDemand(
+                exp(consumption_autoregression .* log(government_consumption[i].amount) + consumption_autoregression_scalar + epsilon_G)
+            )
+            for (_, local_gov_consumption, _) in Ark.Query(world, (Components.ConsumptionDemand, Components.LocalGovernment), relations = (Components.LocalGovernment => gov_e[i],))
                 local_gov_consumption.amount .= government_consumption[i].amount ./ local_governments .* nominal_sector_demand .* (1 .+ pi_e)
             end
         end
@@ -58,9 +60,9 @@ function set_gov_revenues!(world::Ark.World)
     capital_formation = τ_cf * total_investment
     products = 0.0
     production = 0.0
-    for (y, p, τ_prod, τ_capital) in Ark.Query(world, (Components.Output, Components.Price, Components.OutputTaxRate, Components.CapitalTaxRate))
-        products .+= (y.amount * p.value * τ_prod.rate)
-        production .+= (y.amount * p.value * τ_capital.rate)
+    for (e, y, p, τ_prod, τ_capital) in Ark.Query(world, (Components.Output, Components.Price, Components.OutputTaxRate, Components.CapitalTaxRate))
+        products += sum(y.amount .* p.value .* τ_prod.rate)
+        production += sum(y.amount .* p.value .* τ_capital.rate)
     end
 
 
