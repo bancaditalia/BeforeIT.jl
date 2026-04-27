@@ -29,7 +29,7 @@ function set_rotw_import_export!(world::Ark.World)
             )
             @inbounds for i in eachindex(e)
                 g = product[i].id # or product[i].index / product[i].sector
-                import_supply[i] = Components.ImportSupply(imports[g] * total_import_supply_value)
+                import_supply[i] = Components.ImportSupply(imports[g] * only(total_import_supply.amount))
                 import_price[i] = Components.ImportPrice((1 + expected_inflation) * sector_price_index[g])
             end
         end
