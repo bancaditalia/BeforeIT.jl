@@ -18,9 +18,20 @@ function set_rotw_import_export!(world::Ark.World)
 
         end
 
-        for (_, import_supply, import_price) in Ark.Query(world, (Components.ImportSupply, Components.ImportPrice))
-            import_supply.amount .= imports * only(total_import_supply.amount)
-            import_price.value .= (1 + expected_inflation) * sector_price_index
+        for (e, product, import_supply, import_price) in Ark.Query(
+                world,
+                (
+                    Components.PrincipalProduct,
+                    Components.ImportSupply,
+                    Components.ImportPrice,
+                ),
+                with = (Components.ForeignSector,),
+            )
+            @inbounds for i in eachindex(e)
+                g = product[i].id # or product[i].index / product[i].sector
+                import_supply[i] = Components.ImportSupply(imports[g] * total_import_supply_value)
+                import_price[i] = Components.ImportPrice((1 + expected_inflation) * sector_price_index[g])
+            end
         end
 
     end
@@ -39,7 +50,7 @@ function set_rotw_deposits!(world::Ark.World)
         for (_, price, sales) in Ark.Query(world, (Components.ImportPrice, Components.ImportSales))
             net_foreign_position.amount .+= dot(price.value, sales.amount)
         end
-        net_foreign_position.amount .-= (1 - τ_EXPORT) * foreign_consumption.amount
+        net_foreign_position.amount .-= (1 + τ_EXPORT) * foreign_consumption.amount
     end
 
     return nothing

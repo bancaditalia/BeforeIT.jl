@@ -49,7 +49,7 @@ function set_gov_revenues!(world::Ark.World)
 
     total_wages = @sum_over (w.rate for  w in Ark.Query(world, (Components.Employed,)))
     total_consumption = @sum_over (c.amount for c in Ark.Query(world, (Components.RealisedConsumption,)))
-    total_investment = @sum_over (c.amount for c in Ark.Query(world, (Components.RealisedInvestment,)))
+    total_investment = @sum_over (c.amount for c in Ark.Query(world, (Components.RealisedInvestment,), with = (Components.Household,)))
     total_profits = @sum_over (max(0, p.amount) for p in Ark.Query(world, (Components.Profits,)))
 
     social_security = (employees_contribution + employers_contribution) * total_wages * cpi
@@ -65,10 +65,27 @@ function set_gov_revenues!(world::Ark.World)
         production += sum(y.amount .* p.value .* τ_capital.rate)
     end
 
+    τ_export = prop.tax_rates.exports # or matching property name
+    exports = @sum_over (
+        x.amount for x in Ark.Query(world, (Components.ForeignConsumption,))
+    )
+
+    export_tax = τ_export * exports
+
 
     for (e, government_revenues) in Ark.Query(world, (Components.GovernmentRevenues,))
         for i in eachindex(e)
-            government_revenues[i] = Components.GovernmentRevenues(social_security + labor_income + value_added + capital_income + capital_formation + products + production + corporate_income)
+            government_revenues[i] = Components.GovernmentRevenues(
+                social_security
+                    + labor_income
+                    + value_added
+                    + capital_income
+                    + capital_formation
+                    + products
+                    + production
+                    + corporate_income
+                    + export_tax
+            )
         end
     end
     return nothing
@@ -85,7 +102,7 @@ function set_gov_loans!(world::Ark.World)
     for (e, sb_inactive, sb_other, debt, realised_consumption, revenues) in Ark.Query(world, (Components.SocialBenefitsInactive, Components.SocialBenefitsOther, Components.GovernmentDebt, Components.RealisedConsumption, Components.GovernmentRevenues))
         for i in eachindex(e)
             social_benefits = cpi * (inactive * sb_inactive[i].amount + theta_UB * total_wages_unemployed + total * sb_other[i].amount)
-            debt[i] = Components.GovernmentDebt(social_benefits + realised_consumption[i].amount + r_g * debt[i].amount - revenues[i].amount)
+            debt[i] = Components.GovernmentDebt(debt[i].amount + social_benefits + realised_consumption[i].amount + r_g * debt[i].amount - revenues[i].amount)
         end
     end
 

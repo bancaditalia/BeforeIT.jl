@@ -11,7 +11,8 @@ function update_workers_wages!(world::Ark.World)
 end
 
 function employed_worker_income(wage, τ_SIW, τ_INC, social_benefits_other, cpi, expected_inflation)
-    return wage * (1.0 - τ_SIW - τ_INC * (1.0 - τ_SIW) + social_benefits_other) * cpi * (1.0 + expected_inflation)
+    after_tax_factor = 1.0 - τ_SIW - τ_INC * (1.0 - τ_SIW)
+    return (wage * after_tax_factor + social_benefits_other) * cpi * (1.0 + expected_inflation)
 end
 
 function unemployed_worker_income(benefits, θ_UB, social_benefits_other, cpi, expected_inflation)
