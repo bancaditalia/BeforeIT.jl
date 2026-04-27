@@ -1,7 +1,3 @@
-function gross_domestic_product(model::AbstractModel)
-    firms, agg, prop = model.firms, model.agg, model.prop
-    return sum(firms.Y_i)
-end
 function set_gross_domestic_product!(world::Ark.World)
     macro_state = Ark.get_resource(world, MacroeconomicState)
     t = Ark.get_resource(world, TimeIndex)

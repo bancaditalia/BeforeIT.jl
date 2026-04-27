@@ -51,11 +51,12 @@ end
         corporate_tax::Float64,
         dividend_payout_ratio::Float64,
     )
-    taxes_and_dividends =
-        (corporate_tax * -dividend_payout_ratio * (1.0 - corporate_tax)) *
-        max(0.0, expected_profit)
+    positive_profit = max(0.0, expected_profit)
 
-    return expected_profit - debt_installment_rate * current_loans - taxes_and_dividends
+    return expected_profit -
+        debt_installment_rate * current_loans -
+        corporate_tax * positive_profit -
+        dividend_payout_ratio * (1.0 - corporate_tax) * positive_profit
 end
 
 @inline function expected_capital_amount(

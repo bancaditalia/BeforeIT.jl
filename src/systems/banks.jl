@@ -1,4 +1,4 @@
-function set_bank_deposits!(world)
+function set_bank_deposits!(world::Ark.World)
     total_deposits = @sum_over (deposits.amount for deposits in Ark.Query(world, (Components.Deposits,)))
     total_loans = @sum_over (loans.amount for loans in Ark.Query(world, (Components.LoansOutstanding,)))
 
@@ -20,10 +20,10 @@ function finance_insolvent_firms!(world::Ark.World)
         for i in eachindex(e)
             deposits[i].amount >= 0.0 && equity[i].amount >= 0 && continue
             loan = ζ * P_bar_CF * capital[i].amount
-            fianced_equity = outstanding_loans[i].amount - deposits[i].amount - loan
+            financed_equity = outstanding_loans[i].amount - deposits[i].amount - loan
 
-            financed_total_equity += fianced_equity
-            equity[i] = Components.Equity(equity[i].amount + fianced_equity)
+            financed_total_equity += financed_equity
+            equity[i] = Components.Equity(equity[i].amount + financed_equity)
             outstanding_loans[i] = Components.LoansOutstanding(loan)
             deposits[i] = Components.Deposits(0.0)
         end
@@ -64,14 +64,14 @@ function set_bank_rate!(world)
     return nothing
 end
 
-function set_bank_equity!(world)
-    properties = Ark.get_resource(world, Properties)
+function set_bank_equity!(world::Ark.World)
+    properties = BeforeIT.properties(world)
     dividend_payout_ratio = properties.banking_params.dividend_payout_ratio
     corporate_tax = properties.tax_rates.corporate
 
     total_taxed_and_dividend_ratio = (dividend_payout_ratio * (1 - corporate_tax) + corporate_tax)
     for (_, equity, profits) in Ark.Query(world, (Components.Equity, Components.Profits), with = (Components.LendingRate,))
-        equity.amount .= profits.amount .- total_taxed_and_dividend_ratio .* max.(0, profits.amount)
+        equity.amount .= equity.amount .+ profits.amount .- total_taxed_and_dividend_ratio .* max.(0, profits.amount)
     end
 
     return nothing
@@ -88,22 +88,18 @@ function set_bank_profits!(world)
     end
     total_loans = @sum_over (loans.amount for loans in Ark.Query(world, (Components.LoansOutstanding,)))
 
-    cb_rate = 0.0
-    for (e, cb) in Ark.Query(world, (Components.NominalInterestRate,))
-        for i in eachindex(e)
-            cb_rate = cb[i].rate
-        end
-    end
+    (_, cb) = single(Ark.Query(world, (Components.NominalInterestRate,)))
+    cb_rate = cb.rate
 
     rterm = total_loans + total_negative_deposits
     for (e, profits, lending_rate, residual_item) in Ark.Query(world, (Components.Profits, Components.LendingRate, Components.ResidualItems))
         @inbounds for i in eachindex(e)
-            central_bank_term = residual_item[i].amount - total_positive_deposits - total_negative_deposits
-            profits[i] = Components.Profits(lending_rate[i].rate * rterm + cb_rate * central_bank_term)
+            central_bank_term = residual_item[i].amount - total_positive_deposits
+            profits[i] = Components.Profits(
+                lending_rate[i].rate * rterm + cb_rate * central_bank_term
+            )
         end
     end
 
-
     return nothing
-
 end

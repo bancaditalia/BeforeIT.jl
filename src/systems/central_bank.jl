@@ -7,15 +7,11 @@ function set_central_bank_rate!(world)
     properties = Ark.get_resource(world, Properties)
 
     (; inflation_target, interest_rate_smoothing, response_to_inflation, response_to_output, natural_rate) = properties.monetary_policy
-    rotw_growth = 0.0
-    rotw_inflation = 0.0
 
-    for (e, growth, inflation) in Ark.Query(world, (Components.EuroAreaGrowth, Components.EuroAreaInflation))
-        for i in eachindex(e)
-            rotw_growth += growth[i].rate
-            rotw_inflation += inflation[i].rate
-        end
-    end
+
+    (e, growth, inflation) = single(Ark.Query(world, (Components.EuroAreaGrowth, Components.EuroAreaInflation)))
+    rotw_growth = growth.rate
+    rotw_inflation = inflation.rate
 
     for (e, interest_rate) in Ark.Query(world, (Components.NominalInterestRate,))
         @inbounds for i in eachindex(e)
