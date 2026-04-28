@@ -22,6 +22,4 @@ end
     weight::Float64
 end
 
-@component struct CentralBankEquity <: AbstractComponent
-    value::Float64
-end
+@component struct CentralBank <: AbstractComponent end

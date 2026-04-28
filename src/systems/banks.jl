@@ -2,9 +2,9 @@ function set_bank_deposits!(world::Ark.World)
     total_deposits = @sum_over (deposits.amount for deposits in Ark.Query(world, (Components.Deposits,)))
     total_loans = @sum_over (loans.amount for loans in Ark.Query(world, (Components.LoansOutstanding,)))
 
-    for (e, equity, resisdual) in Ark.Query(world, (Components.Equity, Components.ResidualItems))
+    for (e, equity, resisdual) in Ark.Query(world, (Components.Equity, Components.ResidualItems), with = (Components.Bank,))
         for i in eachindex(e)
-            resisdual[i] = Components.ResidualItems(equity[i] - total_loans + total_deposits)
+            resisdual[i] = Components.ResidualItems(equity[i].amount - total_loans + total_deposits)
         end
     end
 
@@ -18,7 +18,7 @@ function finance_insolvent_firms!(world::Ark.World)
     financed_total_equity = 0.0
     for (e, outstanding_loans, equity, deposits, capital) in Ark.Query(world, (Components.LoansOutstanding, Components.Equity, Components.Deposits, Components.CapitalStock))
         for i in eachindex(e)
-            deposits[i].amount >= 0.0 && equity[i].amount >= 0 && continue
+            (deposits[i].amount >= 0.0 || equity[i].amount >= 0) && continue
             loan = ζ * P_bar_CF * capital[i].amount
             financed_equity = outstanding_loans[i].amount - deposits[i].amount - loan
 
@@ -29,7 +29,8 @@ function finance_insolvent_firms!(world::Ark.World)
         end
     end
 
-    for (_, equity) in Ark.Query(world, (Components.Equity,), with = (Components.LendingRate,))
+    @info financed_total_equity
+    for (_, equity) in Ark.Query(world, (Components.Equity,), with = (Components.Bank,))
         equity.amount .-= financed_total_equity
     end
 
@@ -70,7 +71,7 @@ function set_bank_equity!(world::Ark.World)
     corporate_tax = properties.tax_rates.corporate
 
     total_taxed_and_dividend_ratio = (dividend_payout_ratio * (1 - corporate_tax) + corporate_tax)
-    for (_, equity, profits) in Ark.Query(world, (Components.Equity, Components.Profits), with = (Components.LendingRate,))
+    for (_, equity, profits) in Ark.Query(world, (Components.Equity, Components.Profits), with = (Components.Bank,))
         equity.amount .= equity.amount .+ profits.amount .- total_taxed_and_dividend_ratio .* max.(0, profits.amount)
     end
 

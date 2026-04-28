@@ -18,12 +18,13 @@ function setup_bank!(world::Ark.World, properties::Properties)
     )
     Ark.new_entity!(
         world, (
-            Components.EquityCapital(equity_ratio),
+            Components.Equity(equity_ratio),
             Components.ResidualItems(0.0),
             Components.Profits(0.0),
             Components.ExpectedProfits(0.0),
             Components.LendingRate(policy_rate + risk_premium),
             Components.Owner(),
+            Components.Bank(),
         ),
         relations = (Components.Owner => owner,)
     )
@@ -36,8 +37,9 @@ function setup_central_bank!(world::Ark.World, properties::Properties)
     (; central_bank_equity, policy_rate) = properties.initial_conditions.banking
     return Ark.new_entity!(
         world, (
-            Components.CentralBankEquity(central_bank_equity),
+            Components.Equity(central_bank_equity),
             Components.NominalInterestRate(policy_rate),
+            Components.CentralBank(),
         )
     )
 end
