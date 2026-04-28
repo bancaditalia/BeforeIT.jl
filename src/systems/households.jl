@@ -45,7 +45,7 @@ function set_households_income!(world::Ark.World)
     end
 
     for (_, unemployed, net_disposable_income) in Ark.Query(world, (Components.Unemployed, Components.NetDisposableIncome))
-        net_disposable_income.amount .= unemployed_worker_income.(unemployed.unemployment_benefit, θ_UB, sb_other.amount, cpi, 0.0)
+        net_disposable_income.amount .= unemployed_worker_income.(unemployed.unemployment_benefits, θ_UB, sb_other.amount, cpi, 0.0)
     end
 
     for (_, net_disposable_income) in Ark.Query(world, (Components.NetDisposableIncome,), with = (Components.Inactive,))
@@ -81,7 +81,7 @@ function set_households_expected_income!(world::Ark.World)
     end
 
     for (_, unemployed, expected_income) in Ark.Query(world, (Components.Unemployed, Components.ExpectedIncome))
-        expected_income.amount .= unemployed_worker_income.(unemployed.unemployment_benefit, θ_UB, sb_other.amount, cpi, expected_inflation)
+        expected_income.amount .= unemployed_worker_income.(unemployed.unemployment_benefits, θ_UB, sb_other.amount, cpi, expected_inflation)
     end
 
     for (_, expected_income) in Ark.Query(world, (Components.ExpectedIncome,), with = (Components.Inactive,))

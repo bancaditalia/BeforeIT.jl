@@ -58,7 +58,7 @@ function hire_workers!(world::Ark.World)
 
             for (firm_e, vacancies, employment) in Ark.Query(firms)
                 for i in shuffle(eachindex(firm_e))
-                    vacancies[i].amount < 0 && haskey(add_employment, worker_e[j]) && continue
+                    vacancies[i].amount > 0 || haskey(add_employment, worker_e[j]) || continue
                     vacancies[i] = Components.Vacancies(vacancies[i].amount - 1)
                     employment[i] = Components.Employment(employment[i].amount + 1)
                     add_employment[worker_e[j]] = firm_e[i]
