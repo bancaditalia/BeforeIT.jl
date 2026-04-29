@@ -127,3 +127,4 @@ end
 end
 
 @component struct Capitalist <: FirmComponent end
+@component struct Firm <: FirmComponent end

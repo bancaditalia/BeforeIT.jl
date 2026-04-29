@@ -371,25 +371,31 @@ function update_firm_realisation_components!(
     residual_demand = demand_cache.vals[entity_index, sector]
     realised_quantities = materials_component + investment_component - residual_demand
 
+    residual_investment = investment_component - residual_demand
+    material_stock_change_amount = materials_component - max(0.0, - residual_investment)
+    investment_amount = max(0.0, residual_investment)
     material_stock_change[i] = Components.MaterialsStockChange(
-        material_stock_change[i].amount +
-            materials_component - max(0.0, residual_demand - investment_component),
+        material_stock_change[i].amount + material_stock_change_amount
+
     )
 
     investment[i] = Components.Investment(
-        investment[i].amount + max(0.0, investment_component - residual_demand),
+        investment[i].amount + investment_amount
     )
+
+
+    realised_quantities = ifelse(realised_quantities == 0.0, 1.0, realised_quantities)
 
     price_index[i] = Components.PriceIndex(
         price_index[i].value +
             demand_cache.nominal[entity_index, sector] *
-            material_stock_change[i].amount / realised_quantities,
+            material_stock_change_amount / realised_quantities,
     )
 
     cf_price_index[i] = Components.CFPriceIndex(
         cf_price_index[i].value +
             demand_cache.nominal[entity_index, sector] *
-            investment[i].amount / realised_quantities,
+            investment_amount / realised_quantities,
     )
 
     return nothing
@@ -610,6 +616,7 @@ function update_household_realised_consumption_and_prices!(
         end
     end
 
+    total_expenditure = ifelse(total_expenditure == 0.0, 1.0, total_expenditure)
     price_indices.household_consumption +=
         total_real_demand * total_realized_consumption_expenditure / total_expenditure
     price_indices.capital_formation_households +=
@@ -746,6 +753,17 @@ function finalize_search_and_match!(world::Ark.World)
     for (_, sales, demand, output) in
         Ark.Query(world, (Components.Sales, Components.GoodsDemand, Components.ImportSupply))
         sales.amount .= min.(demand.amount, output.amount)
+    end
+
+    for (_, price_index, cf_price_index, materials, investment) in Ark.Query(world, (Components.PriceIndex, Components.CFPriceIndex, Components.MaterialsStockChange, Components.Investment))
+        for i in eachindex(price_index)
+            if materials[i].amount > 0.0
+                price_index[i] = Components.PriceIndex(price_index[i].value / materials[i].amount)
+            end
+            if investment[i].amount > 0.0
+                cf_price_index[i] = Components.CFPriceIndex(cf_price_index[i].value / investment[i].amount)
+            end
+        end
     end
 
 

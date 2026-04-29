@@ -16,9 +16,9 @@ function set_epsilon!(model::Ark.World)
 
     epsilons = BeforeIT.epsilons(model)
     new_eps = epsilon(C)
-    epsilons = Epsilons(new_eps...)
     epsilons.Y_EA = new_eps[1]
     epsilons.E = new_eps[2]
+    epsilons.I = new_eps[3]
     return epsilons.I = new_eps[3]
 
 end

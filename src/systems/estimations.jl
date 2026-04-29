@@ -103,7 +103,7 @@ function set_households_priceindex!(world::Ark.World)
     price_indices = BeforeIT.price_indices(world)
     properties = BeforeIT.properties(world)
 
-    price_indices.household_consumption = dot(properties.product_coeffs.household_consumption, price_indices.sector)
+    price_indices.household_consumption = LinearAlgebra.dot(properties.product_coeffs.household_consumption, price_indices.sector)
     return nothing
 
 end

@@ -711,7 +711,6 @@ function set_firms_deposits!(world::Ark.World)
     debt_installment_rate = properties.banking_params.debt_installment_rate
 
     household_price_index = price_indices.household_consumption
-    capital_goods_price_index = price_indices.capital_goods
 
     for (
             _,

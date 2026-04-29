@@ -29,7 +29,6 @@ function finance_insolvent_firms!(world::Ark.World)
         end
     end
 
-    @info financed_total_equity
     for (_, equity) in Ark.Query(world, (Components.Equity,), with = (Components.Bank,))
         equity.amount .-= financed_total_equity
     end
