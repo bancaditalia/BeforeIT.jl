@@ -3,7 +3,7 @@ function update_workers_wages!(model::AbstractModel)
     w_act, firms = model.w_act, model.firms
     w_i = firms.w_i
     for (i, h) in enumerate(w_act.O_h)
-        if h != zero(typeInt)
+        if h != zero(Int64)
             w_act.w_h[i] = w_i[h]
         end
     end
@@ -16,9 +16,9 @@ function households_income_act(model; expected = false)
     w_h, O_h, tau_SIW, tau_INC = w_act.w_h, w_act.O_h, model.prop.tau_SIW, model.prop.tau_INC
     theta_UB, sb_other, P_bar_HH = model.prop.theta_UB, model.gov.sb_other, model.agg.P_bar_HH
 
-    pi_e = expected ? model.agg.pi_e : zero(typeFloat)
+    pi_e = expected ? model.agg.pi_e : zero(Float64)
 
-    Y_h = zeros(typeFloat, length(w_h))
+    Y_h = zeros(Float64, length(w_h))
     for h in eachindex(w_h)
         if O_h[h] != 0
             Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH * (1 + pi_e)
@@ -39,9 +39,9 @@ function households_income_inact(model::AbstractModel; expected = false)
     H_inact, sb_inact = length(w_inact), model.gov.sb_inact
     sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
 
-    pi_e = expected ? model.agg.pi_e : zero(typeFloat)
+    pi_e = expected ? model.agg.pi_e : zero(Float64)
 
-    Y_h = zeros(typeFloat, H_inact)
+    Y_h = zeros(Float64, H_inact)
     for h in 1:H_inact
         Y_h[h] = (sb_inact + sb_other) * P_bar_HH * (1 + pi_e)
     end
@@ -57,9 +57,9 @@ function households_income_firms(model::AbstractModel; expected = false)
     sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
 
     Pi_i = expected ? firms.Pi_e_i : firms.Pi_i
-    pi_e = expected ? model.agg.pi_e : zero(typeFloat)
+    pi_e = expected ? model.agg.pi_e : zero(Float64)
 
-    Y_h = zeros(typeFloat, length(Pi_i))
+    Y_h = zeros(Float64, length(Pi_i))
     for i in eachindex(Pi_i)
         Y_h[i] = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_i[i]) + sb_other * P_bar_HH * (1 + pi_e)
     end
@@ -76,7 +76,7 @@ function households_income_bank(model; expected = false)
     sb_other, P_bar_HH = model.gov.sb_other, model.agg.P_bar_HH
 
     Pi_k = expected ? bank.Pi_e_k : bank.Pi_k
-    pi_e = expected ? model.agg.pi_e : zero(typeFloat)
+    pi_e = expected ? model.agg.pi_e : zero(Float64)
 
     Y_h = theta_DIV * (1 - tau_INC) * (1 - tau_FIRM) * max(0, Pi_k) + sb_other * P_bar_HH * (1 + pi_e)
     return Y_h

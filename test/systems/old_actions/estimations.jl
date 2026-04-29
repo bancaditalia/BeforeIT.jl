@@ -154,7 +154,7 @@ function sector_specific_priceindex(model::AbstractModel)
     firms, rotw = model.firms, model.rotw
 
     G = model.prop.G
-    vec = zeros(typeFloat, G)
+    vec = zeros(Float64, G)
     for g in 1:G
         P_i = firms.P_i[firms.G_i .== g]
         Y_i = firms.Q_i[firms.G_i .== g]

@@ -1,17 +1,13 @@
 import BeforeIT as Bit
 
-using Random, Plots
+properties = Bit.AUSTRIA2010Q1
 
-parameters = Bit.AUSTRIA2010Q1.parameters
-initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
-
-model = Bit.Model(parameters, initial_conditions)
+model = Bit.ECSModel(properties)
 
 T = 20
 for t in 1:T
     println("Step: ", t)
-    Bit.step!(model; parallel = true)
-    Bit.collect_data!(model)
+    Bit.step!(model)
 end
 
 data = model.data

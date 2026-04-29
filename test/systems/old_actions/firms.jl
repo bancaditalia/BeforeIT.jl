@@ -1,4 +1,4 @@
-function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
+function cost_push_inflation(firms, model)
     P_bar_HH, P_bar_CF, P_bar_g = model.agg.P_bar_HH, model.agg.P_bar_CF, model.agg.P_bar_g
     tau_SIF, a_sg = model.prop.tau_SIF, model.prop.a_sg
 
@@ -12,7 +12,7 @@ function cost_push_inflation(firms::AbstractFirms, model::AbstractModel)
     return cost_push_inflation
 end
 
-function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
+function desired_capital_material_employment(firms, Q_s_i)
 
     # target investments in capital
     I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
@@ -25,7 +25,7 @@ function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
     return I_d_i, DM_d_i, N_d_i
 end
 
-function expected_deposits_capital_loans(firms::AbstractFirms, model::AbstractModel, Pi_e_i)
+function expected_deposits_capital_loans(firms, model, Pi_e_i)
     tau_FIRM, theta, theta_DIV = model.prop.tau_FIRM, model.prop.theta, model.prop.theta_DIV
     P_bar_CF, pi_e = model.agg.P_bar_CF, model.agg.pi_e
 
@@ -59,7 +59,7 @@ employment decisions, expected profits, and desired/expected loans and capital.
 - `L_e_i`: Vector of expected loans
 - `P_i`: Vector of  prices
 """
-function firms_expectations_and_decisions(model::AbstractModel)
+function firms_expectations_and_decisions(model)
     firms = model.firms
 
     gamma_e, pi_e = model.agg.gamma_e, model.agg.pi_e
@@ -88,7 +88,7 @@ function firms_expectations_and_decisions(model::AbstractModel)
     return Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, new_P_i
 end
 
-function set_firms_expectations_and_decisions!(model::AbstractModel)
+function set_firms_expectations_and_decisions!(model)
     firms = model.firms
 
     Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i,
@@ -113,7 +113,7 @@ Calculate the wages set by firms.
 # Returns
 - `w_i`: Vector of wages
 """
-function firms_wages(model::AbstractModel)
+function firms_wages(model)
     firms = model.firms
 
     Q_s_i = firms.Q_s_i
@@ -127,7 +127,7 @@ function firms_wages(model::AbstractModel)
     )
     return w_i
 end
-function set_firms_wages!(model::AbstractModel)
+function set_firms_wages!(model)
     return model.firms.w_i .= firms_wages(model)
 end
 
@@ -141,7 +141,7 @@ Calculate the production of firms.
 
 The production `Y_i` is computed using a Leontief technology.
 """
-function firms_production(model::AbstractModel)
+function firms_production(model)
     firms = model.firms
     Q_s_i, alpha_bar_i, kappa_i, beta_i = firms.Q_s_i, firms.alpha_bar_i, firms.kappa_i, firms.beta_i
     K_i, N_i, M_i = firms.K_i, firms.N_i, firms.M_i
@@ -154,7 +154,7 @@ function firms_production(model::AbstractModel)
 
     return Y_i
 end
-function set_firms_production!(model::AbstractModel)
+function set_firms_production!(model)
     return model.firms.Y_i .= firms_production(model)
 end
 
@@ -211,7 +211,7 @@ where:
 - `out_taxes_capital = tau_K_i * P_i * Y_i`
 - `out_loans = r * (L_i + pos(-D_i))`
 """
-function firms_profits(model::AbstractModel)
+function firms_profits(model)
     firms = model.firms
 
     P_bar_HH, tau_SIF, r, r_bar = model.agg.P_bar_HH, model.prop.tau_SIF, model.bank.r, model.cb.r_bar
@@ -231,7 +231,7 @@ function firms_profits(model::AbstractModel)
 
     return Pi_i
 end
-function set_firms_profits!(model::AbstractModel)
+function set_firms_profits!(model)
     return model.firms.Pi_i .= firms_profits(model)
 end
 

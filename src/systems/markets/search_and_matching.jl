@@ -11,6 +11,17 @@ function search_and_matching!(world::Ark.World)
     return nothing
 end
 
+function check_caches_for_nans(world, sector)
+    demand_cache_im = Ark.get_resource(world, DesiredIntermediatesCache)
+    demand_cache_con = Ark.get_resource(world, DesiredIntermediatesCache)
+    stock_cache = Ark.get_resource(world, StockCache)
+
+    any(isnan, get_available_stocks(stock_cache, sector)) && @error "Nans in  Stock Cache Vals, Sector $sector"
+    any(isnan, get_stock_capacity(stock_cache, sector)) && @error "Nans in  Stock Cache Capacity"
+
+    return nothing
+end
+
 function build_intermediate_demand_cache!(world::Ark.World)
     properties = BeforeIT.properties(world)
     demand_cache = Ark.get_resource(world, DesiredIntermediatesCache)
@@ -145,8 +156,16 @@ end
 
 function build_import_stock_cache!(world::Ark.World, stock_cache)
     for (e, pp, import_supply, price) in
-        Ark.Query(world, (Components.PrincipalProduct, Components.ImportSupply, Components.ImportPrice))
+        Ark.Query(
+            world, (
+                Components.PrincipalProduct,
+                Components.ImportSupply, Components.ImportPrice,
+            )
+        )
         @inbounds for i in eachindex(e)
+            if price[i].value != 0.0
+                @info "price is not 0"
+            end
             BeforeIT.emblace!(
                 import_supply[i].amount,
                 Inf,
@@ -433,6 +452,8 @@ function perform_firm_market!(world::Ark.World, sector::Int64)
         remaining_supply,
     )
 
+    check_caches_for_nans(world, sector)
+
 
     return nothing
 end
@@ -631,7 +652,6 @@ function update_goods_demand_from_remaining_stocks!(world::Ark.World, sector::In
         for i in eachindex(e)
             principal_product[i].id != sector && continue
             firm_index = BeforeIT.find_entity_index(e[i], stock_cache)
-
             good_demand[i] = Components.GoodsDemand(
                 good_demand[i].amount +
                     output[i].amount + inventories[i].amount - stock_cache.available_stocks[firm_index],
@@ -679,6 +699,8 @@ function perform_retail_market!(world::Ark.World, sector::Int64)
         remaining_stocks,
     )
 
+    check_caches_for_nans(world, sector)
+
     update_government_realised_consumption!(world, sector, demand_cache, government_consumption)
     update_foreign_consumption!(world, sector, demand_cache, exports)
     update_household_realised_consumption_and_prices!(
@@ -704,6 +726,8 @@ function perform_retail_market!(world::Ark.World, sector::Int64)
     update_goods_demand_from_remaining_stocks!(world, sector, stock_cache)
     update_import_demand_from_remaining_stocks!(world, sector, stock_cache)
 
+
+    check_caches_for_nans(world, sector)
     return nothing
 end
 

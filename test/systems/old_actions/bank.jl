@@ -29,7 +29,7 @@ function bank_profits(model)
     L_i, D_i, r_bar = model.firms.L_i, model.firms.D_i, model.cb.r_bar
     D_h = [model.w_act.D_h; model.w_inact.D_h; model.firms.D_h; bank.D_h]
 
-    z = zero(typeFloat)
+    z = zero(Float64)
     r_terms = sum(L_i) + sum(max.(z, -D_i)) + sum(max.(z, -D_h))
     r_bar_terms = bank.D_k - sum(max.(z, D_i)) - sum(max.(z, D_h))
     Pi_k = bank.r * r_terms + r_bar * r_bar_terms
@@ -82,12 +82,12 @@ Update the interest rate set by the bank.
 r = \\bar{r} + \\mu
 ```
 """
-function bank_rate(model::AbstractModel)
+function bank_rate(model)
     bank = model.bank
     r = model.cb.r_bar + model.prop.mu
     return r
 end
-function set_bank_rate!(model::AbstractModel)
+function set_bank_rate!(model)
     return model.bank.r = bank_rate(model)
 end
 
@@ -111,12 +111,12 @@ where
 - `pi_e`: Expected inflation rate
 - `gamma_e`: Expected growth rate
 """
-function bank_expected_profits(model::AbstractModel)
+function bank_expected_profits(model)
     bank = model.bank
     pi_e, gamma_e = model.agg.pi_e, model.agg.gamma_e
     return bank.Pi_k * (1 + pi_e) * (1 + gamma_e)
 end
-function set_bank_expected_profits!(model::AbstractModel)
+function set_bank_expected_profits!(model)
     return model.bank.Pi_e_k = bank_expected_profits(model)
 end
 
@@ -125,7 +125,7 @@ end
 
 Re-finance insolvent firms using bank equity.
 """
-function finance_insolvent_firms!(model::AbstractModel)
+function finance_insolvent_firms!(model)
     firms, bank = model.firms, model.bank
     P_bar_CF, zeta_b = model.agg.P_bar_CF, model.prop.zeta_b
 

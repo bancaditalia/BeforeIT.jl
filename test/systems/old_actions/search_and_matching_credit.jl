@@ -16,8 +16,8 @@ function search_and_matching_credit!(model::AbstractModel)
     DL_d_i, K_e_i, L_e_i = firms.DL_d_i, firms.K_e_i, firms.L_e_i
     E_k, zeta, zeta_LTV = model.bank.E_k, model.prop.zeta, model.prop.zeta_LTV
 
-    DL_i = zeros(typeFloat, size(DL_d_i))
-    s_DL = zero(typeFloat)
+    DL_i = zeros(Float64, size(DL_d_i))
+    s_DL = zero(Float64)
     s_L_e = sum(L_e_i)
     I_FG = findall(DL_d_i .> 0)
     fshuffle!(I_FG)

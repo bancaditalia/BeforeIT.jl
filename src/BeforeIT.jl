@@ -4,7 +4,6 @@ import Base: length
 
 import Ark
 import JLD2
-using LazyArrays
 using LinearAlgebra
 using MacroTools
 using Preferences
@@ -28,6 +27,7 @@ include("resources/epsilons.jl")
 
 include("cache/firm_cache.jl")
 include("cache/search_and_matching.jl")
+include("cache/search_and_matching_labor.jl")
 
 include("model_init/init_model.jl")
 include("model_init/firms.jl")

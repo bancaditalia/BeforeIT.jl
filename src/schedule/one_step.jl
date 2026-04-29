@@ -121,5 +121,5 @@ function step!(model)
     # update time step
     BeforeIT.set_time!(world)
 
-    return model
+    return nothing
 end
