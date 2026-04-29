@@ -684,7 +684,6 @@ function perform_retail_market!(world::Ark.World, sector::Int64)
         remaining_stocks,
     )
 
-    check_caches_for_nans(world, sector)
 
     update_government_realised_consumption!(world, sector, demand_cache, government_consumption)
     update_foreign_consumption!(world, sector, demand_cache, exports)
@@ -712,7 +711,6 @@ function perform_retail_market!(world::Ark.World, sector::Int64)
     update_import_demand_from_remaining_stocks!(world, sector, stock_cache)
 
 
-    check_caches_for_nans(world, sector)
     return nothing
 end
 
