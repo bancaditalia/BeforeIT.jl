@@ -879,7 +879,7 @@ function set_firms_stocks!(world::Ark.World)
             materials_stock_change.amount,
         )
 
-        @inbounds inventories.amount .= inventories.amount + final_goods_stock_change_comp.amount
+        @inbounds inventories.amount .= inventories.amount .+ final_goods_stock_change_comp.amount
     end
 
     return nothing

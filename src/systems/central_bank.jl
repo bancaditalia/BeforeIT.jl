@@ -13,7 +13,7 @@ function set_central_bank_rate!(world)
     rotw_growth = growth.rate
     rotw_inflation = inflation.rate
 
-    for (e, interest_rate) in Ark.Query(world, (Components.NominalInterestRate,))
+    for (e, interest_rate) in Ark.Query(world, (Components.NominalInterestRate,), with = (Components.CentralBank,))
         @inbounds for i in eachindex(e)
             interest_rate[i] = Components.NominalInterestRate(
                 taylor_rule(interest_rate_smoothing, interest_rate[i].rate, natural_rate, inflation_target, response_to_inflation, response_to_output, rotw_growth, rotw_inflation)

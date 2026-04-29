@@ -9,8 +9,8 @@ function set_growth_inflation_expectations!(world::Ark.World)
 
 
     expected_gdp = estimate_next_value(log.(gross_domestic_product_history[1:(interval + t - 1)])) |> exp
-    expected_growth = expected_gdp / gross_domestic_product_history[interval + t - 1] - 1
-    expected_inflation = estimate_next_value(inflation_history[1:(interval + t - 1)]) |> exp
+    expected_growth = expected_gdp / gross_domestic_product_history[interval + t - 1] - 1.0
+    expected_inflation = exp(estimate_next_value(inflation_history[1:(interval + t - 1)])) - 1.0
 
     expectations.gross_domestic_product = expected_gdp
     expectations.output_growth = expected_growth
@@ -35,10 +35,10 @@ function set_growth_inflation_EA!(world::Ark.World)
     for (e, gdp, growth, inflation) in Ark.Query(world, (Components.EuroAreaGDP, Components.EuroAreaGrowth, Components.EuroAreaInflation))
         @inbounds for i in eachindex(e)
             expected_growth = exp(output_autoregression * log(gdp[i].value) + output_autoregression_scalar + epsilon_Y_EA)
-            growth[i] = Components.EuroAreaGrowth(expected_growth / gdp[i].value)
+            growth[i] = Components.EuroAreaGrowth(expected_growth / gdp[i].value - 1)
             gdp[i] = Components.EuroAreaGDP(expected_growth)
             inflation[i] = Components.EuroAreaInflation(
-                exp(inflation_autoregression * log1p(inflation[i].rate) + inflation_response_to_output_gap + random_inflation_shock)
+                exp(inflation_autoregression * log1p(inflation[i].rate) + inflation_response_to_output_gap + random_inflation_shock) - 1
             )
         end
     end
@@ -62,9 +62,10 @@ function set_inflation_priceindex!(world::Ark.World)
         total_output += sum(quantities.amount)
     end
     price_index = total_monetary_output_value / total_output
-    price_indices.aggregate = log(price_index / price_indices.aggregate)
+    price_indices.aggregate = price_index / price_indices.aggregate
+    inflation = log(price_indices.aggregate)
     push!(macro_state.inflation_history, 0.0)
-    macro_state.inflation_history[interval + t] = price_index
+    macro_state.inflation_history[interval + t] = inflation
 
     return nothing
 end
@@ -72,23 +73,23 @@ end
 function set_sector_specific_priceindex!(world::Ark.World)
     price_indices = Ark.get_resource(world, PriceIndices)
     fill!(price_indices.sector, 0.0)
-    total_quantities = zeros(size(price_indices.sector))
+    total_sales = zeros(size(price_indices.sector))
 
-    for (entities, principal_product, prices, quantities) in Ark.Query(world, (Components.PrincipalProduct, Components.Price, Components.Output))
+    for (entities, principal_product, prices, sales) in Ark.Query(world, (Components.PrincipalProduct, Components.Price, Components.Sales))
         @inbounds for i in eachindex(entities)
-            price_indices.sector[principal_product[i].id] += prices[i].value * quantities[i].amount
-            total_quantities[principal_product[i].id] += quantities[i].amount
+            price_indices.sector[principal_product[i].id] += prices[i].value * sales[i].amount
+            total_sales[principal_product[i].id] += sales[i].amount
         end
     end
 
-    for (entities, principal_product, prices, quantities) in Ark.Query(world, (Components.PrincipalProduct, Components.ImportPrice, Components.ImportSales))
+    for (entities, principal_product, prices, sales) in Ark.Query(world, (Components.PrincipalProduct, Components.ImportPrice, Components.ImportSales))
         @inbounds for i in eachindex(entities)
-            price_indices.sector[principal_product[i].id] += prices[i].value * quantities[i].amount
-            total_quantities[principal_product[i].id] += quantities[i].amount
+            price_indices.sector[principal_product[i].id] += prices[i].value * sales[i].amount
+            total_sales[principal_product[i].id] += sales[i].amount
         end
     end
 
-    price_indices.sector ./= total_quantities
+    price_indices.sector ./= total_sales
     return nothing
 end
 

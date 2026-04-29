@@ -1,6 +1,7 @@
 function search_and_matching_labor!(world::Ark.World)
     calculate_initial_vacancies!(world)
     fire_employed_workers!(world)
+    build_hiring_firms_cache!(world)
     hire_workers!(world)
     return nothing
 end
@@ -12,6 +13,18 @@ function calculate_initial_vacancies!(world::Ark.World)
     return nothing
 end
 
+function build_hiring_firms_cache!(world)
+    cache = Ark.get_resource(world, HiringFirmsCache)
+
+    for (e, desired_employment, employment) in Ark.Query(world, (Components.DesiredEmployment, Components.Employment))
+        for i in eachindex(e)
+            BeforeIT.emblace!(desired_employment[i].amount - employment[i].amount, employment[i].amount, e[i], cache)
+        end
+    end
+
+    return nothing
+end
+
 function fire_employed_workers!(world::Ark.World)
     f = Ark.Filter(world, (Components.Employed,), with = (Components.EmployedAt,))
     Ark.shuffle_entities!(f)
@@ -19,12 +32,12 @@ function fire_employed_workers!(world::Ark.World)
     for (firm_e, vacancies, employment) in Ark.Query(world, (Components.Vacancies, Components.Employment))
         for i in eachindex(firm_e)
 
-            for (worker_e, employed) in Ark.Query(world, (Components.EmployedAt,), relations = (Components.EmployedAt => firm_e[i],))
+            for (worker_e, _) in Ark.Query(world, (Components.EmployedAt,), relations = (Components.EmployedAt => firm_e[i],))
                 for j in eachindex(worker_e)
                     vacancies[i].amount >= 0 && break
                     push!(remove_employment, worker_e[j])
                     vacancies[i] = Components.Vacancies(vacancies[i].amount + 1)
-                    employment[i] = Components.Employment(employment[i].amount + 1)
+                    employment[i] = Components.Employment(employment[i].amount - 1)
                 end
             end
         end
@@ -58,7 +71,9 @@ function hire_workers!(world::Ark.World)
 
             for (firm_e, vacancies, employment) in Ark.Query(firms)
                 for i in shuffle(eachindex(firm_e))
-                    vacancies[i].amount > 0 || haskey(add_employment, worker_e[j]) || continue
+                    if vacancies[i].amount <= 0 || haskey(add_employment, worker_e[j])
+                        continue
+                    end
                     vacancies[i] = Components.Vacancies(vacancies[i].amount - 1)
                     employment[i] = Components.Employment(employment[i].amount + 1)
                     add_employment[worker_e[j]] = firm_e[i]

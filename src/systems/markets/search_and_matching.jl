@@ -246,15 +246,16 @@ function allocate_intermediate_from_available_stocks!(
     )
     nactive = rebuild_active_buyers!(active, demand_cache.vals, sector)
 
-    while nactive > 0 && !iszero(remaining_supply)
+    while nactive > 0 && !iszero(weights)
         i = 1
         shuffle!(view(active, 1:nactive))
 
-        while i <= nactive && !iszero(remaining_supply)
+        while i <= nactive && !iszero(weights)
 
             buyer = active[i]
 
             firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)
+
 
             sold_amount = min(stock_cache.available_stocks[firm_index], demand_cache.vals[buyer, sector])
 
@@ -288,11 +289,11 @@ function allocate_intermediate_from_stock_capacity!(
     )
     nactive = rebuild_active_buyers!(active, demand_cache.vals, sector)
 
-    while nactive > 0 && !iszero(remaining_supply)
+    while nactive > 0 && !iszero(weights)
         i = 1
         shuffle!(view(active, 1:nactive))
 
-        while i <= nactive && !iszero(remaining_supply)
+        while i <= nactive && !iszero(weights)
 
             buyer = active[i]
             firm_index = BeforeIT.choose_random_firm(stock_cache, sector, weights)

@@ -8,6 +8,7 @@ using Test
     end
 
     @testset "Systems" begin
+        include("systems/old_actions/mock_model.jl")
         include("systems/aggregates.jl")
         include("systems/banks.jl")
         include("systems/central_bank.jl")
