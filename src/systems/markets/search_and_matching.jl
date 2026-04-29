@@ -11,16 +11,6 @@ function search_and_matching!(world::Ark.World)
     return nothing
 end
 
-function check_caches_for_nans(world, sector)
-    demand_cache_im = Ark.get_resource(world, DesiredIntermediatesCache)
-    demand_cache_con = Ark.get_resource(world, DesiredIntermediatesCache)
-    stock_cache = Ark.get_resource(world, StockCache)
-
-    any(isnan, get_available_stocks(stock_cache, sector)) && @error "Nans in  Stock Cache Vals, Sector $sector"
-    any(isnan, get_stock_capacity(stock_cache, sector)) && @error "Nans in  Stock Cache Capacity"
-
-    return nothing
-end
 
 function build_intermediate_demand_cache!(world::Ark.World)
     properties = BeforeIT.properties(world)
@@ -163,9 +153,6 @@ function build_import_stock_cache!(world::Ark.World, stock_cache)
             )
         )
         @inbounds for i in eachindex(e)
-            if price[i].value != 0.0
-                @info "price is not 0"
-            end
             BeforeIT.emblace!(
                 import_supply[i].amount,
                 Inf,
@@ -451,8 +438,6 @@ function perform_firm_market!(world::Ark.World, sector::Int64)
         weights,
         remaining_supply,
     )
-
-    check_caches_for_nans(world, sector)
 
 
     return nothing
