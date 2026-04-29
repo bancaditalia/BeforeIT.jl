@@ -15,6 +15,7 @@ end
 
 function build_hiring_firms_cache!(world)
     cache = Ark.get_resource(world, HiringFirmsCache)
+    reset_cache!(cache)
 
     for (e, desired_employment, employment) in Ark.Query(world, (Components.DesiredEmployment, Components.Employment))
         for i in eachindex(e)
@@ -54,10 +55,9 @@ function fire_employed_workers!(world::Ark.World)
     return nothing
 end
 
-
-#TODO: Make this more efficient 111ms :(
 function hire_workers!(world::Ark.World)
 
+    cache = Ark.get_resource(world, HiringFirmsCache)
     f = Ark.Filter(world, (Components.Unemployed,))
     firms = Ark.Filter(world, (Components.Vacancies, Components.Employment))
     Ark.shuffle_entities!(f)
@@ -66,21 +66,20 @@ function hire_workers!(world::Ark.World)
     add_employment = Dict{Ark.Entity, Ark.Entity}()
 
 
-    for (worker_e, unemployed) in Ark.Query(world, (Components.Unemployed,))
-        for j in eachindex(worker_e)
+    while cache.nhiring > 0 && nunemployed > 0
+        shuffle!(view(cache.active, 1:cache.nhiring))
+        i = 1
+        while i < cache.nhiring
+            firm_index = cache.active[i]
 
-            for (firm_e, vacancies, employment) in Ark.Query(firms)
-                for i in shuffle(eachindex(firm_e))
-                    if vacancies[i].amount <= 0 || haskey(add_employment, worker_e[j])
-                        continue
-                    end
-                    vacancies[i] = Components.Vacancies(vacancies[i].amount - 1)
-                    employment[i] = Components.Employment(employment[i].amount + 1)
-                    add_employment[worker_e[j]] = firm_e[i]
-                    break
-                end
+            if iszero(cache.vacancies[firm_index])
+                active[i] = active[cache.nhiring]
+                cache.nhiring -= 1
+            else
+                i += 1
             end
         end
+
     end
 
     for (worker_e, firm_e) in add_employment
