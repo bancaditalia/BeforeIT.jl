@@ -1,10 +1,10 @@
 @component struct Employed <: AbstractComponent
-    rate::Float64
+    rate::FloatType
 end
 @component struct EmployedAt <: Ark.Relationship end
 
 @component struct Inactive <: AbstractComponent end
 
 @component struct Unemployed <: AbstractComponent
-    unemployment_benefits::Float64
+    unemployment_benefits::FloatType
 end

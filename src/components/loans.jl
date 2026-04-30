@@ -1,7 +1,7 @@
 @component struct LoansOutstanding <: AbstractComponent #L_i
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct LoanFlow <: AbstractComponent  #DL_i
-    amount::Float64
+    amount::FloatType
 end

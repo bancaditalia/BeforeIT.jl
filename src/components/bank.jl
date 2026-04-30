@@ -1,9 +1,9 @@
 @component struct ResidualItems <: AbstractComponent
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct LendingRate <: AbstractComponent
-    rate::Float64
+    rate::FloatType
 end
 
 @component struct Banker <: AbstractComponent end

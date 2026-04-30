@@ -1,25 +1,25 @@
 @component struct NominalInterestRate <: AbstractComponent
-    rate::Float64
+    rate::FloatType
 end
 
 @component struct GovernmentBondInterestRate <: AbstractComponent
-    rate::Float64
+    rate::FloatType
 end
 
 @component struct GradualAdjustmentRate <: AbstractComponent
-    rate::Float64
+    rate::FloatType
 end
 
 @component struct EquilibriumInterestRate <: AbstractComponent
-    rate::Float64
+    rate::FloatType
 end
 
 @component struct InflationTargetingWeight <: AbstractComponent
-    weight::Float64
+    weight::FloatType
 end
 
 @component struct EconomicWeight <: AbstractComponent
-    weight::Float64
+    weight::FloatType
 end
 
 @component struct CentralBank <: AbstractComponent end
