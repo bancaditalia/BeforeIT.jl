@@ -1,6 +1,6 @@
 abstract type FirmComponent <: AbstractComponent end
 @component struct PrincipalProduct <: FirmComponent #G_i
-    id::Int64
+    id::IntType
 end
 
 @component struct LaborProductivity <: FirmComponent #alpha_bar_i
@@ -52,15 +52,15 @@ end
 end
 
 @component struct Employment <: FirmComponent #N_i
-    amount::Int
+    amount::IntType
 end
 
 @component struct Vacancies <: FirmComponent #V_i
-    amount::Int
+    amount::IntType
 end
 
 @component struct DesiredEmployment <: FirmComponent #N_d_i
-    amount::Int
+    amount::IntType
 end
 
 @component struct Output <: FirmComponent #Y_i
@@ -96,31 +96,31 @@ end
 end
 
 @component struct MaterialsStockChange <: FirmComponent #DM_i
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct TargetLoans <: FirmComponent #DL_d_i
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct ExpectedCapital <: FirmComponent #K_e_i
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct ExpectedLoans <: FirmComponent #L_e_i
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct ExpectedSales <: FirmComponent #Q_s_i
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct DesiredInvestment <: FirmComponent #I_d_i
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct DesiredMaterials <: FirmComponent #DM_d_i
-    amount::Float64
+    amount::FloatType
 end
 
 @component struct Owner <: Ark.Relationship
