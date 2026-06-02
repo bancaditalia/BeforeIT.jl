@@ -90,3 +90,7 @@ Temporary Items
 
 # simulation data folder
 simulation_data/
+
+# data files
+*.csv
+*.jld2

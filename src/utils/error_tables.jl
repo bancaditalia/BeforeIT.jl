@@ -1,5 +1,6 @@
 # Error table functions for AR, ABM, and validation models
-# Dependencies (Dates, Statistics, JLD2) are already imported via analysis_utils.jl
+using Dates, Statistics
+using JLD2: load, save
 
 # =============================================================================
 # VARIABLE SPECIFICATIONS
@@ -70,7 +71,7 @@ end
 
 function error_table_ar(
         country::String, ea, data, quarters, horizons;
-        model_variant::String = "base",
+        model_variant::String = "Model",
     )
     quarters_num = date2num.(quarters)
     number_quarters = length(quarters)
@@ -78,6 +79,7 @@ function error_table_ar(
 
     number_horizons = length(horizons)
     variable_names = agg_base_variables
+    number_variables = length(variable_names)
     presample = 4
 
     for k in 1:3
@@ -128,8 +130,8 @@ end
 
 function error_table_abm(
         country::String, ea, data, quarters, horizons;
-        model_variant::String = "base",
-        prediction_folder::String = "abm_predictions/base",
+        model_variant::String = "Model",
+        prediction_folder::String = "abm_predictions/Model",
     )
     quarters_num = date2num.(quarters)
     number_quarters = length(quarters)
@@ -194,7 +196,7 @@ end
 
 function error_table_validation_var(
         country::String, ea, data, quarters, horizons;
-        model_variant::String = "base",
+        model_variant::String = "Model",
     )
     quarters_num = date2num.(quarters)
     number_quarters = length(quarters)
@@ -251,8 +253,8 @@ end
 
 function error_table_validation_abm(
         country::String, ea, data, quarters, horizons;
-        model_variant::String = "base",
-        prediction_folder::String = "abm_predictions/base",
+        model_variant::String = "Model",
+        prediction_folder::String = "abm_predictions/Model",
     )
     quarters_num = date2num.(quarters)
     number_quarters = length(quarters)

@@ -40,7 +40,7 @@ function extract_yq(files)
 end
 
 """
-    save_all_simulations(folder_name; T=12, n_sims=4, model_factory=nothing, simulation_folder=nothing)
+    save_all_simulations(folder_name; T=12, n_sims=4, model_constructor=Bit.Model, simulation_folder=nothing)
 
 Run ensemble simulations for all parameter/initial_condition pairs and save results.
 
@@ -48,10 +48,10 @@ Run ensemble simulations for all parameter/initial_condition pairs and save resu
 - `folder_name`: Base folder containing data (e.g., "data/it")
 - `T`: Number of quarters to simulate (default: 12)
 - `n_sims`: Number of ensemble simulations (default: 4)
-- `model_factory`: Optional constructor `(parameters, initial_conditions) -> Model`.
-                   Pass `Bit.ModelGR`, `Bit.ModelCANVAS`, or any custom factory.
-                   Defaults to `Bit.Model` (baseline).
-- `simulation_folder`: Folder suffix for output (e.g., "canvas" → `simulations_canvas/`).
+- `model_constructor`: Model constructor `(parameters, initial_conditions) -> Model`.
+                   Pass `Bit.ModelGR` or `Bit.ModelCANVAS`; defaults to `Bit.Model` (baseline).
+- `simulation_folder`: Output subdirectory under `folder_name` (default: `simulations`).
+                   Pass e.g. `"simulations/canvas"` to keep variant outputs separated.
                    Input is always read from `parameters/` and `initial_conditions/`.
 
 # Examples
@@ -61,26 +61,20 @@ Bit.save_all_simulations("data/it"; T=12, n_sims=100)
 
 # GrowthRate extension
 Bit.save_all_simulations("data/it"; T=12, n_sims=100,
-    model_factory=Bit.ModelGR, simulation_folder="growth_rate")
+    model_constructor=Bit.ModelGR, simulation_folder="simulations/growth_rate")
 
 # CANVAS extension
 Bit.save_all_simulations("data/it"; T=12, n_sims=100,
-    model_factory=Bit.ModelCANVAS, simulation_folder="canvas")
+    model_constructor=Bit.ModelCANVAS, simulation_folder="simulations/canvas")
 ```
 """
-function save_all_simulations(folder_name; T = 12, n_sims = 4, model_factory = nothing, simulation_folder = nothing)
+function save_all_simulations(folder_name; T = 12, n_sims = 4, model_constructor = Model, simulation_folder = nothing)
     # Always read from standard folders
     param_dir = folder_name * "/parameters/"
     init_dir = folder_name * "/initial_conditions/"
 
-    # Output folder depends on suffix
-    if simulation_folder !== nothing
-        sim_dir = folder_name * "/simulations_$(simulation_folder)/"
-    else
-        sim_dir = folder_name * "/simulations/"
-    end
-
-    # Ensure simulation directory exists
+    # Output subdirectory (defaults to "simulations"); ensure it exists
+    sim_dir = joinpath(folder_name, something(simulation_folder, "simulations")) * "/"
     mkpath(sim_dir)
 
     param_files = readdir(param_dir)
@@ -102,20 +96,15 @@ function save_all_simulations(folder_name; T = 12, n_sims = 4, model_factory = n
             parameters = load(param_file)
             initial_conditions = load(init_file)
 
-            # Use model_factory if provided, else standard Model
-            if model_factory !== nothing
-                model = model_factory(parameters, initial_conditions)
-            else
-                model = Bit.Model(parameters, initial_conditions)
-            end
-
+            model = model_constructor(parameters, initial_conditions)
             model_vector = Bit.ensemblerun!((deepcopy(model) for _ in 1:n_sims), T)
             data_vector = DataVector(model_vector)
             sim_file = joinpath(sim_dir, string(year, "Q", quarter, ".jld2"))
 
             save(sim_file, "data_vector", data_vector)
         catch e
-            @warn "Skipping $(year)Q$(quarter) due to error: $e"
+            e isa InterruptException && rethrow()
+            @warn "Skipping $(year)Q$(quarter) due to error" exception = (e, catch_backtrace())
         end
     end
     return
@@ -131,6 +120,9 @@ function save_all_predictions_from_sims(folder_name, real_data; simulation_suffi
 
     sim_yq = extract_yq(sim_files)
     sim_yq = sort(collect(sim_yq))
+
+    # Ensure the output directory exists (callers should not have to pre-create it)
+    mkpath(folder_name * "/$(prediction_suffix)")
 
     for yq in sim_yq
         y = parse(Int, yq[1:4])
@@ -152,34 +144,4 @@ function save_all_predictions_from_sims(folder_name, real_data; simulation_suffi
     end
 
     return
-end
-
-"""
-    run_variant_pipeline(folder_name, real_data, variant::String; model_factory=nothing, T=12, n_sims=4)
-
-Run the full simulation + prediction extraction pipeline for a model variant.
-
-Derives `simulation_folder` and `prediction_folder` from `variant`, then calls
-`save_all_simulations` and `save_all_predictions_from_sims`.
-
-# Arguments
-- `folder_name`: Base folder (e.g., "data/it")
-- `real_data`: Real calibration data for prediction extraction
-- `variant`: Variant name string (e.g., "base", "canvas", "growth_rate")
-- `model_factory`: Model constructor (`Bit.ModelGR`, `Bit.ModelCANVAS`), or `nothing` for the base model
-- `T`: Forecast horizon in quarters (default: 12)
-- `n_sims`: Number of ensemble simulations (default: 4)
-"""
-function run_variant_pipeline(folder_name, real_data, variant::String; model_factory = nothing, T = 12, n_sims = 4)
-    save_all_simulations(
-        folder_name; T = T, n_sims = n_sims,
-        model_factory = model_factory,
-        simulation_folder = "simulations/$variant"
-    )
-    mkpath(joinpath(folder_name, "abm_predictions/$variant"))
-    return save_all_predictions_from_sims(
-        folder_name, real_data;
-        simulation_suffix = "simulations/$variant",
-        prediction_suffix = "abm_predictions/$variant"
-    )
 end

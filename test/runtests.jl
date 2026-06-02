@@ -13,6 +13,7 @@ using Runic
     include("utils/modify.jl")
     include("utils/zenodo_calibration.jl")
     include("utils/correlation_utils.jl")
+    include("utils/analysis_utils.jl")
 
     # search_and_matching
     include("markets/search_and_matching.jl")

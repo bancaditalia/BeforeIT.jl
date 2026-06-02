@@ -15,12 +15,16 @@
 #
 function bias_ttest(errors::Vector{Float64}, h::Int = 1)
     n = length(errors)
+    n < 2 && return NaN, NaN
     d = errors
 
-    # Newey-West variance estimate (same structure as DM test)
-    if h > 1
-        gamma = [cov(d[1:(end - i)], d[(1 + i):end]) for i in 0:(h - 1)] / n
-        varD = gamma[1] + 2 * sum(gamma[2:h])
+    # Newey-West variance estimate (same structure as DM test). Cap the
+    # truncation lag at the available sample so short error series do not call
+    # `cov` on (near-)empty vectors; for n > h this is unchanged.
+    maxlag = min(h - 1, n - 2)
+    if maxlag >= 1
+        gamma = [cov(d[1:(end - i)], d[(1 + i):end]) for i in 0:maxlag] / n
+        varD = gamma[1] + 2 * sum(gamma[2:end])
     else
         varD = var(d)
     end

@@ -11,9 +11,9 @@ import BeforeIT as Bit
 # Reads from: data/{country}/analysis/{model_variant}/
 # Writes to:  analysis/figs/forecast_performance/{model_variant}/
 #
-# Options: "base", "growth_rate", "canvas"
+# Options: "Model", "ModelGR", "ModelCANVAS"
 
-model_variant = "base"
+model_variant = "Model"
 
 # =============================================================================
 # MAIN SCRIPT

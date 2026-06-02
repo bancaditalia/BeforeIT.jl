@@ -20,16 +20,13 @@ quarters = DateTime(2010, 03, 31):Dates.Month(3):DateTime(2019, 12, 31)
 # =============================================================================
 # MODEL VARIANT CONFIGURATION
 # =============================================================================
-# Set model_variant and model_factory for the desired variant.
-# Results will be saved to: data/{country}/analysis/{model_variant}/
+# Pick the model to run. The variant name (and hence the output folders under
+# data/{country}/analysis/{variant}/) is derived from it, so they cannot disagree.
 #
-# Options:
-#   model_variant = "base"        model_factory = nothing
-#   model_variant = "growth_rate" model_factory = Bit.ModelGR
-#   model_variant = "canvas"      model_factory = Bit.ModelCANVAS
+# Options: `Bit.Model`, `Bit.ModelGR`, `Bit.ModelCANVAS` (the variant folder is named after it)
 
-model_variant = "base"
-model_factory = nothing
+model_constructor = Bit.Model
+model_variant = string(nameof(model_constructor))
 
 # =============================================================================
 # SIMULATION PHASE
@@ -42,7 +39,11 @@ if run_simulation
         @info "Processing $country"
         try
             calibration = Bit.load_calibration_data(country)
-            Bit.run_variant_pipeline("data/$country", calibration.data, model_variant; model_factory, T = t, n_sims)
+            folder = "data/$country"
+            sim_subdir = "simulations/$(model_variant)"
+            pred_subdir = "abm_predictions/$(model_variant)"
+            Bit.save_all_simulations(folder; T = t, n_sims, model_constructor, simulation_folder = sim_subdir)
+            Bit.save_all_predictions_from_sims(folder, calibration.data; simulation_suffix = sim_subdir, prediction_suffix = pred_subdir)
             @info "Completed $country"
         catch e
             @error "Failed $country" exception = (e, catch_backtrace())

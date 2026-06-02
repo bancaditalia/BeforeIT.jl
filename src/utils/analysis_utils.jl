@@ -49,7 +49,7 @@ rmse_improvement(rmse1, rmse2) = -round.(100 * (rmse1 .- rmse2) ./ rmse2, digits
 # TABLE WRITING
 # =============================================================================
 
-function write_latex_table(filename, country, input_data_S, horizons; model_variant = "base")
+function write_latex_table(filename, country, input_data_S, horizons; model_variant = "Model")
     nrows = size(input_data_S, 1)
     row_labels = ["$(i)q" for i in horizons]
     lines = [
@@ -63,7 +63,7 @@ function write_latex_table(filename, country, input_data_S, horizons; model_vari
     end
 end
 
-function write_csv_table(filename, country, input_data, horizons, variable_names; model_variant = "base")
+function write_csv_table(filename, country, input_data, horizons, variable_names; model_variant = "Model")
     df = DataFrame(Horizon = ["$(h)q" for h in horizons])
     for (j, var) in enumerate(variable_names)
         df[!, var] = input_data[:, j]
@@ -85,9 +85,11 @@ function generate_dm_test_comparison(error1, error2, rmse1, rmse2, horizons)
     for j in eachindex(horizons), l in 1:size(rmse1, 2)
         e1 = view(error1, :, j, l)
         e2 = view(error2, :, j, l)
-        dm_e1 = e1[.!isnan.(e1)]
-        dm_e2 = e2[.!isnan.(e2)]
-        _, p_value = dmtest_modified(dm_e2, dm_e1, horizons[j])
+        # The DM test compares paired errors, so keep only quarters where both
+        # series are observed (their NaN patterns can differ, e.g. a missing
+        # prediction file leaves a gap in one but not the other).
+        mask = .!isnan.(e1) .& .!isnan.(e2)
+        p_value = count(mask) < 2 ? NaN : last(dmtest_modified(e2[mask], e1[mask], horizons[j]))
         input_data_S[j, l] = "$(input_data[j, l])($(round(p_value, digits = 2)), $(stars(p_value)))"
         pval_matrix[j, l] = p_value
     end
@@ -112,7 +114,7 @@ end
 # PER-COUNTRY TABLE GENERATION
 # =============================================================================
 
-function create_bias_rmse_tables_abm(forecast, actual, horizons, type, variable_names, country; model_variant = "base")
+function create_bias_rmse_tables_abm(forecast, actual, horizons, type, variable_names, country; model_variant = "Model")
     type_prefix = type == "validation" ? "validation_" : ""
     comparison_model = type == "validation" ? "var" : "ar"
 
@@ -134,8 +136,8 @@ function create_bias_rmse_tables_abm(forecast, actual, horizons, type, variable_
     write_csv_table("pval_$(type_prefix)abm_vs_$(comparison_model).csv", country, pval_vs_benchmark, horizons, variable_names; model_variant)
 
     # 3. Relative to base ABM (non-base variants only)
-    if model_variant != "base"
-        base_abm_file = "data/$country/analysis/base/forecast_$(type_prefix)abm.jld2"
+    if model_variant != "Model"
+        base_abm_file = "data/$country/analysis/Model/forecast_$(type_prefix)abm.jld2"
         if isfile(base_abm_file)
             forecast_base_abm = load(base_abm_file)["forecast"]
             rmse_base_abm, _, error_base_abm = calculate_forecast_errors(forecast_base_abm, actual)
@@ -158,7 +160,7 @@ function create_bias_rmse_tables_abm(forecast, actual, horizons, type, variable_
     return nothing
 end
 
-function create_bias_rmse_tables_var(forecast, actual, horizons, forecast_type, model_type, variable_names, k, country; model_variant = "base")
+function create_bias_rmse_tables_var(forecast, actual, horizons, forecast_type, model_type, variable_names, k, country; model_variant = "Model")
     type_prefix = forecast_type == "validation" ? "validation_" : ""
     analysis_dir = "data/$country/analysis/$model_variant"
     mkpath(analysis_dir)
@@ -289,18 +291,18 @@ end
 # =============================================================================
 
 """
-    discover_countries(; folder="data", subfolder="abm_predictions/base")
+    discover_countries(; folder="data", subfolder="abm_predictions/Model")
 
 Find country codes that have JLD2 files in the given subfolder.
 
 # Examples
 ```julia
-discover_countries(; subfolder="abm_predictions/base")   # base predictions
-discover_countries(; subfolder="abm_predictions/canvas") # canvas predictions
-discover_countries(; subfolder="parameters")             # calibrated countries
+discover_countries(; subfolder="abm_predictions/Model")       # base predictions
+discover_countries(; subfolder="abm_predictions/ModelCANVAS") # CANVAS predictions
+discover_countries(; subfolder="parameters")                  # calibrated countries
 ```
 """
-function discover_countries(; folder::String = "data", subfolder::String = "abm_predictions/base")
+function discover_countries(; folder::String = "data", subfolder::String = "abm_predictions/Model")
     countries = String[]
     isdir(folder) || return countries
     for entry in readdir(folder)
