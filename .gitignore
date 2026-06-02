@@ -82,3 +82,11 @@ Temporary Items
 *.icloud
 
 .vscode/settings.json
+
+# images
+*.png
+*.jpg
+*.jpeg
+
+# simulation data folder
+simulation_data/

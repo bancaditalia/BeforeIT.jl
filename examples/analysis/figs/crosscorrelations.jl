@@ -1,18 +1,22 @@
 # Single-Country Cross-Correlation Analysis
 # Creates cross-correlation and autocorrelation plots for a single country
 #
-# Supports base model and extension variants (CANVAS, GrowthRateAR1).
-# Set model_variant, prediction_folder, and model_factory below.
+# Self-contained example: it first generates a small ensemble of model
+# predictions (one file per quarter, as in `prediction_pipeline_multiple.jl`),
+# then compares their business-cycle statistics — cross-correlations with real
+# GDP and autocorrelations — against the real data.
 
-using StatsBase, LinearAlgebra, Statistics, Dates
-using Plots, JLD2, FileIO
 import BeforeIT as Bit
+using Dates, Plots, JLD2, FileIO
 
 # =============================================================================
 # CONFIGURATION
 # =============================================================================
 
-country = "at"  # Country code
+# Country: any 2-letter code in `Bit.AVAILABLE_COUNTRIES`.
+# Every other country is downloaded from Zenodo via `Bit.download_zenodo_calibration_object`.
+country = "AT"
+
 correlation_lags = 15
 autocorr_lags = 20
 
@@ -23,67 +27,71 @@ plot_variables = [
     "gdp_deflator_quarterly",
 ]
 
-# =============================================================================
-# MODEL VARIANT CONFIGURATION
-# =============================================================================
-# Change these to run analysis for different model variants.
-# Output will be saved to: analysis/figs/{country}/{model_variant}/
-#
-# Options:
-#   model_variant = "base"           prediction_folder = "abm_predictions/crosscorr"               model_factory = nothing
-#   model_variant = "growth_rate"    prediction_folder = "abm_predictions/growth_rate_crosscorr"   model_factory = Bit.ModelGR
-#   model_variant = "canvas"         prediction_folder = "abm_predictions/canvas_crosscorr"        model_factory = Bit.ModelCANVAS
-
-model_variant = "base"
-prediction_folder = "abm_predictions/crosscorr"
-model_factory = nothing
+# Ensemble generation settings
+# Predictions are written to `simulation_data/$(country)/abm_predictions/YYYYQn.jld2` files
+folder = "simulation_data/$(country)"  
+first_calibration_date = DateTime(2010, 03, 31)
+last_calibration_date = DateTime(2011, 12, 31)
+T = 20                                         # quarters simulated per prediction
+n_sims = 4                                     # simulations per quarter
 
 # =============================================================================
-# MAIN SCRIPT
+# GENERATE PREDICTION FILES
 # =============================================================================
+# Mirrors `examples/prediction_pipeline_multiple.jl`: calibrate on each quarter,
+# run `n_sims` simulations of length `T`, and align them with the real data to
+# obtain one `abm_predictions/YYYYQn.jld2` file per quarter.
 
-@info "Cross-Correlation Analysis for $country (variant: $model_variant)"
-
-calibration = Bit.load_calibration_data(country)
+calibration = Bit.download_zenodo_calibration_object(country);
 real_data = calibration.data
-folder = "data/$(country)/$(prediction_folder)"
-output_folder = "analysis/figs/$(country)/$(model_variant)"
-mkpath(output_folder)
+prediction_folder = joinpath(folder, "abm_predictions")
 
-# Load prediction files
-files = filter(f -> endswith(f, ".jld2"), readdir(folder))
-isempty(files) && error("No prediction files found in $folder")
+# Set to `true` to generate prediction files from scratch.
+# If `false`, the script will look for existing files in `prediction_folder` and will skip to the statistics and plots.
+prediction_from_scratch = true
 
-first_pred = load(joinpath(folder, first(files)))["predictions_dict"]
+if prediction_from_scratch
+    @info "Generating prediction files in $prediction_folder"
+    Bit.save_all_params_and_initial_conditions(
+        calibration, folder; scale = 0.0005,
+        first_calibration_date = first_calibration_date,
+        last_calibration_date = last_calibration_date,
+    )
+    Bit.save_all_simulations(folder; T = T, n_sims = n_sims)
+    Bit.save_all_predictions_from_sims(folder, real_data)
+end
+
+# =============================================================================
+# COMPUTE CORRELATION STATISTICS
+# =============================================================================
+
+# Quarterly variables actually produced by the model
+first_pred = load(joinpath(prediction_folder, first(readdir(prediction_folder))))["predictions_dict"]
 vars = collect(filter(v -> endswith(v, "_quarterly"), keys(first_pred)))
-gdp_size = size(first_pred["real_gdp_quarterly"])
 
-# Process simulation data and compute correlations
-hp_cache = Bit.create_hp_filter_cache(real_data, vars)
+# Compute correlation statistics for the ABM predictions and the real data. The function `Bit.correlation_stats`
+abm_stats = Bit.correlation_stats(prediction_folder, vars; correlation_lags = correlation_lags, autocorr_lags = autocorr_lags)
+real_stats = Bit.correlation_stats(real_data, vars; correlation_lags = correlation_lags, autocorr_lags = autocorr_lags)
 
-_, crosscorr, autocorr, _ = Bit.process_all_simulation_data(
-    folder, vars, gdp_size, length(files),
-    correlation_lags, autocorr_lags, autocorr_lags, plot_variables[1:min(3, length(plot_variables))]
-)
+# =============================================================================
+# PLOTS
+# =============================================================================
 
-mean_xcorr, std_xcorr, mean_autocorr, std_autocorr, _ =
-    Bit.calculate_statistics(crosscorr, autocorr, Dict(), vars)
-
-real_crosscorr, real_autocorr, _ =
-    Bit.process_real_data_correlations(real_data, hp_cache, vars, correlation_lags, autocorr_lags)
+output_folder = "analysis/figs/$(country)"
+mkpath(output_folder)
 
 # Cross-correlation plot
 cross_lags = collect(-correlation_lags:correlation_lags)
 p1 = plot(layout = (2, 2), size = (1200, 800), plot_title = "Cross-Correlations with Real GDP")
 
 for (k, var) in enumerate(plot_variables[1:min(4, length(plot_variables))])
-    haskey(mean_xcorr, var) && haskey(real_crosscorr, var) || continue
+    haskey(abm_stats.crosscor, var) && haskey(real_stats.crosscor, var) || continue
     plot!(
-        p1, subplot = k, cross_lags, vec(mean_xcorr[var]), ribbon = vec(std_xcorr[var]),
+        p1, subplot = k, cross_lags, Bit.mean_crosscor(abm_stats, var), ribbon = Bit.std_crosscor(abm_stats, var),
         label = "ABM", color = :steelblue, linewidth = 2
     )
     plot!(
-        p1, subplot = k, cross_lags, vec(real_crosscorr[var]),
+        p1, subplot = k, cross_lags, Bit.mean_crosscor(real_stats, var),
         label = "Real", color = :crimson, linewidth = 2
     )
     title!(p1, subplot = k, replace(var, "_quarterly" => ""))
@@ -97,14 +105,14 @@ auto_lags = collect(0:autocorr_lags)
 p2 = plot(layout = (2, 2), size = (1200, 800), plot_title = "Autocorrelations")
 
 for (k, var) in enumerate(plot_variables[1:min(4, length(plot_variables))])
-    haskey(mean_autocorr, var) || continue
+    haskey(abm_stats.autocor, var) || continue
     plot!(
-        p2, subplot = k, auto_lags, vec(mean_autocorr[var]), ribbon = vec(std_autocorr[var]),
+        p2, subplot = k, auto_lags, Bit.mean_autocor(abm_stats, var), ribbon = Bit.std_autocor(abm_stats, var),
         label = "ABM", color = :steelblue, linewidth = 2
     )
-    if haskey(real_autocorr, var)
+    if haskey(real_stats.autocor, var)
         plot!(
-            p2, subplot = k, auto_lags, vec(real_autocorr[var]),
+            p2, subplot = k, auto_lags, Bit.mean_autocor(real_stats, var),
             label = "Real", color = :crimson, linewidth = 2
         )
     end
@@ -113,5 +121,3 @@ for (k, var) in enumerate(plot_variables[1:min(4, length(plot_variables))])
 end
 savefig(p2, joinpath(output_folder, "autocorrelations_abm.png"))
 @info "✓ Saved autocorrelation plot"
-
-@info "Done."
