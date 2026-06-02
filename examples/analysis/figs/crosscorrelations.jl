@@ -29,11 +29,14 @@ plot_variables = [
 
 # Ensemble generation settings
 # Predictions are written to `simulation_data/$(country)/abm_predictions/YYYYQn.jld2` files
-folder = "simulation_data/$(country)"  
+folder = "simulation_data/$(country)"
 first_calibration_date = DateTime(2010, 03, 31)
-last_calibration_date = DateTime(2011, 12, 31)
+last_calibration_date = DateTime(2012, 12, 31)
 T = 20                                         # quarters simulated per prediction
 n_sims = 4                                     # simulations per quarter
+
+# Model variant to simulate: `Bit.Model` (base), `Bit.ModelGR`, or `Bit.ModelCANVAS`
+model_constructor = Bit.Model
 
 # =============================================================================
 # GENERATE PREDICTION FILES
@@ -57,7 +60,7 @@ if prediction_from_scratch
         first_calibration_date = first_calibration_date,
         last_calibration_date = last_calibration_date,
     )
-    Bit.save_all_simulations(folder; T = T, n_sims = n_sims)
+    Bit.save_all_simulations(folder; T = T, n_sims = n_sims, model_constructor = model_constructor)
     Bit.save_all_predictions_from_sims(folder, real_data)
 end
 
