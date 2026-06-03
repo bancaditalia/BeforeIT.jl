@@ -14,6 +14,20 @@ date2num(d::Dates.DateTime) = Dates.value(d - MATLAB_EPOCH) / (1000 * 60 * 60 * 
 const MATLAB_EPOCH = Dates.DateTime(-1, 12, 31)
 num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(round(Int64, n * 1000 * 60 * 60 * 24))
 
+# Floor applied to sectoral productivities (alpha_s, kappa_s) so that inactive
+# sectors in small economies (e.g. Luxembourg) do not produce NaNs during model
+# initialisation: BeforeIT computes K_i = Y_i / (kappa_s * omega), which is NaN when kappa_s = 0.
+const MIN_PRODUCTIVITY = 1.0e-6
+
+"""
+    has_quarterly(d, key, idx)
+
+True when `d[key]` exists, is long enough to be indexed at `idx`, and the value
+there is not `missing`. Used to decide whether a quarterly series can be used
+directly or whether the annual series must be converted via the timescale.
+"""
+has_quarterly(d, key, idx) = haskey(d, key) && length(d[key]) >= idx && !ismissing(d[key][idx])
+
 """
     get_valid_calibration_quarters(calibration_object)
 
@@ -154,14 +168,18 @@ function get_params_and_initial_conditions(
     data["gdp_deflator_quarterly"] = data["nominal_gdp_quarterly"] ./ data["real_gdp_quarterly"]
     ea["gdp_deflator_quarterly"] = ea["nominal_gdp_quarterly"] ./ ea["real_gdp_quarterly"]
 
-
-    T_calibration = findall(
-        calibration_data["years_num"] .== date2num(DateTime(year(min(calibration_date, max_calibration_date)), 12, 31)),
-    )[1][1]
-    T_calibration_quarterly = findall(calibration_data["quarters_num"] .== date2num(calibration_date))[1][1]
-    T_estimation_exo = findall(data["quarters_num"] .== date2num(estimation_date))[1][1]
-    T_calibration_exo = findall(data["quarters_num"] .== date2num(calibration_date))[1][1]
+    # ========================= Resolve time indices =========================
+    # `vec` so findfirst returns a plain Int for both Vector and N×1-matrix layouts.
+    T_calibration = findfirst(
+        ==(date2num(DateTime(year(min(calibration_date, max_calibration_date)), 12, 31))),
+        vec(calibration_data["years_num"]),
+    )
+    T_calibration_quarterly = findfirst(==(date2num(calibration_date)), vec(calibration_data["quarters_num"]))
+    T_estimation_exo = findfirst(==(date2num(estimation_date)), vec(data["quarters_num"]))
+    T_calibration_exo = findfirst(==(date2num(calibration_date)), vec(data["quarters_num"]))
     T_calibration_exo_max = length(data["quarters_num"])
+
+    # ================= Extract raw FIGARO / calibration data =================
     intermediate_consumption = figaro["intermediate_consumption"][:, :, T_calibration]
     G = size(intermediate_consumption)[1]
     S = G
@@ -177,20 +195,13 @@ function get_params_and_initial_conditions(
     firm_debt_quarterly = calibration_data["firm_debt_quarterly"][T_calibration_quarterly]
 
     # Apply consolidation ratio to exclude intra-group lending from firm debt
-    if haskey(calibration_data, "firm_debt_consolidation_ratio_quarterly") &&
-            length(calibration_data["firm_debt_consolidation_ratio_quarterly"]) >= T_calibration_quarterly &&
-            !ismissing(calibration_data["firm_debt_consolidation_ratio_quarterly"][T_calibration_quarterly])
+    if has_quarterly(calibration_data, "firm_debt_consolidation_ratio_quarterly", T_calibration_quarterly)
         firm_debt_quarterly *= calibration_data["firm_debt_consolidation_ratio_quarterly"][T_calibration_quarterly]
     end
 
-    # Check if quarterly interest data available and load accordingly
-    # Must verify: (1) key exists, (2) vector is long enough, (3) value at index is not missing
-    has_quarterly_firm_interest = haskey(calibration_data, "firm_interest_quarterly") &&
-        length(calibration_data["firm_interest_quarterly"]) >= T_calibration_quarterly &&
-        !ismissing(calibration_data["firm_interest_quarterly"][T_calibration_quarterly])
-    has_quarterly_govt_interest = haskey(calibration_data, "interest_government_debt_quarterly") &&
-        length(calibration_data["interest_government_debt_quarterly"]) >= T_calibration_quarterly &&
-        !ismissing(calibration_data["interest_government_debt_quarterly"][T_calibration_quarterly])
+    # Prefer quarterly interest series when available; otherwise fall back to annual.
+    has_quarterly_firm_interest = has_quarterly(calibration_data, "firm_interest_quarterly", T_calibration_quarterly)
+    has_quarterly_govt_interest = has_quarterly(calibration_data, "interest_government_debt_quarterly", T_calibration_quarterly)
 
     # Load firm interest - prefer quarterly if available, otherwise use annual
     # (will convert later). We have warned about this upcoming conversion
@@ -248,9 +259,7 @@ function get_params_and_initial_conditions(
 
     # Load government deficit - prefer quarterly if available (to match MATLAB exactly)
     # MATLAB uses: government_deficit_quarterly / timescale
-    has_quarterly_govt_deficit = haskey(calibration_data, "government_deficit_quarterly") &&
-        length(calibration_data["government_deficit_quarterly"]) >= T_calibration_quarterly &&
-        !ismissing(calibration_data["government_deficit_quarterly"][T_calibration_quarterly])
+    has_quarterly_govt_deficit = has_quarterly(calibration_data, "government_deficit_quarterly", T_calibration_quarterly)
 
     government_deficit_quarterly = if has_quarterly_govt_deficit
         calibration_data["government_deficit_quarterly"][T_calibration_quarterly]
@@ -265,8 +274,9 @@ function get_params_and_initial_conditions(
     population = calibration_data["population"][T_calibration]
     r_bar = (data["euribor"][T_calibration_exo] .+ 1.0) .^ (1.0 / 4.0) .- 1
 
-    omega = 0.85
+    omega = 0.85  # capacity utilisation assumed when backing out capital productivity
 
+    # ===================== Derive accounting identities ======================
     # Ensure intermediate_consumption is non-negative (robustness)
     intermediate_consumption = max.(0, intermediate_consumption)
 
@@ -367,24 +377,18 @@ function get_params_and_initial_conditions(
         sum(fixed_capitalformation)
     fixed_capital_formation_other_than_dwellings = fixed_capitalformation - capitalformation_dwellings
     exports = Bit.pos(exports)
-    imports = Bit.pos(
+    # Imports as a residual of the goods balance; positive part is imports,
+    # negative part (re-exports) is split off so the two never drift apart.
+    net_imports =
         sum(intermediate_consumption, dims = 2) +
-            household_consumption +
-            government_consumption +
-            fixed_capital_formation_other_than_dwellings * sum(capital_consumption) /
-            sum(fixed_capital_formation_other_than_dwellings) +
-            capitalformation_dwellings +
-            exports - output,
-    )
-    reexports = Bit.neg(
-        sum(intermediate_consumption, dims = 2) +
-            household_consumption +
-            government_consumption +
-            fixed_capital_formation_other_than_dwellings * sum(capital_consumption) /
-            sum(fixed_capital_formation_other_than_dwellings) +
-            capitalformation_dwellings +
-            exports - output,
-    )
+        household_consumption +
+        government_consumption +
+        fixed_capital_formation_other_than_dwellings * sum(capital_consumption) /
+        sum(fixed_capital_formation_other_than_dwellings) +
+        capitalformation_dwellings +
+        exports - output
+    imports = Bit.pos(net_imports)
+    reexports = Bit.neg(net_imports)
     household_social_contributions = social_contributions - sum(employers_social_contributions)
     # Use actual per-sector D11 wages when available for more accurate w_s and pi_bar_s.
     # Fallback: apply aggregate D12/D1 ratio uniformly (assumes identical social contribution
@@ -444,6 +448,7 @@ function get_params_and_initial_conditions(
     unemployed = max.(1, matlab_round.(scale * unemployed))
 
 
+    # ================= Sector parameters & tax/policy rates ==================
     # Sector parameters
     I_s = firms
     alpha_s = timescale * output ./ employees
@@ -458,11 +463,7 @@ function get_params_and_initial_conditions(
     replace!(w_s, NaN => 0.0)
     replace!(beta_s, NaN => 0.0)
 
-    # Handle zero-productivity sectors (inactive sectors in small economies like Luxembourg)
-    # Set minimum positive values to avoid NaN during BeforeIT initialization.
-    # BeforeIT computes per-firm capital as K_i = Y_i / (kappa_s * omega), which produces NaN
-    # when kappa_s = 0. Similarly, alpha_s = 0 causes issues with labor allocation.
-    MIN_PRODUCTIVITY = 1.0e-6
+    # Floor zero-productivity sectors (see MIN_PRODUCTIVITY definition at top of file).
     alpha_s = max.(alpha_s, MIN_PRODUCTIVITY)
     kappa_s = max.(kappa_s, MIN_PRODUCTIVITY)
     tau_Y_s = taxes_products ./ output
@@ -531,7 +532,7 @@ function get_params_and_initial_conditions(
             firm_interest_quarterly - r_bar * (firm_debt_quarterly - bank_equity_quarterly)
     )
     tau_VAT = taxes_products_household / sum(household_consumption)
-    # tau_SIF is computed earlier (line 437) for model_profit_s calculation
+    # tau_SIF is computed earlier (needed for the model_profit_s calculation above)
     tau_SIW = household_social_contributions / sum(wages)
     tau_EXPORT = sum(taxes_products_export) / sum(exports - reexports)
     tau_CF = sum(taxes_products_capitalformation_dwellings) / sum(capitalformation_dwellings)
@@ -551,6 +552,7 @@ function get_params_and_initial_conditions(
     zeta_LTV = 0.6
     zeta_b = 0.5
 
+    # ============ Estimate exogenous processes (AR1 / Taylor rule) ===========
     # Inflation is always estimated on growth rates (diff of log) - this is already correct
     alpha_pi_EA, beta_pi_EA, sigma_pi_EA, epsilon_pi_EA = Bit.estimate_for_calibration_script(
         diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo])),
@@ -635,6 +637,7 @@ function get_params_and_initial_conditions(
         C = cov([epsilon_Y_EA epsilon_E epsilon_I])
     end
 
+    # ================ Pack params & initial_conditions output ================
     # define a dictionary of parameters to save in jld2 format
     params = Dict(
         "T" => T,
@@ -757,7 +760,7 @@ function get_params_and_initial_conditions(
     pi_EA_series = diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))
     r_bar_series = (data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1.0) .^ (1.0 / 4.0) .- 1
 
-    # define a dictionary of parameters to save in jld2 format
+    # define a dictionary of initial conditions to save in jld2 format
     initial_conditions = Dict(
         "D_I" => D_I,
         "L_I" => L_I,
