@@ -281,16 +281,6 @@ function get_params_and_initial_conditions(
         operating_surplus
     output = output[:, 1]
 
-    # Load capital_consumption (used for delta_s depreciation rate and imports residual)
-    capital_consumption = calibration_data["capital_consumption"][:, T_calibration]
-    if size(capital_consumption)[1] != G
-        # gross_capitalformation_dwellings = calibration_data["gross_capitalformation_dwellings"][T_calibration]
-        nace64_capital_consumption = calibration_data["nace64_capital_consumption"][:, T_calibration]
-        nominal_nace64_output = calibration_data["nominal_nace64_output"][:, T_calibration]
-        capital_consumption = nace64_capital_consumption ./ nominal_nace64_output .* output
-        # operating_surplus = operating_surplus - capital_consumption
-    end
-
     ## If fixed_assets and dwellings are given on industry-level
     if size(calibration_data["fixed_assets"])[1] == G &
             size(calibration_data["dwellings"])[1] == G
@@ -368,9 +358,9 @@ function get_params_and_initial_conditions(
     if !has_quarterly_govt_interest
         interest_government_debt_quarterly = timescale * interest_government_debt_quarterly
     end
-    if !has_quarterly_govt_deficit
-        government_deficit_quarterly = government_deficit_annual
-    end
+    # Note: in the annual-fallback case `government_deficit_quarterly` stays `nothing`;
+    # it is never read on that path — `other_net_transfers` uses `government_deficit_annual`
+    # directly via `govt_deficit_term` below.
 
     capitalformation_dwellings =
         (gross_capitalformation_dwellings - taxes_products_capitalformation_dwellings) * fixed_capitalformation /
