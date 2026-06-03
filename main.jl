@@ -5,6 +5,13 @@ using Random, Plots
 parameters = Bit.AUSTRIA2010Q1.parameters
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
+## Or using calibrated input data from Zenodo:
+# using Dates
+# co = Bit.download_zenodo_calibration_object("FR")
+# calibration_date = DateTime(2022, 12, 31)
+# parameters, initial_conditions = Bit.get_params_and_initial_conditions(
+#     co, calibration_date; scale = 1 / 1000)
+
 model = Bit.Model(parameters, initial_conditions)
 
 T = 20
