@@ -353,7 +353,7 @@ else
         legend = :bottomright,
         color = 1,
         xlabel = "epoch",
-        ylabel = "percentage change in respect to original GDP",
+        ylabel = "percentage change",
         dpi = 1000,
         yformatter = y -> "$(Int(y))%",
         linewidth = lw,
