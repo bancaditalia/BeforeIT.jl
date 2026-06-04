@@ -357,10 +357,10 @@ else
         dpi = 1000,
         yformatter = y -> "$(Int(y))%",
         linewidth = lw,
-        markersize= 3,
-        markershape=:circle,
+        markersize = 3,
+        markershape = :circle,
     )
-    plot!(p, 100 .* (b.GDP1 / b.GDP1[1] .- 1); label = "Numerical Gradient (Float64)", markersize= 3, marker = :square, color = 2, linewidth = lw)
-    plot!(p, 100 .* (c.GDP1 / c.GDP1[1] .- 1); label = "Numerical Gradient (Float128)", markersize= 3, marker = :diamond, color = 3, linewidth = lw)
+    plot!(p, 100 .* (b.GDP1 / b.GDP1[1] .- 1); label = "Numerical Gradient (Float64)", markersize = 3, marker = :square, color = 2, linewidth = lw)
+    plot!(p, 100 .* (c.GDP1 / c.GDP1[1] .- 1); label = "Numerical Gradient (Float128)", markersize = 3, marker = :diamond, color = 3, linewidth = lw)
     savefig(p, joinpath(SCRIPT_DIR, "gdp_optimization.pdf"))
 end
