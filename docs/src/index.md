@@ -49,7 +49,7 @@ plot(data.real_gdp)
 
 ## License
 
-BeforeIT.jl is released under the GNU Affero General Public License v3 or later (AGPLv3+).
+BeforeIT.jl is released under the Apache License, Version 2.0.
 
 Copyright 2024 - Banca d'Italia and the authors.
 
