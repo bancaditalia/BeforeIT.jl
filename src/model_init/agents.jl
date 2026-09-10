@@ -432,8 +432,10 @@ function (::Type{T})(agents) where {T <: AbstractModel}
 
         L_base = sum(f.L_i for f in banks.firms[bank_id])
         D_base = sum(f.D_i for f in banks.firms[bank_id])
-        Pi_k_base = prop.mu * L_base + prop.r_bar * prop.E_k
-        D_k_base = D_base + prop.E_k - L_base
+        # per-bank equity: prop.E_k is the sector aggregate, banks.E_k[bank_id] its share
+        E_k_base = banks.E_k[bank_id]
+        Pi_k_base = prop.mu * L_base + prop.r_bar * E_k_base
+        D_k_base = D_base + E_k_base - L_base
         banks.Pi_k[bank_id] = Pi_k_base
         banks.D_k[bank_id] = D_k_base
         banks.Y_h[bank_id] = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, banks.Pi_k[bank_id]) + sb_other * P_bar_HH
