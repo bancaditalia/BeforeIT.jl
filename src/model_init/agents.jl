@@ -412,7 +412,7 @@ function (::Type{T})(agents) where {T <: AbstractModel}
     end
 
     P_bar_HH = 1.0
-    H_W = prop.H_act - prop.I - 1
+    H_W = length(w_act)
     for h in 1:H_W
         if O_h[h] != 0
             Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH

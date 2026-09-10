@@ -16,6 +16,7 @@ function Workers(parameters, initial_conditions)
     H_act = Int(parameters["H_act"])
     H_inact = Int(parameters["H_inact"])
     I = Int(sum(parameters["I_s"]))
+    B = Int(get(parameters, "N_banks", 1))
     theta_UB = parameters["theta_UB"]
     tau_SIW = parameters["tau_SIW"]
     tau_INC = parameters["tau_INC"]
@@ -26,7 +27,8 @@ function Workers(parameters, initial_conditions)
     D_H = initial_conditions["D_H"]
     K_H = initial_conditions["K_H"]
 
-    H_W = H_act - I - 1
+    # active households are the workers plus the I firm owners and the B bank owners
+    H_W = H_act - I - B
     P_bar_HH = one(typeFloat)
     w_h = zeros(typeFloat, H_W)
     O_h = zeros(typeInt, H_W)
