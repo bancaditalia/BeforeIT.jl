@@ -65,6 +65,12 @@ function Bit.firms_expectations_and_decisions(model::Bit.ModelCANVAS)
 
     # cost push inflation
     pi_c_i = Bit.cost_push_inflation(firms, model)
+
+    # adjust prices for demand pull and cost push only for a fraction of random firms, a la Calvo
+    adjust_mask = rand(length(firms.P_i)) .< model.prop.theta_calvo
+    pi_d_i .= pi_d_i .* adjust_mask
+    pi_c_i .= pi_c_i .* adjust_mask
+
     # price setting
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e) .* (1 .+ pi_d_i)
     # target investments in capital, intermediate goods to purchase and employment
