@@ -28,6 +28,7 @@ Bit.@object mutable struct Properties(Object) <: AbstractProperties
     zeta_b::Bit.typeFloat
     omega::Bit.typeFloat
     theta_calvo::Bit.typeFloat
+    overdrafts_in_capital_ratio::Bool
     b_CF_g::Vector{Bit.typeFloat}
     b_CFH_g::Vector{Bit.typeFloat}
     b_HH_g::Vector{Bit.typeFloat}
@@ -82,6 +83,8 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     # macro parameters
     omega = typeFloat(get(parameters, "omega", 0.0))                # smoothing parameter for expectations, between 0 (only expectations) and 1 (only last period)
     theta_calvo = typeFloat(get(parameters, "theta_calvo", 0.0))    # adjust prices for demand pull and cost push only for a fraction theta_calvo of random firms
+    # when false the credit-supply constraint counts loans only; when true it also counts drawn overdrafts
+    overdrafts_in_capital_ratio = Bool(get(parameters, "overdrafts_in_capital_ratio", false))
 
     # products related parameters
     b_CF_g = Vector{typeFloat}(vec(parameters["b_CF_g"]))   # Capital formation coefficient g-th product (firm investment)
@@ -104,6 +107,6 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     return Properties(
         G, T_prime, H_act, H_inact, J, L, I_s, I, H, tau_INC, tau_FIRM, tau_VAT, tau_SIF,
         tau_SIW, tau_EXPORT, tau_CF, tau_G, theta_UB, psi, psi_H, mu, theta_DIV, theta, zeta, zeta_LTV,
-        zeta_b, omega, theta_calvo, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g, a_sg, C, D_H, K_H, sb_other, E_k, r_bar, N_banks
+        zeta_b, omega, theta_calvo, overdrafts_in_capital_ratio, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g, a_sg, C, D_H, K_H, sb_other, E_k, r_bar, N_banks
     )
 end
