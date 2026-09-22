@@ -30,6 +30,11 @@ Bit.@object struct Data(Object) <: AbstractData
     euribor::Vector{Bit.typeFloat} = Bit.typeFloat[]
     nominal_sector_gva::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
     real_sector_gva::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
+    credit_new_per_bank::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
+    credit_stock_per_bank::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
+    equity_per_bank::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
+    reserves_per_bank::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
+    roe_per_bank::Vector{Vector{Bit.typeFloat}} = Vector{Bit.typeFloat}[]
 end
 
 # Define the DataVector struct
@@ -95,7 +100,12 @@ function allocate_new_data!(m::AbstractModel)
         push!(getfield(d, f), 0.0)
     end
     push!(d.nominal_sector_gva, zeros(m.prop.G))
-    return push!(d.real_sector_gva, zeros(m.prop.G))
+    push!(d.real_sector_gva, zeros(m.prop.G))
+    push!(d.credit_new_per_bank, zeros(m.prop.N_banks))
+    push!(d.credit_stock_per_bank, zeros(m.prop.N_banks))
+    push!(d.equity_per_bank, zeros(m.prop.N_banks))
+    push!(d.reserves_per_bank, zeros(m.prop.N_banks))
+    return push!(d.roe_per_bank, zeros(m.prop.N_banks))
 end
 
 function update_data_init!(m::AbstractModel)
@@ -144,6 +154,14 @@ function update_data_init!(m::AbstractModel)
     d.euribor[1] = m.cb.r_bar
     d.gdp_deflator_growth_ea[1] = m.rotw.pi_EA
     d.real_gdp_ea[1] = m.rotw.Y_EA
+    for bank_id in eachbank(m)
+        bank_firms = m.banks.firms[bank_id]
+        d.credit_new_per_bank[1][bank_id] = sum(f.DL_i for f in bank_firms; init = 0.0)
+        d.credit_stock_per_bank[1][bank_id] = sum(f.L_i for f in bank_firms; init = 0.0)
+        d.equity_per_bank[1][bank_id] = m.banks.E_k[bank_id]
+        d.reserves_per_bank[1][bank_id] = m.banks.D_k[bank_id]
+        d.roe_per_bank[1][bank_id] = m.banks.E_k[bank_id] != 0.0 ? m.banks.Pi_k[bank_id] / m.banks.E_k[bank_id] : 0.0
+    end
     d.collection_time[1] = 1
     return m
 end
@@ -218,6 +236,14 @@ function update_data_step!(m::AbstractModel)
     d.euribor[t] = m.cb.r_bar
     d.gdp_deflator_growth_ea[t] = m.rotw.pi_EA
     d.real_gdp_ea[t] = m.rotw.Y_EA
+    for bank_id in eachbank(m)
+        bank_firms = m.banks.firms[bank_id]
+        d.credit_new_per_bank[t][bank_id] = sum(f.DL_i for f in bank_firms; init = 0.0)
+        d.credit_stock_per_bank[t][bank_id] = sum(f.L_i for f in bank_firms; init = 0.0)
+        d.equity_per_bank[t][bank_id] = m.banks.E_k[bank_id]
+        d.reserves_per_bank[t][bank_id] = m.banks.D_k[bank_id]
+        d.roe_per_bank[t][bank_id] = m.banks.E_k[bank_id] != 0.0 ? m.banks.Pi_k[bank_id] / m.banks.E_k[bank_id] : 0.0
+    end
     d.collection_time[t] = m.agg.t
     return m
 end
