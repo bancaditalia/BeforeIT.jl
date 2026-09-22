@@ -52,3 +52,24 @@ using Test
     end
     @test isapprox(zero, fill(0.0, n_banks), atol = 1.0e-8)
 end
+
+@testset "bank initialisation invariant to N_banks" begin
+    initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
+    reference = nothing
+    for n_banks in (1, 2, 5)
+        parameters = copy(Bit.AUSTRIA2010Q1.parameters)
+        parameters["N_banks"] = n_banks
+        Random.seed!(1234)
+        model = Bit.Model(parameters, initial_conditions)
+        @test length(model.banks) == n_banks
+
+        # splitting the sector into more banks must not create or destroy equity,
+        # initial profits or deposits
+        aggregates = (sum(model.banks.E_k), sum(model.banks.Pi_k), sum(model.banks.D_k))
+        if isnothing(reference)
+            reference = aggregates
+        else
+            @test all(isapprox.(aggregates, reference; rtol = 1.0e-10))
+        end
+    end
+end
