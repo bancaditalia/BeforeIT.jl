@@ -9,11 +9,15 @@ using Test
     parameters = Bit.AUSTRIA2010Q1.parameters
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
-    T = 1
+    T = 3
     model = Bit.Model(parameters, initial_conditions)
+    n_banks = length(model.banks)
+    L_i_per_bank = Vector{Vector{Float64}}()
+    push!(L_i_per_bank, [sum(f.L_i for f in model.banks.firms[k]; init = 0.0) for k in 1:n_banks])
     for t in 1:T
         Bit.step!(model; parallel = false)
         Bit.collect_data!(model)
+        push!(L_i_per_bank, [sum(f.L_i for f in model.banks.firms[k]; init = 0.0) for k in 1:n_banks])
     end
 
     # income accounting and production accounting should be equal
@@ -39,7 +43,6 @@ using Test
 
     # accounting identity of balance sheet of all banks
     banks = model.banks
-    n_banks = length(banks)
     zero = fill(0.0, n_banks)
     for bank_id in 1:n_banks
         L_i = Bit.typeFloat[f.L_i for f in banks.firms[bank_id]]
@@ -51,6 +54,13 @@ using Test
         zero[bank_id] = sum(D_i) + sum(D_h) + banks.E_k[bank_id] - sum(L_i) - banks.D_k[bank_id]
     end
     @test isapprox(zero, fill(0.0, n_banks), atol = 1.0e-8)
+
+    # credit_stock_per_bank should equal sum of L_i for all firms of that bank
+    for t in 1:(T + 1)
+        for bank_id in 1:n_banks
+            @test isapprox(model.data.credit_stock_per_bank[t][bank_id], L_i_per_bank[t][bank_id], atol = 1.0e-8)
+        end
+    end
 end
 
 @testset "bank initialisation invariant to N_banks" begin
