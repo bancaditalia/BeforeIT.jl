@@ -1,4 +1,33 @@
 """
+    bank_exposure(model, bank_id; expected = false, overdrafts = true)
+
+Total credit exposure of bank `bank_id`: outstanding loans plus, when
+`overdrafts = true`, the drawn overdrafts (negative deposits) of the firms and
+households assigned to the bank.
+
+With `expected = true` the loan leg uses `L_e_i`, the book net of this period's
+scheduled repayment. The credit market needs that base because new loans are
+granted on top of the post-repayment book.
+"""
+function bank_exposure(model::AbstractModel, bank_id; expected = false, overdrafts = true)
+    banks = model.banks
+    z = zero(typeFloat)
+    exposure = sum(typeFloat[expected ? f.L_e_i : f.L_i for f in banks.firms[bank_id]]; init = z)
+    overdrafts || return exposure
+    for f in banks.firms[bank_id]
+        exposure += max(z, -f.D_i) + max(z, -f.D_h)
+    end
+    for w in banks.w_act[bank_id]
+        exposure += max(z, -w.D_h)
+    end
+    for w in banks.w_inact[bank_id]
+        exposure += max(z, -w.D_h)
+    end
+    exposure += max(z, -banks.D_h[bank_id])
+    return exposure
+end
+
+"""
     banks_profits(model)
 
 Calculate the total profits of the banks.

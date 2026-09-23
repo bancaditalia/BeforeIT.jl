@@ -26,20 +26,7 @@ function search_and_matching_credit!(model::AbstractModel)
         # The capital / credit-supply constraint binds on the bank's whole loan book,
         # not only the firms requesting new credit this period. With
         # overdrafts_in_capital_ratio it also counts drawn overdrafts (negative deposits).
-        z = zero(typeFloat)
-        exposure = sum(typeFloat[f.L_e_i for f in bank_firms]; init = z)
-        if model.prop.overdrafts_in_capital_ratio
-            for f in bank_firms
-                exposure += max(z, -f.D_i) + max(z, -f.D_h)
-            end
-            for w in model.banks.w_act[bank_id]
-                exposure += max(z, -w.D_h)
-            end
-            for w in model.banks.w_inact[bank_id]
-                exposure += max(z, -w.D_h)
-            end
-            exposure += max(z, -model.banks.D_h[bank_id])
-        end
+        exposure = bank_exposure(model, bank_id; expected = true, overdrafts = model.prop.overdrafts_in_capital_ratio)
 
         s_DL = zero(typeFloat)
         #I_FG = findall(DL_d_i .> 0)
