@@ -3,10 +3,10 @@ name: Run tests
 on:
   pull_request:
     branches:
-      - multibank
+      - main
   push:
     branches:
-      - multibank
+      - main
     tags: '*'
 jobs:
   test:
