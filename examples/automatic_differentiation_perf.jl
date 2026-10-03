@@ -14,8 +14,8 @@ set_preferences!("BeforeIT", "typeFloat" => "$FloatType"; force = true)
 import BeforeIT as Bit
 
 function gdp(m)
-    tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
-    tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
+    tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + sum(m.banks.C_h)
+    tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + sum(m.banks.I_h)
     return sum(m.firms.Y_i .* ((1 .- m.firms.tau_Y_i) - 1 ./ m.firms.beta_i)) +
         sum(m.firms.tau_Y_i .* m.firms.Y_i) +
         m.prop.tau_VAT * tot_C_h / Bit.zero_to_one(m.agg.P_bar_h) +
