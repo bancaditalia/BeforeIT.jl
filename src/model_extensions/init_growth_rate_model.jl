@@ -161,11 +161,11 @@ function ModelGR(parameters::Dict{String, Any}, initial_conditions::Dict{String,
     # standard initialisations
     workers_act, workers_inact = Workers(p, ic)
     firms = Firms(p, ic)
-    bank = Bank(p, ic)
+    banks = Banks(p, ic)
     central_bank = CentralBank(p, ic)
     agg = Aggregates(p, ic)
     properties = Properties(p, ic)
     data = Data()
 
-    return ModelGR((workers_act, workers_inact, firms, bank, central_bank, gov, rotw, agg, properties, data))
+    return ModelGR((workers_act, workers_inact, firms, banks, central_bank, gov, rotw, agg, properties, data))
 end

@@ -29,6 +29,9 @@ using Runic
     # accounting identities
     include("accounting_identities.jl")
 
+    # model extensions
+    include("model_extensions.jl")
+
     # shock tests
     include("shocks/shocks.jl")
 
