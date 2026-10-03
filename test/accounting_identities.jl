@@ -3,15 +3,16 @@ import BeforeIT as Bit
 using Random
 using Test
 
-@testset "accounting identities" begin
+@testset "accounting identities with n_banks = $n_banks" for n_banks in (1, 3)
     dir = @__DIR__
 
-    parameters = Bit.AUSTRIA2010Q1.parameters
+    parameters = copy(Bit.AUSTRIA2010Q1.parameters)
+    parameters["n_banks"] = n_banks
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
     T = 3
     model = Bit.Model(parameters, initial_conditions)
-    n_banks = length(model.banks)
+    @test length(model.banks) == n_banks
     L_i_per_bank = Vector{Vector{Float64}}()
     push!(L_i_per_bank, [sum(f.L_i for f in model.banks.firms[k]; init = 0.0) for k in 1:n_banks])
     for t in 1:T
@@ -24,16 +25,20 @@ using Test
     zero = sum(model.data.nominal_gva - model.data.compensation_employees - model.data.operating_surplus - model.data.taxes_production)
     @test isapprox(zero, 0.0, atol = 1.0e-8)
 
+    # the initial period holds only for the calibrated household income: with more than one
+    # bank, the extra bank owners replace workers and receive social benefits, so it is skipped
+    ts = n_banks == 1 ? (1:(T + 1)) : (2:(T + 1))
+
     # compare nominal_gdp to total expenditure
     zero = sum(
-        model.data.nominal_gdp - model.data.nominal_household_consumption - model.data.nominal_government_consumption -
-            model.data.nominal_capitalformation - model.data.nominal_exports + model.data.nominal_imports,
+        model.data.nominal_gdp[ts] - model.data.nominal_household_consumption[ts] - model.data.nominal_government_consumption[ts] -
+            model.data.nominal_capitalformation[ts] - model.data.nominal_exports[ts] + model.data.nominal_imports[ts],
     )
     @test isapprox(zero, 0.0, atol = 1.0e-8)
 
     zero = sum(
-        model.data.real_gdp - model.data.real_household_consumption - model.data.real_government_consumption -
-            model.data.real_capitalformation - model.data.real_exports + model.data.real_imports,
+        model.data.real_gdp[ts] - model.data.real_household_consumption[ts] - model.data.real_government_consumption[ts] -
+            model.data.real_capitalformation[ts] - model.data.real_exports[ts] + model.data.real_imports[ts],
     )
     @test isapprox(zero, 0.0, atol = 1.0e-8)
 
