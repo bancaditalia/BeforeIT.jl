@@ -82,7 +82,7 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
 
     # macro parameters
     omega = typeFloat(get(parameters, "omega", 0.0))                # smoothing parameter for expectations, between 0 (only expectations) and 1 (only last period)
-    theta_calvo = typeFloat(get(parameters, "theta_calvo", 0.0))    # adjust prices for demand pull and cost push only for a fraction theta_calvo of random firms
+    theta_calvo = typeFloat(get(parameters, "theta_calvo", 1.0))    # adjust prices for demand pull and cost push only for a fraction theta_calvo of random firms (1 = all firms, original behaviour)
     # when false the credit-supply constraint counts loans only; when true it also counts drawn overdrafts
     overdrafts_in_capital_ratio = Bool(get(parameters, "overdrafts_in_capital_ratio", false))
 
