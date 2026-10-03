@@ -63,12 +63,12 @@ using Test
     end
 end
 
-@testset "bank initialisation invariant to N_banks" begin
+@testset "bank initialisation invariant to n_banks" begin
     initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
     reference = nothing
     for n_banks in (1, 2, 5)
         parameters = copy(Bit.AUSTRIA2010Q1.parameters)
-        parameters["N_banks"] = n_banks
+        parameters["n_banks"] = n_banks
         Random.seed!(1234)
         model = Bit.Model(parameters, initial_conditions)
         @test length(model.banks) == n_banks

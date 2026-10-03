@@ -101,11 +101,11 @@ function allocate_new_data!(m::AbstractModel)
     end
     push!(d.nominal_sector_gva, zeros(m.prop.G))
     push!(d.real_sector_gva, zeros(m.prop.G))
-    push!(d.credit_new_per_bank, zeros(m.prop.N_banks))
-    push!(d.credit_stock_per_bank, zeros(m.prop.N_banks))
-    push!(d.equity_per_bank, zeros(m.prop.N_banks))
-    push!(d.reserves_per_bank, zeros(m.prop.N_banks))
-    return push!(d.roe_per_bank, zeros(m.prop.N_banks))
+    push!(d.credit_new_per_bank, zeros(m.prop.n_banks))
+    push!(d.credit_stock_per_bank, zeros(m.prop.n_banks))
+    push!(d.equity_per_bank, zeros(m.prop.n_banks))
+    push!(d.reserves_per_bank, zeros(m.prop.n_banks))
+    return push!(d.roe_per_bank, zeros(m.prop.n_banks))
 end
 
 function update_data_init!(m::AbstractModel)

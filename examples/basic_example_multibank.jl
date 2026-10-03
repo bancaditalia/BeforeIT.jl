@@ -5,7 +5,7 @@
 # compare a run against the pre-multibank baseline.
 #
 # Baseline (reproduces the original pre-multibank `basic_example` behaviour):
-#     N_banks = 1, omega = 0.0, overdrafts_in_capital_ratio = false
+#     n_banks = 1, omega = 0.0, overdrafts_in_capital_ratio = false
 #
 # Note: this is a STANDARD `Bit.Model` run (like `basic_example.jl`), so the
 # Calvo parameter `theta_calvo` is INERT here — it only bites in CANVAS runs
@@ -19,7 +19,7 @@ using Plots, StatsPlots
 # ---------------------------------------------------------------------------
 
 # (#1) Number of banks. 1 = original single-bank behaviour.
-N_banks = 1
+n_banks = 1
 
 # (#4) EMA smoothing of expected inflation:
 #   pi_e := (1 - omega) * pi_e + omega * last_realised_inflation
@@ -47,7 +47,7 @@ T = 16
 parameters = copy(Bit.AUSTRIA2010Q1.parameters)
 initial_conditions = Bit.AUSTRIA2010Q1.initial_conditions
 
-parameters["N_banks"] = N_banks
+parameters["n_banks"] = n_banks
 parameters["omega"] = omega
 parameters["overdrafts_in_capital_ratio"] = overdrafts_in_capital_ratio
 parameters["theta_calvo"] = theta_calvo
@@ -56,7 +56,7 @@ parameters["theta_calvo"] = theta_calvo
 model = Bit.Model(parameters, initial_conditions)
 
 println("Running with:")
-println("  N_banks                     = ", model.prop.N_banks)
+println("  n_banks                     = ", model.prop.n_banks)
 println("  omega (EMA)                 = ", model.prop.omega)
 println("  overdrafts_in_capital_ratio = ", model.prop.overdrafts_in_capital_ratio)
 println("  theta_calvo (CANVAS-only)   = ", model.prop.theta_calvo)

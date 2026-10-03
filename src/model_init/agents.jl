@@ -381,20 +381,20 @@ function (::Type{T})(agents) where {T <: AbstractModel}
     model = T(w_act, w_inact, firms, banks, cb, gov, rotw, agg, prop, data)
 
     # initialize bank assignments for firms and workers (sticky: random initial assignment)
-    N_banks = length(banks)
+    n_banks = length(banks)
     N_firms = length(firms)
     N_workers_act = length(w_act)
     N_workers_inact = length(w_inact)
 
-    # For backward compatibility: N_banks=1 means all agents use bank 1
-    if N_banks == 1
+    # For backward compatibility: n_banks=1 means all agents use bank 1
+    if n_banks == 1
         firms.B_i .= 1
         w_act.B_h .= 1
         w_inact.B_h .= 1
     else
-        firms.B_i .= rand(1:N_banks, N_firms)
-        w_act.B_h .= rand(1:N_banks, N_workers_act)
-        w_inact.B_h .= rand(1:N_banks, N_workers_inact)
+        firms.B_i .= rand(1:n_banks, N_firms)
+        w_act.B_h .= rand(1:n_banks, N_workers_act)
+        w_inact.B_h .= rand(1:n_banks, N_workers_inact)
     end
 
     # add workers to firms
@@ -458,7 +458,7 @@ length(w::AbstractWorkers) = length(w.Y_h)
 length(b::AbstractBanks) = length(b.E_k)
 
 # multi-bank helper functions
-eachbank(model::AbstractModel) = 1:model.prop.N_banks #eachindex(model.banks)
+eachbank(model::AbstractModel) = 1:model.prop.n_banks #eachindex(model.banks)
 #getbank(model::AbstractModel, bank_id::Int) = model.banks[bank_id]
 #nbanks(model::AbstractModel) = length(model.banks)
 eachfirm(model::AbstractModel) = 1:model.prop.I

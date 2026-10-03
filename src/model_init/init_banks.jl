@@ -13,7 +13,7 @@ Initialize a bank with the given parameters and initial conditions.
 function Banks(parameters, initial_conditions)
 
     # unpacking useful parameters
-    B = get!(parameters, "N_banks", 1) # default to 1 if not provided
+    B = get(parameters, "n_banks", 1) # default to 1 if not provided
 
     theta_DIV = parameters["theta_DIV"]
     tau_INC = parameters["tau_INC"]
