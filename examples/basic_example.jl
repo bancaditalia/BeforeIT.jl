@@ -37,7 +37,7 @@ plot(ps..., layout = (3, 3))
 
 # To run multiple Monte-Carlo repetitions in parallel we can use
 models = (Bit.Model(parameters, initial_conditions) for _ in 1:10)
-models = Bit.ensemblerun!(models, T)
+models = Bit.ensemblerun!(models, T);
 
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command
