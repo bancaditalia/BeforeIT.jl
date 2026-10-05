@@ -129,31 +129,67 @@ julia --proj format.jl
 
 ## Current Authors
 
-
 <table>
   <tr>
-  <td align="center">
+    <td align="center" valign="top" width="170">
       <a href="https://github.com/ameligrana">
-        <img src="https://avatars.githubusercontent.com/ameligrana" width="100px;" alt="Adriano Meligrana"/><br />
+        <img src="https://avatars.githubusercontent.com/ameligrana" width="60px;" alt="Adriano Meligrana"/><br />
         <sub><b>Adriano Meligrana</b></sub>
       </a><br />
-      <p>University of Turin</p>
-      <p>Email: <a href="mailto:adrianomeligrana@proton.me:">adrianomeligrana@proton.me</a></p>
+      <sub>Sapienza University of Rome</sub>
+      <br /><sub><a href="mailto:adrianomeligrana@proton.me">email</a></sub>
     </td>
-    <td align="center">
+    <td align="center" valign="top" width="170">
       <a href="https://devetak.github.io/">
-        <img src="https://avatars.githubusercontent.com/Devetak" width="100px;" alt="Mitja Devetak"/><br />
+        <img src="https://avatars.githubusercontent.com/Devetak" width="60px;" alt="Mitja Devetak"/><br />
         <sub><b>Mitja Devetak</b></sub>
       </a><br />
-      <p>Paris 1: Pantheon - Sorbonne</p>
+      <sub>Complexity Science Hub</sub>
     </td>
-    <td align="center">
+    <td align="center" valign="top" width="170">
+      <a href="https://github.com/SGHoekstra">
+        <img src="https://avatars.githubusercontent.com/SGHoekstra" width="60px;" alt="Steven Hoekstra"/><br />
+        <sub><b>Steven Hoekstra</b></sub>
+      </a><br />
+      <sub>University of Amsterdam</sub>
+    </td>
+    <td align="center" valign="top" width="170">
+      <a href="https://github.com/zauster">
+        <img src="https://avatars.githubusercontent.com/zauster" width="60px;" alt="Oliver Reiter"/><br />
+        <sub><b>Oliver Reiter</b></sub>
+      </a><br />
+      <sub>wiiw</sub>
+    </td>
+  </tr>
+  <tr>
+    <td align="center" valign="top" width="170">
+      <a href="https://github.com/marcobardoscia">
+        <img src="https://avatars.githubusercontent.com/marcobardoscia" width="60px;" alt="Marco Bardoscia"/><br />
+        <sub><b>Marco Bardoscia</b></sub>
+      </a><br />
+      <sub>Bank of England</sub>
+    </td>
+    <td align="center" valign="top" width="170">
+      <a href="https://github.com/erminnella">
+        <img src="https://avatars.githubusercontent.com/erminnella" width="60px;" alt="Enrico Minnella"/><br />
+        <sub><b>Enrico Minnella</b></sub>
+      </a><br />
+      <sub>Bank of England</sub>
+    </td>
+    <td align="center" valign="top" width="170">
+      <a href="https://github.com/sebastianpoledna">
+        <img src="https://avatars.githubusercontent.com/sebastianpoledna" width="60px;" alt="Sebastian Poledna"/><br />
+        <sub><b>Sebastian Poledna</b></sub>
+      </a><br />
+      <sub>WIFO</sub>
+    </td>
+    <td align="center" valign="top" width="170">
       <a href="https://github.com/aldoglielmo">
-        <img src="https://avatars.githubusercontent.com/aldoglielmo" width="100px;" alt="Aldo Glielmo"/><br />
+        <img src="https://avatars.githubusercontent.com/aldoglielmo" width="60px;" alt="Aldo Glielmo"/><br />
         <sub><b>Aldo Glielmo</b></sub>
       </a><br />
-      <p>Banca d'Italia </p>
-      <p>Email: <a href="mailto:aldo.glielmo@bancaditalia.it:">aldo.glielmo@bancaditalia.it</a></p>
+      <sub>Banca d'Italia</sub>
+      <br /><sub><a href="mailto:aldo.glielmo@bancaditalia.it">email</a></sub>
     </td>
   </tr>
 </table>
