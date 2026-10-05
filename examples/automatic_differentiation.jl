@@ -113,7 +113,7 @@ if WORKER_ARG_INDEX !== nothing
             flattened_length(model.w_act) +
             flattened_length(model.w_inact) +
             flattened_length(model.firms) +
-            flattened_length(model.bank) +
+            flattened_length(model.banks) +
             flattened_length(model.cb) +
             flattened_length(model.gov) +
             flattened_length(model.rotw) +
@@ -126,8 +126,8 @@ if WORKER_ARG_INDEX !== nothing
     end
 
     function gdp(m)
-        tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + m.bank.C_h
-        tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + m.bank.I_h
+        tot_C_h = sum(m.w_act.C_h) + sum(m.w_inact.C_h) + sum(m.firms.C_h) + sum(m.banks.C_h)
+        tot_I_h = sum(m.w_act.I_h) + sum(m.w_inact.I_h) + sum(m.firms.I_h) + sum(m.banks.I_h)
         return sum(m.firms.Y_i .* ((1 .- m.firms.tau_Y_i) - 1 ./ m.firms.beta_i)) +
             sum(m.firms.tau_Y_i .* m.firms.Y_i) +
             m.prop.tau_VAT * tot_C_h / Bit.zero_to_one(m.agg.P_bar_h) +

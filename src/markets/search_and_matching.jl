@@ -10,7 +10,7 @@ This function updates the model in-place and does not return any value.
 function search_and_matching!(model::AbstractModel; parallel = false)
 
     w_act, w_inact, firms, gov = model.w_act, model.w_inact, model.firms, model.gov
-    bank, rotw, agg, prop = model.bank, model.rotw, model.agg, model.prop
+    banks, rotw, agg, prop = model.banks, model.rotw, model.agg, model.prop
 
     # Initialize variables for firms market
     a_sg, b_CF_g, P_f, S_f, S_f_, G_f, I_i_g, DM_i_g, P_bar_i_g,
@@ -20,7 +20,7 @@ function search_and_matching!(model::AbstractModel; parallel = false)
     I, H, L, J, C_d_h, I_d_h, b_HH_g, b_CFH_g, c_E_g, c_G_g,
         Q_d_i_g, Q_d_m_g, C_h, I_h, C_j_g, C_l_g, P_bar_h_g,
         P_bar_CF_h_g, P_j_g, P_l_g = initialize_variables_retail_market(
-        firms, rotw, prop, agg, w_act, w_inact, gov, bank
+        firms, rotw, prop, agg, w_act, w_inact, gov, banks
     )
 
     # Create a shared lock for multithreading
@@ -53,14 +53,14 @@ function search_and_matching!(model::AbstractModel; parallel = false)
     end
 
     return update_aggregate_variables!(
-        agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
+        agg, w_act, w_inact, firms, banks, gov, rotw, P_CF_i_g, I_i_g,
         P_bar_i_g, DM_i_g, C_h, I_h, Q_d_i_g, Q_d_m_g, C_j_g,
         C_l_g, P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
     )
 end
 
 function update_aggregate_variables!(
-        agg, w_act, w_inact, firms, bank, gov, rotw, P_CF_i_g, I_i_g,
+        agg, w_act, w_inact, firms, banks, gov, rotw, P_CF_i_g, I_i_g,
         P_bar_i_g, DM_i_g, C_h, I_h, Q_d_i_g, Q_d_m_g, C_j_g, C_l_g,
         P_bar_h_g, P_bar_CF_h_g, P_j_g, P_l_g,
     )
@@ -68,7 +68,7 @@ function update_aggregate_variables!(
     I = length(firms)
     H_W = length(w_act)
     H_inact = length(w_inact)
-    H = H_W + H_inact + I + 1
+    H_banks = length(banks)
 
     I_i = vec(sum(I_i_g, dims = 2))
     DM_i = vec(sum(DM_i_g, dims = 2))
@@ -98,12 +98,12 @@ function update_aggregate_variables!(
     w_act.C_h .= @view(C_h[1:H_W])
     w_inact.C_h .= @view(C_h[(H_W + 1):(H_W + H_inact)])
     firms.C_h .= @view(C_h[(H_W + H_inact + 1):(H_W + H_inact + I)])
-    bank.C_h = C_h[H]
+    banks.C_h .= @view(C_h[(H_W + H_inact + I + 1):(H_W + H_inact + I + H_banks)])
 
     w_act.I_h .= @view(I_h[1:H_W])
     w_inact.I_h .= @view(I_h[(H_W + 1):(H_W + H_inact)])
     firms.I_h .= @view(I_h[(H_W + H_inact + 1):(H_W + H_inact + I)])
-    bank.I_h = I_h[H]
+    banks.I_h .= @view(I_h[(H_W + H_inact + I + 1):(H_W + H_inact + I + H_banks)])
 
     rotw.Q_d_m .= Q_d_m
 
@@ -121,10 +121,10 @@ function update_aggregate_variables!(
     w_act.K_h .+= w_act.I_h
     w_inact.K_h .+= w_inact.I_h
     firms.K_h .+= firms.I_h
-    return bank.K_h += bank.I_h
+    return banks.K_h .+= banks.I_h
 end
 
-function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, bank)
+function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_inact, gov, banks)
     # ... Initialize all the variables ...
 
     # change some variables according to arguments of matlab function
@@ -139,13 +139,14 @@ function initialize_variables_retail_market(firms, rotw, prop, agg, w_act, w_ina
     I = size(firms.P_i, 1)        # number of firms
     H_W = length(w_act)           # number of active households
     H_inact = length(w_inact)     # number of inactive households
-    H = H_W + H_inact + I + 1     # number of households
+    B = size(banks.E_k, 1)         # number of banks
+    H = H_W + H_inact + I + B     # number of households
     L = size(rotw.C_d_l, 1)       # number of export partners
     J = size(gov.C_d_j, 1)        # number of government entities
 
     # define a global C_d_h and I_d_h
-    C_d_h = [w_act.C_d_h; w_inact.C_d_h; firms.C_d_h; bank.C_d_h]
-    I_d_h = [w_act.I_d_h; w_inact.I_d_h; firms.I_d_h; bank.I_d_h]
+    C_d_h = [w_act.C_d_h; w_inact.C_d_h; firms.C_d_h; banks.C_d_h]
+    I_d_h = [w_act.I_d_h; w_inact.I_d_h; firms.I_d_h; banks.I_d_h]
 
     # initialise some vectors of variables to zeros
     Q_d_i_g = zeros(typeFloat, size(firms.Y_i)..., G)

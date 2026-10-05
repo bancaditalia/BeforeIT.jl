@@ -37,6 +37,11 @@ function growth_inflation_expectations(model::AbstractModel)
 
     lpi = estimate_next_value(pi_[1:(T_prime + t - 1)])
     pi_e = exp(lpi) - 1 # expected inflation rate
+    # smooth expectations with last period's value
+    omega = model.prop.omega
+    pi_e = (1 - omega) * pi_e + (omega * pi_[T_prime + t - 1])
+    # alterntive smoothing with anchor on central bank's policy rate
+    #pi_e = (1 - omega) * pi_e + omega * model.cb.r_bar
 
     return Y_e, gamma_e, pi_e
 end

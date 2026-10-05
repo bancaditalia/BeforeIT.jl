@@ -17,10 +17,10 @@ model = Bit.Model(parameters, initial_conditions);
 fieldnames(typeof(model))
 
 # and to inspect the specific attributes of one agent type by typing
-fieldnames(typeof(model.bank))
+fieldnames(typeof(model.banks))
 
 # We can run now the model for a number of epochs
-T = 16
+T = 20
 for _ in 1:T
     Bit.step!(model; parallel = true)
     Bit.collect_data!(model)
@@ -36,11 +36,8 @@ ps = Bit.plot_data(model, quantities = [:real_gdp, :real_household_consumption, 
 plot(ps..., layout = (3, 3))
 
 # To run multiple Monte-Carlo repetitions in parallel we can use
-models = (Bit.Model(parameters, initial_conditions) for _ in 1:2)
-models = Bit.ensemblerun!(models, T)
-
-# Note that we can equivalently run n_sims models for T steps in the single command
-# `Bit.ensemblerun(model, T, n_sims)`.
+models = (Bit.Model(parameters, initial_conditions) for _ in 1:10)
+models = Bit.ensemblerun!(models, T);
 
 # Note that this will use the number of threads specified when activating the Julia environment.
 # To discover the number of threads available, you can use the command

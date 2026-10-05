@@ -12,19 +12,30 @@ Returns:
 """
 function search_and_matching_credit!(model::AbstractModel)
     firms = model.firms
+    zeta, zeta_LTV = model.prop.zeta, model.prop.zeta_LTV
 
-    DL_d_i, K_e_i, L_e_i = firms.DL_d_i, firms.K_e_i, firms.L_e_i
-    E_k, zeta, zeta_LTV = model.bank.E_k, model.prop.zeta, model.prop.zeta_LTV
+    DL_i = zeros(typeFloat, size(firms.DL_i))
+    for bank_id in eachbank(model)
+        bank_firms = model.banks.firms[bank_id]
+        DL_d_i = typeFloat[f.DL_d_i for f in bank_firms if f.DL_d_i > 0]
+        K_e_i = typeFloat[f.K_e_i for f in bank_firms if f.DL_d_i > 0]
+        L_e_i = typeFloat[f.L_e_i for f in bank_firms if f.DL_d_i > 0]
+        f_id = [f.ID for f in bank_firms if f.DL_d_i > 0]
+        E_k = model.banks.E_k[bank_id]
 
-    DL_i = zeros(typeFloat, size(DL_d_i))
-    s_DL = zero(typeFloat)
-    s_L_e = sum(L_e_i)
-    I_FG = findall(DL_d_i .> 0)
-    fshuffle!(I_FG)
-    for i in I_FG
-        DL_i_p = DL_i[i]
-        DL_i[i] = max(0.0, min(DL_d_i[i], zeta_LTV * K_e_i[i] - L_e_i[i], E_k / zeta - s_L_e - s_DL))
-        s_DL += (DL_i[i] - DL_i_p)
+        # The capital / credit-supply constraint binds on the bank's whole loan book,
+        # not only the firms requesting new credit this period. With
+        # overdrafts_in_capital_ratio it also counts drawn overdrafts (negative deposits).
+        exposure = bank_exposure(model, bank_id; expected = true, overdrafts = model.prop.overdrafts_in_capital_ratio)
+
+        s_DL = zero(typeFloat)
+        #I_FG = findall(DL_d_i .> 0)
+        I_FG = collect(1:length(DL_d_i))
+        fshuffle!(I_FG)
+        for i in I_FG
+            DL_i[f_id[i]] = max(0.0, min(DL_d_i[i], zeta_LTV * K_e_i[i] - L_e_i[i], E_k / zeta - exposure - s_DL))
+            s_DL += DL_i[f_id[i]]
+        end
     end
     return firms.DL_i .= DL_i # actual new loans obtained
 end

@@ -2,12 +2,14 @@ include("object_macro.jl")
 
 abstract type AbstractWorkers <: AbstractObject end
 abstract type AbstractFirms <: AbstractObject end
-abstract type AbstractBank <: AbstractObject end
+abstract type AbstractBanks <: AbstractObject end
 abstract type AbstractCentralBank <: AbstractObject end
 abstract type AbstractGovernment <: AbstractObject end
 abstract type AbstractRestOfTheWorld <: AbstractObject end
 abstract type AbstractAggregates <: AbstractObject end
 abstract type AbstractModel <: AbstractObject end
+
+include("../utils/modify.jl")
 
 """
 This is a Workers. Each field is an array which stores the values for all the workers in
@@ -25,6 +27,7 @@ For all fields the entry at index `i` corresponds to the `i`th worker.
 - `I_d_h`: Investment budget
 - `C_h`: Realised consumption
 - `I_h`: Realised investment
+- `B_h`: Bank assignment
 """
 Bit.@object mutable struct Workers(Object) <: AbstractWorkers
     const del::Base.RefValue{Bool}
@@ -40,6 +43,7 @@ Bit.@object mutable struct Workers(Object) <: AbstractWorkers
     const I_d_h::Vector{Bit.typeFloat}
     const C_h::Vector{Bit.typeFloat}
     const I_h::Vector{Bit.typeFloat}
+    const B_h::Vector{Bit.typeInt}
 end
 
 """
@@ -137,6 +141,7 @@ Bit.@object mutable struct Firms(Object) <: AbstractFirms
     const DM_d_i::Vector{Bit.typeFloat}
     const N_d_i::Vector{Bit.typeInt}
     const Pi_e_i::Vector{Bit.typeFloat}
+    const B_i::Vector{Bit.typeInt}
     ### Household fields (firms' owners)
     const Y_h::Vector{Bit.typeFloat}
     const C_d_h::Vector{Bit.typeFloat}
@@ -148,7 +153,10 @@ Bit.@object mutable struct Firms(Object) <: AbstractFirms
 end
 
 """
-This is a Bank type. It represents the bank of the model.
+This is a Banks type. Each field is an array which stores the values for all the banks in
+the economy.
+
+For all fields the entry at index `i` corresponds to the `i`th firm.
 
 # Fields
 - `E_k`: equity capital (common equity) of the bank
@@ -165,19 +173,26 @@ This is a Bank type. It represents the bank of the model.
 - `K_h`: Capital stock
 - `D_h`: Deposits
 """
-Bit.@object mutable struct Bank(Object) <: AbstractBank
-    E_k::Bit.typeFloat
-    Pi_k::Bit.typeFloat
-    Pi_e_k::Bit.typeFloat
-    D_k::Bit.typeFloat
-    r::Bit.typeFloat
-    Y_h::Bit.typeFloat
-    C_d_h::Bit.typeFloat
-    I_d_h::Bit.typeFloat
-    C_h::Bit.typeFloat
-    I_h::Bit.typeFloat
-    K_h::Bit.typeFloat
-    D_h::Bit.typeFloat
+Bit.@object mutable struct Banks(Object) <: AbstractBanks
+    const del::Base.RefValue{Bool}
+    const lastid::Base.RefValue{Int}
+    const id_to_index::Dict{Int, Int}
+    const ID::Vector{Int}
+    const E_k::Vector{Bit.typeFloat}
+    const Pi_k::Vector{Bit.typeFloat}
+    const Pi_e_k::Vector{Bit.typeFloat}
+    const D_k::Vector{Bit.typeFloat}
+    const r::Vector{Bit.typeFloat}
+    const Y_h::Vector{Bit.typeFloat}
+    const C_d_h::Vector{Bit.typeFloat}
+    const I_d_h::Vector{Bit.typeFloat}
+    const C_h::Vector{Bit.typeFloat}
+    const I_h::Vector{Bit.typeFloat}
+    const K_h::Vector{Bit.typeFloat}
+    const D_h::Vector{Bit.typeFloat}
+    const firms::Vector{Vector{Agent{<:AbstractFirms}}}
+    const w_act::Vector{Vector{Agent{<:AbstractWorkers}}}
+    const w_inact::Vector{Vector{Agent{<:AbstractWorkers}}}
 end
 
 """
@@ -335,7 +350,7 @@ This is a Model type. It is used to store all the agents of the economy.
 - `w_act`: Workers that are active
 - `w_inact`: Workers that are inactive
 - `firms`: Firms
-- `bank`: Bank
+- `banks`: Banks
 - `cb`: CentralBank
 - `gov`: Government
 - `rotw`: RestOfTheWorld
@@ -343,7 +358,7 @@ This is a Model type. It is used to store all the agents of the economy.
 """
 Bit.@object mutable struct Model{
         W1 <: Bit.AbstractWorkers, W2 <: Bit.AbstractWorkers,
-        F <: Bit.AbstractFirms, B <: Bit.AbstractBank,
+        F <: Bit.AbstractFirms, B <: Bit.AbstractBanks,
         C <: Bit.AbstractCentralBank, G <: Bit.AbstractGovernment,
         R <: Bit.AbstractRestOfTheWorld, A <: Bit.AbstractAggregates,
         P, D,
@@ -351,7 +366,7 @@ Bit.@object mutable struct Model{
     w_act::W1
     w_inact::W2
     firms::F
-    bank::B
+    banks::B
     cb::C
     gov::G
     rotw::R
@@ -362,8 +377,25 @@ end
 
 function (::Type{T})(agents) where {T <: AbstractModel}
 
-    w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data = agents
-    model = T(w_act, w_inact, firms, bank, cb, gov, rotw, agg, prop, data)
+    w_act, w_inact, firms, banks, cb, gov, rotw, agg, prop, data = agents
+    model = T(w_act, w_inact, firms, banks, cb, gov, rotw, agg, prop, data)
+
+    # initialize bank assignments for firms and workers (sticky: random initial assignment)
+    n_banks = length(banks)
+    N_firms = length(firms)
+    N_workers_act = length(w_act)
+    N_workers_inact = length(w_inact)
+
+    # For backward compatibility: n_banks=1 means all agents use bank 1
+    if n_banks == 1
+        firms.B_i .= 1
+        w_act.B_h .= 1
+        w_inact.B_h .= 1
+    else
+        firms.B_i .= rand(1:n_banks, N_firms)
+        w_act.B_h .= rand(1:n_banks, N_workers_act)
+        w_inact.B_h .= rand(1:n_banks, N_workers_inact)
+    end
 
     # add workers to firms
     V_i, w_bar_i = firms.V_i, firms.w_bar_i
@@ -380,7 +412,7 @@ function (::Type{T})(agents) where {T <: AbstractModel}
     end
 
     P_bar_HH = 1.0
-    H_W = prop.H_act - prop.I - 1
+    H_W = length(w_act)
     for h in 1:H_W
         if O_h[h] != 0
             Y_h[h] = (w_h[h] * (1 - tau_SIW - tau_INC * (1 - tau_SIW)) + sb_other) * P_bar_HH
@@ -393,11 +425,23 @@ function (::Type{T})(agents) where {T <: AbstractModel}
     w_act.K_h .= prop.K_H * Y_h #/ sum(Y_h)
 
     # bank initialization which depends on firms
-    bank.Pi_k = prop.mu * sum(firms.L_i) + prop.r_bar * prop.E_k
-    bank.D_k = sum(firms.D_i) + prop.E_k - sum(firms.L_i)
-    bank.Y_h = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, bank.Pi_k) + sb_other * P_bar_HH
-    bank.D_h = prop.D_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
-    bank.K_h = prop.K_H * bank.Y_h # Need to normalise wrt sum(Y_h) at the end of initialisation
+    for bank_id in eachbank(model)
+        banks.firms[bank_id] = [firms[i] for i in eachfirm(model) if firms.B_i[i] == bank_id]
+        banks.w_act[bank_id] = [w_act[i] for i in eachindex(model.w_act.D_h) if w_act.B_h[i] == bank_id]
+        banks.w_inact[bank_id] = [w_inact[i] for i in eachindex(model.w_inact.D_h) if w_inact.B_h[i] == bank_id]
+
+        L_base = sum(f.L_i for f in banks.firms[bank_id])
+        D_base = sum(f.D_i for f in banks.firms[bank_id])
+        # per-bank equity: prop.E_k is the sector aggregate, banks.E_k[bank_id] its share
+        E_k_base = banks.E_k[bank_id]
+        Pi_k_base = prop.mu * L_base + prop.r_bar * E_k_base
+        D_k_base = D_base + E_k_base - L_base
+        banks.Pi_k[bank_id] = Pi_k_base
+        banks.D_k[bank_id] = D_k_base
+        banks.Y_h[bank_id] = prop.theta_DIV * (1 - tau_INC) * (1 - prop.tau_FIRM) * max(0, banks.Pi_k[bank_id]) + sb_other * P_bar_HH
+        banks.D_h[bank_id] = prop.D_H * banks.Y_h[bank_id] # Need to normalise wrt sum(Y_h) at the end of initialisation
+        banks.K_h[bank_id] = prop.K_H * banks.Y_h[bank_id] # Need to normalise wrt sum(Y_h) at the end of initialisation
+    end
 
     # update model variables with global quantities (total income, total deposits) obtained from all the agents
     update_variables_with_totals!(model)
@@ -411,3 +455,10 @@ end
 # helper functions
 length(f::AbstractFirms) = length(f.G_i)
 length(w::AbstractWorkers) = length(w.Y_h)
+length(b::AbstractBanks) = length(b.E_k)
+
+# multi-bank helper functions
+eachbank(model::AbstractModel) = 1:model.prop.n_banks #eachindex(model.banks)
+#getbank(model::AbstractModel, bank_id::Int) = model.banks[bank_id]
+#nbanks(model::AbstractModel) = length(model.banks)
+eachfirm(model::AbstractModel) = 1:model.prop.I

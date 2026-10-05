@@ -75,7 +75,7 @@ where
 
 """
 function central_bank_profits(cb, model)
-    D_k, L_G = model.bank.D_k, model.gov.L_G
+    D_k, L_G = sum(model.banks.D_k), model.gov.L_G
     Pi_CB = cb.r_G * L_G - cb.r_bar * D_k
     return Pi_CB
 end

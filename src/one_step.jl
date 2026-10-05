@@ -46,7 +46,7 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock! = NoSh
     shock!(model)
 
     # update rate on loans and morgages
-    Bit.set_bank_rate!(model)
+    Bit.set_banks_rate!(model)
 
     ####### FIRM EXPECTATIONS AND DECISIONS #######
 
@@ -75,13 +75,13 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock! = NoSh
     Bit.set_gov_social_benefits!(model)
 
     # update expected bank profits
-    Bit.set_bank_expected_profits!(model)
+    Bit.set_banks_expected_profits!(model)
 
     # update consumption and investment budget for all households
     Bit.set_households_budget_act!(model)
     Bit.set_households_budget_inact!(model)
     Bit.set_households_budget_firms!(model)
-    Bit.set_households_budget_bank!(model)
+    Bit.set_households_budget_banks!(model)
 
     ####### GOVERNMENT SPENDING BUDGET, IMPORT-EXPORT BUDGET #######
 
@@ -113,22 +113,22 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock! = NoSh
     Bit.set_firms_profits!(model)
 
     # update bank profits
-    Bit.set_bank_profits!(model)
+    Bit.set_banks_profits!(model)
 
     # update bank equity
-    Bit.set_bank_equity!(model)
+    Bit.set_banks_equity!(model)
 
     # update actual income of all households
     Bit.set_households_income_act!(model)
     Bit.set_households_income_inact!(model)
     Bit.set_households_income_firms!(model)
-    Bit.set_households_income_bank!(model)
+    Bit.set_households_income_banks!(model)
 
     # update savings (deposits) of all households
     Bit.set_households_deposits_act!(model)
     Bit.set_households_deposits_inact!(model)
     Bit.set_households_deposits_firms!(model)
-    Bit.set_households_deposits_bank!(model)
+    Bit.set_households_deposits_banks!(model)
 
     # compute central bank equity
     Bit.set_central_bank_equity!(model)
@@ -148,7 +148,7 @@ function CommonSolve.step!(model::AbstractModel; parallel = false, shock! = NoSh
     Bit.set_rotw_deposits!(model)
 
     # update bank net credit/debit position
-    Bit.set_bank_deposits!(model)
+    Bit.set_banks_deposits!(model)
 
     # update GDP with the results of the time step
     Bit.set_gross_domestic_product!(model)

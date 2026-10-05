@@ -26,6 +26,9 @@ Bit.@object mutable struct Properties(Object) <: AbstractProperties
     zeta::Bit.typeFloat
     zeta_LTV::Bit.typeFloat
     zeta_b::Bit.typeFloat
+    omega::Bit.typeFloat
+    theta_calvo::Bit.typeFloat
+    overdrafts_in_capital_ratio::Bool
     b_CF_g::Vector{Bit.typeFloat}
     b_CFH_g::Vector{Bit.typeFloat}
     b_HH_g::Vector{Bit.typeFloat}
@@ -39,6 +42,7 @@ Bit.@object mutable struct Properties(Object) <: AbstractProperties
     sb_other::Bit.typeFloat
     E_k::Bit.typeFloat
     r_bar::Bit.typeFloat
+    n_banks::Bit.typeInt
 end
 
 function Properties(parameters::Dict{String, Any}, initial_conditions)
@@ -76,6 +80,12 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     zeta_LTV = typeFloat(parameters["zeta_LTV"])   # Loan-to-value (LTV) ratio
     zeta_b = typeFloat(parameters["zeta_b"])     # Loan-to-capital ratio for new firms after bankruptcy
 
+    # macro parameters
+    omega = typeFloat(get(parameters, "omega", 0.0))                # smoothing parameter for expectations, between 0 (only expectations) and 1 (only last period)
+    theta_calvo = typeFloat(get(parameters, "theta_calvo", 1.0))    # adjust prices for demand pull and cost push only for a fraction theta_calvo of random firms (1 = all firms, original behaviour)
+    # when false the credit-supply constraint counts loans only; when true it also counts drawn overdrafts
+    overdrafts_in_capital_ratio = Bool(get(parameters, "overdrafts_in_capital_ratio", false))
+
     # products related parameters
     b_CF_g = Vector{typeFloat}(vec(parameters["b_CF_g"]))   # Capital formation coefficient g-th product (firm investment)
     b_CFH_g = Vector{typeFloat}(vec(parameters["b_CFH_g"])) # Household investment coefficient of the g-th product
@@ -92,10 +102,11 @@ function Properties(parameters::Dict{String, Any}, initial_conditions)
     sb_other = typeFloat(initial_conditions["sb_other"])
     E_k = typeFloat(initial_conditions["E_k"])
     r_bar = typeFloat(initial_conditions["r_bar"])
+    n_banks = typeInt(get(parameters, "n_banks", 1))
 
     return Properties(
         G, T_prime, H_act, H_inact, J, L, I_s, I, H, tau_INC, tau_FIRM, tau_VAT, tau_SIF,
         tau_SIW, tau_EXPORT, tau_CF, tau_G, theta_UB, psi, psi_H, mu, theta_DIV, theta, zeta, zeta_LTV,
-        zeta_b, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g, a_sg, C, D_H, K_H, sb_other, E_k, r_bar
+        zeta_b, omega, theta_calvo, overdrafts_in_capital_ratio, b_CF_g, b_CFH_g, b_HH_g, c_G_g, c_E_g, c_I_g, a_sg, C, D_H, K_H, sb_other, E_k, r_bar, n_banks
     )
 end

@@ -16,7 +16,7 @@ using Test, MAT, StatsBase, Random
         cb = model.cb           # central bank
         rotw = model.rotw       # rest of the world
         firms = model.firms     # firms
-        bank = model.bank       # bank
+        banks = model.banks     # banks
         w_act = model.w_act     # active workers
         w_inact = model.w_inact # inactive workers
         agg = model.agg         # aggregates
@@ -32,7 +32,7 @@ using Test, MAT, StatsBase, Random
 
         cb.r_bar = Bit.central_bank_rate(model)
 
-        bank.r = Bit.bank_rate(model)
+        Bit.set_banks_rate!(model)
 
         Q_s_i, I_d_i, DM_d_i, N_d_i, Pi_e_i, DL_d_i, K_e_i, L_e_i, P_i =
             Bit.firms_expectations_and_decisions(model)
@@ -58,7 +58,7 @@ using Test, MAT, StatsBase, Random
 
         gov.sb_other, gov.sb_inact = Bit.gov_social_benefits(model)
 
-        bank.Pi_e_k = Bit.bank_expected_profits(model)
+        banks.Pi_e_k .= Bit.banks_expected_profits(model)
 
         C_d_h, I_d_h = Bit.households_budget_act(model)
         w_act.C_d_h .= C_d_h
@@ -69,7 +69,9 @@ using Test, MAT, StatsBase, Random
         C_d_h, I_d_h = Bit.households_budget_firms(model)
         firms.C_d_h .= C_d_h
         firms.I_d_h .= I_d_h
-        bank.C_d_h, bank.I_d_h = Bit.households_budget_bank(model)
+        C_d_h, I_d_h = Bit.households_budget_banks(model)
+        banks.C_d_h .= C_d_h
+        banks.I_d_h .= I_d_h
 
         C_G, C_d_j = Bit.gov_expenditure(model)
         gov.C_G = C_G
@@ -83,20 +85,20 @@ using Test, MAT, StatsBase, Random
         rotw.P_m .= P_m
 
         Bit.search_and_matching!(model; parallel = m)
-        return bank, w_act, w_inact, firms, gov, rotw
+        return banks, w_act, w_inact, firms, gov, rotw
     end
 
     # NOTE: as a test we use the expected values and standard deviations of the
     #       original implementation, with tolerance = 3*(standard deviation) for
     #       both single-threaded and multi-threaded execution
     for m in [true, false]
-        bank, w_act, w_inact, firms, gov, rotw = run_search_and_matching(parameters, initial_conditions, T, m)
+        banks, w_act, w_inact, firms, gov, rotw = run_search_and_matching(parameters, initial_conditions, T, m)
         @test isapprox(
-            mean([bank.I_h, w_act.I_h..., w_inact.I_h..., firms.I_h...]),
+            mean([banks.I_h..., w_act.I_h..., w_inact.I_h..., firms.I_h...]),
             0.32975, atol = 3 * 0.0025351
         )
         @test isapprox(
-            mean([bank.C_h, w_act.C_h..., w_inact.C_h..., firms.C_h...]),
+            mean([banks.C_h..., w_act.C_h..., w_inact.C_h..., firms.C_h...]),
             3.973, atol = 3 * 0.029366
         )
         @test isapprox(mean(firms.I_i), 20.5075, atol = 3 * 0.12763)

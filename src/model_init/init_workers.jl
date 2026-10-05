@@ -16,6 +16,7 @@ function Workers(parameters, initial_conditions)
     H_act = Int(parameters["H_act"])
     H_inact = Int(parameters["H_inact"])
     I = Int(sum(parameters["I_s"]))
+    B = Int(get(parameters, "n_banks", 1))
     theta_UB = parameters["theta_UB"]
     tau_SIW = parameters["tau_SIW"]
     tau_INC = parameters["tau_INC"]
@@ -26,7 +27,8 @@ function Workers(parameters, initial_conditions)
     D_H = initial_conditions["D_H"]
     K_H = initial_conditions["K_H"]
 
-    H_W = H_act - I - 1
+    # active households are the workers plus the I firm owners and the B bank owners
+    H_W = H_act - I - B
     P_bar_HH = one(typeFloat)
     w_h = zeros(typeFloat, H_W)
     O_h = zeros(typeInt, H_W)
@@ -40,13 +42,14 @@ function Workers(parameters, initial_conditions)
     I_d_h = zeros(typeFloat, H_W)
     C_h = zeros(typeFloat, H_W)
     I_h = zeros(typeFloat, H_W)
+    B_h = zeros(typeInt, H_W)  # bank assignment, initialized in Model constructor
 
     # active workers (both employed and unemployed)
     id_to_index = Dict{Int, Int}()
     index_to_id = collect(1:Int(H_W))
     lastid = Ref(Int(H_W))
     del = Ref(false)
-    workers_act = Workers(del, lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h)
+    workers_act = Workers(del, lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h, O_h, C_d_h, I_d_h, C_h, I_h, B_h)
 
     # inactive workers
     Y_h = zeros(typeFloat, H_inact)
@@ -62,12 +65,13 @@ function Workers(parameters, initial_conditions)
     I_d_h = zeros(typeFloat, H_inact)
     C_h = zeros(typeFloat, H_inact)
     I_h = zeros(typeFloat, H_inact)
+    B_h_inact = zeros(typeInt, H_inact)  # bank assignment, initialized in Model constructor
 
     id_to_index = Dict{Int, Int}()
     index_to_id = collect(1:Int(H_inact))
     lastid = Ref(Int(H_inact))
     del = Ref(false)
-    workers_inact = Workers(del, lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h)
+    workers_inact = Workers(del, lastid, id_to_index, index_to_id, Y_h, D_h, K_h, w_h_inact, O_h_inact, C_d_h, I_d_h, C_h, I_h, B_h_inact)
 
     return workers_act, workers_inact
 end

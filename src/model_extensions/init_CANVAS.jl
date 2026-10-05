@@ -65,6 +65,12 @@ function Bit.firms_expectations_and_decisions(model::Bit.ModelCANVAS)
 
     # cost push inflation
     pi_c_i = Bit.cost_push_inflation(firms, model)
+
+    # adjust prices for demand pull and cost push only for a fraction of random firms, a la Calvo
+    adjust_mask = rand(length(firms.P_i)) .< model.prop.theta_calvo
+    pi_d_i .= pi_d_i .* adjust_mask
+    pi_c_i .= pi_c_i .* adjust_mask
+
     # price setting
     new_P_i = firms.P_i .* (1 .+ pi_c_i) .* (1 + pi_e) .* (1 .+ pi_d_i)
     # target investments in capital, intermediate goods to purchase and employment
@@ -147,13 +153,13 @@ function ModelCANVAS(parameters::Dict{String, Any}, initial_conditions::Dict{Str
     rotw_st = Bit.RestOfTheWorld(p, ic)
     rotw = RestOfTheWorldCANVAS(Bit.fields(rotw_st)..., Y_EA_series, pi_EA_series) # add new variables to the aggregates
 
-    # standard initialisations: workers, bank, aggregats, government, properties and data
+    # standard initialisations: workers, banks, aggregats, government, properties and data
     workers_act, workers_inact = Bit.Workers(p, ic)
-    bank = Bit.Bank(p, ic)
+    banks = Bit.Banks(p, ic)
     agg = Bit.Aggregates(p, ic)
     government = Bit.Government(p, ic)
     properties = Bit.Properties(p, ic)
     data = Bit.Data()
 
-    return ModelCANVAS((workers_act, workers_inact, firms, bank, central_bank, government, rotw, agg, properties, data))
+    return ModelCANVAS((workers_act, workers_inact, firms, banks, central_bank, government, rotw, agg, properties, data))
 end
