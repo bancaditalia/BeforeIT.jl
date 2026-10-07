@@ -35,7 +35,7 @@ BeforeITMooncake = "Mooncake"
 BeforeITPlots = ["Plots", "StatsPlots"]
 
 [compat]
-CSV = "0.10"
+CSV = "0.10, 1"
 CommonSolve = "0.2"
 DataFrames = "1"
 Dates = "1"
