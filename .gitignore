@@ -94,3 +94,6 @@ simulation_data/
 # data files
 *.csv
 *.jld2
+
+# saved example results
+!examples/data/*.csv
