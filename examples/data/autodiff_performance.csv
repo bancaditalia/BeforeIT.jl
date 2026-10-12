@@ -1,0 +1,14 @@
+method,float_type,n,seconds,prepare_seconds
+automatic,Float64,1,0.44165917,323.787042557
+automatic,Float64,10,0.435804566,12.074906837
+automatic,Float64,100,0.423717298,5.575527798
+automatic,Float64,1000,0.408129095,3.929176416
+automatic,Float64,10000,0.400635486,3.3014122
+automatic,Float64,115829,0.401110508,3.63341019
+numerical,Float128,1,0.656519785,
+numerical,Float128,10,7.072890667,
+numerical,Float128,100,70.577654941,
+numerical,Float64,1,0.046927975,
+numerical,Float64,10,0.616458387,
+numerical,Float64,100,5.433046211,
+numerical,Float64,1000,55.130575998,
