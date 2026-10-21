@@ -212,7 +212,9 @@ and do not hesitate to get in touch to include your extension in the next releas
 ## Disclaimer
 
 This package is an outcome of a research project. All errors are those of
-the authors. All views expressed are personal views, not those of Bank of Italy.
+the authors. All views expressed are personal views, and do not necessarily 
+reflect the official policy or position of Banca d’Italia or those of 
+the Bank of England or its committees.
 
 ---
 
