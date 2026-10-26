@@ -199,11 +199,11 @@ julia --proj format.jl
 If you found _BeforeIT_ useful for your research, please cite the following software description
 
 ```bib
-@article{glielmo2025beforeit,
+@article{meligrana2026beforeit,
   title={BeforeIT.jl: High-Performance Agent-Based Macroeconomics Made Easy},
-  author={Glielmo, Aldo and Devetak, Mitja and Meligrana, Adriano and Poledna, Sebastian},
+  author={Meligrana, Adriano and Devetak, Mitja and Hoekstra, Steven and Reiter, Oliver and Minnella, Enrico and Poledna, Sebastian and Bardoscia, Mardo and Glielmo, Aldo},
   journal={arXiv preprint arXiv:2502.13267},
-  year={2025}
+  year={2026}
 }
 ```
 
