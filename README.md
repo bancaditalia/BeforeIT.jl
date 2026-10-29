@@ -201,7 +201,7 @@ If you found _BeforeIT_ useful for your research, please cite the following soft
 ```bib
 @article{meligrana2026beforeit,
   title={BeforeIT.jl: High-Performance Agent-Based Macroeconomics Made Easy},
-  author={Meligrana, Adriano and Devetak, Mitja and Hoekstra, Steven and Reiter, Oliver and Minnella, Enrico and Poledna, Sebastian and Bardoscia, Mardo and Glielmo, Aldo},
+  author={Meligrana, Adriano and Devetak, Mitja and Hoekstra, Steven and Reiter, Oliver and Minnella, Enrico and Poledna, Sebastian and Bardoscia, Marco and Glielmo, Aldo},
   journal={arXiv preprint arXiv:2502.13267},
   year={2026}
 }
