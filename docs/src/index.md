@@ -69,6 +69,7 @@ Copyright 2024 - Banca d'Italia and the authors.
 - [Arnau Quera-Bofarull](https://github.com/arnauqb) for help in the deployment of the documentation
 - [Steven Hoekstra](https://github.com/SGHoekstra) for fixing a bug in a script
 - [Peter Reschenhofer](https://github.com/petres) for fixing a bug in a script
+- [Mustafa Osman](https://github.com/musta20) for fixing a bug in the firms' investment and employment planning
 
 ## Citing _BeforeIT_
 
