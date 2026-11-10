@@ -15,13 +15,13 @@ end
 function desired_capital_material_employment(firms::AbstractFirms, Q_s_i)
 
     # target investments in capital
-    I_d_i = firms.delta_i ./ firms.kappa_i .* min(Q_s_i, firms.K_i .* firms.kappa_i)
+    I_d_i = firms.delta_i ./ firms.kappa_i .* min.(Q_s_i, firms.K_i .* firms.kappa_i)
 
     # intermediate goods to purchase
     DM_d_i = min.(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.beta_i
 
     # target employment
-    N_d_i = max.(1.0, round.(min(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.alpha_bar_i))
+    N_d_i = max.(1.0, round.(min.(Q_s_i, firms.K_i .* firms.kappa_i) ./ firms.alpha_bar_i))
     return I_d_i, DM_d_i, N_d_i
 end
 

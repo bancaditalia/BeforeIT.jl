@@ -50,9 +50,9 @@
         matlab_output = output_t5[string(fieldname)]
 
         if length(julia_output) == 6
-            @test isapprox(julia_output[2:end], matlab_output', rtol = 1.0e-4)
+            @test isapprox(julia_output[2:end], matlab_output', rtol = 1.0e-8)
         else
-            @test isapprox(julia_output[2:end, :], matlab_output, rtol = 1.0e-5)
+            @test isapprox(julia_output[2:end, :], matlab_output, rtol = 1.0e-8)
         end
     end
 
