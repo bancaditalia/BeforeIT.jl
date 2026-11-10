@@ -180,6 +180,18 @@ function get_params_and_initial_conditions(
     T_calibration_exo_max = length(data["quarters_num"])
 
     # ================= Extract raw FIGARO / calibration data =================
+    # The country and the euro-area time series need not start on the same quarter
+    # (e.g. NL/PL/PT/RO/SE/SI/SK data start in 2000Q1, the EA series in 1996Q1), so
+    # every euro-area index below is computed against the EA grid: applying the
+    # country's indices to the EA series would silently select the wrong quarters.
+    T_estimation_ea = findfirst(==(date2num(estimation_date)), vec(ea["quarters_num"]))
+    T_calibration_ea = findfirst(==(date2num(calibration_date)), vec(ea["quarters_num"]))
+    if T_estimation_ea === nothing || T_calibration_ea === nothing
+        error(
+            "euro-area series does not cover the estimation/calibration window: " *
+                "estimation_date=$(estimation_date), calibration_date=$(calibration_date)"
+        )
+    end
     intermediate_consumption = figaro["intermediate_consumption"][:, :, T_calibration]
     G = size(intermediate_consumption)[1]
     S = G
@@ -555,13 +567,16 @@ function get_params_and_initial_conditions(
     # ============ Estimate exogenous processes (AR1 / Taylor rule) ===========
     # Inflation is always estimated on growth rates (diff of log) - this is already correct
     alpha_pi_EA, beta_pi_EA, sigma_pi_EA, epsilon_pi_EA = Bit.estimate_for_calibration_script(
-        diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo])),
+        diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_ea - 1):T_calibration_ea])),
     )
+    alpha_Y_EA, beta_Y_EA, sigma_Y_EA, epsilon_Y_EA =
+        Bit.estimate_for_calibration_script(log.(ea["real_gdp_quarterly"][T_estimation_ea:T_calibration_ea]))
 
     # Taylor rule estimation (always uses growth rates for inflation/output gap)
     a1 = (data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1) .^ (1 / 4) .- 1
-    a2 = exp.(diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))) .- 1
-    a3 = exp.(diff(log.(ea["real_gdp_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))) .- 1
+    a2 = exp.(diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_ea - 1):T_calibration_ea]))) .- 1
+    a3 = exp.(diff(log.(ea["real_gdp_quarterly"][(T_estimation_ea - 1):T_calibration_ea]))) .- 1
+
     rho, r_star, xi_pi, xi_gamma, pi_star = Bit.estimate_taylor_rule(a1, a2, a3)
 
     # Level series for G, E, I (needed for initial conditions)
@@ -727,8 +742,8 @@ function get_params_and_initial_conditions(
         timescale * sum(output) .* data["real_gdp_quarterly"][T_estimation_exo:T_calibration_exo] ./
         data["real_gdp_quarterly"][T_calibration_exo]
     pi = diff(log.(data["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))
-    Y_EA = ea["real_gdp_quarterly"][T_calibration_exo]
-    pi_EA = ea["gdp_deflator_quarterly"][T_calibration_exo] / ea["gdp_deflator_quarterly"][T_calibration_exo - 1] - 1
+    Y_EA = ea["real_gdp_quarterly"][T_calibration_ea]
+    pi_EA = ea["gdp_deflator_quarterly"][T_calibration_ea] / ea["gdp_deflator_quarterly"][T_calibration_ea - 1] - 1
     C_G = [
         timescale *
             sum(government_consumption) *
@@ -756,8 +771,8 @@ function get_params_and_initial_conditions(
     ]
 
     # data series needed for CANVAS
-    Y_EA_series = timescale * sum(output) .* ea["real_gdp_quarterly"][T_estimation_exo:T_calibration_exo] ./ ea["real_gdp_quarterly"][T_calibration_exo]
-    pi_EA_series = diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))
+    Y_EA_series = timescale * sum(output) .* ea["real_gdp_quarterly"][T_estimation_ea:T_calibration_ea] ./ ea["real_gdp_quarterly"][T_calibration_ea]
+    pi_EA_series = diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_ea - 1):T_calibration_ea]))
     r_bar_series = (data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1.0) .^ (1.0 / 4.0) .- 1
 
     # define a dictionary of initial conditions to save in jld2 format
