@@ -23,6 +23,19 @@ function get_params_and_initial_conditions_steady_state(
     T_estimation_exo = findall(data["quarters_num"] .== date2num(estimation_date))[1][1]
     T_calibration_exo = findall(data["quarters_num"] .== date2num(calibration_date))[1][1]
     T_calibration_exo_max = length(data["quarters_num"])
+
+    # The country and the euro-area time series need not start on the same quarter
+    # (e.g. NL/PL/PT/RO/SE/SI/SK data start in 2000Q1, the EA series in 1996Q1), so
+    # every euro-area index below is computed against the EA grid: applying the
+    # country's indices to the EA series would silently select the wrong quarters.
+    T_estimation_ea = findfirst(==(date2num(estimation_date)), vec(ea["quarters_num"]))
+    T_calibration_ea = findfirst(==(date2num(calibration_date)), vec(ea["quarters_num"]))
+    if T_estimation_ea === nothing || T_calibration_ea === nothing
+        error(
+            "euro-area series does not cover the estimation/calibration window: " *
+                "estimation_date=$(estimation_date), calibration_date=$(calibration_date)"
+        )
+    end
     intermediate_consumption = figaro["intermediate_consumption"][:, :, T_calibration]
     household_consumption = figaro["household_consumption"][:, T_calibration]
     fixed_capitalformation = figaro["fixed_capitalformation"][:, T_calibration]
@@ -229,10 +242,10 @@ function get_params_and_initial_conditions_steady_state(
     zeta_b = 0.5
 
     alpha_pi_EA, beta_pi_EA, sigma_pi_EA, epsilon_pi_EA = Bit.estimate_for_calibration_script(
-        diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo])),
+        diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_ea - 1):T_calibration_ea])),
     )
     alpha_Y_EA, beta_Y_EA, sigma_Y_EA, epsilon_Y_EA =
-        Bit.estimate_for_calibration_script(log.(ea["real_gdp_quarterly"][T_estimation_exo:T_calibration_exo]))
+        Bit.estimate_for_calibration_script(log.(ea["real_gdp_quarterly"][T_estimation_ea:T_calibration_ea]))
     alpha_pi_EA = 1.0 # STEADY-STATE
     beta_pi_EA = 0.0 # STEADY-STATE
     sigma_pi_EA = 0.0 # STEADY-STATE
@@ -241,8 +254,8 @@ function get_params_and_initial_conditions_steady_state(
     sigma_Y_EA = 0.0 # STEADY-STATE
 
     a1 = (data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1) .^ (1 / 4) .- 1
-    a2 = exp.(diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))) .- 1
-    a3 = exp.(diff(log.(ea["real_gdp_quarterly"][(T_estimation_exo - 1):T_calibration_exo]))) .- 1
+    a2 = exp.(diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_ea - 1):T_calibration_ea]))) .- 1
+    a3 = exp.(diff(log.(ea["real_gdp_quarterly"][(T_estimation_ea - 1):T_calibration_ea]))) .- 1
 
     rho, r_star, xi_pi, xi_gamma, pi_star = Bit.estimate_taylor_rule(a1, a2, a3)
     rho = 1.0      # STEADY-STATE
@@ -380,8 +393,8 @@ function get_params_and_initial_conditions_steady_state(
     pi = zeros(T_calibration_exo - T_estimation_exo + 1, 1)   # STEADY-STATE
 
 
-    Y_EA = ea["real_gdp_quarterly"][T_calibration_exo]
-    pi_EA = ea["gdp_deflator_quarterly"][T_calibration_exo] / ea["gdp_deflator_quarterly"][T_calibration_exo - 1] - 1
+    Y_EA = ea["real_gdp_quarterly"][T_calibration_ea]
+    pi_EA = ea["gdp_deflator_quarterly"][T_calibration_ea] / ea["gdp_deflator_quarterly"][T_calibration_ea - 1] - 1
     pi_EA = 0.0 # STEADY-STATE
 
     C_G = [
