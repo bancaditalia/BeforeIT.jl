@@ -569,8 +569,6 @@ function get_params_and_initial_conditions(
     alpha_pi_EA, beta_pi_EA, sigma_pi_EA, epsilon_pi_EA = Bit.estimate_for_calibration_script(
         diff(log.(ea["gdp_deflator_quarterly"][(T_estimation_ea - 1):T_calibration_ea])),
     )
-    alpha_Y_EA, beta_Y_EA, sigma_Y_EA, epsilon_Y_EA =
-        Bit.estimate_for_calibration_script(log.(ea["real_gdp_quarterly"][T_estimation_ea:T_calibration_ea]))
 
     # Taylor rule estimation (always uses growth rates for inflation/output gap)
     a1 = (data["euribor"][T_estimation_exo:T_calibration_exo] .+ 1) .^ (1 / 4) .- 1
@@ -593,20 +591,17 @@ function get_params_and_initial_conditions(
         timescale * sum(imports) .* data["real_imports_quarterly"][T_estimation_exo:T_calibration_exo] ./
         data["real_imports_quarterly"][T_calibration_exo]
 
-    # EA GDP series
-    Y_EA_series_raw = ea["real_gdp_quarterly"][T_estimation_exo:T_calibration_exo]
-
-    # Initialize growth rate initial values (will be set if use_growth_rate_ar1 is true)
-    g_G_init = 0.0
-    g_E_init = 0.0
-    g_I_init = 0.0
-
     # EA GDP/inflation: ALWAYS use log-level AR(1) regardless of use_growth_rate_ar1
     # This keeps Taylor rule inputs consistent with how the Taylor rule parameters
     # (rho, xi_pi, xi_gamma) were estimated. The growth-rate mode only affects
     # domestic exogenous variables (G, E, I), not EA variables.
     alpha_Y_EA, beta_Y_EA, sigma_Y_EA, epsilon_Y_EA =
-        Bit.estimate_for_calibration_script(log.(Y_EA_series_raw))
+        Bit.estimate_for_calibration_script(log.(ea["real_gdp_quarterly"][T_estimation_ea:T_calibration_ea]))
+
+    # Initialize growth rate initial values (will be set if use_growth_rate_ar1 is true)
+    g_G_init = 0.0
+    g_E_init = 0.0
+    g_I_init = 0.0
 
     if use_growth_rate_ar1
         # GROWTH-RATE AR(1) ESTIMATION for DOMESTIC variables only
