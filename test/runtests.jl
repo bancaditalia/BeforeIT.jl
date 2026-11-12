@@ -12,6 +12,7 @@ using Runic
     include("utils/estimations.jl")
     include("utils/modify.jl")
     include("utils/zenodo_calibration.jl")
+    include("utils/sb_other_nonnegative.jl")
     include("utils/correlation_utils.jl")
     include("utils/analysis_utils.jl")
 
