@@ -376,7 +376,7 @@ function get_params_and_initial_conditions_steady_state(
     sb_other = max(
         0.0,
         timescale * (social_benefits + other_net_transfers - unemployment_benefits - pension_benefits) /
-        (sum(employees) + unemployed + inactive + sum(firms) + 1),
+            (sum(employees) + unemployed + inactive + sum(firms) + 1),
     )
     D_H = household_cash_quarterly
     K_H = sum(dwellings)
