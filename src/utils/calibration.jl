@@ -14,9 +14,11 @@ date2num(d::Dates.DateTime) = Dates.value(d - MATLAB_EPOCH) / (1000 * 60 * 60 * 
 const MATLAB_EPOCH = Dates.DateTime(-1, 12, 31)
 num2date(n::Number) = MATLAB_EPOCH + Dates.Millisecond(round(Int64, n * 1000 * 60 * 60 * 24))
 
-# Floor applied to sectoral productivities (alpha_s, kappa_s) so that inactive
-# sectors in small economies (e.g. Luxembourg) do not produce NaNs during model
+# Floor applied to sectoral productivities (alpha_s, beta_s, kappa_s) so that
+# inactive sectors in small economies (e.g. Luxembourg) do not produce NaNs during model
 # initialisation: BeforeIT computes K_i = Y_i / (kappa_s * omega), which is NaN when kappa_s = 0.
+# beta_s is additionally capped at 1 / MIN_PRODUCTIVITY to catch the Inf produced by
+# output without intermediate consumption.
 const MIN_PRODUCTIVITY = 1.0e-6
 
 """
@@ -474,6 +476,12 @@ function get_params_and_initial_conditions(
     replace!(kappa_s, NaN => 0.0)
     replace!(w_s, NaN => 0.0)
     replace!(beta_s, NaN => 0.0)
+    # Floor and cap the materials share: a zero-output sector (LU 2024Q1:
+    # sectors 03/10) yields zero and output without intermediate consumption
+    # (MT 2024Q1: sector 10) yields Inf; both break the Leontief arithmetic
+    # (infinite initial materials, NaN wages from Inf * 0). Mirror the
+    # alpha_s/kappa_s floor above, with a symmetric cap for the Inf case.
+    beta_s = clamp.(beta_s, MIN_PRODUCTIVITY, 1.0 / MIN_PRODUCTIVITY)
 
     # Floor zero-productivity sectors (see MIN_PRODUCTIVITY definition at top of file).
     alpha_s = max.(alpha_s, MIN_PRODUCTIVITY)
@@ -722,9 +730,12 @@ function get_params_and_initial_conditions(
     L_I = firm_debt_quarterly
     w_UB = timescale * unemployment_benefits / unemployed
     sb_inact = timescale * pension_benefits / inactive
-    sb_other =
+    # Nonnegative by model construction, but HU 2024Q1: negative net transfers.
+    sb_other = max(
+        0.0,
         timescale * (social_benefits + other_net_transfers - unemployment_benefits - pension_benefits) /
-        (sum(employees) + unemployed + inactive + sum(firms) + 1)
+            (sum(employees) + unemployed + inactive + sum(firms) + 1),
+    )
     D_H = household_cash_quarterly
     K_H = sum(dwellings)
     L_G = government_debt_quarterly
